@@ -11,7 +11,7 @@ public class ServerSpikeTest {
 
     public static void main(String[] args) throws ClassNotFoundException {
         
-        int portNum = 25565;
+        int portNum = 0;
         
         ObjectOutputStream out;
         ObjectInputStream in;

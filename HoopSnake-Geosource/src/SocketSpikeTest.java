@@ -10,7 +10,7 @@ public class SocketSpikeTest {
 
     public static void main(String[] args) throws ClassNotFoundException {
         String ipaddress = "localhost";
-        int portNum = 25565;
+        int portNum = 0;
         
         ObjectOutputStream out; //wrapped stream to client
         ObjectInputStream in; //stream from client       
