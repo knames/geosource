@@ -1,34 +1,27 @@
-package socket.spike.test;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
-/**
- *
- * @author Connor
- */
 public class SocketSpikeTest {
 
-    public static void main(String[] args) {
-        String ipaddress = "255.255.255.255";
-        int portNum = 0;
+    public static void main(String[] args) throws ClassNotFoundException {
+        String ipaddress = "localhost";
+        int portNum = 25565;
         
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out; //wrapped stream to client
-        BufferedReader in; //stream from client       
+        ObjectOutputStream out; //wrapped stream to client
+        ObjectInputStream in; //stream from client       
         Socket outSocket;
         
         try //create socket
         {
             outSocket = new Socket(InetAddress.getByName(ipaddress), portNum);
             if (outSocket.isConnected()) System.out.println("Connection Established");
-            out = new PrintWriter(outSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(outSocket.getInputStream()));
+            out = new ObjectOutputStream(outSocket.getOutputStream());
+            in = new ObjectInputStream(outSocket.getInputStream());
             System.out.println("Stream Created");
         }
         catch(IOException e)
@@ -38,16 +31,32 @@ public class SocketSpikeTest {
             return; //end program if connection failed
         }
         
-        String streamIn;
+        LinkedList<Integer> testList = new LinkedList();
+        testList.add(3);
+        testList.add(1);
+        testList.add(4);
+        testList.add(1);
+        testList.add(5);
+        testList.add(9);
+        testList.add(2);
+        testList.add(6);
+        
+        LinkedList receiveList;
         
         try
         {
             System.out.println("Attempting receive");
-            while ((streamIn = in.readLine()) != null)
+            receiveList = (LinkedList)in.readObject();
+            ListIterator<Integer> iter = receiveList.listIterator();
+            while (iter.hasNext())
             {
-                System.out.println("From Server: " + streamIn);
-                out.println(br.readLine());
+                System.out.print(iter.next());
             }
+            System.out.print("\n");
+            
+            System.out.println("Sending Data");
+            out.writeObject(testList);
+            
             System.out.println("Connection Closing");
             in.close();
             out.close();
