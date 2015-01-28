@@ -1,21 +1,20 @@
-package serverspiketest;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class ServerSpikeTest {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
         
         int portNum = 0;
         
-        PrintWriter out;
-        BufferedReader in;
+        ObjectOutputStream out;
+        ObjectInputStream in;
         
         ServerSocket serverSocket;
         Socket clientSocket;
@@ -25,8 +24,8 @@ public class ServerSpikeTest {
             serverSocket = new ServerSocket(portNum);
             System.out.println("Server Bound");
             clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream(), true); //auto-flushing
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
             System.out.println("Client Connected");
         }
         catch (IOException e)
@@ -36,18 +35,30 @@ public class ServerSpikeTest {
                 return;
         }
         
-        String input;
+        LinkedList testList = new LinkedList();
+        testList.add(1);
+        testList.add(2);
+        testList.add(3);
+        testList.add(4);
+        testList.add(5);
+        testList.add(6);
+        testList.add(7);
+        
+        LinkedList receiveList;
         
         try
         {
-            out.println("Sup Brah?");
+            out.writeObject(testList);
             System.out.println("Greeting sent");
-            while ((input = in.readLine()) != null)
+            
+            receiveList = (LinkedList)in.readObject();
+             ListIterator<Integer> iter = receiveList.listIterator();
+            while (iter.hasNext())
             {
-                System.out.println("From Client: " + input);
-                if (input.equals("done")) break;
-                else out.println("Cool Story, Bro!");
+                System.out.print(iter.next());
             }
+            System.out.print("\n");
+            
             System.out.println("Connection Closing");
             in.close();
             out.close();
