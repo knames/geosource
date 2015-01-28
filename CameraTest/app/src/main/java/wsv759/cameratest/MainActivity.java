@@ -193,10 +193,10 @@ public class MainActivity extends ActionBarActivity {
     /*
      * Return the fraction of free space available for internal storage by this app.
      */
-    public long getFractionFreeSpace()
+    public double getFractionFreeSpace()
     {
         File dataDir = Environment.getDataDirectory();
-        return dataDir.getFreeSpace() / dataDir.getTotalSpace();
+        return (double) dataDir.getFreeSpace() / dataDir.getTotalSpace();
     }
 
     /*
