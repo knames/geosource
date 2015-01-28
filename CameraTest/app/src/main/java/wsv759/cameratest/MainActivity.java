@@ -196,7 +196,7 @@ public class MainActivity extends ActionBarActivity {
     public double getFractionFreeSpace()
     {
         File dataDir = Environment.getDataDirectory();
-        return (double) dataDir.getFreeSpace() / dataDir.getTotalSpace();
+        return dataDir.getFreeSpace() / (double) dataDir.getTotalSpace();
     }
 
     /*
