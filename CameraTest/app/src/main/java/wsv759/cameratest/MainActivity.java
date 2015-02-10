@@ -25,8 +25,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -36,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
+    Uri fileUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (isExternalStorageWritable()) {
-            Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
             if (fileUri == null)
                 return;
 
@@ -91,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         if (isExternalStorageWritable()) {
-            Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);  // create a file to save the video
+            fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);  // create a file to save the video
             if (fileUri == null)
                 return;
 
@@ -113,10 +117,11 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // Image captured and saved to fileUri specified in the Intent
-                Uri fileUri = data.getData();
+
                 Toast.makeText(this, "Video saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
+                //Send image to the geosource server.
                 new TaskSendImageOnSocket().execute(fileUri);
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
@@ -161,7 +166,9 @@ public class MainActivity extends ActionBarActivity {
         // Check that the SDCard is mounted. If it is, initialize an external file.
         if (this.isExternalStorageWritable()) {
             File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES), getString(R.string.app_name));
+                    Environment.DIRECTORY_PICTURES), "camera_test_app");
+
+            Log.d(getString(R.string.app_name), mediaStorageDir.getAbsolutePath());
             // This location works best if you want the created images to be shared
             // between applications and persist after your app has been uninstalled.
 
@@ -194,17 +201,18 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    enum SocketResult {SUCCESS, FAILED_CONNECTION, UNKNOWN_ERROR};
+    enum SocketResult {SUCCESS, FAILED_CONNECTION, CLASS_NOT_FOUND, UNKNOWN_ERROR};
 
     private class TaskSendImageOnSocket extends AsyncTask<Uri, Void, SocketResult>
     {
         protected SocketResult doInBackground(Uri... params) {
             //this method will be running on background thread so don't update UI frome here
             //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
-            String ipaddress = "localhost";
-            int portNum = 0;
+            String ipaddress = "10.227.145.56";
+            int portNum = 80;
 
             OutputStream out; //wrapped stream to client
+
             ObjectInputStream in; //stream from client
             Socket outSocket;
 
@@ -239,9 +247,23 @@ public class MainActivity extends ActionBarActivity {
             bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] imageByteArray = stream.toByteArray();
 
+            LinkedList receiveList;
             try
             {
-                Log.d(getString(R.string.app_name), "Attempting to send image " + params[0].getPath());
+                Log.i(getString(R.string.app_name), "Attempting receive");
+                receiveList = (LinkedList) in.readObject();
+
+                String logMessage = "";
+                ListIterator<Integer> iter = receiveList.listIterator();
+                while (iter.hasNext())
+                {
+                    logMessage += iter.next().toString() + ", ";
+                }
+                Log.d(getString(R.string.app_name),logMessage);
+
+                Log.i(getString(R.string.app_name), "Attempting to send image " + params[0].getPath());
+                byte[] size = ByteBuffer.allocate(4).putInt(stream.size()).array();
+                out.write(size);
                 out.write(imageByteArray);
 
                 Log.i(getString(R.string.app_name), "Connection Closing");
@@ -256,6 +278,11 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
+            } catch (ClassNotFoundException e) {
+                Log.e(getString(R.string.app_name),"incoming class not found.");
+                e.printStackTrace();
+
+                return SocketResult.CLASS_NOT_FOUND;
             }
 
             return SocketResult.SUCCESS;
@@ -268,6 +295,9 @@ public class MainActivity extends ActionBarActivity {
                     break;
                 case FAILED_CONNECTION:
                     Toast.makeText(MainActivity.this, "File upload failed. Connection failed.", Toast.LENGTH_SHORT).show();
+                    break;
+                case CLASS_NOT_FOUND:
+                    Toast.makeText(MainActivity.this, "File upload failed. Server response object class not found.", Toast.LENGTH_SHORT).show();
                     break;
                 case SUCCESS:
                     Toast.makeText(MainActivity.this, "New file uploaded.", Toast.LENGTH_SHORT).show();
