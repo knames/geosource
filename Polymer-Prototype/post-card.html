@@ -1,0 +1,93 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../components/core-icons/communication-icons.html">
+
+<polymer-element name="post-card">
+  <template>
+    <style>
+    :host {
+      display: block;
+      position: relative;
+      background-color: white;
+      padding: 20px;
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+    .card-header {
+      margin-bottom: 10px;
+    }
+    polyfill-next-selector { content: '.card-header h2'; }
+    .card-header ::content h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 300;
+    }
+    polyfill-next-selector { content: '.card-header img'; }
+    .card-header ::content img {
+      width: 70px;
+      border-radius: 50%;
+      margin: 10px;
+    }
+    paper-icon-button {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      color: #636363;
+    }
+    #favorite {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      color: #636363;
+    }
+    #locicon {
+      position: absolute;
+      top: 40px;
+      right: 3px;
+      color: #636363;
+    }
+    :host([favorite]) paper-icon-button {
+      color: #da4336;
+    }
+    </style>
+
+    <div class="card-header" layout horizontal center>
+
+      <content select="img"></content>
+      <content select="h2"></content>
+
+    </div>
+
+    <paper-icon-button
+      id="favicon"
+      icon="favorite"
+      on-tap="{{favoriteTapped}}">
+    </paper-icon-button>
+    <paper-icon-button
+      id="locicon"
+      icon="room"
+      on-tap="{{locationTapped}}">
+    </paper-icon-button>
+
+    <content></content>   
+  </template>
+  <script>
+  Polymer({
+    publish: {
+      favorite: {
+        value: false,
+        reflect: true
+      }
+    },
+    favoriteTapped: function(event, detail, sender) {
+      this.favorite = !this.favorite;
+      this.fire('favorite-test');
+    },
+    locationTapped: function(event, detail, sender) {
+      this.fire('location-test');
+      console.log('fired location-test');
+    }
+  });
+  </script>
+</polymer-element>
