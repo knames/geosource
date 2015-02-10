@@ -5,7 +5,7 @@ Our repository contains the following spike prototypes:
 1. Camera Test
 2. Socket Test (/HoopSnake-Geosource)
 3. Server Test (/HoopSnake-Geosource)
-4. Dynamic Incident Test
+4. Dynamic Incident Test (/ListViewPlanets)
 
 The following items are available through wiki pages:
 1. Android Creating Custom Adapters
