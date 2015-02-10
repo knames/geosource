@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="/tmp_mnt/student/wsv759/Documents/CMPT_371/cmpt371group2/CameraTest" />
-            <option value="/tmp_mnt/student/wsv759/Documents/CMPT_371/cmpt371group2/CameraTest/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>
