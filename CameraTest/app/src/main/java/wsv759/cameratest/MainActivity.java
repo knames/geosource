@@ -22,8 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -211,19 +209,17 @@ public class MainActivity extends ActionBarActivity {
             String ipaddress = "10.227.145.56";
             int portNum = 80;
 
-            OutputStream out; //wrapped stream to client
+            ObjectOutputStream outStream; //wrapped stream to client
 
-            ObjectInputStream in; //stream from client
+            ObjectInputStream inStream; //stream from client
             Socket outSocket;
 
             try //create socket
             {
-                outSocket = new Socket(InetAddress.getByName(ipaddress), portNum);
-                if (outSocket.isConnected())
-                    Log.i(getString(R.string.app_name),"Connection Established");
-                out = new ObjectOutputStream(outSocket.getOutputStream());
-                in = new ObjectInputStream(outSocket.getInputStream());
-                Log.i(getString(R.string.app_name), "Stream Created");
+                SocketWrapper socketWrapper = new SocketWrapper(MainActivity.this);
+                outSocket = socketWrapper.getOutSocket();
+                outStream = socketWrapper.getOut();
+                inStream = socketWrapper.getIn();
             }
             catch(IOException e)
             {
@@ -251,7 +247,7 @@ public class MainActivity extends ActionBarActivity {
             try
             {
                 Log.i(getString(R.string.app_name), "Attempting receive");
-                receiveList = (LinkedList) in.readObject();
+                receiveList = (LinkedList) inStream.readObject();
 
                 String logMessage = "";
                 ListIterator<Integer> iter = receiveList.listIterator();
@@ -263,12 +259,12 @@ public class MainActivity extends ActionBarActivity {
 
                 Log.i(getString(R.string.app_name), "Attempting to send image " + params[0].getPath());
                 byte[] size = ByteBuffer.allocate(4).putInt(stream.size()).array();
-                out.write(size);
-                out.write(imageByteArray);
+                outStream.write(size);
+                outStream.write(imageByteArray);
 
                 Log.i(getString(R.string.app_name), "Connection Closing");
-                in.close();
-                out.close();
+                inStream.close();
+                outStream.close();
                 outSocket.close();
                 Log.i(getString(R.string.app_name), "Connection Closed");
             }
