@@ -27,11 +27,14 @@ import javax.crypto.NoSuchPaddingException;
 /**
  *
  * @author Connor, with changes for Android compatibility by William.
+ *
+ * This is a wrapper that creates a new socket that connects to a server, then initializes an
+ * ObjectOutputStream and an ObjectInputStream with encryption and compression.
  */
 public class SocketWrapper {
 
-    int portNum = 0;
-    String ipaddress = "10.227.145.56";
+    int portNum = 80;
+    String ipaddress = "10.227.145.56"; //temporary
 
     ObjectOutputStream out;
     ObjectInputStream in;
