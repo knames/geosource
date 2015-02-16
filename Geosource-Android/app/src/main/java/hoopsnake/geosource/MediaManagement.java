@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * Created by wsv759 on 16/02/15.
  */
-public class FileManagement {
+public class MediaManagement {
 
     public enum MediaType {
         IMAGE,

@@ -24,12 +24,13 @@ public class MainActivity extends Activity {
         CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,
         CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebView webview = (WebView)findViewById(R.id.webView);
+        WebView webview = (WebView) findViewById(R.id.webView);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.loadUrl(getString(R.string.website_url));
     }
@@ -62,8 +63,8 @@ public class MainActivity extends Activity {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if (FileManagement.isExternalStorageWritable()) {
-            fileUri = FileManagement.getOutputMediaFileUri(MainActivity.this, FileManagement.MediaType.IMAGE); // create a file to save the image
+        if (MediaManagement.isExternalStorageWritable()) {
+            fileUri = MediaManagement.getOutputMediaFileUri(MainActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
             if (fileUri == null)
                 return;
 
@@ -83,8 +84,8 @@ public class MainActivity extends Activity {
         //create new Intent
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-        if (FileManagement.isExternalStorageWritable()) {
-            fileUri = FileManagement.getOutputMediaFileUri(MainActivity.this, FileManagement.MediaType.VIDEO);  // create a file to save the video
+        if (MediaManagement.isExternalStorageWritable()) {
+            fileUri = MediaManagement.getOutputMediaFileUri(MainActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
             if (fileUri == null)
                 return;
 
