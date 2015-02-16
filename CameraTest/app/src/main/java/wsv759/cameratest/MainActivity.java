@@ -78,13 +78,14 @@ public class MainActivity extends ActionBarActivity {
                 return;
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+		   
+		    // start the image capture Intent
+		    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
         else
         {
             //TODO Potentially save a file to internal storage, instead.
         }
-        // start the image capture Intent
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     public void onVideoButtonClicked(View v)
@@ -98,7 +99,6 @@ public class MainActivity extends ActionBarActivity {
                 return;
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
-
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
 
             // start the Video Capture Intent
@@ -132,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // Video captured and saved to fileUri specified in the Intent
-                Uri fileUri = data.getData();
+               
                 Toast.makeText(this, "Video saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
@@ -300,6 +300,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
+    
     /* Checks if external storage is available for read and write. */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();

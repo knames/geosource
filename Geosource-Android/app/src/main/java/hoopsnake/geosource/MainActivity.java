@@ -1,17 +1,37 @@
 package hoopsnake.geosource;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
+    /** ensure that only one button is ever clicked at a time. */
+    private boolean clickable = true;
+
+    /** The filepath to pass to the camera or video app, to which it will save a new media file. */
+    private Uri fileUri;
+
+    private enum RequestCode {
+        CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,
+        CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        WebView webview = (WebView)findViewById(R.id.webView);
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.loadUrl(getString(R.string.website_url));
     }
 
 
@@ -35,6 +55,86 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onPictureButtonClicked(View v)
+    {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (FileManagement.isExternalStorageWritable()) {
+            fileUri = FileManagement.getOutputMediaFileUri(MainActivity.this, FileManagement.MediaType.IMAGE); // create a file to save the image
+            if (fileUri == null)
+                return;
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+            // start the image capture Intent
+            startActivityForResult(intent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
+        }
+        else
+        {
+            //TODO Potentially save a file to internal storage, instead.
+        }
+    }
+
+    public void onVideoButtonClicked(View v)
+    {
+        //create new Intent
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        if (FileManagement.isExternalStorageWritable()) {
+            fileUri = FileManagement.getOutputMediaFileUri(MainActivity.this, FileManagement.MediaType.VIDEO);  // create a file to save the video
+            if (fileUri == null)
+                return;
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
+            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+
+            // start the Video Capture Intent
+            startActivityForResult(intent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
+        }
+        else
+        {
+            //TODO Potentially save a file to internal storage, instead.
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
+            if (resultCode == RESULT_OK) {
+                // Image captured and saved to fileUri specified in the Intent
+
+                Toast.makeText(this, "Image saved to:\n" +
+                        fileUri, Toast.LENGTH_LONG).show();
+
+                //TODO Send image to the geosource server.
+//                new TaskSendImageOnSocket().execute(fileUri);
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                // Image capture failed, advise user
+                Toast.makeText(MainActivity.this, "Failed to capture image.", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (requestCode == RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal()) {
+            if (resultCode == RESULT_OK) {
+                // Video captured and saved to fileUri specified in the Intent
+
+                Toast.makeText(this, "Video saved to:\n" +
+                        fileUri, Toast.LENGTH_LONG).show();
+
+                //TODO Send video to geosource server.
+//                new TaskSendImageOnSocket().execute(fileUri);
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the video capture
+            } else {
+                // Video capture failed, advise user
+                Toast.makeText(MainActivity.this, "Failed to capture video.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void coverage(int i)

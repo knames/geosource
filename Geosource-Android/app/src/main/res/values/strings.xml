@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="website_url">www.placeholder.com</string>
     <string name="app_name">Geosource</string>
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
     <string name="add_picture">Take Picture</string>
     <string name="add_video">Record Video</string>
