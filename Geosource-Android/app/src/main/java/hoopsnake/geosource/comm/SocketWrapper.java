@@ -1,6 +1,5 @@
 package hoopsnake.geosource.comm;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import hoopsnake.geosource.R;
+import hoopsnake.geosource.MainActivity;
 
 /**
  *
@@ -43,6 +42,7 @@ public class SocketWrapper {
 
     Socket outSocket;
 
+    String logTag = MainActivity.APP_LOG_TAG;
     // Password must be at least 8 characters
     private static final String password = "hiedlbrand";
 
@@ -58,7 +58,7 @@ public class SocketWrapper {
         return in;
     }
 
-    public SocketWrapper(Context context) throws IOException
+    public SocketWrapper() throws IOException
     {
         try
         {
@@ -74,7 +74,7 @@ public class SocketWrapper {
 
             outSocket = new Socket(InetAddress.getByName(ipaddress), portNum);
             if (outSocket.isConnected())
-                Log.i(context.getString(R.string.app_name),"Connection Established");
+                Log.i(logTag,"Connection Established");
             OutputStream outStream = outSocket.getOutputStream();
             InputStream inStream = outSocket.getInputStream();
 
@@ -86,20 +86,20 @@ public class SocketWrapper {
             GZIPInputStream zipIn = new GZIPInputStream(cipherIn);
             in = new ObjectInputStream(zipIn);
 
-            Log.i(context.getString(R.string.app_name), "Stream Created");
+            Log.i(logTag, "Stream Created");
         }
         catch (InvalidKeyException IKe)
         {
-            Log.e(context.getString(R.string.app_name), "invalid encryption password");
+            Log.e(logTag, "invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            Log.e(context.getString(R.string.app_name), "invalid key specification");
+            Log.e(logTag, "invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            Log.e(context.getString(R.string.app_name), "invalid encryption algorithm");
+            Log.e(logTag, "invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            Log.e(context.getString(R.string.app_name), "No Such Padding");
+            Log.e(logTag, "No Such Padding");
         }
         finally
         {

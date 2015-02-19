@@ -3,10 +3,18 @@
 
     <string name="website_url">www.placeholder.com</string>
     <string name="app_name">Geosource</string>
-
     <string name="action_settings">Settings</string>
     <string name="add_picture">Take Picture</string>
     <string name="add_video">Record Video</string>
     <string name="add_audio">Record Audio</string>
+    <string name="title_activity_incident">IncidentActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!--Anam's stuff -->
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_camera_page">CameraPage</string>
+    <string name="title_activity_audio">AudioActivity</string>
+    <string name="title_activity_description">DescriptionActivity</string>
 
 </resources>
