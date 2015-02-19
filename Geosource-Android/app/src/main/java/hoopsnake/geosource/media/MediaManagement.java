@@ -1,15 +1,16 @@
-package hoopsnake.geosource;
+package hoopsnake.geosource.media;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 16/02/15.
@@ -30,15 +31,8 @@ public class MediaManagement {
         return false;
     }
 
-    /** Create a file Uri for saving an image or video. This used to be static. */
+    /** Create a file Uri for saving an image or video. */
     public static Uri getOutputMediaFileUri(Context context, MediaType type){
-        File outputMediaFile = getOutputMediaFile(context, type);
-        if (outputMediaFile == null)
-        {
-            Toast.makeText(context, "New file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-            return null;
-        }
-
         return Uri.fromFile(getOutputMediaFile(context, type));
     }
 
@@ -57,7 +51,7 @@ public class MediaManagement {
             // Create the storage directory if it does not exist
             if (!mediaStorageDir.exists()) {
                 if (!mediaStorageDir.mkdirs()) {
-                    Log.d(context.getString(R.string.app_name), "failed to create directory");
+                    Log.d(context.getString(R.string.app_name), "failed to create directory.");
                     return null;
                 }
             }

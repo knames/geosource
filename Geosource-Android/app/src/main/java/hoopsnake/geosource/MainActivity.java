@@ -11,14 +11,21 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import hoopsnake.geosource.media.MediaManagement;
+
 
 public class MainActivity extends Activity {
 
-    /** ensure that only one button is ever clicked at a time. */
+    /** TODO ensure that only one button is ever clicked at a time. */
     private boolean clickable = true;
 
     /** The filepath to pass to the camera or video app, to which it will save a new media file. */
     private Uri fileUri;
+
+    public static final String APP_LOG_TAG = "geosource";
+
+    //TODO make this something other than a hard-coded string.
+    String curChannelName = "mushrooms";
 
     private enum RequestCode {
         CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,
@@ -58,7 +65,14 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onPictureButtonClicked(View v)
+    public void onAddIncidentButtonClicked(View v)
+    {
+        Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
+        intent.putExtra(IncidentActivity.CHANNEL_NAME_PARAM_STRING, curChannelName);
+        startActivity(intent);
+    }
+
+    public void onImageButtonClicked(View v)
     {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -66,7 +80,10 @@ public class MainActivity extends Activity {
         if (MediaManagement.isExternalStorageWritable()) {
             fileUri = MediaManagement.getOutputMediaFileUri(MainActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
             if (fileUri == null)
+            {
+                Toast.makeText(MainActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                 return;
+            }
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
@@ -87,7 +104,10 @@ public class MainActivity extends Activity {
         if (MediaManagement.isExternalStorageWritable()) {
             fileUri = MediaManagement.getOutputMediaFileUri(MainActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
             if (fileUri == null)
+            {
+                Toast.makeText(MainActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                 return;
+            }
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
@@ -101,6 +121,11 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void onAudioButtonClicked(View v)
+    {
+        Toast.makeText(MainActivity.this, "audio recording not yet implemented. ", Toast.LENGTH_LONG).show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
@@ -109,6 +134,8 @@ public class MainActivity extends Activity {
 
                 Toast.makeText(this, "Image saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
+
+                //TODO fill in the requisite incident fields by sending an intent.
 
                 //TODO Send image to the geosource server.
 //                new TaskSendImageOnSocket().execute(fileUri);
@@ -127,6 +154,8 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "Video saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
+                //TODO fill in the requisite incident fields by sending an intent.
+
                 //TODO Send video to geosource server.
 //                new TaskSendImageOnSocket().execute(fileUri);
             } else if (resultCode == RESULT_CANCELED) {
@@ -135,26 +164,6 @@ public class MainActivity extends Activity {
                 // Video capture failed, advise user
                 Toast.makeText(MainActivity.this, "Failed to capture video.", Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    public void coverage(int i)
-    {
-        if(i == 1)
-        {
-            return;
-        }
-        if(i == 2)
-        {
-            return;
-        }
-        if(i == 3)
-        {
-            return;
-        }
-        else
-        {
-            return;
         }
     }
 }
