@@ -11,6 +11,8 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import hoopsnake.geosource.media.MediaManagement;
+
 
 public class MainActivity extends Activity {
 
@@ -58,7 +60,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onPictureButtonClicked(View v)
+    public void onImageButtonClicked(View v)
     {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -101,6 +103,11 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void onAudioButtonClicked(View v)
+    {
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
@@ -135,26 +142,6 @@ public class MainActivity extends Activity {
                 // Video capture failed, advise user
                 Toast.makeText(MainActivity.this, "Failed to capture video.", Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    public void coverage(int i)
-    {
-        if(i == 1)
-        {
-            return;
-        }
-        if(i == 2)
-        {
-            return;
-        }
-        if(i == 3)
-        {
-            return;
-        }
-        else
-        {
-            return;
         }
     }
 }

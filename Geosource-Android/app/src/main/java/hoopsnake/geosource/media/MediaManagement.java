@@ -1,4 +1,4 @@
-package hoopsnake.geosource;
+package hoopsnake.geosource.media;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,6 +10,8 @@ import java.io.File;
 import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 16/02/15.
