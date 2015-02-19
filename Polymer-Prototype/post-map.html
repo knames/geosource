@@ -1,0 +1,48 @@
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="post-service/post-service.html">
+<link rel="import" href="post-card.html">
+<link rel="import" href="components/google-map/google-map.html">  
+<link rel="import" href="components/google-apis/google-apis.html">              
+
+<polymer-element name="post-map" attributes="latitude longitude show channel">
+  <template>
+
+    <style>
+      #google_map {
+        width: 100%;
+        height: 100%;
+        display: block;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+      }
+    </style>
+
+   <google-map latitude="{{latitude}}" longitude="{{longitude}}" id="google_map">
+    <post-service id="service" posts="{{posts}}"></post-service>
+    <template repeat="{{post in posts}}">
+      <google-map-marker id="marker"
+        latitude="{{post.location.latitude}}"
+        longitude="{{post.location.longitude}}"
+        title="{{post.text}}"
+        visible?="{{!(show == 'none') && !(channel == 'none') && !(show == 'favorites' && !post.favorite) && !(channel != 'All' && channel != post.channel)}}">
+      </google-map-marker>
+    </template>
+    </google-map>
+  </template>
+  
+
+  <script>
+  Polymer({
+    show: 'all',
+    channel: 'all', 
+    showChanged: function(oldVal, newVal) {
+      console.log('old: ' + oldVal, 'new: ' + newVal);
+    },
+    channelChanged: function(oldVal, newVal) {
+      console.log('old: ' + oldVal, 'new: ' + newVal);
+      // console.log(this.$.getElementsByClassName('google_map'));
+    },
+});
+  </script>
+</polymer-element>

@@ -1,6 +1,7 @@
 <link rel="import" href="../components/polymer/polymer.html">
 <link rel="import" href="../components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../components/core-icons/communication-icons.html">
+<link rel="import" href="components/paper-button/paper-button.html">
 
 <polymer-element name="post-card">
   <template>
@@ -9,17 +10,17 @@
       display: block;
       position: relative;
       background-color: white;
-      padding: 20px;
+      padding: 3px;
       width: 100%;
       font-size: 1.2rem;
       font-weight: 300;
     }
     .card-header {
-      margin-bottom: 10px;
+      margin: 20px;
     }
     polyfill-next-selector { content: '.card-header h2'; }
     .card-header ::content h2 {
-      margin: 0;
+      margin: 0px;
       font-size: 1.8rem;
       font-weight: 300;
     }
@@ -29,6 +30,11 @@
       border-radius: 50%;
       margin: 10px;
     }
+
+    .card-body {
+      margin: 20px;
+    }
+
     paper-icon-button {
       position: absolute;
       top: 3px;
@@ -41,22 +47,35 @@
       right: 3px;
       color: #636363;
     }
-    #locicon {
+    #location-button {
       position: absolute;
-      top: 40px;
-      right: 3px;
+      top: 3px;
+      right: 40px;
       color: #636363;
     }
     :host([favorite]) paper-icon-button {
       color: #da4336;
     }
+    #more-button {
+      color: #4285f4;
+      margin: 0;
+    }
+    #card-footer {
+      font-size: 14px;
+    }
+    #time-ago {
+      margin: 0.75em;
+      color: #636363;
+      text-transform: uppercase;
+    }
+    #decsription {
+      margin: 17px;
+    }
     </style>
 
     <div class="card-header" layout horizontal center>
-
       <content select="img"></content>
       <content select="h2"></content>
-
     </div>
 
     <paper-icon-button
@@ -64,13 +83,24 @@
       icon="favorite"
       on-tap="{{favoriteTapped}}">
     </paper-icon-button>
+
     <paper-icon-button
-      id="locicon"
+      id="location-button"
       icon="room"
       on-tap="{{locationTapped}}">
     </paper-icon-button>
 
-    <content></content>   
+    <div class="card-body">
+      <content select="desc"></content>
+    </div>
+
+    <div center="" horizontal="" layout="" id="card-footer">
+      <div flex id="time-ago"> 
+        <content select="time-ago">2 minutes ago</content> 
+      </div>
+      <paper-button id="more-button" on-tap="{{moreTapped}}">see more</paper-button> 
+    </div>
+    
   </template>
   <script>
   Polymer({
@@ -81,12 +111,17 @@
       }
     },
     favoriteTapped: function(event, detail, sender) {
+      console.log('clicked favorite')
       this.favorite = !this.favorite;
-      this.fire('favorite-test');
+      this.fire('favorite-clicked');
     },
     locationTapped: function(event, detail, sender) {
-      this.fire('location-test');
-      console.log('fired location-test');
+      console.log('clicked location');
+      this.fire('location-clicked');
+    },
+    moreTapped: function(event, detail, sender) {
+      console.log('clicked more');
+      this.fire('more-clicked');
     }
   });
   </script>
