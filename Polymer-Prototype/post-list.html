@@ -2,7 +2,7 @@
 <link rel="import" href="post-service/post-service.html">
 <link rel="import" href="post-card.html">
 
-<polymer-element name="post-list" attributes="show channel">
+<polymer-element name="post-list" attributes="show channel posts">
   <template>
     <style>
     :host {
@@ -12,8 +12,6 @@
       margin-bottom: 30px;
     }
     </style>
-
-    <post-service id="service" posts="{{posts}}"></post-service>
     
     <div layout vertical center>
       <template repeat="{{post in posts}}">
@@ -22,8 +20,7 @@
           favorite="{{post.favorite}}"
           on-location-clicked="{{handleLocation}}"
           on-favorite-clicked="{{handleFavorite}}"
-          on-more-clicked="{{handleMore}}"
-          hidden?="{{(show == 'none') || (channel == 'none') || (show == 'favorites' && !post.favorite) || (channel != 'All' && channel != post.channel)}}">
+          on-more-clicked="{{handleMore}}">
           <img src="{{post.avatar}}" width="70" height="70">
           <h2>{{post.username}}</h2>
           <desc>{{post.text}}</desc>
@@ -35,6 +32,9 @@
 
   <script>
   Polymer({
+    ready: function() {
+      console.log(this.posts);
+    },
     handleFavorite: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
       this.$.service.setFavorite(post.uid, post.favorite);

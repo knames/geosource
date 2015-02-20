@@ -1,10 +1,9 @@
 <link rel="import" href="components/polymer/polymer.html">
 <link rel="import" href="post-service/post-service.html">
 <link rel="import" href="post-card.html">
-<link rel="import" href="components/google-map/google-map.html">  
-<link rel="import" href="components/google-apis/google-apis.html">              
+<link rel="import" href="components/google-map/google-map.html">
 
-<polymer-element name="post-map" attributes="latitude longitude show channel">
+<polymer-element name="post-map" attributes="latitude longitude show channel posts">
   <template>
 
     <style>
@@ -19,13 +18,12 @@
     </style>
 
    <google-map latitude="{{latitude}}" longitude="{{longitude}}" id="google_map">
-    <post-service id="service" posts="{{posts}}"></post-service>
+
     <template repeat="{{post in posts}}">
       <google-map-marker id="marker"
         latitude="{{post.location.latitude}}"
         longitude="{{post.location.longitude}}"
-        title="{{post.text}}"
-        visible?="{{!(show == 'none') && !(channel == 'none') && !(show == 'favorites' && !post.favorite) && !(channel != 'All' && channel != post.channel)}}">
+        title="{{post.text}}">
       </google-map-marker>
     </template>
     </google-map>

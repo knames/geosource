@@ -16,6 +16,7 @@
   <link rel="import" href="post-list.html">
   <link rel="import" href="post-card.html">
   <link rel="import" href="post-map.html">
+  <link rel="import" href="geosource-main.html">
 
   <link rel="import" href="components/font-roboto/roboto.html">
   <link rel="import" href="components/core-header-panel/core-header-panel.html">
@@ -33,6 +34,10 @@
   <link rel="import" href="components/paper-dialog/paper-dialog.html">
   <link rel="import" href="components/paper-spinner/paper-spinner.html">
 
+  <link rel="import" href="components/polymer/polymer.html">
+
+  <link rel="import" href="post-service/post-service.html">
+
   <style>
 
   html,body {
@@ -42,273 +47,13 @@
     font-family: 'RobotoDraft', sans-serif;
   }
 
-  core-header-panel {
-    height: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  core-toolbar {
-    background: #5CC0A2;
-    color: white;
-  }
-  #tabs {
-    width: 100%;
-    margin: 0;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-	text-transform: uppercase;
-  }
-  .container {
-    margin: 30px;
-    margin-bottom: 0;
-  }
-  #core_drawer_panel {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-  }
-  paper-input {
-    padding-bottom: 10px;
-  }
-  #section1 {
-    box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
-    background-color: rgb(250, 250, 250);
-    overflow-x: auto;
-  }
-  #section2 {
-    height: 100%;
-    box-sizing: border-box;
-    background-color: rgb(221, 221, 221);
-  }
-  #core_drawer_panel1 {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-  }
-  #section3 {
-    box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
-    background-color: rgb(250, 250, 250);
-    overflow-x: auto;
-  }
-  #section4 {
-    height: 100%;
-    box-sizing: border-box;
-    background-color: rgb(221, 221, 221);
-  }
-  #core_menu {
-    font-size: 16px;
-    width: 216px;
-    position: absolute;
-    margin: 20px;
-  }
-  #toggle-label {
-    margin: 15px;
-    margin-left: 0;
-  }
-  @media (min-width: 481px) {
-    #tabs {
-      width: 200px;
-    }
-  }
-  #dialog {
-    overflow-x: auto;
-    font-size: 20px;
-  }
-
-  #list {
-    width: 100%;
-  }
-
-  html /deep/ paper-dialog {
-    max-width: 800px;
-  }
-
-  core-drawer-panel::shadow #core_drawer_panel {
-    width: 400px;
-  }      
-
   </style>
 
 </head>
 
-<body unresolved>
+<body>
 
-  <core-header-panel id="core_header_panel">
-
-    <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
-      <div flex id="dialog-content"></div>
-    </paper-dialog>
-
-      <core-toolbar id="core_toolbar">
-        <paper-icon-button icon="menu" id="filter_button" core-drawer-toggle></paper-icon-button>
-        <div id="div" one flex center-justified horizontal layout>GeoSource</div>
-        <paper-icon-button icon="account-circle" id="feed_button"></paper-icon-button>
-      </core-toolbar>
-
-      <section id="section">
-        <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="core_drawer_panel">
-          <section id="section1" drawer>
-            <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
-              <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
-                <div center horizontal layout id="toggle-label">
-                  <div flex>All</div>
-                  <paper-toggle-button checked id="all-toggle-button"></paper-toggle-button>
-                </div>
-                <div center horizontal layout id="toggle-label">
-                  <div flex>Mine</div>
-                  <paper-toggle-button checked id="mine-toggle-button" disabled></paper-toggle-button>
-                </div>
-                <div center horizontal layout id="toggle-label">
-                  <div flex>Favorites</div>
-                  <paper-toggle-button checked id="favorite-toggle-button" disabled></paper-toggle-button>
-                </div>
-              </core-submenu>
-              <core-submenu opened active id="channels" selected="0" icon="settings" label="Channels">
-                <core-item id="channel_all" label="All" horizontal center layout></core-item>
-                <core-item id="channel_mushrooms" label="Mushrooms" horizontal center layout></core-item>
-                <core-item id="channel_birds" label="Birds" horizontal center layout></core-item>
-              </core-submenu>
-              <div center horizontal layout id="search">
-                <paper-icon-button icon="search"></paper-icon-button>
-                <paper-input label="Search for channels..."></paper-input>
-              </div>
-              
-              
-            </core-menu>
-
-          </section>
-
-          <section id="section2" main>
-            <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="core_drawer_panel1">
-              <section id="section3" drawer>
-                <div class="container" layout vertical center>
-                  <post-list id='list' show="all" channel="all"></post-list>
-                </div>
-              </section>
-              <section id="section4" main>
-                <post-map show="all" channel="all"></post-map>
-              </section>
-            </core-drawer-panel>
-          </section>
-        </core-drawer-panel>
-      </section>
-
-  <script>
-    // var tabs = document.querySelector('#tabs');
-    var list = document.querySelector('#list');
-    var feed_button = document.querySelector('#feed_button');
-    var feed_drawer = document.querySelector('#core_drawer_panel1');
-
-    var filter_button = document.querySelector('#filter_button');
-    var filter_drawer = document.querySelector('#core_drawer_panel');
-
-    var map = document.querySelector('post-map');
-
-    feed_button.addEventListener('click', function() {
-        filter_drawer.closeDrawer();
-        if(feed_drawer.narrow) {
-          feed_drawer.forceNarrow = false;
-          feed_drawer.togglePanel();
-        }
-        else {
-          feed_drawer.forceNarrow = true;
-        }
-    });
-
-    filter_button.addEventListener('click', function() {
-        feed_drawer.closeDrawer();
-        if(filter_drawer.narrow) {
-          filter_drawer.forceNarrow = false;
-          filter_drawer.togglePanel();
-        }
-        else {
-          filter_drawer.forceNarrow = true;
-        }
-    }); 
-
-    var all_toggle = document.querySelector('#all-toggle-button');
-    var fav_toggle = document.querySelector('#favorite-toggle-button');
-    var mine_toggle = document.querySelector('#mine-toggle-button');
-
-    all_toggle.addEventListener('change', function() {
-      if(all_toggle.checked)
-      {
-        list.show = "all"
-        map.show = "all";
-        fav_toggle.disabled = true;
-        mine_toggle.disabled = true;
-      }
-      else
-      {
-        fav_toggle.disabled = false;
-        mine_toggle.disabled = false;
-
-        if(fav_toggle.checked)
-        {
-          list.show = "favorites";
-          map.show = "favorites";
-        }
-        else
-        {
-          list.show = "none";
-          map.show = "none";
-        }
-      }
-    });
-
-    fav_toggle.addEventListener('change', function() {
-      if(fav_toggle.checked)
-      {
-        list.show = "favorites";
-        map.show = "favorites";
-      }
-      else
-      {
-        list.show = "none";
-        map.show = "none";
-      }
-    });
-
-    list.addEventListener('set-location', function(e) {
-      map.latitude = e.detail.latitude; //52.1333;
-      map.longitude = e.detail.longitude; //-106.6833;
-    });
-
-    list.addEventListener('set-more', function(e) {
-      console.log(e.detail);
-
-      // this.injectBoundHTML(
-      //   '<paper-spinner active></paper-spinner>',
-      //   document.querySelector('#dialog-content'));
-
-      // document.querySelector('#dialog').toggle();
-
-      this.injectBoundHTML(
-        '<h2>' + e.detail.username + '</h2>' +
-        '<p>' + e.detail.text + '</p>' +
-        '<img src="' + e.detail.avatar + '" width="auto" height="auto"/>' +
-        '<p>' + e.detail.time + '</p>',
-        document.querySelector('#dialog-content'));
-
-      document.querySelector('#dialog').toggle();
-    });
-
-    var channels = document.querySelector('#channels');
-    channels.addEventListener('core-select', function(e){
-      list.channel = e.detail.item.label;
-      map.channel = e.detail.item.label;
-    });
-
-  </script>
+  <geosource-main></geosource-main>
+  
 </body>
 </html>
