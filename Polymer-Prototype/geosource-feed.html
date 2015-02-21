@@ -15,16 +15,12 @@
     
     <div layout vertical center>
       <template repeat="{{post in posts}}">
-        <post-card
-          location="{{post.location.latitude}}"
+        <post-card 
+          post="{{post}}"
           favorite="{{post.favorite}}"
           on-location-click="{{handleLocation}}"
           on-favorite-click="{{handleFavorite}}"
           on-more-click="{{handleMore}}">
-          <img src="{{post.avatar}}" width="70" height="70">
-          <h2>{{post.username}}</h2>
-          <desc>{{post.text}}</desc>
-          <time-ago>{{post.time + ' to ' + post.channel}}</time-ago>
         </post-card>
       </template>
     </div>

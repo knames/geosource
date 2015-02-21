@@ -3,7 +3,7 @@
 <link rel="import" href="../components/core-icons/communication-icons.html">
 <link rel="import" href="components/paper-button/paper-button.html">
 
-<polymer-element name="post-card">
+<polymer-element name="post-card" attributes="post favorite">
   <template>
     <style>
     :host {
@@ -74,9 +74,9 @@
     </style>
 
     <div class="card-header" layout horizontal center>
-      <content select="img"></content>
-      <content select="h2"></content>
-    </div>
+      <content select="img"><img src="{{post.avatar}}" width="70" height="70"></content>
+      <content select="h2"><h2>{{post.username}}</h2></content>
+    </div>          
 
     <paper-icon-button
       id="favicon"
@@ -91,12 +91,12 @@
     </paper-icon-button>
 
     <div class="card-body">
-      <content select="desc"></content>
+      <content select="desc">{{post.text}}</content>
     </div>
 
     <div center="" horizontal="" layout="" id="card-footer">
       <div flex id="time-ago"> 
-        <content select="time-ago">2 minutes ago</content> 
+        <content select="time-ago">{{post.time}} to {{post.channel}}</content> 
       </div>
       <paper-button id="more-button" on-tap="{{moreTapped}}">see more</paper-button> 
     </div>
@@ -105,13 +105,18 @@
   <script>
   Polymer({
     publish: {
-      favorite: {
+      post: {
+        value: null,
+        reflect: true
+      },
+      favorite: { //temporary hack, 
         value: false,
         reflect: true
       }
     },
     favoriteTapped: function(event, detail, sender) {
-      this.favorite = !this.favorite;
+      this.post.favorite = !this.post.favorite;
+      this.favorite = this.post.favorite;
       this.fire('favorite-click');
     },
     locationTapped: function(event, detail, sender) {

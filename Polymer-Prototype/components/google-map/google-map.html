@@ -2,6 +2,7 @@
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-apis/google-apis.html">
+<link rel="import" href="../../post-card.html">
 
 <!--
 The `google-map-marker` element represents a map marker. It is used as a
@@ -149,7 +150,15 @@ child of `google-map`.
         if (content) {
           if (!this.info) {
             // Create a new infowindow
-            this.info = new google.maps.InfoWindow();
+
+            var post_card = document.createElement('post-card');
+            post_card.post = this.post;
+
+            this.info = new google.maps.InfoWindow({
+              content: post_card
+            });
+
+
             this.infoHandler_ = google.maps.event.addListener(this.marker, 'click', function() {
               // this.info.open(this.map, this.marker);
 
@@ -163,8 +172,31 @@ child of `google-map`.
               console.log('fired marker-click');
 
             }.bind(this));
+
+            google.maps.event.addListener(this.marker, 'mouseover', function() {
+              this.info.open(this.map, this.marker);
+              var event = new CustomEvent('marker-mouseover', {
+                detail: {
+                  marker: this
+                }
+              });
+              this.dispatchEvent(event);
+              // this.icon="../" + this.post.avatar;
+            }.bind(this));
+
+            google.maps.event.addListener(this.marker, 'mouseout', function() {
+              this.info.close(this.map, this.marker);
+              // var event = new CustomEvent('marker-mouseout', {
+              //   detail: {
+              //     marker: this
+              //   }
+              // });
+              // this.dispatchEvent(event);
+              this.icon = null;
+            }.bind(this));
+
           }
-          this.info.setContent(content);
+          // this.info.setContent(content);
         } else {
           if (this.info) {
             // Destroy the existing infowindow.  It doesn't make sense to have an empty one.
