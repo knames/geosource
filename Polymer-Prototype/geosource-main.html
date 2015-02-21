@@ -302,7 +302,7 @@
           }
 
           for(i=0; i<posts.length; i++) {
-            postIncluded[i] = (all_toggle.checked && postIncluded[i]) || (!all_toggle.checked && fav_toggle.checked && posts[i].favorite);
+            postIncluded[i] = (all_toggle.checked && postIncluded[i]) || (!all_toggle.checked && fav_toggle.checked && posts[i].favorite && postIncluded[i]);
           }
 
           var includedPosts = []
