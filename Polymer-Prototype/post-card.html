@@ -111,17 +111,14 @@
       }
     },
     favoriteTapped: function(event, detail, sender) {
-      console.log('clicked favorite')
       this.favorite = !this.favorite;
-      this.fire('favorite-clicked');
+      this.fire('favorite-click');
     },
     locationTapped: function(event, detail, sender) {
-      console.log('clicked location');
-      this.fire('location-clicked');
+      this.fire('location-click');
     },
     moreTapped: function(event, detail, sender) {
-      console.log('clicked more');
-      this.fire('more-clicked');
+      this.fire('more-click');
     }
   });
   </script>

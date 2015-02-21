@@ -24,7 +24,9 @@
         latitude="{{post.location.latitude}}"
         longitude="{{post.location.longitude}}"
         title="{{post.text}}"
-        clickEvents="false">
+        post="{{post}}"
+        clickEvents="false"
+        on-marker-click="{{markerClick}}">
       </google-map-marker>
     </template>
     </google-map>
@@ -34,7 +36,17 @@
   <script>
   Polymer({
     latitude: 52.1333,
-    longitude: -106.6833, 
-});
+    longitude: -106.6833,
+    markerClick: function(e) {
+      console.log(e.detail);
+
+      var event = new CustomEvent('open-dialog', {
+        detail: {
+          post: e.detail.marker.post
+        }
+      });
+      this.dispatchEvent(event);
+    },
+  });
   </script>
 </polymer-element>

@@ -2,7 +2,6 @@
 <html>
 
 <link rel="import" href="geosource-feed.html">
-<link rel="import" href="post-card.html">
 <link rel="import" href="geosource-map.html">
 
 <link rel="import" href="components/font-roboto/roboto.html">
@@ -120,7 +119,8 @@
         }      
   </style>
 
-    <post-service id="service" posts="{{posts}}"></post-service>
+    <post-service id="post_service" posts="{{posts}}"></post-service>
+    <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
       <div flex id="dialog_content"></div>
@@ -171,11 +171,11 @@
               <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="core_drawer_panel1">
                 <section id="section3" drawer>
                   <div class="container" layout vertical center>
-                    <geosource-feed id='feed' posts="{{posts}}"></geosource-feed>
+                    <geosource-feed id='feed' posts="{{posts}}" on-open-dialog="{{openDialog}}"></geosource-feed>
                   </div>
                 </section>
                 <section id="section4" main>
-                  <geosource-map id="map" posts="{{posts}}"></geosource-map>
+                  <geosource-map id="map" posts="{{posts}}" on-open-dialog="{{openDialog}}"></geosource-map>
                 </section>
               </core-drawer-panel>
             </section>
@@ -248,25 +248,10 @@
           map.longitude = e.detail.longitude; //-106.6833;
         });
 
-        var dialog = this.$.dialog;
-        var dialog_content = this.$.dialog_content;
+        
 
-        feed.addEventListener('set-more', function(e) {
-          console.log(e.detail);
-
-          // this.injectBoundHTML(
-          //   '<paper-spinner active></paper-spinner>',
-          //   this.$.dialog-content';
-
-          // this.$.dialog').toggle;
-          this.injectBoundHTML(
-            '<h2>' + e.detail.username + '</h2>' +
-            '<p>' + e.detail.text + '</p>' +
-            '<img src="' + e.detail.avatar + '" width="auto" height="auto"/>' +
-            '<p>' + e.detail.time + '</p>',
-            dialog_content);
-
-          dialog.toggle();
+        map.addEventListener('marker-click', function(e) {
+          console.log(e);
         });
 
         var selectedChannel;
@@ -277,8 +262,8 @@
         });
 
         var posts;
-        var service = this.$.service;
-        service.addEventListener('core-response', function(e) {
+        var post_service = this.$.post_service;
+        post_service.addEventListener('core-response', function(e) {
           posts = e.detail.response;
           console.log(posts);
         })
@@ -316,8 +301,19 @@
 
           main.posts = includedPosts;
         }
+      },
+      openDialog: function(e) {
+        var dialog = this.$.dialog;
+        var dialog_content = this.$.dialog_content;
 
+        this.injectBoundHTML(
+          '<h2>' + e.detail.post.username + '</h2>' +
+          '<p>' + e.detail.post.text + '</p>' +
+          '<img src="' + e.detail.post.avatar + '" width="auto" height="auto"/>' +
+          '<p>' + e.detail.post.time + '</p>',
+          dialog_content);
 
+        dialog.toggle();
 
       },
     });

@@ -34,7 +34,7 @@ child of `google-map`.
 @status alpha
 @homepage http://googlewebcomponents.github.io/google-map
 -->
-<polymer-element name="google-map-marker" attributes="icon">
+<polymer-element name="google-map-marker" attributes="icon post">
 <template>
   <style>
     :host {
@@ -100,7 +100,9 @@ child of `google-map`.
          * @type number
          * @default null
          */
-        latitude: {value: null, reflect: true}
+        latitude: {value: null, reflect: true},
+
+        post: {value: null, reflect: true}
       },
 
       observe: {
@@ -149,7 +151,17 @@ child of `google-map`.
             // Create a new infowindow
             this.info = new google.maps.InfoWindow();
             this.infoHandler_ = google.maps.event.addListener(this.marker, 'click', function() {
-              this.info.open(this.map, this.marker);
+              // this.info.open(this.map, this.marker);
+
+              var event = new CustomEvent('marker-click', {
+                detail: {
+                  marker: this
+                }
+              });
+              this.dispatchEvent(event);
+
+              console.log('fired marker-click');
+
             }.bind(this));
           }
           this.info.setContent(content);

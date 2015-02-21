@@ -1,6 +1,6 @@
 [
   {
-    "uid": 1,
+    "pid": 1,
     "text" : "Have you heard about the Web Components revolution?",
     "username" : "Eric",
     "avatar" : "../images/avatar-01.svg",
@@ -10,7 +10,7 @@
     "channel": "Birds"
   },
   {
-    "uid": 2,
+    "pid": 2,
     "text" : "Loving this Polymer thing.",
     "username" : "Rob",
     "avatar" : "../images/avatar-02.svg",
@@ -20,7 +20,7 @@
     "channel": "Mushrooms"
   },
     {
-    "uid": 3,
+    "pid": 3,
     "text" : "So last year...",
     "username" : "Dimitri",
     "avatar" : "../images/avatar-03.svg",
@@ -30,7 +30,7 @@
     "channel": "Birds"
   },
   {
-    "uid": 4,
+    "pid": 4,
     "text" : "Pretty sure I came up with that first.",
     "username" : "Ada",
     "avatar" : "../images/avatar-07.svg",
@@ -40,7 +40,7 @@
     "channel": "Mushrooms"
   },
   {
-    "uid": 5,
+    "pid": 5,
     "text" : "Yo, I heard you like components, so I put a component in your component.",
     "username" : "Grace",
     "avatar" : "../images/avatar-08.svg",
@@ -50,7 +50,7 @@
     "channel": "Mushrooms"
   },
   {
-    "uid": 6,
+    "pid": 6,
     "text" : "Centralize, centrailize.",
     "username" : "John",
     "avatar" : "../images/avatar-04.svg",
@@ -60,7 +60,7 @@
     "channel": "Birds"
   },
   {
-    "uid": 7,
+    "pid": 7,
     "text" : "Has anyone seen my cat?",
     "username" : "Zelda",
     "avatar" : "../images/avatar-06.svg",
@@ -70,7 +70,7 @@
     "channel": "Birds"
   },
   {
-    "uid": 8,
+    "pid": 8,
     "text" : "Decentralize!",
     "username" : "Norbert",
     "avatar" : "../images/avatar-05.svg",

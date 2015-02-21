@@ -18,9 +18,9 @@
         <post-card
           location="{{post.location.latitude}}"
           favorite="{{post.favorite}}"
-          on-location-clicked="{{handleLocation}}"
-          on-favorite-clicked="{{handleFavorite}}"
-          on-more-clicked="{{handleMore}}">
+          on-location-click="{{handleLocation}}"
+          on-favorite-click="{{handleFavorite}}"
+          on-more-click="{{handleMore}}">
           <img src="{{post.avatar}}" width="70" height="70">
           <h2>{{post.username}}</h2>
           <desc>{{post.text}}</desc>
@@ -50,18 +50,14 @@
         }
       });
       this.dispatchEvent(event);
-
-      console.log('fired set-location');
     },
     handleMore: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
 
-      var event = new CustomEvent('set-more', {
-        detail: post
+      var event = new CustomEvent('open-dialog', {
+        detail: {post: post}
       });
       this.dispatchEvent(event);
-
-      console.log('fired set-more');
     }
   });
   </script>
