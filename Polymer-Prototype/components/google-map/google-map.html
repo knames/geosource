@@ -100,9 +100,7 @@ child of `google-map`.
          * @type number
          * @default null
          */
-        latitude: {value: null, reflect: true},
-
-        visible: {value: true, reflect: true}
+        latitude: {value: null, reflect: true}
       },
 
       observe: {
@@ -170,7 +168,7 @@ child of `google-map`.
           position: new google.maps.LatLng(this.latitude, this.longitude),
           title: this.title,
           draggable: this.draggable,
-          visible: this.visible,
+          visible: !this.hidden,
           icon: this.icon
         });
         this.contentChanged();
@@ -184,8 +182,8 @@ child of `google-map`.
 
         // Cannot use *Changed watchers for native properties.
         switch (attrName) {
-          case 'visible':
-            this.marker.setVisible(this.visible);
+          case 'hidden':
+            this.marker.setVisible(!this.hidden);
             break;
           case 'draggable':
             this.marker.setDraggable(this.draggable);
