@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
 
-<link rel="import" href="post-list.html">
+<link rel="import" href="geosource-feed.html">
 <link rel="import" href="post-card.html">
-<link rel="import" href="post-map.html">
+<link rel="import" href="geosource-map.html">
 
 <link rel="import" href="components/font-roboto/roboto.html">
 <link rel="import" href="components/core-header-panel/core-header-panel.html">
@@ -107,7 +107,7 @@
           font-size: 20px;
         }
 
-        #list {
+        #feed {
           width: 100%;
         }
 
@@ -171,11 +171,11 @@
               <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="core_drawer_panel1">
                 <section id="section3" drawer>
                   <div class="container" layout vertical center>
-                    <post-list id='list' show="all" channel="all" posts="{{posts}}"></post-list>
+                    <geosource-feed id='feed' show="all" channel="all" posts="{{posts}}"></geosource-feed>
                   </div>
                 </section>
                 <section id="section4" main>
-                  <post-map show="all" channel="all" posts="{{posts}}" id="map"></post-map>
+                  <geosource-map show="all" channel="all" posts="{{posts}}" id="map"></geosource-map>
                 </section>
               </core-drawer-panel>
             </section>
@@ -188,7 +188,7 @@
     Polymer({
       ready: function() {
 
-        var list = this.$.list;
+        var feed = this.$.feed;
         var feed_button = this.$.feed_button;
         var feed_drawer = this.$.core_drawer_panel1;
 
@@ -243,7 +243,7 @@
           filterPosts();
         });
 
-        list.addEventListener('set-location', function(e) {
+        feed.addEventListener('set-location', function(e) {
           map.latitude = e.detail.latitude; //52.1333;
           map.longitude = e.detail.longitude; //-106.6833;
         });
@@ -251,7 +251,7 @@
         var dialog = this.$.dialog;
         var dialog_content = this.$.dialog_content;
 
-        list.addEventListener('set-more', function(e) {
+        feed.addEventListener('set-more', function(e) {
           console.log(e.detail);
 
           // this.injectBoundHTML(
