@@ -32,14 +32,13 @@
 
   <script>
   Polymer({
-    show: 'all',
-    channel: 'all', 
+    latitude: 52.1333,
+    longitude: -106.6833, 
     showChanged: function(oldVal, newVal) {
       console.log('old: ' + oldVal, 'new: ' + newVal);
     },
     channelChanged: function(oldVal, newVal) {
       console.log('old: ' + oldVal, 'new: ' + newVal);
-      // console.log(this.$.getElementsByClassName('google_map'));
     },
 });
   </script>
