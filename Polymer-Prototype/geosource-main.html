@@ -60,9 +60,6 @@
           width: 100%;
           height: 100%;
         }
-        paper-input {
-          padding-bottom: 10px;
-        }
         #section1 {
           box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
           background-color: rgb(250, 250, 250);
@@ -161,12 +158,10 @@
                     <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
                   </div>
                 </core-submenu>
-                <geosource-channels id="channels" channels="{{channels}}" on-selection-change="{{filterPosts}}"></geosource-channels>
-                <div center horizontal layout id="search">
-                  <paper-icon-button icon="search"></paper-icon-button>
-                  <paper-input label="Search for channels..."></paper-input>
-                </div>
-                
+                <geosource-channels id="channels" 
+                  channels="{{channels}}" 
+                  on-selection-change="{{filterPosts}}">
+                </geosource-channels>                
               </core-menu>
 
             </section>
