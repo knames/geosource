@@ -2,6 +2,7 @@
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-apis/google-maps-api.html">
+<link rel="import" href="../../post-card.html">
 
 <!--
 The `google-map-marker` element represents a map marker. It is used as a
@@ -92,7 +93,7 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
 @event google-map-marker-rightclick
 @param {google.maps.MouseEvent} event The mouse event.
 -->
-<polymer-element name="google-map-marker" attributes="clickEvents icon mouseEvents">
+<polymer-element name="google-map-marker" attributes="clickEvents icon mouseEvents post">
 <template>
   <style>
     :host {
@@ -176,7 +177,16 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
          * @type number
          * @default null
          */
-        latitude: {value: null, reflect: true}
+        latitude: {value: null, reflect: true},
+
+        /**
+         * The post associated with the marker.
+         * 
+         * @attribute post
+         * @type post
+         * @default null
+         */
+        post: {value: null, reflect: true}
       },
 
       observe: {
@@ -257,16 +267,57 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
       contentChanged: function() {
         this.onMutation(this, this.contentChanged); // Watch for future updates.
 
-        var content = this.innerHTML.trim();
+        var content = this.innerHTML;
         if (content) {
           if (!this.info) {
             // Create a new infowindow
-            this.info = new google.maps.InfoWindow();
+
+            var post_card = document.createElement('post-card');
+            post_card.post = this.post;
+            post_card.favorite = this.post.favorite;
+
+            this.info = new google.maps.InfoWindow({
+              content: post_card
+            });
+
             this.infoHandler_ = google.maps.event.addListener(this.marker, 'click', function() {
-              this.info.open(this.map, this.marker);
+              // this.info.open(this.map, this.marker);
+
+              var event = new CustomEvent('marker-click', {
+                detail: {
+                  marker: this
+                }
+              });
+              this.dispatchEvent(event);
+
+              console.log('fired marker-click');
+
             }.bind(this));
+
+            google.maps.event.addListener(this.marker, 'mouseover', function() {
+              this.info.open(this.map, this.marker);
+              var event = new CustomEvent('marker-mouseover', {
+                detail: {
+                  marker: this
+                }
+              });
+              this.dispatchEvent(event);
+              // this.icon="../" + this.post.avatar;
+            }.bind(this));
+
+            google.maps.event.addListener(this.marker, 'mouseout', function() {
+              this.info.close(this.map, this.marker);
+              // var event = new CustomEvent('marker-mouseout', {
+              //   detail: {
+              //     marker: this
+              //   }
+              // });
+              // this.dispatchEvent(event);
+              this.icon = null;
+            }.bind(this));
+
           }
-          this.info.setContent(content);
+          // this.info.setContent(content);
         } else {
           if (this.info) {
             // Destroy the existing infowindow.  It doesn't make sense to have an empty one.
