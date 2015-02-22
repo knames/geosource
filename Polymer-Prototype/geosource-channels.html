@@ -27,14 +27,14 @@
   <script>
   Polymer({
     selected: "All",
-    ready: function() {
-      console.log(this.channels);
-    },
+
+    /**
+     * Fires a 'selection-change' event, and changes the 'selected' attribute to
+     * whichever attribute has been selected.
+     */
     channelSelected: function(e) {
       this.selected = e.detail.item.label;
-      console.log(this.selected);
-      var event = new CustomEvent('selection-change');
-      this.dispatchEvent(event);
+      this.fire('selection-change');
     },
   });
   </script>
