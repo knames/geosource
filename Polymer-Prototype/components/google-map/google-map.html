@@ -294,6 +294,10 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
 
             }.bind(this));
 
+            google.maps.event.addListener(this.marker, 'click', function() {
+              this.info.close(this.map, this.marker);
+            }.bind(this));
+
             google.maps.event.addListener(this.marker, 'mouseover', function() {
               this.info.open(this.map, this.marker);
               var event = new CustomEvent('marker-mouseover', {
