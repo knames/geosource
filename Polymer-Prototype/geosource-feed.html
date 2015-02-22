@@ -32,6 +32,7 @@
     },
     handleFavorite: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
+      this.fire('favorite');
       this.$.service.setFavorite(post.uid, post.favorite);
     },
     handleLocation: function(event, detail, sender) {

@@ -139,9 +139,7 @@
         <section id="section">
           <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="settings_drawer">
             <section id="section1" drawer>
-              <google-signin 
-                clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com">
-              </google-signin>
+              <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
               <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
                 <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
                   <div center horizontal layout id="toggle_label">
@@ -172,7 +170,8 @@
                     <geosource-feed id='feed' 
                         posts="{{filteredPosts}}" 
                         on-open-dialog="{{openDialog}}"
-                        on-set-location="{{moveMap}}">
+                        on-set-location="{{moveMap}}"
+                        on-favorite="{{filterPosts}}">
                     </geosource-feed>
                   </div>
                 </section>
