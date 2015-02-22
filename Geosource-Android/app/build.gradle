@@ -48,7 +48,6 @@ robolectric {
 dependencies {
 
     repositories {
-        mavenCentral()
         jcenter()
     }
 

@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="/tmp_mnt/student/jih320/Documents/cmpt371/cmpt371group2/Geosource-Android" />
+            <option value="/tmp_mnt/student/jih320/Documents/cmpt371/cmpt371group2/Geosource-Android/app" />
           </set>
         </option>
       </GradleProjectSettings>
