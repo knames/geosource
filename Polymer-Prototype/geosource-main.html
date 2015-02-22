@@ -188,6 +188,7 @@
   <script>
     Polymer({
 
+      channels: null,
       allPosts: null,
       filteredPosts: null,
 
@@ -209,6 +210,10 @@
         });  
       },
 
+      /**
+       * Filters 'allPosts' depending upon the channels and filters selected,
+       * and places the result into 'filteredPosts'.
+       */
       filterPosts: function() {
         var selectedChannel = this.$.channels.selected;
         var all_toggle = this.$.all_toggle_button;
@@ -244,6 +249,10 @@
         console.log("filtered", this.filteredPosts);
       },
 
+      /**
+       * Opens a dialog, given an event containing detail 'post', which contains
+       * information 
+       */
       openDialog: function(e) {
         var dialog = this.$.dialog;
         var dialog_content = this.$.dialog_content;
@@ -258,19 +267,35 @@
         dialog.toggle();
       },
 
+      /**
+       * When the attribute 'allPosts' changes, the posts are filtered.
+       */
       allPostsChanged: function() {
         this.filterPosts();
       },
+
+      /**
+       * When the attribute 'channels' changes, the posts are filtered.
+       */
       channelsChanged: function() {
         this.filterPosts();
       },
 
+      /**
+       * Moves the position of the map, given an event containing details
+       * 'latitude' and 'longitude'.
+       */
       moveMap: function(e) {
         var map = this.$.map;
         map.latitude = e.detail.latitude;
         map.longitude = e.detail.longitude;
       },
 
+      /**
+       * Toggles the feed drawer. If the screen size is small enough for the 
+       * drawer to be hidden by default, opening the feed drawer will close 
+       * the settings drawer if opened.
+       */
       toggleFeedDrawer: function() {
         var feed_drawer = this.$.feed_drawer;
         var settings_drawer = this.$.settings_drawer;
@@ -287,6 +312,12 @@
 
         setTimeout(function(){ map.resize() }, 500);
       },
+
+      /**
+       * Toggles the settings drawer. If the screen size is small enough for the 
+       * drawer to be hidden by default, opening the settings drawer will close 
+       * the feed drawer opened.
+       */
       toggleSettingsDrawer: function() {
         var settings_drawer = this.$.settings_drawer;
         var feed_drawer = this.$.feed_drawer;
