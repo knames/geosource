@@ -51,7 +51,7 @@
           margin: 30px;
           margin-bottom: 0;
         }
-        #core_drawer_panel {
+        #settings_drawer {
           position: absolute;
           top: 0px;
           right: 0px;
@@ -70,7 +70,7 @@
           box-sizing: border-box;
           background-color: rgb(221, 221, 221);
         }
-        #core_drawer_panel1 {
+        #feed_drawer {
           position: absolute;
           top: 0px;
           right: 0px;
@@ -117,7 +117,7 @@
           max-width: 800px;
         }
 
-        core-drawer-panel::shadow #core_drawer_panel {
+        core-drawer-panel::shadow #settings_drawer {
           width: 400px;
         }      
   </style>
@@ -138,7 +138,7 @@
         </core-toolbar>
 
         <section id="section">
-          <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="core_drawer_panel">
+          <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="settings_drawer">
             <section id="section1" drawer>
               <google-signin 
                 clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com">
@@ -167,7 +167,7 @@
             </section>
 
             <section id="section2" main>
-              <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="core_drawer_panel1">
+              <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="feed_drawer">
                 <section id="section3" drawer>
                   <div class="container" layout vertical center>
                     <geosource-feed id='feed' 
@@ -274,11 +274,11 @@
       },
 
       toggleFeedDrawer: function() {
-        var feed_drawer = this.$.core_drawer_panel1;
-        var filter_drawer = this.$.core_drawer_panel;
+        var feed_drawer = this.$.feed_drawer;
+        var settings_drawer = this.$.settings_drawer;
         var map = this.$.map;
         
-        filter_drawer.closeDrawer();
+        settings_drawer.closeDrawer();
         if(feed_drawer.narrow) {
           feed_drawer.forceNarrow = false;
           feed_drawer.togglePanel();
@@ -290,17 +290,17 @@
         setTimeout(function(){ map.resize() }, 500);
       },
       toggleSettingsDrawer: function() {
-        var filter_drawer = this.$.core_drawer_panel;
-        var feed_drawer = this.$.core_drawer_panel1;
+        var settings_drawer = this.$.settings_drawer;
+        var feed_drawer = this.$.feed_drawer;
         var map = this.$.map;
 
         feed_drawer.closeDrawer();
-        if(filter_drawer.narrow) {
-          filter_drawer.forceNarrow = false;
-          filter_drawer.togglePanel();
+        if(settings_drawer.narrow) {
+          settings_drawer.forceNarrow = false;
+          settings_drawer.togglePanel();
         }
         else {
-          filter_drawer.forceNarrow = true;
+          settings_drawer.forceNarrow = true;
         }
 
         setTimeout(function(){ map.resize() }, 500);
