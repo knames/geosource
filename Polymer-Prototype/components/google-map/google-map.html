@@ -153,11 +153,11 @@ child of `google-map`.
 
             var post_card = document.createElement('post-card');
             post_card.post = this.post;
+            post_card.favorite = this.post.favorite;
 
             this.info = new google.maps.InfoWindow({
               content: post_card
             });
-
 
             this.infoHandler_ = google.maps.event.addListener(this.marker, 'click', function() {
               // this.info.open(this.map, this.marker);
