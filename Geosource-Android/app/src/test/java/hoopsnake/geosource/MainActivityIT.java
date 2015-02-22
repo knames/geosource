@@ -25,6 +25,9 @@ public class MainActivityIT extends ActivityInstrumentationTestCase2<MainActivit
 
         //Cool fact: It will accept partial matches: i.e if Hello World is on the screen, looking for Hello asserts to true.
         assertTrue(solo.searchText("Hello"));
+
+        //This should fail the test automatically, using for testing purposes if needed.
+        //assertTrue(1==2);
     }*/
 
     /* Currently tests these things:
@@ -38,9 +41,12 @@ public class MainActivityIT extends ActivityInstrumentationTestCase2<MainActivit
         //Check to see if we are in the right activity
         solo.assertCurrentActivity("wrong activity", MainActivity.class);
         this.testAudio();
-        assertTrue(1==2);
-        //cameraTest();
+
+
+        //testCamera();
         //VideoTest();
+
+
 
     }
 
@@ -53,11 +59,20 @@ public class MainActivityIT extends ActivityInstrumentationTestCase2<MainActivit
 
         solo.clickOnButton(solo.getString(R.string.add_audio));
 
-        //Cool fact: It will accept partial matches: i.e if Hello World is on the screen, looking for Hello asserts to true.
+
         assertTrue(solo.searchText("audio recording not yet implemented"));
     }
 
 
+    //Robotium cannot access outside our app, which makes testing the camera a problem. I'll have to look into this.
+    /*public void testCamera() throws Exception
+    {
+        //Check to see if we are in the right activity
+        solo.assertCurrentActivity("wrong activity", MainActivity.class);
+
+        solo.clickOnButton(solo.getString(R.string.add_picture));
+        solo.clickOnButton(solo.getString(Camera.));
+    }*/
 
 
 
