@@ -3,6 +3,7 @@
 
 <link rel="import" href="geosource-feed.html">
 <link rel="import" href="geosource-map.html">
+<link rel="import" href="geosource-channels.html">
 
 <link rel="import" href="components/font-roboto/roboto.html">
 <link rel="import" href="components/core-header-panel/core-header-panel.html">
@@ -19,6 +20,11 @@
 <link rel="import" href="components/core-icons/hardware-icons.html">
 <link rel="import" href="components/paper-dialog/paper-dialog.html">
 <link rel="import" href="components/paper-spinner/paper-spinner.html">
+<link rel="import" href="components/paper-range-slider/paper-range-slider.html">
+<link rel="import" href="components/google-signin/google-signin.html">
+
+<link rel="import" href="post-service/post-service.html">
+<link rel="import" href="post-service/channel-service.html">
 
 <polymer-element name="geosource-main">
   <template>
@@ -119,7 +125,7 @@
         }      
   </style>
 
-    <post-service id="post_service" posts="{{posts}}"></post-service>
+    <post-service id="post_service" posts="{{allPosts}}"></post-service>
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
@@ -129,39 +135,37 @@
     <core-header-panel id="core_header_panel">
 
         <core-toolbar id="core_toolbar">
-          <paper-icon-button icon="menu" id="filter_button" core-drawer-toggle></paper-icon-button>
+          <paper-icon-button icon="menu" id="filter_button" on-tap="{{toggleSettingsDrawer}}"></paper-icon-button>
           <div id="div" one flex center-justified horizontal layout>GeoSource</div>
-          <paper-icon-button icon="account-circle" id="feed_button"></paper-icon-button>
+          <paper-icon-button icon="account-circle" id="feed_button" on-tap="{{toggleFeedDrawer}}"></paper-icon-button>
         </core-toolbar>
 
         <section id="section">
           <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="core_drawer_panel">
             <section id="section1" drawer>
+              <google-signin 
+                clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com">
+              </google-signin>
               <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
                 <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
                   <div center horizontal layout id="toggle_label">
                     <div flex>All</div>
-                    <paper-toggle-button checked id="all_toggle_button"></paper-toggle-button>
+                    <paper-toggle-button checked id="all_toggle_button" on-change="{{filterPosts}}"></paper-toggle-button>
                   </div>
                   <div center horizontal layout id="toggle_label">
                     <div flex>Mine</div>
-                    <paper-toggle-button checked id="mine_toggle_button" disabled></paper-toggle-button>
+                    <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
                   </div>
                   <div center horizontal layout id="toggle_label">
                     <div flex>Favorites</div>
-                    <paper-toggle-button checked id="favorite_toggle_button" disabled></paper-toggle-button>
+                    <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
                   </div>
                 </core-submenu>
-                <core-submenu opened active id="channels" selected="0" icon="settings" label="Channels">
-                  <core-item id="channel_all" label="All" horizontal center layout></core-item>
-                  <core-item id="channel_mushrooms" label="Mushrooms" horizontal center layout></core-item>
-                  <core-item id="channel_birds" label="Birds" horizontal center layout></core-item>
-                </core-submenu>
+                <geosource-channels id="channels" channels="{{channels}}" on-selection-change="{{filterPosts}}"></geosource-channels>
                 <div center horizontal layout id="search">
                   <paper-icon-button icon="search"></paper-icon-button>
                   <paper-input label="Search for channels..."></paper-input>
                 </div>
-                
                 
               </core-menu>
 
@@ -171,11 +175,15 @@
               <core-drawer-panel transition drawerwidth="400px" responsivewidth="800px" selected="main" disableEdgeSwipe narrow rightdrawer id="core_drawer_panel1">
                 <section id="section3" drawer>
                   <div class="container" layout vertical center>
-                    <geosource-feed id='feed' posts="{{posts}}" on-open-dialog="{{openDialog}}"></geosource-feed>
+                    <geosource-feed id='feed' 
+                        posts="{{filteredPosts}}" 
+                        on-open-dialog="{{openDialog}}"
+                        on-set-location="{{moveMap}}">
+                    </geosource-feed>
                   </div>
                 </section>
                 <section id="section4" main>
-                  <geosource-map id="map" posts="{{posts}}" on-open-dialog="{{openDialog}}"></geosource-map>
+                  <geosource-map id="map" posts="{{filteredPosts}}" on-open-dialog="{{openDialog}}"></geosource-map>
                 </section>
               </core-drawer-panel>
             </section>
@@ -186,46 +194,15 @@
 
   <script>
     Polymer({
+
+      allPosts: null,
+      filteredPosts: null,
+
       ready: function() {
-
-        var feed = this.$.feed;
-        var feed_button = this.$.feed_button;
-        var feed_drawer = this.$.core_drawer_panel1;
-
-        var filter_button = this.$.filter_button;
-        var filter_drawer = this.$.core_drawer_panel;
-
-        var map = this.$.map;
-
-        feed_button.addEventListener('click', function() {
-            filter_drawer.closeDrawer();
-            if(feed_drawer.narrow) {
-              feed_drawer.forceNarrow = false;
-              feed_drawer.togglePanel();
-            }
-            else {
-              feed_drawer.forceNarrow = true;
-            }
-        });
-
-        filter_button.addEventListener('click', function() {
-            feed_drawer.closeDrawer();
-            if(filter_drawer.narrow) {
-              filter_drawer.forceNarrow = false;
-              filter_drawer.togglePanel();
-            }
-            else {
-              filter_drawer.forceNarrow = true;
-            }
-        }); 
 
         var all_toggle = this.$.all_toggle_button;
         var fav_toggle = this.$.favorite_toggle_button;
         var mine_toggle = this.$.mine_toggle_button;
-
-        var posts = this.posts;
-
-        var main = this;
 
         all_toggle.addEventListener('change', function() {
           if(all_toggle.checked) {
@@ -236,72 +213,44 @@
             fav_toggle.disabled = false;
             mine_toggle.disabled = false;
           }
-          filterPosts();
-        });
-
-        fav_toggle.addEventListener('change', function() {
-          filterPosts();
-        });
-
-        feed.addEventListener('set-location', function(e) {
-          map.latitude = e.detail.latitude; //52.1333;
-          map.longitude = e.detail.longitude; //-106.6833;
-        });
-
-        
-
-        map.addEventListener('marker-click', function(e) {
-          console.log(e);
-        });
-
-        var selectedChannel;
-        var channels = this.$.channels;
-        channels.addEventListener('core-select', function(e){
-          selectedChannel = e.detail.item.label;
-          filterPosts();
-        });
-
-        var posts;
-        var post_service = this.$.post_service;
-        post_service.addEventListener('core-response', function(e) {
-          posts = e.detail.response;
-          console.log(posts);
-        })
-
-        function filterPosts() {
-
-          var selectedChannels = [selectedChannel];
-
-          var postIncluded = [];
-          for(i=0; i<posts.length; i++)
-          {
-            postIncluded[i] = false;
-          }
-
-          for(i=0; i<posts.length; i++)
-          {
-            for(j=0; j<selectedChannels.length; j++)
-            {
-              postIncluded[i] = (postIncluded[i] || posts[i].channel == selectedChannels[j] || selectedChannels[j] == 'All');
-            }
-          }
-
-          for(i=0; i<posts.length; i++) {
-            postIncluded[i] = (all_toggle.checked && postIncluded[i]) || (!all_toggle.checked && fav_toggle.checked && posts[i].favorite && postIncluded[i]);
-          }
-
-          var includedPosts = []
-          for(i=0; i<posts.length; i++)
-          {
-            if(postIncluded[i])
-            {
-              includedPosts.push(posts[i]);
-            }
-          }
-
-          main.posts = includedPosts;
-        }
+        });  
       },
+
+      filterPosts: function() {
+        var selectedChannel = this.$.channels.selected;
+        var all_toggle = this.$.all_toggle_button;
+        var fav_toggle = this.$.favorite_toggle_button;
+
+        var postIncluded = [];
+        for(i=0; i<this.allPosts.length; i++)
+        {
+          postIncluded[i] = false;
+        }
+
+        for(i=0; i<this.allPosts.length; i++)
+        {
+            postIncluded[i] = (postIncluded[i] || this.allPosts[i].channel == selectedChannel || selectedChannel == 'All');
+        }
+
+        for(i=0; i<this.allPosts.length; i++) {
+          postIncluded[i] = (all_toggle.checked && postIncluded[i]) || (!all_toggle.checked && fav_toggle.checked && this.allPosts[i].favorite && postIncluded[i]);
+        }
+
+        var includedPosts = []
+        for(i=0; i<this.allPosts.length; i++)
+        {
+          if(postIncluded[i])
+          {
+            includedPosts.push(this.allPosts[i]);
+          }
+        }
+
+        this.filteredPosts = includedPosts;
+
+        console.log("all", this.allPosts);
+        console.log("filtered", this.filteredPosts);
+      },
+
       openDialog: function(e) {
         var dialog = this.$.dialog;
         var dialog_content = this.$.dialog_content;
@@ -314,8 +263,54 @@
           dialog_content);
 
         dialog.toggle();
-
       },
+
+      allPostsChanged: function() {
+        this.filterPosts();
+      },
+      channelsChanged: function() {
+        this.filterPosts();
+      },
+
+      moveMap: function(e) {
+        var map = this.$.map;
+        map.latitude = e.detail.latitude;
+        map.longitude = e.detail.longitude;
+      },
+
+      toggleFeedDrawer: function() {
+        var feed_drawer = this.$.core_drawer_panel1;
+        var filter_drawer = this.$.core_drawer_panel;
+        var map = this.$.map;
+        
+        filter_drawer.closeDrawer();
+        if(feed_drawer.narrow) {
+          feed_drawer.forceNarrow = false;
+          feed_drawer.togglePanel();
+        }
+        else {
+          feed_drawer.forceNarrow = true;
+        }
+
+        setTimeout(function(){ map.resize() }, 500);
+      },
+      toggleSettingsDrawer: function() {
+        var filter_drawer = this.$.core_drawer_panel;
+        var feed_drawer = this.$.core_drawer_panel1;
+        var map = this.$.map;
+
+        feed_drawer.closeDrawer();
+        if(filter_drawer.narrow) {
+          filter_drawer.forceNarrow = false;
+          filter_drawer.togglePanel();
+        }
+        else {
+          filter_drawer.forceNarrow = true;
+        }
+
+        setTimeout(function(){ map.resize() }, 500);
+      },
+
     });
 
   </script>

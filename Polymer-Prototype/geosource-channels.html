@@ -1,0 +1,29 @@
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="components/core-item/core-item.html">
+
+<polymer-element name="geosource-channels" attributes="channels">
+
+<template>
+  <core-submenu opened active selected="0" icon="settings" label="Channels" on-core-select="{{channelSelected}}">
+    <core-item label="All" horizontal center layout selected></core-item>
+    <template repeat="{{channel in channels}}">
+      <core-item label="{{channel.name}}" horizontal center layout></core-item>
+    </template>
+  </core-submenu>
+</template>
+
+  <script>
+  Polymer({
+    selected: "All",
+    ready: function() {
+      console.log(this.channels);
+    },
+    channelSelected: function(e) {
+      this.selected = e.detail.item.label;
+      console.log(this.selected);
+      var event = new CustomEvent('selection-change');
+      this.dispatchEvent(event);
+    },
+  });
+  </script>
+</polymer-element>
