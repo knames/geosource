@@ -62,7 +62,17 @@
         var fav_toggle = this.$.favorite_toggle_button;
         this.favorites = fav_toggle.checked;
         this.fire('change');
-      }
+      },
+
+      filterPosts: function(posts) {
+        var includedPosts = [];
+        for(i=0; i<posts.length; i++) {
+          if((this.all) || (!this.all && this.favorites && posts[i].favorite)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+        return includedPosts;
+      },
 
     });
   </script>

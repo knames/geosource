@@ -36,6 +36,16 @@
       this.selected = e.detail.item.label;
       this.fire('selection-change');
     },
+
+    filterPosts: function(posts) {
+      var includedPosts = [];
+      for(i=0; i<posts.length; i++) {
+        if(this.selected == 'All' || posts[i].channel == this.selected) {
+          includedPosts.push(posts[i]);
+        }
+      }
+      return includedPosts;
+    },
   });
   </script>
   

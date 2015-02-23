@@ -34,7 +34,9 @@
      */
     handleFavorite: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
-      this.fire('favorite');
+      this.fire('favorite', {
+        post: post
+      });
       this.$.service.setFavorite(post.uid, post.favorite);
     },
 
@@ -47,13 +49,10 @@
 
       var post = sender.templateInstance.model.post;
 
-      var event = new CustomEvent('set-location', {
-        detail: {
-          latitude: post.location.latitude,
-          longitude: post.location.longitude
-        }
+      this.fire('set-location', {
+        latitude: post.location.latitude,
+        longitude: post.location.longitude
       });
-      this.dispatchEvent(event);
     },
 
     /**
@@ -63,10 +62,9 @@
     handleMore: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
 
-      var event = new CustomEvent('open-dialog', {
-        detail: {post: post}
+      this.fire('open-dialog', {
+        post: post
       });
-      this.dispatchEvent(event);
     }
   });
   </script>

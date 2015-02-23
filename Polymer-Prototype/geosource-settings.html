@@ -1,0 +1,78 @@
+<link rel="import" href="geosource-filters.html">
+<link rel="import" href="geosource-channels.html">
+
+<polymer-element name="geosource-settings" attributes="channels posts filteredPosts">
+
+  <template>
+    
+    <style>
+      #core_menu {
+        font-size: 16px;
+        width: 216px;
+        position: absolute;
+        margin: 20px;
+      }
+    </style>
+
+    <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
+      <geosource-filters id="filters"
+        on-change="{{filterPosts}}">
+      </geosource-filters>
+      
+      <geosource-channels id="channels" 
+        channels="{{channels}}" 
+        on-selection-change="{{filterPosts}}">
+      </geosource-channels>
+    </core-menu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      channels: null,
+      posts: null,
+      filteredPosts: null,
+
+      observe: {
+        posts: 'filterPosts',
+        channels: 'filterPosts'
+      },
+
+      toggleAll: function(e) {
+        var all_toggle = this.$.all_toggle_button;
+        var fav_toggle = this.$.favorite_toggle_button;
+        var mine_toggle = this.$.mine_toggle_button;
+
+        if(all_toggle.checked) {
+          fav_toggle.disabled = true;
+          mine_toggle.disabled = true;
+        }
+        else {
+          fav_toggle.disabled = false;
+          mine_toggle.disabled = false;
+        }
+
+        this.all = all_toggle.checked;
+        this.fire('change');
+      },
+      toggleMine: function(e) {
+        var mine_toggle = this.$.mine_toggle_button;
+        this.mine = mine_toggle.checked;
+        this.fire('change');
+      },
+      toggleFavorites: function(e) {
+        var fav_toggle = this.$.favorite_toggle_button;
+        this.favorites = fav_toggle.checked;
+        this.fire('change');
+      },
+
+      filterPosts: function() {
+        this.filteredPosts = this.$.filters.filterPosts(this.posts);
+        this.filteredPosts = this.$.channels.filterPosts(this.filteredPosts);
+      },
+
+    });
+  </script>
+
+</polymer-element>
