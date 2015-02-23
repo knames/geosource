@@ -40,7 +40,7 @@ import static junit.framework.Assert.assertNotNull;
 public class IncidentActivity extends ActionBarActivity {
 
     // The data to show
-    List<FieldWithContent> fieldList = new ArrayList<FieldWithContent>();
+    ArrayList<FieldWithContent> fieldList = new ArrayList<FieldWithContent>();
     CustomAdapter aAdpt;
 
     /** The filepath to pass to the camera or video app, to which it will save a new media file. */
@@ -219,7 +219,7 @@ public class IncidentActivity extends ActionBarActivity {
                 }
                 else
                 {
-                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, "placeholder"));
+                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, true, "placeholder"));
                     IncidentActivity.this.aAdpt.notifyDataSetChanged(); // We notify the data model is changed
                     d.dismiss();
                 }
