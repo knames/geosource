@@ -1,6 +1,5 @@
 package hoopsnake.geosource;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,14 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,9 +22,8 @@ import java.util.List;
 
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
-import hoopsnake.geosource.data.FieldType;
-import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.FieldWithContent;
+import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
 import hoopsnake.geosource.media.MediaManagement;
 
@@ -42,6 +35,7 @@ public class IncidentActivity extends ActionBarActivity {
     // The data to show
     ArrayList<FieldWithContent> fieldList = new ArrayList<FieldWithContent>();
     CustomAdapter aAdpt;
+    ListView lv;
 
     /** The filepath to pass to the camera or video app, to which it will save a new media file. */
     private Uri fileUri;
@@ -70,7 +64,7 @@ public class IncidentActivity extends ActionBarActivity {
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
         // We get the ListView component from the layout
-        ListView lv = (ListView) findViewById(R.id.listView);
+        lv = (ListView) findViewById(R.id.listView);
 
         // This is a simple adapter that accepts as parameter
         // Context
@@ -79,88 +73,86 @@ public class IncidentActivity extends ActionBarActivity {
         // The keys used to retrieve the data
         // The View id used to show the data. The key number and the view id must match
         //aAdpt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, fieledList);
-        aAdpt = new CustomAdapter(fieldList, this);
-        lv.setAdapter(aAdpt);
 
         // React to user clicks on item
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
                                     long id) {
+                FieldWithContent field = aAdpt.getItem(position);
+
+                switch(field.getType())
+                {
+                    case IMAGE:
+                        // create Intent to take a picture and return control to the calling application
+                        Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                        if (MediaManagement.isExternalStorageWritable()) {
+                            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
+                            if (fileUri == null)
+                            {
+                                Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+                            // start the image capture Intent
+                            startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
+                        }
+                        else
+                        {
+                            //TODO Potentially save a file to internal storage, instead.
+                        }
+
+                        break;
+                    case STRING:
+                        throw new RuntimeException("Sorry, unimplemented.");
+                    case VIDEO:
+                        //create new Intent
+                        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+                        if (MediaManagement.isExternalStorageWritable()) {
+                            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
+                            if (fileUri == null)
+                            {
+                                Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
+                            videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+
+                            // start the Video Capture Intent
+                            startActivityForResult(videoIntent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
+                        }
+                        else
+                        {
+                            //TODO Potentially save a file to internal storage, instead.
+                        }
+                        break;
+                    case SOUND:
+                        throw new RuntimeException("Sorry, unimplemented.");
+                }
 
             }
         });
 
         // we register for the contextmenu
-        registerForContextMenu(lv);
+//        registerForContextMenu(lv);
     }
 
 
-    // We want to create a context Menu when the user long click on an item
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-
-        super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) menuInfo;
-
-        // We know that each row in the adapter is a Map
-        FieldWithContent field = aAdpt.getItem(aInfo.position);
-
-        switch(field.getType())
-        {
-
-            case IMAGE:
-                // create Intent to take a picture and return control to the calling application
-                Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                if (MediaManagement.isExternalStorageWritable()) {
-                    fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
-                    if (fileUri == null)
-                    {
-                        Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
-
-                    // start the image capture Intent
-                    startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
-                }
-                else
-                {
-                    //TODO Potentially save a file to internal storage, instead.
-                }
-
-                break;
-            case STRING:
-                throw new RuntimeException("Sorry, unimplemented.");
-            case VIDEO:
-                //create new Intent
-                Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-                if (MediaManagement.isExternalStorageWritable()) {
-                    fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
-                    if (fileUri == null)
-                    {
-                        Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
-                    videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
-
-                    // start the Video Capture Intent
-                    startActivityForResult(videoIntent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
-                }
-                else
-                {
-                    //TODO Potentially save a file to internal storage, instead.
-                }
-                break;
-            case SOUND:
-                throw new RuntimeException("Sorry, unimplemented.");
-        }
-
+//    // We want to create a context Menu when the user long click on an item
+//    public void onCreateContextMenu(ContextMenu menu, View v,
+//                                    ContextMenu.ContextMenuInfo menuInfo) {
+//
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) menuInfo;
+//
+//        // We know that each row in the adapter is a Map
+//        FieldWithContent field = aAdpt.getItem(aInfo.position);
+//
 //        if (field.getTitle().equals("Picture"))
 //        {
 //            Intent intent = new Intent(IncidentActivity.this, CameraPage.class);
@@ -184,60 +176,60 @@ public class IncidentActivity extends ActionBarActivity {
 //            menu.add(1, 2, 2, "Delete");
 //
 //        }
-    }
+//    }
 
 
-    // This method is called when user selects an Item in the Context menu
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) item.getMenuInfo();
-        fieldList.remove(aInfo.position);
-        aAdpt.notifyDataSetChanged();
-        return true;
-    }
+//    // This method is called when user selects an Item in the Context menu
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//        int itemId = item.getItemId();
+//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) item.getMenuInfo();
+//        fieldList.remove(aInfo.position);
+//        aAdpt.notifyDataSetChanged();
+//        return true;
+//    }
 
-    // Handle user click
-    public void addField(View view) {
-        final Dialog d = new Dialog(this);
-        d.setContentView(R.layout.dialog);
-        d.setTitle("Add a Field");
-        d.setCancelable(true);
+//    // Handle user click
+//    public void addField(View view) {
+//        final Dialog d = new Dialog(this);
+//        d.setContentView(R.layout.dialog);
+//        d.setTitle("Add a Field");
+//        d.setCancelable(true);
+//
+//        final EditText edit = (EditText) d.findViewById(R.id.editTextPlanet);
+//        Button b = (Button) d.findViewById(R.id.button1);
+//        b.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                String fieldTitle = edit.getText().toString();
+//
+//                //Sorry about the nested for loops, but my Android Studio was having issues with  recognizing the OR symbol, "||"
+//                if (!properField(fieldTitle))
+//                {
+//                    Toast.makeText(IncidentActivity.this,
+//                            "Sorry, that's not a valid field. Please try again.", Toast.LENGTH_SHORT).show();
+//                }
+//                else
+//                {
+//                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, true, "placeholder"));
+//                    IncidentActivity.this.aAdpt.notifyDataSetChanged(); // We notify the data model is changed
+//                    d.dismiss();
+//                }
+//            }
+//        });
+//
+//        d.show();
+//    }
 
-        final EditText edit = (EditText) d.findViewById(R.id.editTextPlanet);
-        Button b = (Button) d.findViewById(R.id.button1);
-        b.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                String fieldTitle = edit.getText().toString();
-
-                //Sorry about the nested for loops, but my Android Studio was having issues with  recognizing the OR symbol, "||"
-                if (!properField(fieldTitle))
-                {
-                    Toast.makeText(IncidentActivity.this,
-                            "Sorry, that's not a valid field. Please try again.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, true, "placeholder"));
-                    IncidentActivity.this.aAdpt.notifyDataSetChanged(); // We notify the data model is changed
-                    d.dismiss();
-                }
-            }
-        });
-
-        d.show();
-    }
-
-    boolean properField(String fieldTitle)
-    {
-        String picture = "Picture";
-        String audio = "Audio";
-        String description = "Description";
-        String title = "Title";
-
-        return (fieldTitle.equals(picture) || fieldTitle.equals(audio) || fieldTitle.equals(description) || fieldTitle.equals(title));
-    }
+//    boolean properField(String fieldTitle)
+//    {
+//        String picture = "Picture";
+//        String audio = "Audio";
+//        String description = "Description";
+//        String title = "Title";
+//
+//        return (fieldTitle.equals(picture) || fieldTitle.equals(audio) || fieldTitle.equals(description) || fieldTitle.equals(title));
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -364,6 +356,9 @@ public class IncidentActivity extends ActionBarActivity {
 
             incident = new Incident(fieldsToBeFilled);
 
+            aAdpt = new CustomAdapter(incident.getFieldList(), IncidentActivity.this);
+            lv.setAdapter(aAdpt);
+
             return SocketResult.SUCCESS;
         }
 
@@ -416,7 +411,7 @@ public class IncidentActivity extends ActionBarActivity {
             Incident incidentToSend = params[0];
             assertNotNull(incidentToSend);
 
-            List<FieldWithContent> fieldsToSend = incidentToSend.getFieldWithContentList();
+            List<FieldWithContent> fieldsToSend = incidentToSend.getFieldList();
             assertNotNull(fieldsToSend);
 
             try //create socket

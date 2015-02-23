@@ -10,32 +10,32 @@ import static junit.framework.Assert.assertNotNull;
 public class Incident {
 
     /** The fields for this incident, including their content. Their content may be null. */
-    ArrayList<FieldWithContent> fieldWithContentList;
+    ArrayList<FieldWithContent> fieldList;
 
-    /** Create a new incident by populating its fieldWithContentList by means of a
+    /** Create a new incident by populating its fieldList by means of a
      * fieldWithoutContentList, and adding null content. */
     public Incident(ArrayList<FieldWithoutContent> fieldWithoutContentList)
     {
-        fieldWithContentList = new ArrayList<FieldWithContent>();
+        fieldList = new ArrayList<FieldWithContent>();
 
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
             FieldWithContent newFieldWithContent = new FieldWithContent(
                     fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired(), null);
-            fieldWithContentList.add(newFieldWithContent);
+            fieldList.add(newFieldWithContent);
         }
     }
 
-    public ArrayList<FieldWithContent> getFieldWithContentList() {
-        return fieldWithContentList;
+    public ArrayList<FieldWithContent> getFieldList() {
+        return fieldList;
     }
 
     /** Is the incident ready to be shipped off? That is, has it been completely filled out? */
     public boolean isCompletelyFilledIn()
     {
-        assertNotNull(fieldWithContentList);
+        assertNotNull(fieldList);
 
-        for (FieldWithContent fieldWithContent : fieldWithContentList)
+        for (FieldWithContent fieldWithContent : fieldList)
         {
             if (fieldWithContent.getContent() == null)
                 return false;
