@@ -1,0 +1,42 @@
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="components/core-item/core-item.html">
+<link rel="import" href="components/paper-input/paper-input.html">
+
+<polymer-element name="geosource-channels" attributes="channels">
+
+  <template>
+
+    <style>
+      paper-input {
+        padding-bottom: 10px;
+      }
+    </style>
+
+    <core-submenu opened active selected="0" icon="settings" label="Channels" on-core-select="{{channelSelected}}">
+      <core-item label="All" horizontal center layout selected></core-item>
+      <template repeat="{{channel in channels}}">
+        <core-item label="{{channel.name}}" horizontal center layout></core-item>
+      </template>
+    </core-submenu>
+    <div center horizontal layout id="search">
+      <paper-icon-button icon="search"></paper-icon-button>
+      <paper-input label="Search for channels..."></paper-input>
+    </div>
+  </template>
+
+  <script>
+  Polymer({
+    selected: "All",
+
+    /**
+     * Fires a 'selection-change' event, and changes the 'selected' attribute to
+     * whichever attribute has been selected.
+     */
+    channelSelected: function(e) {
+      this.selected = e.detail.item.label;
+      this.fire('selection-change');
+    },
+  });
+  </script>
+  
+</polymer-element>

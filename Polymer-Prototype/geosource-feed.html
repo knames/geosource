@@ -1,5 +1,4 @@
 <link rel="import" href="components/polymer/polymer.html">
-<link rel="import" href="post-service/post-service.html">
 <link rel="import" href="post-card.html">
 
 <polymer-element name="geosource-feed" attributes="posts">
@@ -28,13 +27,22 @@
 
   <script>
   Polymer({
-    ready: function() {
-      console.log(this.posts);
-    },
+
+    /**
+     * Dispatches a 'favorite' event.
+     * @detail post The corresponding post for which 'favorite' was clicked
+     */
     handleFavorite: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
+      this.fire('favorite');
       this.$.service.setFavorite(post.uid, post.favorite);
     },
+
+    /**
+     * Dispatches a 'set-location' event.
+     * @detail latitude The latitude of the corresponding post
+     * @detail longitude The longitude of the corresponding post
+     */
     handleLocation: function(event, detail, sender) {
 
       var post = sender.templateInstance.model.post;
@@ -47,6 +55,11 @@
       });
       this.dispatchEvent(event);
     },
+
+    /**
+     * Dispatches an 'open-dialog' event. 
+     * @detail post The corresponding post for which 'see more' was clicked
+     */
     handleMore: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
 

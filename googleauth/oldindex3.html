@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <script src="https://apis.google.com/js/client.js"></script>
+    <script>
+      function auth() {
+        var config = {
+          'client_id': '1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com',
+          'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email'
+        };
+        gapi.auth.authorize(config, function() {
+          console.log('login complete');
+          console.log(gapi.auth.getToken());
+        });
+      }
+
+          /**
+     * Calls the OAuth2 endpoint to disconnect the app for the user.
+     */
+    function disconnect() {
+      // Revoke the access token.
+      $.ajax({
+        type: 'GET',
+        url: 'https://accounts.google.com/o/oauth2/revoke?token=' +
+            gapi.auth.getToken().access_token,
+        async: false,
+        contentType: 'application/json',
+        dataType: 'jsonp',
+        success: function(result) {
+          console.log('revoke response: ' + result);
+          $('#authOps').hide();
+          $('#profile').empty();
+          $('#visiblePeople').empty();
+          $('#authResult').empty();
+          $('#gConnect').show();
+        },
+        error: function(e) {
+          console.log(e);
+        }
+      });
+    }
+
+// This sample assumes a client object has been created.
+// To learn more about creating a client, check out the starter:
+//  https://developers.google.com/+/quickstart/javascript
+var request = gapi.client.plus.people.get({
+  'userId' : 'me'
+});
+
+request.execute(function(resp) {
+  console.log('ID: ' + resp.id);
+  console.log('Display Name: ' + resp.displayName);
+  console.log('Image URL: ' + resp.image.url);
+  console.log('Profile URL: ' + resp.url);
+  console.log('Emails: ' + emails);
+});
+
+
+
+    </script>
+  </head>
+
+  <body>
+    <button onclick="auth();">Authorize</button>
+
+    <button id="disconnect" >Disconnect your Google account from this app</button>
+
+  </body>
+</html>
