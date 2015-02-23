@@ -1,0 +1,70 @@
+<link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="components/core-menu/core-submenu.html">
+
+<polymer-element name="geosource-filters">
+
+  <template>
+    
+    <style>
+      #toggle_label {
+        margin: 15px;
+        margin-left: 0;
+      }
+    </style>
+
+    <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
+      <div center horizontal layout id="toggle_label">
+        <div flex>All</div>
+        <paper-toggle-button checked id="all_toggle_button" on-change="{{toggleAll}}"></paper-toggle-button>
+      </div>
+      <div center horizontal layout id="toggle_label">
+        <div flex>Mine</div>
+        <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
+      </div>
+      <div center horizontal layout id="toggle_label">
+        <div flex>Favorites</div>
+        <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
+      </div>
+    </core-submenu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      all: true,
+      mine: true,
+      favorites: true,
+
+      toggleAll: function(e) {
+        var all_toggle = this.$.all_toggle_button;
+        var fav_toggle = this.$.favorite_toggle_button;
+        var mine_toggle = this.$.mine_toggle_button;
+
+        if(all_toggle.checked) {
+          fav_toggle.disabled = true;
+          mine_toggle.disabled = true;
+        }
+        else {
+          fav_toggle.disabled = false;
+          mine_toggle.disabled = false;
+        }
+
+        this.all = all_toggle.checked;
+        this.fire('change');
+      },
+      toggleMine: function(e) {
+        var mine_toggle = this.$.mine_toggle_button;
+        this.mine = mine_toggle.checked;
+        this.fire('change');
+      },
+      toggleFavorites: function(e) {
+        var fav_toggle = this.$.favorite_toggle_button;
+        this.favorites = fav_toggle.checked;
+        this.fire('change');
+      }
+
+    });
+  </script>
+
+</polymer-element>

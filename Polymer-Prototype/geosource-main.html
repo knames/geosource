@@ -4,6 +4,7 @@
 <link rel="import" href="geosource-feed.html">
 <link rel="import" href="geosource-map.html">
 <link rel="import" href="geosource-channels.html">
+<link rel="import" href="geosource-filters.html">
 
 <link rel="import" href="components/font-roboto/roboto.html">
 <link rel="import" href="components/core-header-panel/core-header-panel.html">
@@ -13,9 +14,7 @@
 <link rel="import" href="components/core-drawer-panel/core-drawer-panel.html">
 <link rel="import" href="components/core-icons/communication-icons.html">
 <link rel="import" href="components/core-menu/core-menu.html">
-<link rel="import" href="components/core-menu/core-submenu.html">
 <link rel="import" href="components/core-item/core-item.html">
-<link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="components/paper-input/paper-input.html">
 <link rel="import" href="components/core-icons/hardware-icons.html">
 <link rel="import" href="components/paper-dialog/paper-dialog.html">
@@ -24,6 +23,7 @@
 
 <link rel="import" href="post-service/post-service.html">
 <link rel="import" href="post-service/channel-service.html">
+
 
 <polymer-element name="geosource-main">
   <template>
@@ -141,20 +141,9 @@
             <section id="section1" drawer>
               <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
               <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
-                <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
-                  <div center horizontal layout id="toggle_label">
-                    <div flex>All</div>
-                    <paper-toggle-button checked id="all_toggle_button" on-change="{{filterPosts}}"></paper-toggle-button>
-                  </div>
-                  <div center horizontal layout id="toggle_label">
-                    <div flex>Mine</div>
-                    <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
-                  </div>
-                  <div center horizontal layout id="toggle_label">
-                    <div flex>Favorites</div>
-                    <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{filterPosts}}"></paper-toggle-button>
-                  </div>
-                </core-submenu>
+                <geosource-filters id="filters"
+                  on-change="{{filterPosts}}">
+                </geosource-filters>
                 <geosource-channels id="channels" 
                   channels="{{channels}}" 
                   on-selection-change="{{filterPosts}}">
@@ -192,32 +181,14 @@
       allPosts: null,
       filteredPosts: null,
 
-      ready: function() {
-
-        var all_toggle = this.$.all_toggle_button;
-        var fav_toggle = this.$.favorite_toggle_button;
-        var mine_toggle = this.$.mine_toggle_button;
-
-        all_toggle.addEventListener('change', function() {
-          if(all_toggle.checked) {
-            fav_toggle.disabled = true;
-            mine_toggle.disabled = true;
-          }
-          else {
-            fav_toggle.disabled = false;
-            mine_toggle.disabled = false;
-          }
-        });  
-      },
-
       /**
        * Filters 'allPosts' depending upon the channels and filters selected,
        * and places the result into 'filteredPosts'.
        */
       filterPosts: function() {
+
+        var filters = this.$.filters;
         var selectedChannel = this.$.channels.selected;
-        var all_toggle = this.$.all_toggle_button;
-        var fav_toggle = this.$.favorite_toggle_button;
 
         var postIncluded = [];
         for(i=0; i<this.allPosts.length; i++)
@@ -231,7 +202,7 @@
         }
 
         for(i=0; i<this.allPosts.length; i++) {
-          postIncluded[i] = (all_toggle.checked && postIncluded[i]) || (!all_toggle.checked && fav_toggle.checked && this.allPosts[i].favorite && postIncluded[i]);
+          postIncluded[i] = (filters.all && postIncluded[i]) || (!filters.all && filters.favorites && this.allPosts[i].favorite && postIncluded[i]);
         }
 
         var includedPosts = []
