@@ -2,7 +2,7 @@ BEGIN;
 
 
 -- google stuff
-CREATE DOMAIN email AS varchar(100); -- restr. is this enough
+CREATE DOMAIN email AS varchar(100);
 CREATE DOMAIN username AS varchar(25); -- restriction
 
 
