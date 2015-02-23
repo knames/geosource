@@ -1,0 +1,60 @@
+
+
+<!DOCTYPE HTML> 
+/* 
+files to test
+components
+  google-map.html (no need for extensive testing)
+
+index.html
+geosource-main.html
+geosource-feed.html
+geosource-channel.html
+geosource-map.html
+
+
+basic assertions in javascript
+*/
+<html lang="en-US"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>Easy JavaScript Testing </title> 
+    <style> 
+        .pass:before { 
+            content: 'PASS: '; 
+            color:  blue; 
+            font-weight: bold; 
+        } 
+  
+        .fail:before { 
+            content: 'FAIL: '; 
+            color: red; 
+            font-weight: bold; 
+  
+        } 
+    </style> 
+</head> 
+<body> 
+<ul id="output"></ul> 
+  /*
+	author: john
+	manually built assertion method for javascript testing
+	preconditions: 
+	outcome: a boolean that references whether your test passed or failed
+	description: a string that is a description of your test
+	postconditions: 
+	outputs PASS or FAIL as well as the description string to a log
+	*/
+	<script> 
+	var output = document.getElementById('output'); 
+	  
+	function assert( outcome, description ) { 
+	    var li = document.createElement('li'); 
+	    li.className = outcome ? 'pass' : 'fail'; 
+	    li.appendChild( document.createTextNode( description ) ); 
+	  
+	    output.appendChild(li); 
+	}; 
+	</script>
+</body>
+</html>
