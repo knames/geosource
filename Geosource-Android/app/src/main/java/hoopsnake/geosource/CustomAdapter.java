@@ -1,7 +1,9 @@
 package hoopsnake.geosource;
 
 /**
- * Created by Anam on 2015-02-09.
+ * Created by Anam on 2015-02-09. Modified by William. This adapts the array of fields
+ * (or prompts to create fields) that are to be displayed while a user is filling out the
+ * form for an incident.
  */
 
 import android.content.Context;
@@ -11,20 +13,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import hoopsnake.geosource.data.FullField;
+import hoopsnake.geosource.data.FieldWithContent;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class CustomAdapter extends ArrayAdapter<FullField> {
+public class CustomAdapter extends ArrayAdapter<FieldWithContent> {
 
-    private List<FullField> fieldList;
+    private ArrayList<FieldWithContent> fieldList;
     private Context context;
 
 
 
-    public CustomAdapter(List<FullField> fieldList, Context ctx) {
+    public CustomAdapter(ArrayList<FieldWithContent> fieldList, Context ctx) {
         super(ctx, R.layout.img_row_layout, fieldList);
         this.fieldList = fieldList;
         this.context = ctx;
@@ -34,7 +36,7 @@ public class CustomAdapter extends ArrayAdapter<FullField> {
         return fieldList.size();
     }
 
-    public FullField getItem(int position) {
+    public FieldWithContent getItem(int position) {
         return fieldList.get(position);
     }
 
@@ -65,7 +67,7 @@ public class CustomAdapter extends ArrayAdapter<FullField> {
         else
             holder = (FieldHolder) v.getTag();
 
-        FullField f = fieldList.get(position);
+        FieldWithContent f = fieldList.get(position);
 
         String fieldTitle = f.getTitle();
         assertNotNull(fieldTitle);
@@ -88,7 +90,6 @@ public class CustomAdapter extends ArrayAdapter<FullField> {
                     break;
                 case SOUND:
                     prompt.setText("Click to record audio.");
-                    break;
             }
         }
         else
@@ -106,7 +107,6 @@ public class CustomAdapter extends ArrayAdapter<FullField> {
                     break;
                 case SOUND:
                     prompt.setText("There is an audio recording here, trust me.");
-                    break;
             }
         }
 

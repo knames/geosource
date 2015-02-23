@@ -24,14 +24,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
-import hoopsnake.geosource.data.EmptyField;
-import hoopsnake.geosource.data.FieldTypeManagement;
-import hoopsnake.geosource.data.FullField;
+import hoopsnake.geosource.data.FieldType;
+import hoopsnake.geosource.data.FieldWithoutContent;
+import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.Incident;
 import hoopsnake.geosource.media.MediaManagement;
 
@@ -41,7 +40,7 @@ import static junit.framework.Assert.assertNotNull;
 public class IncidentActivity extends ActionBarActivity {
 
     // The data to show
-    List<FullField> fieldList = new ArrayList<FullField>();
+    List<FieldWithContent> fieldList = new ArrayList<FieldWithContent>();
     CustomAdapter aAdpt;
 
     /** The filepath to pass to the camera or video app, to which it will save a new media file. */
@@ -92,7 +91,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
         });
 
-        // we register for the contextmneu
+        // we register for the contextmenu
         registerForContextMenu(lv);
     }
 
@@ -105,7 +104,7 @@ public class IncidentActivity extends ActionBarActivity {
         AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) menuInfo;
 
         // We know that each row in the adapter is a Map
-        FullField field = aAdpt.getItem(aInfo.position);
+        FieldWithContent field = aAdpt.getItem(aInfo.position);
 
         switch(field.getType())
         {
@@ -220,7 +219,7 @@ public class IncidentActivity extends ActionBarActivity {
                 }
                 else
                 {
-                    IncidentActivity.this.fieldList.add(new FullField(fieldTitle, FieldTypeManagement.FieldType.STRING, "placeholder"));
+                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, "placeholder"));
                     IncidentActivity.this.aAdpt.notifyDataSetChanged(); // We notify the data model is changed
                     d.dismiss();
                 }
@@ -232,43 +231,12 @@ public class IncidentActivity extends ActionBarActivity {
 
     boolean properField(String fieldTitle)
     {
-
         String picture = "Picture";
         String audio = "Audio";
         String description = "Description";
         String title = "Title";
 
-        //Sorry about the nested for loops, but my Android Studio was having issues with  recognizing the OR symbol, "||"
-        if ((!fieldTitle.equals(picture)))
-        {
-            if ((!fieldTitle.equals(audio)))
-            {
-                if ((!fieldTitle.equals(description)))
-                {
-                    if ((!fieldTitle.equals(title)))
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return true;
-        }
-
+        return (fieldTitle.equals(picture) || fieldTitle.equals(audio) || fieldTitle.equals(description) || fieldTitle.equals(title));
     }
 
     @Override
@@ -363,7 +331,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
 
 
-            LinkedList<EmptyField> fieldsToBeFilled;
+            ArrayList<FieldWithoutContent> fieldsToBeFilled;
             try
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
@@ -372,7 +340,7 @@ public class IncidentActivity extends ActionBarActivity {
 
                 Log.i(logTag, "Retrieving reply...");
                 //TODO this is a bit presumptuous on my part.
-                fieldsToBeFilled = (LinkedList<EmptyField>) inStream.readObject();
+                fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
 
                 Log.i(logTag, "Connection Closing");
                 inStream.close();
@@ -448,7 +416,7 @@ public class IncidentActivity extends ActionBarActivity {
             Incident incidentToSend = params[0];
             assertNotNull(incidentToSend);
 
-            LinkedList<FullField> fieldsToSend = incidentToSend.getFullFieldList();
+            List<FieldWithContent> fieldsToSend = incidentToSend.getFieldWithContentList();
             assertNotNull(fieldsToSend);
 
             try //create socket

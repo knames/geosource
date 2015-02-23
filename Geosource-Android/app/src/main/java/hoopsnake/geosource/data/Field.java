@@ -4,11 +4,16 @@ import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 19/02/15.
+ *
+ * A single field within an incident. Does not include a content field by default.
  */
 public abstract class Field {
-    String title;
+    protected String title;
+    protected FieldType type;
 
-    public FieldTypeManagement.FieldType getType() {
+    boolean isRequired;
+
+    public FieldType getType() {
         return type;
     }
 
@@ -16,13 +21,18 @@ public abstract class Field {
         return title;
     }
 
-    FieldTypeManagement.FieldType type;
 
-    public Field(String title, FieldTypeManagement.FieldType type)
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public Field(String title, FieldType type, boolean isRequired)
     {
         this.title = title;
         this.type = type;
+        this.isRequired = isRequired;
 
+        assertNotNull(isRequired);
         assertNotNull(title);
         assertNotNull(type);
     }

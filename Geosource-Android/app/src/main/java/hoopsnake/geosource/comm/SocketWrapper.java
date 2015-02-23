@@ -35,7 +35,7 @@ import hoopsnake.geosource.MainActivity;
 public class SocketWrapper {
 
     int portNum = 80;
-    String ipaddress = "10.227.145.56"; //temporary
+    String ipaddress = "10.227.145.56"; //temporary.
 
     ObjectOutputStream out;
     ObjectInputStream in;
