@@ -210,7 +210,7 @@
           feed_drawer.forceNarrow = true;
         }
 
-        setTimeout(function(){ map.resize() }, 500);
+        this.async(function(){ map.resize() }, null, 300);
       },
 
       /**
@@ -232,7 +232,7 @@
           settings_drawer.forceNarrow = true;
         }
 
-        setTimeout(function(){ map.resize() }, 500);
+        this.async(function(){ map.resize() }, null, 300);
       },
 
       filterPosts: function() {
