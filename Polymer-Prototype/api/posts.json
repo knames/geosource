@@ -1,7 +1,7 @@
 [
   {
     "pid": 1,
-    "text" : "Have you heard about the Web Components revolution?",
+    "text" : "Have you seen this sparrow?",
     "username" : "Eric",
     "avatar" : "../images/avatar-01.svg",
     "favorite": false,
@@ -11,7 +11,7 @@
   },
   {
     "pid": 2,
-    "text" : "Loving this Polymer thing.",
+    "text" : "Loving this mushroom.",
     "username" : "Rob",
     "avatar" : "../images/avatar-02.svg",
     "favorite": false,
@@ -21,7 +21,7 @@
   },
     {
     "pid": 3,
-    "text" : "So last year...",
+    "text" : "I think I saw this bird last year...",
     "username" : "Dimitri",
     "avatar" : "../images/avatar-03.svg",
     "favorite": false,
@@ -31,7 +31,7 @@
   },
   {
     "pid": 4,
-    "text" : "Pretty sure I came up with that first.",
+    "text" : "Pretty sure I found that mushroom first.",
     "username" : "Ada",
     "avatar" : "../images/avatar-07.svg",
     "favorite": false,
@@ -41,7 +41,7 @@
   },
   {
     "pid": 5,
-    "text" : "Yo, I heard you like components, so I put a component in your component.",
+    "text" : "Yo, I heard you like mushrooms, so I grew mushrooms on your mushrooms.",
     "username" : "Grace",
     "avatar" : "../images/avatar-08.svg",
     "favorite": false,
@@ -51,13 +51,13 @@
   },
   {
     "pid": 6,
-    "text" : "Centralize, centrailize.",
+    "text" : "Almost drove over this pothole.",
     "username" : "John",
     "avatar" : "../images/avatar-04.svg",
     "favorite": false,
     "time": "6 minutes ago",
     "location": {"latitude": 57.1333, "longitude": -106.6833},
-    "channel": "Birds"
+    "channel": "Potholes"
   },
   {
     "pid": 7,
@@ -71,12 +71,12 @@
   },
   {
     "pid": 8,
-    "text" : "Decentralize!",
+    "text" : "Help, my car is stuck!",
     "username" : "Norbert",
     "avatar" : "../images/avatar-05.svg",
     "favorite": false,
     "time": "8 minutes ago",
     "location": {"latitude": 59.1333, "longitude": -106.6833},
-    "channel": "Mushrooms"
+    "channel": "Snow"
   }
 ]
