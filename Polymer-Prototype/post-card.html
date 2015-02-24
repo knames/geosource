@@ -3,7 +3,7 @@
 <link rel="import" href="../components/core-icons/communication-icons.html">
 <link rel="import" href="components/paper-button/paper-button.html">
 
-<polymer-element name="post-card" attributes="post favorite">
+<polymer-element name="post-card" attributes="post favorite mapInfo">
   <template>
     <style>
     :host {
@@ -29,6 +29,7 @@
       width: 70px;
       border-radius: 50%;
       margin: 10px;
+      margin-right: 15px;
     }
 
     .card-body {
@@ -60,7 +61,7 @@
       color: #4285f4;
       margin: 0;
     }
-    #card-footer {
+    .card-footer {
       font-size: 14px;
     }
     #time-ago {
@@ -70,6 +71,28 @@
     }
     #decsription {
       margin: 17px;
+    }
+    :host([mapInfo]) paper-icon-button {
+      display: none;
+    }
+    :host([mapInfo]) paper-button {
+      display: none;
+    }
+    :host([mapInfo]) #time-ago {
+      margin: 0;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    :host([mapInfo]) .card-body {
+      margin-left: 20px;
+      margin-top: 10px;
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+    :host([mapInfo]) {
+      width: auto;
+      max-width:500px;
     }
     </style>
 
@@ -94,7 +117,7 @@
       <content select="desc">{{post.text}}</content>
     </div>
 
-    <div center="" horizontal="" layout="" id="card-footer">
+    <div center="" horizontal="" layout="" class="card-footer">
       <div flex id="time-ago"> 
         <content select="time-ago">{{post.time}} to {{post.channel}}</content> 
       </div>
@@ -110,6 +133,10 @@
         reflect: true
       },
       favorite: { //temporary hack, 
+        value: false,
+        reflect: true
+      },
+      mapInfo: {
         value: false,
         reflect: true
       }

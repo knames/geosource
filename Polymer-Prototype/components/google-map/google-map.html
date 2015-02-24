@@ -275,6 +275,7 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
             var post_card = document.createElement('post-card');
             post_card.post = this.post;
             post_card.favorite = this.post.favorite;
+            post_card.mapInfo = true;
 
             this.info = new google.maps.InfoWindow({
               content: post_card
