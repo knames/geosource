@@ -1,5 +1,7 @@
 package hoopsnake.geosource.data;
 
+import android.net.Uri;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -36,6 +38,13 @@ public class FieldWithContent extends Field implements Serializable
         assertNotNull(content);
     }
 
+    public FieldWithContent(String title, FieldType type, boolean isRequired)
+    {
+        super(title, type, isRequired);
+
+        setContent(null);
+    }
+
     /** Serializable implementation. */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
     {
@@ -57,10 +66,17 @@ public class FieldWithContent extends Field implements Serializable
         throw new InvalidObjectException("Stream data required");
     }
 
+    /**
+     * Sets content to the specified value, but only if newContent matches the current type.
+     * newContent can be null.
+     * @param newContent a Serializable object.
+     */
     public void setContent(Serializable newContent)
     {
         assertNotNull(type);
-        assertNotNull(newContent);
+
+        if (newContent == null)
+            return;
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -75,6 +91,9 @@ public class FieldWithContent extends Field implements Serializable
     /**
      * Does the given content object match the given field type? i.e. is it an admissible object
      * for the specified field type?
+     *
+     * NOTE: null content is always admissible.
+     *
      * @param content a Serializable content object. This is probably the 'content' field from a
      *                FieldWithContent object.
      * @param type  An instance of FieldType. This is probably the 'type' field from a FieldWithContent object.
@@ -83,17 +102,19 @@ public class FieldWithContent extends Field implements Serializable
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
         assertNotNull(type);
-        assertNotNull(content);
+
+        if (content == null)
+            return true;
 
         switch (type)
         {
             case IMAGE:
                 return (content instanceof SerialBitmap);
             case VIDEO:
-                throw new RuntimeException("Video object type not yet implemented, sorry!");
+                return (content instanceof Uri);
             case STRING:
                 return (content instanceof String);
-            case SOUND:
+            case AUDIO:
                 throw new RuntimeException("Sound object type not yet implemented, sorry!");
             default:
                 throw new RuntimeException("field type is invalid.");

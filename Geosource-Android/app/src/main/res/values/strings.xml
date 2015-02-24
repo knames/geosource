@@ -8,7 +8,8 @@
     <string name="add_video">Record Video</string>
     <string name="add_audio">Record Audio</string>
     <string name="title_activity_incident">IncidentActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="submit_incident">Submit</string>
+    <string name="create_incident">Create New Incident</string>
 
     <!--Anam's stuff -->
     <string name="menu_settings">Settings</string>
