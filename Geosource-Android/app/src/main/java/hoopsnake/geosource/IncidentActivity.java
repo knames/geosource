@@ -77,7 +77,7 @@ public class IncidentActivity extends ActionBarActivity {
 
         ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
         mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
-        mockedSpec.add(new FieldWithoutContent("Recording", FieldType.AUDIO, false));
+        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
         mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
 
         incident = new Incident(mockedSpec);
@@ -131,6 +131,7 @@ public class IncidentActivity extends ActionBarActivity {
         Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (MediaManagement.isExternalStorageWritable()) {
+            //TODO rather than using a field fileUri, just use the contentFileUri for the current field.
             fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
             if (fileUri == null) {
                 Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
@@ -156,6 +157,7 @@ public class IncidentActivity extends ActionBarActivity {
         Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         if (MediaManagement.isExternalStorageWritable()) {
+            //TODO rather than using a field fileUri, just use the contentFileUri for the current field.
             fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
             if (fileUri == null) {
                 Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
