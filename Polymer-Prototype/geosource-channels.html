@@ -7,8 +7,27 @@
   <template>
 
     <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
       paper-input {
         padding-bottom: 10px;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      .search {
+        padding-right: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin-left: 15px;
+      }
+      core-item.core-selected {
+        color: #3C8670;
       }
     </style>
 
@@ -18,7 +37,7 @@
         <core-item label="{{channel.name}}" horizontal center layout></core-item>
       </template>
     </core-submenu>
-    <div center horizontal layout id="search">
+    <div center horizontal layout class="search">
       <paper-icon-button icon="search"></paper-icon-button>
       <paper-input label="Search for channels..."></paper-input>
     </div>

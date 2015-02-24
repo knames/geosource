@@ -1,7 +1,7 @@
 <link rel="import" href="geosource-filters.html">
 <link rel="import" href="geosource-channels.html">
 <link rel="import" href="components/core-menu/core-menu.html">
-<link rel="import" href="components/google-signin/google-signin.html">
+<link rel="import" href="geosource-account.html">
 
 <polymer-element name="geosource-settings" attributes="channels posts filteredPosts">
 
@@ -10,21 +10,27 @@
     <style>
       #core_menu {
         font-size: 16px;
-        width: 216px;
         position: absolute;
-        margin: 20px;
+        padding: 10px;
+      }
+      geosource-filters {
+        margin-bottom: 20px;
+      }
+      geosource-account {
+        margin-bottom: 20px;
       }
     </style>
+      <div layout vertical center>
+          <geosource-account id="account">
+          </geosource-account>
 
-    <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
-      <geosource-filters id="filters">
-      </geosource-filters>
-      
-      <geosource-channels id="channels" 
-        channels="{{channels}}">
-      </geosource-channels>
-    </core-menu>
-
+          <geosource-filters id="filters">
+          </geosource-filters>
+          
+          <geosource-channels id="channels" 
+            channels="{{channels}}">
+          </geosource-channels>
+      </div>
   </template>
 
   <script>

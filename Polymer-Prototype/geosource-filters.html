@@ -6,9 +6,22 @@
   <template>
     
     <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
       #toggle_label {
         margin: 15px;
         margin-left: 0;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin-left: 15px;
       }
     </style>
 
