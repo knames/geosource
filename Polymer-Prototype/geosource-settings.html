@@ -17,13 +17,11 @@
     </style>
 
     <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
-      <geosource-filters id="filters"
-        on-change="{{filterPosts}}">
+      <geosource-filters id="filters">
       </geosource-filters>
       
       <geosource-channels id="channels" 
-        channels="{{channels}}" 
-        on-selection-change="{{filterPosts}}">
+        channels="{{channels}}">
       </geosource-channels>
     </core-menu>
 
@@ -33,45 +31,11 @@
     Polymer({
 
       channels: null,
-      posts: null,
-      filteredPosts: null,
 
-      observe: {
-        posts: 'filterPosts',
-        channels: 'filterPosts'
-      },
-
-      toggleAll: function(e) {
-        var all_toggle = this.$.all_toggle_button;
-        var fav_toggle = this.$.favorite_toggle_button;
-        var mine_toggle = this.$.mine_toggle_button;
-
-        if(all_toggle.checked) {
-          fav_toggle.disabled = true;
-          mine_toggle.disabled = true;
-        }
-        else {
-          fav_toggle.disabled = false;
-          mine_toggle.disabled = false;
-        }
-
-        this.all = all_toggle.checked;
-        this.fire('change');
-      },
-      toggleMine: function(e) {
-        var mine_toggle = this.$.mine_toggle_button;
-        this.mine = mine_toggle.checked;
-        this.fire('change');
-      },
-      toggleFavorites: function(e) {
-        var fav_toggle = this.$.favorite_toggle_button;
-        this.favorites = fav_toggle.checked;
-        this.fire('change');
-      },
-
-      filterPosts: function() {
-        this.filteredPosts = this.$.filters.filterPosts(this.posts);
-        this.filteredPosts = this.$.channels.filterPosts(this.filteredPosts);
+      filterPosts: function(posts) {
+        var filteredPosts = this.$.filters.filterPosts(posts);
+        filteredPosts = this.$.channels.filterPosts(filteredPosts);
+        return filteredPosts;
       },
 
     });

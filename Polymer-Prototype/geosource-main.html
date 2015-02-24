@@ -127,9 +127,8 @@
             <section id="section1" drawer>
               <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
               <geosource-settings id="settings"
-                posts="{{posts}}"
-                filteredPosts="{{filteredPosts}}"
-                channels="{{channels}}">
+                channels="{{channels}}"
+                on-filter-change="{{filterPosts}}">
               </geosource-settings>          
 
             </section>
@@ -162,6 +161,11 @@
       channels: null,
       posts: null,
       filteredPosts: null,
+
+      observe: {
+        posts: 'filterPosts',
+        channels: 'filterPosts'
+      },
 
       /**
        * Opens a dialog, given an event containing detail 'post', which contains
@@ -223,6 +227,9 @@
         var feed_drawer = this.$.feed_drawer;
         var map = this.$.map;
 
+        console.log('forceNarrow', settings_drawer.forceNarrow);
+        console.log('narrow', settings_drawer.narrow);
+
         feed_drawer.closeDrawer();
         if(settings_drawer.narrow) {
           settings_drawer.forceNarrow = false;
@@ -236,7 +243,7 @@
       },
 
       filterPosts: function() {
-        this.$.settings.filterPosts();
+        this.filteredPosts = this.$.settings.filterPosts(this.posts);
       }
 
     });
