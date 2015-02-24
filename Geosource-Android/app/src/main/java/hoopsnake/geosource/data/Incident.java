@@ -39,7 +39,7 @@ public class Incident {
         {
             assertNotNull(fieldWithContent);
 
-            if (!fieldWithContent.contentIsFilled())
+            if (!fieldWithContent.contentIsFilled() && fieldWithContent.isRequired())
                 return false;
         }
 

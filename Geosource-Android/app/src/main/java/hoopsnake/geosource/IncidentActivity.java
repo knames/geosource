@@ -183,7 +183,7 @@ public class IncidentActivity extends ActionBarActivity {
 
                 FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
                 curField.setContentFileUri(fileUri);
-
+                incidentAdapter.notifyDataSetChanged();
                 //TODO set the content of this field appropriately. Probably in a background task?
                 //curField.setContent(new SerialBitmap(fileUri));
 
@@ -206,6 +206,7 @@ public class IncidentActivity extends ActionBarActivity {
 
                 FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
                 curField.setContentFileUri(fileUri);
+                incidentAdapter.notifyDataSetChanged();
                 //TODO set the content of this field appropriately. Probably in a background task?
 
                 //TODO display the video in its field!
