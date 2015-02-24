@@ -26,16 +26,32 @@
       core-submenu::shadow #submenu {
         margin-left: 15px;
       }
-      core-item.core-selected {
+/*      core-item.core-selected {
         color: #3C8670;
+      }*/
+      .unsubscribe_button {
+        color: #FF6666;
+      }
+      #subscribed {
+        padding: 0;
+      }
+      core-menu {
+        margin: 0;
       }
     </style>
 
     <core-submenu opened active selected="0" icon="settings" label="Channels" on-core-select="{{channelSelected}}">
-      <core-item label="All" horizontal center layout selected></core-item>
-      <template repeat="{{channel in channels}}">
-        <core-item label="{{channel.name}}" horizontal center layout></core-item>
-      </template>
+      <core-menu selected="0">
+        <core-item label="All" horizontal center layout selected></core-item>
+        <core-submenu id="subscribed" label="Subscribed">
+          <template repeat="{{channel in channels}}">
+            <div center horizontal layout class="deleteable_channel">
+              <core-item label="{{channel.name}}" horizontal center layout flex></core-item>
+              <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
+            </div>
+          </template>
+        </core-submenu>
+      </core-menu>
     </core-submenu>
     <div center horizontal layout class="search">
       <paper-icon-button icon="search"></paper-icon-button>
