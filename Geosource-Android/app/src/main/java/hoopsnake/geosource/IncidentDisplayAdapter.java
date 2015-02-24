@@ -88,26 +88,12 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
                     break;
                 case AUDIO:
                     prompt.setText("Click to record audio.");
+                default:
+                    throw new RuntimeException("invalid type.");
             }
         }
         else
-        {
-            switch (f.getType())
-            {
-                case IMAGE:
-                    prompt.setText("There is a picture here, trust me.");
-                    break;
-                case STRING:
-                    prompt.setText((String) f.getContent());
-                    break;
-                case VIDEO:
-                    prompt.setText("There is a video here, trust me.");
-                    break;
-                case AUDIO:
-                    prompt.setText("There is an audio recording here, trust me.");
-            }
-        }
-
+            prompt.setText(f.getContentStringRepresentation());
 
         return v;
     }

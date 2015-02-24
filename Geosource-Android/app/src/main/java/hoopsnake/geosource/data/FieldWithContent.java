@@ -111,14 +111,34 @@ public class FieldWithContent extends Field implements Serializable
         return content;
     }
 
+    private boolean typeCouldHaveUri()
+    {
+        switch(type)
+        {
+            case IMAGE:
+                return true;
+            case STRING:
+                return false;
+            case VIDEO:
+                return true;
+            case AUDIO:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public Uri getContentFileUri() {
         return contentFileUri;
     }
 
     public void setContentFileUri(Uri contentFileUri) {
-        //TODO add file-type-checking, probably using Files.probeContentType().
-        this.contentFileUri = contentFileUri;
+        if (typeCouldHaveUri()) {
+            //TODO add file-type-checking, probably using Files.probeContentType().
+            this.contentFileUri = contentFileUri;
+        }
+        else
+            throw new RuntimeException("type " + type + "can't have a Uri.");
     }
 
     public boolean contentIsFilled()
@@ -129,6 +149,25 @@ public class FieldWithContent extends Field implements Serializable
         return content != null;
     }
 
+    public String getContentStringRepresentation()
+    {
+        if (!contentIsFilled())
+            return "";
+
+        switch(type)
+        {
+            case IMAGE:
+                return contentFileUri.toString();
+            case STRING:
+                return (String) content;
+            case VIDEO:
+                return contentFileUri.toString();
+            case AUDIO:
+                return contentFileUri.toString();
+            default:
+                return "";
+        }
+    }
 
     /**
      * Does the given content object match the given field type? i.e. is it an admissible object
@@ -153,11 +192,12 @@ public class FieldWithContent extends Field implements Serializable
             case IMAGE:
                 return (content instanceof SerialBitmap);
             case VIDEO:
-                //TODO this doesn't make sense. Content should be what is actually serialized and sent, not this placeholder! Something's gotta give.
-                return (content instanceof Uri);
+                //TODO implement this.
+                throw new RuntimeException("Video object type not yet implemented, sorry!");
             case STRING:
                 return (content instanceof String);
             case AUDIO:
+                //TODO implement this.
                 throw new RuntimeException("Sound object type not yet implemented, sorry!");
             default:
                 throw new RuntimeException("field type is invalid.");

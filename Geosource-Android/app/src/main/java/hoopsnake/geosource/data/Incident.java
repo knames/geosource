@@ -37,7 +37,9 @@ public class Incident {
 
         for (FieldWithContent fieldWithContent : fieldList)
         {
-            if (fieldWithContent.getContent() == null)
+            assertNotNull(fieldWithContent);
+
+            if (!fieldWithContent.contentIsFilled())
                 return false;
         }
 

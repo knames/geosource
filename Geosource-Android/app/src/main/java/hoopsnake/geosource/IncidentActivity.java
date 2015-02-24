@@ -64,7 +64,7 @@ public class IncidentActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_incident);
 
         Bundle extras = getIntent().getExtras();
         assertNotNull(extras);
@@ -72,7 +72,7 @@ public class IncidentActivity extends ActionBarActivity {
         channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
         assertNotNull(channelName);
 
-        //Query the server for the spec!
+        //TODO Query the server for the spec!
         //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
         ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
@@ -86,6 +86,8 @@ public class IncidentActivity extends ActionBarActivity {
 
         incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
         incidentDisplay.setAdapter(incidentAdapter);
+
+        incidentAdapter.notifyDataSetChanged();
 
         // React to user clicks on item
         incidentDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,19 +103,22 @@ public class IncidentActivity extends ActionBarActivity {
                         startCameraActivityForImage();
                         break;
                     case STRING:
+                        //TODO implement this.
                         field.setContent("This is a user-entered string.");
+                        incidentAdapter.notifyDataSetChanged();
+                        break;
                     case VIDEO:
                         startCameraActivityForVideo();
                         break;
                     case AUDIO:
+                        //TODO implement this.
                         throw new RuntimeException("Sorry, unimplemented.");
+                    default:
+                        throw new RuntimeException("Invalid field type.");
                 }
 
             }
         });
-
-        // we register for the contextmenu
-//        registerForContextMenu(incidentDisplay);
     }
 
     /**
@@ -218,10 +223,14 @@ public class IncidentActivity extends ActionBarActivity {
      * //TODO this function is not connected to anything yet!
      * @param v the submit button.
      */
-    private void onSubmitButtonClicked(View v)
+    public void onSubmitButtonClicked(View v)
     {
-        if (incident.isCompletelyFilledIn())
-            new TaskSendIncident(IncidentActivity.this).execute(incident);
+        if (incident.isCompletelyFilledIn()) {
+            //TODO actually call this task.
+            //new TaskSendIncident(IncidentActivity.this).execute(incident);
+
+            this.finish();
+        }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
     }
