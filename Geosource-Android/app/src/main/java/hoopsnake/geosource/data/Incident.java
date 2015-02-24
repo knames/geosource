@@ -1,6 +1,6 @@
 package hoopsnake.geosource.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -9,31 +9,35 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class Incident {
 
-    public LinkedList<FullField> getFullFieldList() {
-        return fullFieldList;
+    /** The fields for this incident, including their content. Their content may be null. */
+    ArrayList<FieldWithContent> fieldList;
+
+    /** Create a new incident by populating its fieldList by means of a
+     * fieldWithoutContentList, and adding null content. */
+    public Incident(ArrayList<FieldWithoutContent> fieldWithoutContentList)
+    {
+        fieldList = new ArrayList<FieldWithContent>();
+
+        for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
+        {
+            FieldWithContent newFieldWithContent = new FieldWithContent(
+                    fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired(), null);
+            fieldList.add(newFieldWithContent);
+        }
     }
 
-    LinkedList<FullField> fullFieldList;
-
-    public Incident(LinkedList<EmptyField> emptyFieldList)
-    {
-        fullFieldList = new LinkedList<FullField>();
-
-        for (EmptyField emptyField : emptyFieldList)
-        {
-            FullField newFullField = new FullField(emptyField.getTitle(), emptyField.getType(), null);
-            fullFieldList.add(newFullField);
-        }
+    public ArrayList<FieldWithContent> getFieldList() {
+        return fieldList;
     }
 
     /** Is the incident ready to be shipped off? That is, has it been completely filled out? */
     public boolean isCompletelyFilledIn()
     {
-        assertNotNull(fullFieldList);
+        assertNotNull(fieldList);
 
-        for (FullField fullField : fullFieldList)
+        for (FieldWithContent fieldWithContent : fieldList)
         {
-            if (fullField.getContent() == null)
+            if (fieldWithContent.getContent() == null)
                 return false;
         }
 

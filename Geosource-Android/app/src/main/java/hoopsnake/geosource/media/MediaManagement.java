@@ -14,6 +14,8 @@ import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 16/02/15.
+ * This class governs the methods to call Android's built-in media APIs: IMAGE, VIDEO, AUDIO
+ * in particular.
  */
 public class MediaManagement {
 

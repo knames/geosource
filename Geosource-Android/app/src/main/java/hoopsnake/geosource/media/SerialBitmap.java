@@ -10,14 +10,20 @@ import java.io.Serializable;
 
 /**
  * Created by wsv759 on 18/02/15.
+ * A Serializable
  */
 public class SerialBitmap implements Serializable {
 
+    /** this stores the image. */
     public Bitmap bitmap;
 
     // TODO: Finish this constructor
+
+    /**
+     *
+     * @param fis a FileInputStream streaming the image file to be stored in this SerialBitmap.
+     */
     SerialBitmap(FileInputStream fis) {
-        // Take your existing call to BitmapFactory and put it here
         bitmap = BitmapFactory.decodeStream(fis);
     }
 
