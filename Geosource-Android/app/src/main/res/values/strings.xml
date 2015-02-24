@@ -11,11 +11,11 @@
     <string name="submit_incident">Submit</string>
     <string name="create_incident">Create New Incident</string>
 
-    <!--Anam's stuff -->
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_camera_page">CameraPage</string>
-    <string name="title_activity_audio">AudioActivity</string>
-    <string name="title_activity_description">DescriptionActivity</string>
+    <!--&lt;!&ndash;Anam's stuff &ndash;&gt;-->
+    <!--<string name="menu_settings">Settings</string>-->
+    <!--<string name="title_activity_main">MainActivity</string>-->
+    <!--<string name="title_activity_camera_page">CameraPage</string>-->
+    <!--<string name="title_activity_audio">AudioActivity</string>-->
+    <!--<string name="title_activity_description">DescriptionActivity</string>-->
 
 </resources>

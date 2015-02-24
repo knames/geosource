@@ -21,6 +21,7 @@ import static junit.framework.Assert.assertNotNull;
 
 public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
 
+    private String logTag = MainActivity.APP_LOG_TAG;
     private ArrayList<FieldWithContent> fieldList;
     private Context context;
 
@@ -74,7 +75,9 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         TextView prompt = holder.promptView;
         assertNotNull(prompt);
 
-        if (f.getContent() == null) {
+        if (f.contentIsFilled())
+            prompt.setText(f.getContentStringRepresentation());
+        else {
             switch (f.getType())
             {
                 case IMAGE:
@@ -88,26 +91,11 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
                     break;
                 case AUDIO:
                     prompt.setText("Click to record audio.");
+                    break;
+                default:
+                    throw new RuntimeException("invalid type." + f.getType());
             }
         }
-        else
-        {
-            switch (f.getType())
-            {
-                case IMAGE:
-                    prompt.setText("There is a picture here, trust me.");
-                    break;
-                case STRING:
-                    prompt.setText((String) f.getContent());
-                    break;
-                case VIDEO:
-                    prompt.setText("There is a video here, trust me.");
-                    break;
-                case AUDIO:
-                    prompt.setText("There is an audio recording here, trust me.");
-            }
-        }
-
 
         return v;
     }
