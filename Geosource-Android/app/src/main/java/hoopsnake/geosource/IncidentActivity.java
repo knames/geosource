@@ -27,7 +27,6 @@ import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
 import hoopsnake.geosource.media.MediaManagement;
-import hoopsnake.geosource.media.SerialBitmap;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -168,94 +167,6 @@ public class IncidentActivity extends ActionBarActivity {
         }
     }
 
-//    // We want to create a context Menu when the user long click on an item
-//    public void onCreateContextMenu(ContextMenu menu, View v,
-//                                    ContextMenu.ContextMenuInfo menuInfo) {
-//
-//        super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) menuInfo;
-//
-//        // We know that each row in the adapter is a Map
-//        FieldWithContent field = incidentAdapter.getItem(aInfo.position);
-//
-//        if (field.getTitle().equals("Picture"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, CameraPage.class);
-//            startActivity(intent);
-//        }
-//        else if (field.getTitle().equals("Audio"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, AudioActivity.class);
-//            startActivity(intent);
-//        }
-//        else if (field.getTitle().equals("Description"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, DescriptionActivity.class);
-//            startActivity(intent);
-//        }
-//
-//        else
-//        {
-//            menu.setHeaderTitle("Options for " + field.getTitle());
-//            menu.add(1, 1, 1, "Details");
-//            menu.add(1, 2, 2, "Delete");
-//
-//        }
-//    }
-
-
-//    // This method is called when user selects an Item in the Context menu
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        int itemId = item.getItemId();
-//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) item.getMenuInfo();
-//        fieldList.remove(aInfo.position);
-//        incidentAdapter.notifyDataSetChanged();
-//        return true;
-//    }
-
-//    // Handle user click
-//    public void addField(View view) {
-//        final Dialog d = new Dialog(this);
-//        d.setContentView(R.layout.dialog);
-//        d.setTitle("Add a Field");
-//        d.setCancelable(true);
-//
-//        final EditText edit = (EditText) d.findViewById(R.id.editTextPlanet);
-//        Button b = (Button) d.findViewById(R.id.button1);
-//        b.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                String fieldTitle = edit.getText().toString();
-//
-//                //Sorry about the nested for loops, but my Android Studio was having issues with  recognizing the OR symbol, "||"
-//                if (!properField(fieldTitle))
-//                {
-//                    Toast.makeText(IncidentActivity.this,
-//                            "Sorry, that's not a valid field. Please try again.", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, true, "placeholder"));
-//                    IncidentActivity.this.incidentAdapter.notifyDataSetChanged(); // We notify the data model is changed
-//                    d.dismiss();
-//                }
-//            }
-//        });
-//
-//        d.show();
-//    }
-
-//    boolean properField(String fieldTitle)
-//    {
-//        String picture = "Picture";
-//        String audio = "Audio";
-//        String description = "Description";
-//        String title = "Title";
-//
-//        return (fieldTitle.equals(picture) || fieldTitle.equals(audio) || fieldTitle.equals(description) || fieldTitle.equals(title));
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
@@ -265,9 +176,11 @@ public class IncidentActivity extends ActionBarActivity {
                 Toast.makeText(this, "Image saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
-                //TODO set the content of this field appropriately.
                 FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
-                curField.setContent(new SerialBitmap(fileUri));
+                curField.setContentFileUri(fileUri);
+
+                //TODO set the content of this field appropriately. Probably in a background task?
+                //curField.setContent(new SerialBitmap(fileUri));
 
                 //TODO display the image in its field!
 
@@ -286,9 +199,9 @@ public class IncidentActivity extends ActionBarActivity {
                 Toast.makeText(this, "Video saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
-                //TODO set the content of this field appropriately.
                 FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
-                curField.setContent(fileUri);
+                curField.setContentFileUri(fileUri);
+                //TODO set the content of this field appropriately. Probably in a background task?
 
                 //TODO display the video in its field!
 

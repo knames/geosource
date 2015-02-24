@@ -27,23 +27,49 @@ public class FieldWithContent extends Field implements Serializable
      */
     protected Serializable content;
 
+    /**
+     * The Uri representing the file which will be converted into the Serializable content object
+     * at some point. If this is non-null, the content field is assumed to be filled.
+     *
+     * If this is null, the content field may still be non-null!
+     *
+     * This should only ever be non-null if the content actually corresponds to a file
+     * (i.e. Image, Video, or Audio content.)
+     */
+    protected Uri contentFileUri;
+
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct with non-null content.
+     * @param title
+     * @param type
+     * @param isRequired
+     * @param content
+     */
     public FieldWithContent(String title, FieldType type, boolean isRequired, Serializable content)
     {
         super(title, type, isRequired);
 
         setContent(content);
         assertNotNull(content);
+
     }
 
+    /**
+     * Construct with null content.
+     * @param title
+     * @param type
+     * @param isRequired
+     */
     public FieldWithContent(String title, FieldType type, boolean isRequired)
     {
         super(title, type, isRequired);
 
         setContent(null);
     }
+
 
     /** Serializable implementation. */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
@@ -75,9 +101,6 @@ public class FieldWithContent extends Field implements Serializable
     {
         assertNotNull(type);
 
-        if (newContent == null)
-            return;
-
         if (contentMatchesType(newContent, type))
             content =  newContent;
         else
@@ -87,6 +110,25 @@ public class FieldWithContent extends Field implements Serializable
     public Serializable getContent() {
         return content;
     }
+
+
+    public Uri getContentFileUri() {
+        return contentFileUri;
+    }
+
+    public void setContentFileUri(Uri contentFileUri) {
+        //TODO add file-type-checking, probably using Files.probeContentType().
+        this.contentFileUri = contentFileUri;
+    }
+
+    public boolean contentIsFilled()
+    {
+        if (contentFileUri != null)
+            return true;
+
+        return content != null;
+    }
+
 
     /**
      * Does the given content object match the given field type? i.e. is it an admissible object
