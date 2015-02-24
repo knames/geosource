@@ -111,6 +111,7 @@ public class FieldWithContent extends Field implements Serializable
             case IMAGE:
                 return (content instanceof SerialBitmap);
             case VIDEO:
+                //TODO this doesn't make sense. Content should be what is actually serialized and sent, not this placeholder! Something's gotta give.
                 return (content instanceof Uri);
             case STRING:
                 return (content instanceof String);

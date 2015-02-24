@@ -288,7 +288,7 @@ public class IncidentActivity extends ActionBarActivity {
 
                 //TODO set the content of this field appropriately.
                 FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
-                curField.setContent(new SerialBitmap(fileUri));
+                curField.setContent(fileUri);
 
                 //TODO display the video in its field!
 
