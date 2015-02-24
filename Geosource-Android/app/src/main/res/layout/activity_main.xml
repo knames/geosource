@@ -26,28 +26,11 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:text="@string/add_audio"
-            android:id="@+id/add_audio_button"
+            android:text="@string/create_incident"
+            android:id="@+id/create_incident_button"
             android:layout_weight="1"
-            android:clickable="true"
-            android:onClick="onAudioButtonClicked" />
+            android:onClick="onCreateIncidentButtonClicked"
+            android:singleLine="true" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="@string/add_picture"
-            android:id="@+id/add_picture_button"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:onClick="onImageButtonClicked" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="@string/add_video"
-            android:id="@+id/add_video_button"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:onClick="onVideoButtonClicked" />
     </LinearLayout>
 </LinearLayout>

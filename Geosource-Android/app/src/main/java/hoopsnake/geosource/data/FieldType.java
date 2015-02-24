@@ -8,5 +8,5 @@ public enum FieldType {
     IMAGE,
     STRING,
     VIDEO,
-    SOUND
+    AUDIO
 }

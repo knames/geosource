@@ -21,7 +21,7 @@ public class Incident {
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
             FieldWithContent newFieldWithContent = new FieldWithContent(
-                    fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired(), null);
+                    fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired());
             fieldList.add(newFieldWithContent);
         }
     }

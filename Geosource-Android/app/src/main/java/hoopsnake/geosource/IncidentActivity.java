@@ -22,6 +22,7 @@ import java.util.List;
 
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
+import hoopsnake.geosource.data.FieldType;
 import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
@@ -31,18 +32,29 @@ import static junit.framework.Assert.assertNotNull;
 
 
 public class IncidentActivity extends ActionBarActivity {
+    /** TODO ensure that only one button is ever clicked at a time. */
+    private boolean clickable = true;
 
-    // The data to show
-    ArrayList<FieldWithContent> fieldList = new ArrayList<FieldWithContent>();
-    CustomAdapter aAdpt;
-    ListView lv;
+    /** This holds the incident, and passes it to the incidentDisplay for display. */
+    IncidentDisplayAdapter incidentAdapter;
+
+    /** The ListView that is actually visible to the user, displaying all the fields of the incident. */
+    ListView incidentDisplay;
 
     /** The filepath to pass to the camera or video app, to which it will save a new media file. */
     private Uri fileUri;
 
+    /** The incident to be created and edited by the user on this screen. */
     Incident incident;
+
     public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
+
+    /** The name of the channel to which to submit the new incident. */
     String channelName;
+
+    /** The position of the currently-selected field in the incidentDisplay.
+     * This is recorded for when the Camera or Video activity returns. */
+    int curFieldIdx;
 
     private enum RequestCode {
         CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,
@@ -61,77 +73,39 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(channelName);
 
         //Query the server for the spec!
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
+        //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
+        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
+        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
+        mockedSpec.add(new FieldWithoutContent("Recording", FieldType.AUDIO, false));
+        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+
+        incident = new Incident(mockedSpec);
         // We get the ListView component from the layout
-        lv = (ListView) findViewById(R.id.listView);
+        incidentDisplay = (ListView) findViewById(R.id.listView);
 
-        // This is a simple adapter that accepts as parameter
-        // Context
-        // Data list
-        // The row layout that is used during the row creation
-        // The keys used to retrieve the data
-        // The View id used to show the data. The key number and the view id must match
-        //aAdpt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, fieledList);
+        incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
+        incidentDisplay.setAdapter(incidentAdapter);
 
         // React to user clicks on item
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        incidentDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
                                     long id) {
-                FieldWithContent field = aAdpt.getItem(position);
+                FieldWithContent field = incidentAdapter.getItem(position);
 
-                switch(field.getType())
-                {
+                curFieldIdx = position;
+
+                switch (field.getType()) {
                     case IMAGE:
-                        // create Intent to take a picture and return control to the calling application
-                        Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                        if (MediaManagement.isExternalStorageWritable()) {
-                            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
-                            if (fileUri == null)
-                            {
-                                Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-
-                            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
-
-                            // start the image capture Intent
-                            startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
-                        }
-                        else
-                        {
-                            //TODO Potentially save a file to internal storage, instead.
-                        }
-
+                        startCameraActivityForImage();
                         break;
                     case STRING:
-                        throw new RuntimeException("Sorry, unimplemented.");
+                        field.setContent("This is a user-entered string.");
                     case VIDEO:
-                        //create new Intent
-                        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-                        if (MediaManagement.isExternalStorageWritable()) {
-                            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
-                            if (fileUri == null)
-                            {
-                                Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-
-                            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
-                            videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
-
-                            // start the Video Capture Intent
-                            startActivityForResult(videoIntent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
-                        }
-                        else
-                        {
-                            //TODO Potentially save a file to internal storage, instead.
-                        }
+                        startCameraActivityForVideo();
                         break;
-                    case SOUND:
+                    case AUDIO:
                         throw new RuntimeException("Sorry, unimplemented.");
                 }
 
@@ -139,97 +113,59 @@ public class IncidentActivity extends ActionBarActivity {
         });
 
         // we register for the contextmenu
-//        registerForContextMenu(lv);
+//        registerForContextMenu(incidentDisplay);
     }
 
+    /**
+     * start Android's built-in Camera activity, allowing the user to take a picture, and save it
+     * to their image gallery.
+     */
+    private void startCameraActivityForImage()
+    {
+        // create Intent to take a picture and return control to the calling application
+        Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-//    // We want to create a context Menu when the user long click on an item
-//    public void onCreateContextMenu(ContextMenu menu, View v,
-//                                    ContextMenu.ContextMenuInfo menuInfo) {
-//
-//        super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) menuInfo;
-//
-//        // We know that each row in the adapter is a Map
-//        FieldWithContent field = aAdpt.getItem(aInfo.position);
-//
-//        if (field.getTitle().equals("Picture"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, CameraPage.class);
-//            startActivity(intent);
-//        }
-//        else if (field.getTitle().equals("Audio"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, AudioActivity.class);
-//            startActivity(intent);
-//        }
-//        else if (field.getTitle().equals("Description"))
-//        {
-//            Intent intent = new Intent(IncidentActivity.this, DescriptionActivity.class);
-//            startActivity(intent);
-//        }
-//
-//        else
-//        {
-//            menu.setHeaderTitle("Options for " + field.getTitle());
-//            menu.add(1, 1, 1, "Details");
-//            menu.add(1, 2, 2, "Delete");
-//
-//        }
-//    }
+        if (MediaManagement.isExternalStorageWritable()) {
+            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
+            if (fileUri == null) {
+                Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                return;
+            }
 
+            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
-//    // This method is called when user selects an Item in the Context menu
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        int itemId = item.getItemId();
-//        AdapterViewCompat.AdapterContextMenuInfo aInfo = (AdapterViewCompat.AdapterContextMenuInfo) item.getMenuInfo();
-//        fieldList.remove(aInfo.position);
-//        aAdpt.notifyDataSetChanged();
-//        return true;
-//    }
+            // start the image capture Intent
+            startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
+        } else {
+            //TODO Potentially save a file to internal storage, instead.
+        }
+    }
 
-//    // Handle user click
-//    public void addField(View view) {
-//        final Dialog d = new Dialog(this);
-//        d.setContentView(R.layout.dialog);
-//        d.setTitle("Add a Field");
-//        d.setCancelable(true);
-//
-//        final EditText edit = (EditText) d.findViewById(R.id.editTextPlanet);
-//        Button b = (Button) d.findViewById(R.id.button1);
-//        b.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                String fieldTitle = edit.getText().toString();
-//
-//                //Sorry about the nested for loops, but my Android Studio was having issues with  recognizing the OR symbol, "||"
-//                if (!properField(fieldTitle))
-//                {
-//                    Toast.makeText(IncidentActivity.this,
-//                            "Sorry, that's not a valid field. Please try again.", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    IncidentActivity.this.fieldList.add(new FieldWithContent(fieldTitle, FieldType.STRING, true, "placeholder"));
-//                    IncidentActivity.this.aAdpt.notifyDataSetChanged(); // We notify the data model is changed
-//                    d.dismiss();
-//                }
-//            }
-//        });
-//
-//        d.show();
-//    }
+    /**
+     * start Android's built-in Camera activity, allowing the user to take a video, and save it
+     * to their video gallery.
+     */
+    private void startCameraActivityForVideo()
+    {
+        //create new Intent
+        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-//    boolean properField(String fieldTitle)
-//    {
-//        String picture = "Picture";
-//        String audio = "Audio";
-//        String description = "Description";
-//        String title = "Title";
-//
-//        return (fieldTitle.equals(picture) || fieldTitle.equals(audio) || fieldTitle.equals(description) || fieldTitle.equals(title));
-//    }
+        if (MediaManagement.isExternalStorageWritable()) {
+            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
+            if (fileUri == null) {
+                Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
+            videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+
+            // start the Video Capture Intent
+            startActivityForResult(videoIntent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
+        } else {
+            //TODO Potentially save a file to internal storage, instead.
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -239,6 +175,12 @@ public class IncidentActivity extends ActionBarActivity {
 
                 Toast.makeText(this, "Image saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
+
+                FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
+                curField.setContentFileUri(fileUri);
+
+                //TODO set the content of this field appropriately. Probably in a background task?
+                //curField.setContent(new SerialBitmap(fileUri));
 
                 //TODO display the image in its field!
 
@@ -257,9 +199,12 @@ public class IncidentActivity extends ActionBarActivity {
                 Toast.makeText(this, "Video saved to:\n" +
                         fileUri, Toast.LENGTH_LONG).show();
 
+                FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
+                curField.setContentFileUri(fileUri);
+                //TODO set the content of this field appropriately. Probably in a background task?
+
                 //TODO display the video in its field!
 
-//                new TaskSendImageOnSocket().execute(fileUri);
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the video capture
             } else {
@@ -296,6 +241,7 @@ public class IncidentActivity extends ActionBarActivity {
         }
 
         protected SocketResult doInBackground(String... params) {
+            //TODO make this the actual ip address.
             String ipaddress = "10.227.145.56";
             int portNum = 80;
 
@@ -356,8 +302,8 @@ public class IncidentActivity extends ActionBarActivity {
 
             incident = new Incident(fieldsToBeFilled);
 
-            aAdpt = new CustomAdapter(incident.getFieldList(), IncidentActivity.this);
-            lv.setAdapter(aAdpt);
+            incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
+            incidentDisplay.setAdapter(incidentAdapter);
 
             return SocketResult.SUCCESS;
         }
@@ -380,7 +326,7 @@ public class IncidentActivity extends ActionBarActivity {
                     Log.i(logTag, "incident spec for channel " + channelName + "downloaded successfully.");
 
                     //TODO notify the ui of the new incident. We probably need more than this.
-                    aAdpt.notifyDataSetChanged();
+                    incidentAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -400,6 +346,7 @@ public class IncidentActivity extends ActionBarActivity {
         }
 
         protected SocketResult doInBackground(Incident... params) {
+            //TODO make this the actual ip address.
             String ipaddress = "10.227.145.56";
             int portNum = 80;
 

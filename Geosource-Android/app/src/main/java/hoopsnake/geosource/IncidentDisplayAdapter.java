@@ -19,14 +19,12 @@ import hoopsnake.geosource.data.FieldWithContent;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class CustomAdapter extends ArrayAdapter<FieldWithContent> {
+public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
 
     private ArrayList<FieldWithContent> fieldList;
     private Context context;
 
-
-
-    public CustomAdapter(ArrayList<FieldWithContent> fieldList, Context ctx) {
+    public IncidentDisplayAdapter(ArrayList<FieldWithContent> fieldList, Context ctx) {
         super(ctx, R.layout.img_row_layout, fieldList);
         this.fieldList = fieldList;
         this.context = ctx;
@@ -88,7 +86,7 @@ public class CustomAdapter extends ArrayAdapter<FieldWithContent> {
                 case VIDEO:
                     prompt.setText("Click to take a video.");
                     break;
-                case SOUND:
+                case AUDIO:
                     prompt.setText("Click to record audio.");
             }
         }
@@ -105,7 +103,7 @@ public class CustomAdapter extends ArrayAdapter<FieldWithContent> {
                 case VIDEO:
                     prompt.setText("There is a video here, trust me.");
                     break;
-                case SOUND:
+                case AUDIO:
                     prompt.setText("There is an audio recording here, trust me.");
             }
         }

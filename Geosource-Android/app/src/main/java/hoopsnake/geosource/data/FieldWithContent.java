@@ -1,5 +1,7 @@
 package hoopsnake.geosource.data;
 
+import android.net.Uri;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -25,16 +27,49 @@ public class FieldWithContent extends Field implements Serializable
      */
     protected Serializable content;
 
+    /**
+     * The Uri representing the file which will be converted into the Serializable content object
+     * at some point. If this is non-null, the content field is assumed to be filled.
+     *
+     * If this is null, the content field may still be non-null!
+     *
+     * This should only ever be non-null if the content actually corresponds to a file
+     * (i.e. Image, Video, or Audio content.)
+     */
+    protected Uri contentFileUri;
+
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct with non-null content.
+     * @param title
+     * @param type
+     * @param isRequired
+     * @param content
+     */
     public FieldWithContent(String title, FieldType type, boolean isRequired, Serializable content)
     {
         super(title, type, isRequired);
 
         setContent(content);
         assertNotNull(content);
+
     }
+
+    /**
+     * Construct with null content.
+     * @param title
+     * @param type
+     * @param isRequired
+     */
+    public FieldWithContent(String title, FieldType type, boolean isRequired)
+    {
+        super(title, type, isRequired);
+
+        setContent(null);
+    }
+
 
     /** Serializable implementation. */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
@@ -57,10 +92,14 @@ public class FieldWithContent extends Field implements Serializable
         throw new InvalidObjectException("Stream data required");
     }
 
+    /**
+     * Sets content to the specified value, but only if newContent matches the current type.
+     * newContent can be null.
+     * @param newContent a Serializable object.
+     */
     public void setContent(Serializable newContent)
     {
         assertNotNull(type);
-        assertNotNull(newContent);
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -72,9 +111,31 @@ public class FieldWithContent extends Field implements Serializable
         return content;
     }
 
+
+    public Uri getContentFileUri() {
+        return contentFileUri;
+    }
+
+    public void setContentFileUri(Uri contentFileUri) {
+        //TODO add file-type-checking, probably using Files.probeContentType().
+        this.contentFileUri = contentFileUri;
+    }
+
+    public boolean contentIsFilled()
+    {
+        if (contentFileUri != null)
+            return true;
+
+        return content != null;
+    }
+
+
     /**
      * Does the given content object match the given field type? i.e. is it an admissible object
      * for the specified field type?
+     *
+     * NOTE: null content is always admissible.
+     *
      * @param content a Serializable content object. This is probably the 'content' field from a
      *                FieldWithContent object.
      * @param type  An instance of FieldType. This is probably the 'type' field from a FieldWithContent object.
@@ -83,17 +144,20 @@ public class FieldWithContent extends Field implements Serializable
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
         assertNotNull(type);
-        assertNotNull(content);
+
+        if (content == null)
+            return true;
 
         switch (type)
         {
             case IMAGE:
                 return (content instanceof SerialBitmap);
             case VIDEO:
-                throw new RuntimeException("Video object type not yet implemented, sorry!");
+                //TODO this doesn't make sense. Content should be what is actually serialized and sent, not this placeholder! Something's gotta give.
+                return (content instanceof Uri);
             case STRING:
                 return (content instanceof String);
-            case SOUND:
+            case AUDIO:
                 throw new RuntimeException("Sound object type not yet implemented, sorry!");
             default:
                 throw new RuntimeException("field type is invalid.");

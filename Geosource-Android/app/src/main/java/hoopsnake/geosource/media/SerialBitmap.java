@@ -2,9 +2,12 @@ package hoopsnake.geosource.media;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -21,9 +24,20 @@ public class SerialBitmap implements Serializable {
 
     /**
      *
-     * @param fis a FileInputStream streaming the image file to be stored in this SerialBitmap.
+     * @param fileUri the Uri of the file to be stored in this SerialBitmap.
      */
-    SerialBitmap(FileInputStream fis) {
+    public SerialBitmap(Uri fileUri) {
+
+        File imageFile = new File(fileUri.getPath());
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException("uri " + fileUri + " not found.");
+        }
+
         bitmap = BitmapFactory.decodeStream(fis);
     }
 
