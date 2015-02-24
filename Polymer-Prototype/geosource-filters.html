@@ -13,7 +13,7 @@
         width: 100%;
         font-weight: 300;
       }
-      #toggle_label {
+      .toggle_label {
         margin: 15px;
         margin-left: 0;
       }
@@ -26,15 +26,15 @@
     </style>
 
     <core-submenu opened active id="core_submenu" icon="settings" label="Filters">
-      <div center horizontal layout id="toggle_label">
+      <div center horizontal layout class="toggle_label">
         <div flex>All</div>
         <paper-toggle-button checked id="all_toggle_button" on-change="{{toggleAll}}"></paper-toggle-button>
       </div>
-      <div center horizontal layout id="toggle_label">
+      <div center horizontal layout class="toggle_label">
         <div flex>Mine</div>
         <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{toggleMine}}"></paper-toggle-button>
       </div>
-      <div center horizontal layout id="toggle_label">
+      <div center horizontal layout class="toggle_label">
         <div flex>Favorites</div>
         <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{toggleFavorites}}"></paper-toggle-button>
       </div>
