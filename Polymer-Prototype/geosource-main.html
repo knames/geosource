@@ -3,23 +3,15 @@
 
 <link rel="import" href="geosource-feed.html">
 <link rel="import" href="geosource-map.html">
-<link rel="import" href="geosource-channels.html">
-<link rel="import" href="geosource-filters.html">
+<link rel="import" href="geosource-settings.html">
 
 <link rel="import" href="components/font-roboto/roboto.html">
 <link rel="import" href="components/core-header-panel/core-header-panel.html">
 <link rel="import" href="components/core-toolbar/core-toolbar.html">
-<link rel="import" href="components/paper-tabs/paper-tabs.html">
 
 <link rel="import" href="components/core-drawer-panel/core-drawer-panel.html">
-<link rel="import" href="components/core-icons/communication-icons.html">
-<link rel="import" href="components/core-menu/core-menu.html">
-<link rel="import" href="components/core-item/core-item.html">
-<link rel="import" href="components/paper-input/paper-input.html">
-<link rel="import" href="components/core-icons/hardware-icons.html">
 <link rel="import" href="components/paper-dialog/paper-dialog.html">
 <link rel="import" href="components/paper-spinner/paper-spinner.html">
-<link rel="import" href="components/google-signin/google-signin.html">
 
 <link rel="import" href="post-service/post-service.html">
 <link rel="import" href="post-service/channel-service.html">
@@ -88,12 +80,6 @@
           box-sizing: border-box;
           background-color: rgb(221, 221, 221);
         }
-        #core_menu {
-          font-size: 16px;
-          width: 216px;
-          position: absolute;
-          margin: 20px;
-        }
         #toggle_label {
           margin: 15px;
           margin-left: 0;
@@ -121,7 +107,7 @@
         }      
   </style>
 
-    <post-service id="post_service" posts="{{allPosts}}"></post-service>
+    <post-service id="post_service" posts="{{posts}}"></post-service>
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
@@ -140,15 +126,10 @@
           <core-drawer-panel transition responsivewidth="800px" selected="main" disableEdgeSwipe id="settings_drawer">
             <section id="section1" drawer>
               <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
-              <core-menu multi notap selected="0" selectedindex="0" id="core_menu">
-                <geosource-filters id="filters"
-                  on-change="{{filterPosts}}">
-                </geosource-filters>
-                <geosource-channels id="channels" 
-                  channels="{{channels}}" 
-                  on-selection-change="{{filterPosts}}">
-                </geosource-channels>                
-              </core-menu>
+              <geosource-settings id="settings"
+                channels="{{channels}}"
+                on-filter-change="{{filterPosts}}">
+              </geosource-settings>          
 
             </section>
 
@@ -178,46 +159,12 @@
     Polymer({
 
       channels: null,
-      allPosts: null,
+      posts: null,
       filteredPosts: null,
 
-      /**
-       * Filters 'allPosts' depending upon the channels and filters selected,
-       * and places the result into 'filteredPosts'.
-       */
-      filterPosts: function() {
-
-        var filters = this.$.filters;
-        var selectedChannel = this.$.channels.selected;
-
-        var postIncluded = [];
-        for(i=0; i<this.allPosts.length; i++)
-        {
-          postIncluded[i] = false;
-        }
-
-        for(i=0; i<this.allPosts.length; i++)
-        {
-            postIncluded[i] = (postIncluded[i] || this.allPosts[i].channel == selectedChannel || selectedChannel == 'All');
-        }
-
-        for(i=0; i<this.allPosts.length; i++) {
-          postIncluded[i] = (filters.all && postIncluded[i]) || (!filters.all && filters.favorites && this.allPosts[i].favorite && postIncluded[i]);
-        }
-
-        var includedPosts = []
-        for(i=0; i<this.allPosts.length; i++)
-        {
-          if(postIncluded[i])
-          {
-            includedPosts.push(this.allPosts[i]);
-          }
-        }
-
-        this.filteredPosts = includedPosts;
-
-        console.log("all", this.allPosts);
-        console.log("filtered", this.filteredPosts);
+      observe: {
+        posts: 'filterPosts',
+        channels: 'filterPosts'
       },
 
       /**
@@ -236,20 +183,6 @@
           dialog_content);
 
         dialog.toggle();
-      },
-
-      /**
-       * When the attribute 'allPosts' changes, the posts are filtered.
-       */
-      allPostsChanged: function() {
-        this.filterPosts();
-      },
-
-      /**
-       * When the attribute 'channels' changes, the posts are filtered.
-       */
-      channelsChanged: function() {
-        this.filterPosts();
       },
 
       /**
@@ -281,7 +214,7 @@
           feed_drawer.forceNarrow = true;
         }
 
-        setTimeout(function(){ map.resize() }, 500);
+        this.async(function(){ map.resize() }, null, 300);
       },
 
       /**
@@ -294,6 +227,9 @@
         var feed_drawer = this.$.feed_drawer;
         var map = this.$.map;
 
+        console.log('forceNarrow', settings_drawer.forceNarrow);
+        console.log('narrow', settings_drawer.narrow);
+
         feed_drawer.closeDrawer();
         if(settings_drawer.narrow) {
           settings_drawer.forceNarrow = false;
@@ -303,8 +239,12 @@
           settings_drawer.forceNarrow = true;
         }
 
-        setTimeout(function(){ map.resize() }, 500);
+        this.async(function(){ map.resize() }, null, 300);
       },
+
+      filterPosts: function() {
+        this.filteredPosts = this.$.settings.filterPosts(this.posts);
+      }
 
     });
 

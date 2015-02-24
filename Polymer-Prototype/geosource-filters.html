@@ -51,18 +51,28 @@
         }
 
         this.all = all_toggle.checked;
-        this.fire('change');
+        this.fire('filter-change');
       },
       toggleMine: function(e) {
         var mine_toggle = this.$.mine_toggle_button;
         this.mine = mine_toggle.checked;
-        this.fire('change');
+        this.fire('filter-change');
       },
       toggleFavorites: function(e) {
         var fav_toggle = this.$.favorite_toggle_button;
         this.favorites = fav_toggle.checked;
-        this.fire('change');
-      }
+        this.fire('filter-change');
+      },
+
+      filterPosts: function(posts) {
+        var includedPosts = [];
+        for(i=0; i<posts.length; i++) {
+          if((this.all) || (!this.all && this.favorites && posts[i].favorite)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+        return includedPosts;
+      },
 
     });
   </script>
