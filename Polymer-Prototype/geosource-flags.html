@@ -26,17 +26,21 @@
     </style>
 
     <core-submenu opened active id="core_submenu" icon="flag" label="Flags">
-      <div center horizontal layout class="toggle_label">
-        <div flex>All</div>
-        <paper-toggle-button checked id="all_toggle_button" on-change="{{toggleAll}}"></paper-toggle-button>
-      </div>
-      <div center horizontal layout class="toggle_label">
-        <div flex>Mine</div>
-        <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{toggleMine}}"></paper-toggle-button>
-      </div>
-      <div center horizontal layout class="toggle_label">
-        <div flex>Favorites</div>
-        <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{toggleFavorites}}"></paper-toggle-button>
+      <div on-change="{{toggleButton}}">
+        <div center horizontal layout class="toggle_label">
+          <div flex>All</div>
+          <paper-toggle-button id="all_toggle_button" checked
+            on-change="{{toggleAll}}">
+          </paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label">
+          <div flex>Mine</div>
+          <paper-toggle-button id="mine_toggle_button" checked disabled></paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label">
+          <div flex>Favorites</div>
+          <paper-toggle-button id="favorite_toggle_button" checked disabled></paper-toggle-button>
+        </div>
       </div>
     </core-submenu>
 
@@ -45,15 +49,10 @@
   <script>
     Polymer({
 
-      all: true,
-      mine: true,
-      favorites: true,
-
       toggleAll: function(e) {
         var all_toggle = this.$.all_toggle_button;
         var fav_toggle = this.$.favorite_toggle_button;
         var mine_toggle = this.$.mine_toggle_button;
-
         if(all_toggle.checked) {
           fav_toggle.disabled = true;
           mine_toggle.disabled = true;
@@ -62,25 +61,21 @@
           fav_toggle.disabled = false;
           mine_toggle.disabled = false;
         }
+        this.fire('filter-change');
+      },
 
-        this.all = all_toggle.checked;
-        this.fire('filter-change');
-      },
-      toggleMine: function(e) {
-        var mine_toggle = this.$.mine_toggle_button;
-        this.mine = mine_toggle.checked;
-        this.fire('filter-change');
-      },
-      toggleFavorites: function(e) {
-        var fav_toggle = this.$.favorite_toggle_button;
-        this.favorites = fav_toggle.checked;
+      toggleButton: function() {
         this.fire('filter-change');
       },
 
       filterPosts: function(posts) {
+        var all = this.$.all_toggle_button.checked;
+        var fav = this.$.favorite_toggle_button.checked;
+        var mine = this.$.mine_toggle_button.checked;
+
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((this.all) || (!this.all && this.favorites && posts[i].favorite)) {
+          if((all) || (!all && fav && posts[i].favorite)) {
             includedPosts.push(posts[i]);
           }
         }
