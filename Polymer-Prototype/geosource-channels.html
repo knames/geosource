@@ -46,7 +46,9 @@
         <core-item label="Subscribed"></core-item>
         <template repeat="{{channel in subscribedChannels}}">
           <core-item label="{{channel.name}}" horizontal justified layout>
-            <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
+            <paper-icon-button icon="close" class="unsubscribe_button" 
+              on-tap="{{unsubscribe}}">
+            </paper-icon-button>
           </core-item>
         </template>
         <div center horizontal layout class="search">
@@ -58,7 +60,7 @@
        </div>
         <template repeat="{{channel in searchedChannels}}">
           <core-item label="{{channel.name}}" horizontal justified layout>
-            <paper-icon-button icon="add" class="subscribe_button"></paper-icon-button>
+            <paper-icon-button icon="add" class="subscribe_button" on-tap="{{subscribe}}"></paper-icon-button>
           </core-item>
         </template>
       </core-menu>
@@ -73,7 +75,7 @@
     subscribedChannels: null,
     seachedChannels: null,
 
-    channelsChanged: function(){
+    channelsChanged: function() {
       this.channels.sort();
       this.subscribedChannels = []
       for(i=0; i<this.channels.length; i++) {
@@ -124,8 +126,7 @@
       return includedPosts;
     },
 
-    searchChannels: function()
-    {
+    searchChannels: function() {
 
       var search = this.$.search_input.value;
 
@@ -149,6 +150,23 @@
           this.searchedChannels.push(this.channels[i]);
         }
       }
+    },
+
+    unsubscribe: function(event, detail, sender) {
+      console.log('event', event);
+      console.log('detail', detail);
+      console.log('sender', sender);
+      console.log(sender.templateInstance.model.channel);
+
+      var channel = sender.templateInstance.model.channel;
+      channel.subscribed = false;
+      this.channelsChanged();
+    },
+
+    subscribe: function(event, detail, sender) {
+      var channel = sender.templateInstance.model.channel;
+      channel.subscribed = true;
+      this.channelsChanged();
     }
 
   });
