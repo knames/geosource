@@ -40,8 +40,8 @@
       }
     </style>
 
-    <core-submenu opened active selected="0" icon="settings" label="Channels" on-core-select="{{channelSelected}}">
-      <core-menu selected="0">
+    <core-submenu opened active selected="0" icon="settings-remote" label="Channels" on-core-select="{{channelSelected}}">
+      <core-menu id="core_menu" selected="0">
         <core-item label="All"></core-item>
         <core-item label="Subscribed"></core-item>
         <template repeat="{{channel in subscribedChannels}}">

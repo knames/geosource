@@ -2,6 +2,7 @@
 <link rel="import" href="geosource-channels.html">
 <link rel="import" href="components/core-menu/core-menu.html">
 <link rel="import" href="geosource-account.html">
+<link rel="import" href="geosource-time.html">
 
 <polymer-element name="geosource-settings" attributes="channels posts filteredPosts">
 
@@ -13,24 +14,21 @@
         position: absolute;
         padding: 10px;
       }
-      geosource-filters {
-        margin-bottom: 30px;
-      }
-      geosource-account {
-        margin-bottom: 30px;
-      }
-      geosource-channels {
+      .panel {
         margin-bottom: 30px;
       }
     </style>
       <div layout vertical center>
-          <geosource-account id="account">
+          <geosource-account id="account_panel" class="panel">
           </geosource-account>
 
-          <geosource-filters id="filters">
+          <geosource-filters id="filters_panel" class="panel">
           </geosource-filters>
           
-          <geosource-channels id="channels" 
+          <geosource-time id="time_panel" class="panel">
+          </geosource-time>
+
+          <geosource-channels id="channels_panel" class="panel"
             channels="{{channels}}">
           </geosource-channels>
       </div>
@@ -42,7 +40,8 @@
       channels: null,
 
       filterPosts: function(posts) {
-        var filteredPosts = this.$.filters.filterPosts(posts);
+        var filteredPosts = this.$.filters_panel.filterPosts(posts);
+        filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
         filteredPosts = this.$.channels.filterPosts(filteredPosts);
         return filteredPosts;
       },

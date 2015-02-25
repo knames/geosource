@@ -1,7 +1,7 @@
 <link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="components/core-menu/core-submenu.html">
 
-<polymer-element name="geosource-filters">
+<polymer-element name="geosource-time">
 
   <template>
     
@@ -25,7 +25,7 @@
       }
     </style>
 
-    <core-submenu opened active id="core_submenu" icon="flag" label="Flags">
+    <core-submenu opened active id="core_submenu" icon="schedule" label="Time">
       <div center horizontal layout class="toggle_label">
         <div flex>All</div>
         <paper-toggle-button checked id="all_toggle_button" on-change="{{toggleAll}}"></paper-toggle-button>
