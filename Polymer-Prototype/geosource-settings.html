@@ -1,4 +1,4 @@
-<link rel="import" href="geosource-filters.html">
+<link rel="import" href="geosource-flags.html">
 <link rel="import" href="geosource-channels.html">
 <link rel="import" href="components/core-menu/core-menu.html">
 <link rel="import" href="geosource-account.html">
@@ -22,8 +22,8 @@
           <geosource-account id="account_panel" class="panel">
           </geosource-account>
 
-          <geosource-filters id="filters_panel" class="panel">
-          </geosource-filters>
+          <geosource-flags id="flags_panel" class="panel">
+          </geosource-flags>
           
           <geosource-time id="time_panel" class="panel">
           </geosource-time>
@@ -40,7 +40,7 @@
       channels: null,
 
       filterPosts: function(posts) {
-        var filteredPosts = this.$.filters_panel.filterPosts(posts);
+        var filteredPosts = this.$.flags_panel.filterPosts(posts);
         filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
         filteredPosts = this.$.channels.filterPosts(filteredPosts);
         return filteredPosts;
