@@ -1,6 +1,7 @@
 <link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="components/core-menu/core-submenu.html">
 <link rel="import" href="components/google-signin/google-signin.html">
+<link rel="import" href="components/paper-icon-button/paper-icon-button.html">
 
 <polymer-element name="geosource-account">
 
@@ -28,6 +29,16 @@
         margin-top: 10px;
         margin-bottom: 10px;
       }
+      #dropdown {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        color: #636363;
+      }
+      google-signin::shadow .buttonText {
+        padding-left: 1.75em;
+        padding-right: 1.75em;
+      }
     </style>
 
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
@@ -45,6 +56,8 @@
       </div> -->
       <google-signin labelSignin="Sign-in with Google" theme="light"></google-signin>
     </core-submenu>
+
+   
 
   </template>
 
