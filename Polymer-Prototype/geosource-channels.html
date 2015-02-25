@@ -29,6 +29,9 @@
       .unsubscribe_button {
         color: #FF6666;
       }
+      .subscribe_button {
+        color: #5CC0A2;
+      }
       #subscribed {
         padding: 0;
       }
@@ -39,19 +42,26 @@
 
     <core-submenu opened active selected="0" icon="settings" label="Channels" on-core-select="{{channelSelected}}">
       <core-menu selected="0">
-        <core-item label="All" horizontal center layout selected></core-item>
-        <core-submenu id="subscribed" label="Subscribed">
-          <template repeat="{{channel in subscribedChannels}}">
-              <core-item label="{{channel.name}}" horizontal justified layout>
-                <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
-              </core-item>
-          </template>
-        </core-submenu>
+        <core-item label="All"></core-item>
+        <core-item label="Subscribed"></core-item>
+        <template repeat="{{channel in subscribedChannels}}">
+          <core-item label="{{channel.name}}" horizontal justified layout>
+            <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
+          </core-item>
+        </template>
+        <div center horizontal layout class="search">
+          <paper-input id="search_input" 
+            label="Search for channels..."
+            on-value-change="{{searchChannels}}">
+          </paper-input>
+          <paper-icon-button icon="search"></paper-icon-button> 
+       </div>
+        <template repeat="{{channel in searchedChannels}}">
+          <core-item label="{{channel.name}}" horizontal justified layout>
+            <paper-icon-button icon="add" class="subscribe_button"></paper-icon-button>
+          </core-item>
+        </template>
       </core-menu>
-      <div center horizontal layout class="search">
-        <paper-input label="Search for channels..."></paper-input>
-        <paper-icon-button icon="search"></paper-icon-button> 
-     </div>
     </core-submenu>
   </template>
 
@@ -61,8 +71,10 @@
     selected: "All",
     channels: null,
     subscribedChannels: null,
+    seachedChannels: null,
 
     channelsChanged: function(){
+      this.channels.sort();
       this.subscribedChannels = []
       for(i=0; i<this.channels.length; i++) {
         if(this.channels[i].subscribed) {
@@ -76,10 +88,10 @@
      * whichever attribute has been selected.
      */
     channelSelected: function(e) {
-      this.selected = e.detail.item.label;
-      console.log('selected channel', this.selected);
-      this.$.subscribed.selected = false;
-      this.fire('filter-change');
+      if(e.detail.item.label) {
+        this.selected = e.detail.item.label;
+        this.fire('filter-change');
+      }
     },
 
     filterPosts: function(posts) {
@@ -111,6 +123,34 @@
 
       return includedPosts;
     },
+
+    searchChannels: function()
+    {
+
+      var search = this.$.search_input.value;
+
+      if(search == '') {
+        this.searchedChannels = [];
+        return;
+      }
+
+      var regexString = "^";
+      for(i=0; i<search.length; i++) {
+        regexString += search[i] + '.*';
+      }
+
+      var regex = new RegExp(regexString, 'i');
+
+      console.log(regexString);
+
+      this.searchedChannels = [];
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].name.match(regex)) {
+          this.searchedChannels.push(this.channels[i]);
+        }
+      }
+    }
+
   });
   </script>
   

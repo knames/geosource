@@ -131,6 +131,7 @@ Use `paper-input-decorator` if you would like to implement validation.
 
     valueChanged: function() {
       this.$.decorator.updateLabelVisibility(this.value);
+      this.fire('value-change', null, this);
     },
 
     changeAction: function(e) {
