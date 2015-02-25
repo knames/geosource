@@ -42,7 +42,7 @@
       filterPosts: function(posts) {
         var filteredPosts = this.$.flags_panel.filterPosts(posts);
         filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
-        filteredPosts = this.$.channels.filterPosts(filteredPosts);
+        filteredPosts = this.$.channels_panel.filterPosts(filteredPosts);
         return filteredPosts;
       },
 
