@@ -20,9 +20,6 @@
       core-submenu {
         padding: 10px;
       }
-      .search {
-        padding-right: 10px;
-      }
       core-submenu::shadow #submenu {
         margin-left: 15px;
       }
@@ -44,24 +41,35 @@
       <core-menu selected="0">
         <core-item label="All" horizontal center layout selected></core-item>
         <core-submenu id="subscribed" label="Subscribed">
-          <template repeat="{{channel in channels}}">
-            <div center horizontal layout class="deleteable_channel">
-              <core-item label="{{channel.name}}" horizontal center layout flex></core-item>
-              <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
-            </div>
+          <template repeat="{{channel in subscribedChannels}}">
+              <core-item label="{{channel.name}}" horizontal justified layout>
+                <paper-icon-button icon="close" class="unsubscribe_button"></paper-icon-button>
+              </core-item>
           </template>
         </core-submenu>
       </core-menu>
+      <div center horizontal layout class="search">
+        <paper-input label="Search for channels..."></paper-input>
+        <paper-icon-button icon="search"></paper-icon-button> 
+     </div>
     </core-submenu>
-    <div center horizontal layout class="search">
-      <paper-icon-button icon="search"></paper-icon-button>
-      <paper-input label="Search for channels..."></paper-input>
-    </div>
   </template>
 
   <script>
   Polymer({
+
     selected: "All",
+    channels: null,
+    subscribedChannels: null,
+
+    channelsChanged: function(){
+      this.subscribedChannels = []
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].subscribed) {
+          this.subscribedChannels.push(this.channels[i])
+        }
+      }
+    },
 
     /**
      * Fires a 'selection-change' event, and changes the 'selected' attribute to
@@ -69,16 +77,38 @@
      */
     channelSelected: function(e) {
       this.selected = e.detail.item.label;
+      console.log('selected channel', this.selected);
+      this.$.subscribed.selected = false;
       this.fire('filter-change');
     },
 
     filterPosts: function(posts) {
       var includedPosts = [];
-      for(i=0; i<posts.length; i++) {
-        if(this.selected == 'All' || posts[i].channel == this.selected) {
-          includedPosts.push(posts[i]);
-        }
+
+      switch (this.selected) {
+        case 'All':
+          includedPosts = posts.slice(0);
+          break;
+        case 'Subscribed':
+          for(i=0; i<posts.length; i++) {
+            for(j=0; j<this.subscribedChannels.length; j++) {
+              if(posts[i].channel == this.subscribedChannels[j].name)
+              {
+                includedPosts.push(posts[i]);
+                break;
+              }
+            }
+          }
+          break;
+        default:
+          for(i=0; i<posts.length; i++) {
+            if(posts[i].channel == this.selected) {
+              includedPosts.push(posts[i]);
+            }
+          }
+          break;
       }
+
       return includedPosts;
     },
   });
