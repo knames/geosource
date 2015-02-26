@@ -68,7 +68,10 @@
     },
     postsLoaded: function() {
       // Make a copy of the loaded data
-      this.posts = this.$.ajax.response.slice(0);
+      this.posts = this.$.ajax.response.slice(0).sort(function(a,b) {
+        return moment(b.time).diff(moment(a.time));
+      });
+
     },
     /** 
      * Update the service with the current favorite value.
