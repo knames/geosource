@@ -119,12 +119,14 @@
 
     <div center="" horizontal="" layout="" class="card-footer">
       <div flex id="time-ago"> 
-        <content select="time-ago">{{post.time}} to {{post.channel}}</content> 
+        <content select="time-ago">{{time}} to {{post.channel}}</content> 
       </div>
       <paper-button id="more-button" on-tap="{{moreTapped}}">see more</paper-button> 
     </div>
     
   </template>
+
+  <script type="text/javascript" src="components/moment/moment.js"></script>
   <script>
   Polymer({
     publish: {
@@ -141,6 +143,9 @@
         reflect: true
       }
     },
+
+    time: null,
+
     favoriteTapped: function(event, detail, sender) {
       this.post.favorite = !this.post.favorite;
       this.favorite = this.post.favorite;
@@ -151,7 +156,12 @@
     },
     moreTapped: function(event, detail, sender) {
       this.fire('more-click');
+    },
+
+    postChanged: function() {
+      this.time = moment(this.post.time).fromNow();
     }
+
   });
   </script>
 </polymer-element>
