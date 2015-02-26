@@ -64,7 +64,7 @@
     .card-footer {
       font-size: 14px;
     }
-    #time-ago {
+    #info {
       margin: 0.75em;
       color: #636363;
       text-transform: uppercase;
@@ -118,8 +118,9 @@
     </div>
 
     <div center="" horizontal="" layout="" class="card-footer">
-      <div flex id="time-ago"> 
-        <content select="time-ago">{{time}} to {{post.channel}}</content> 
+      <div flex id="info"> 
+        <content select="time-ago" title="{{post.time}}">{{time}}</content>
+        <content select="time-ago">to {{post.channel}}</content> 
       </div>
       <paper-button id="more-button" on-tap="{{moreTapped}}">see more</paper-button> 
     </div>
