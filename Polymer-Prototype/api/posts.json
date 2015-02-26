@@ -6,7 +6,7 @@
     "avatar" : "../images/avatar-01.svg",
     "favorite": false,
     "time": "2015-02-26 12:00:00.000",
-    "location": {"latitude": 52.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.1333, "longitude": -106.6853},
     "channel": "Birds"
   },
   {
@@ -16,7 +16,7 @@
     "avatar" : "../images/avatar-02.svg",
     "favorite": false,
     "time": "2015-02-25 12:00:00.000",
-    "location": {"latitude": 53.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.2333, "longitude": -106.6633},
     "channel": "Mushrooms"
   },
     {
@@ -26,7 +26,7 @@
     "avatar" : "../images/avatar-03.svg",
     "favorite": false,
     "time": "2015-02-24 12:00:00.000",
-    "location": {"latitude": 54.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.1833, "longitude": -106.6333},
     "channel": "Birds"
   },
   {
@@ -36,7 +36,7 @@
     "avatar" : "../images/avatar-07.svg",
     "favorite": false,
     "time": "2015-02-20 12:00:00.000",
-    "location": {"latitude": 55.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.0833, "longitude": -106.6833},
     "channel": "Mushrooms"
   },
   {
@@ -46,7 +46,7 @@
     "avatar" : "../images/avatar-08.svg",
     "favorite": false,
     "time": "2015-02-16 12:00:00.000",
-    "location": {"latitude": 56.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.0633, "longitude": -106.6933},
     "channel": "Mushrooms"
   },
   {
@@ -56,7 +56,7 @@
     "avatar" : "../images/avatar-04.svg",
     "favorite": false,
     "time": "2015-02-01 12:00:00.000",
-    "location": {"latitude": 57.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.1033, "longitude": -106.6533},
     "channel": "Potholes"
   },
   {
@@ -66,7 +66,7 @@
     "avatar" : "../images/avatar-06.svg",
     "favorite": false,
     "time": "2015-01-20 12:00:00.000",
-    "location": {"latitude": 58.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.1533, "longitude": -106.7333},
     "channel": "Birds"
   },
   {
@@ -76,7 +76,7 @@
     "avatar" : "../images/avatar-05.svg",
     "favorite": false,
     "time": "2015-01-01 12:00:00.000",
-    "location": {"latitude": 59.1333, "longitude": -106.6833},
+    "location": {"latitude": 52.1333, "longitude": -106.6333},
     "channel": "Snow"
   }
 ]
