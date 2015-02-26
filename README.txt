@@ -22,7 +22,7 @@ source java code:
 test java code (currently nonexistent):
 	Geosource-Android/app/src/test/java/hoopsnake/geosource
 source XML code:
-	/Geosource-Android/app/src/main/res
+	Geosource-Android/app/src/main/res
 
 
 5. Database
