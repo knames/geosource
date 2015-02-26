@@ -41,9 +41,6 @@ public class IncidentActivity extends ActionBarActivity {
     /** The ListView that is actually visible to the user, displaying all the fields of the incident. */
     ListView incidentDisplay;
 
-    /** The filepath to pass to the camera or video app, to which it will save a new media file. */
-    private Uri fileUri;
-
     /** The incident to be created and edited by the user on this screen. */
     Incident incident;
 
@@ -100,7 +97,7 @@ public class IncidentActivity extends ActionBarActivity {
 
                 switch (field.getType()) {
                     case IMAGE:
-                        startCameraActivityForImage();
+                        startCameraActivityForImage(incident.getFieldList().get(curFieldIdx));
                         break;
                     case STRING:
                         //TODO implement this.
@@ -108,7 +105,7 @@ public class IncidentActivity extends ActionBarActivity {
                         incidentAdapter.notifyDataSetChanged();
                         break;
                     case VIDEO:
-                        startCameraActivityForVideo();
+                        startCameraActivityForVideo(incident.getFieldList().get(curFieldIdx));
                         break;
                     case AUDIO:
                         //TODO implement this.
@@ -124,21 +121,24 @@ public class IncidentActivity extends ActionBarActivity {
     /**
      * start Android's built-in Camera activity, allowing the user to take a picture, and save it
      * to their image gallery.
+     * @param fieldForNewImage the field in which to store the new image.
      */
-    private void startCameraActivityForImage()
+    private void startCameraActivityForImage(FieldWithContent fieldForNewImage)
     {
         // create Intent to take a picture and return control to the calling application
         Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (MediaManagement.isExternalStorageWritable()) {
-            //TODO rather than using a field fileUri, just use the contentFileUri for the current field.
-            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE); // create a file to save the image
-            if (fileUri == null) {
+            //TODO rather than using a field fileUriForNewImage, just use the contentFileUri for the current field.
+            // create a file to save the image
+            fieldForNewImage.setContentFileUri(MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE));
+            Uri fileUriForNewImage = fieldForNewImage.getContentFileUri();
+            if (fileUriForNewImage == null) {
                 Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewImage); // set the image file name
 
             // start the image capture Intent
             startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
@@ -150,21 +150,24 @@ public class IncidentActivity extends ActionBarActivity {
     /**
      * start Android's built-in Camera activity, allowing the user to take a video, and save it
      * to their video gallery.
+     * @param fieldForNewVideo the field in which to store the new video.
      */
-    private void startCameraActivityForVideo()
+    private void startCameraActivityForVideo(FieldWithContent fieldForNewVideo)
     {
         //create new Intent
         Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         if (MediaManagement.isExternalStorageWritable()) {
             //TODO rather than using a field fileUri, just use the contentFileUri for the current field.
-            fileUri = MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO);  // create a file to save the video
-            if (fileUri == null) {
+            // create a file to save the video
+            fieldForNewVideo.setContentFileUri(MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO));
+            Uri fileUriForNewVideo = fieldForNewVideo.getContentFileUri();
+            if (fileUriForNewVideo == null) {
                 Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
+            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewVideo);  // set the image file name
             videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
 
             // start the Video Capture Intent
@@ -179,15 +182,14 @@ public class IncidentActivity extends ActionBarActivity {
         if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
             if (resultCode == RESULT_OK) {
                 // Image captured and saved to fileUri specified in the Intent
+                FieldWithContent fieldWithNewImage = incident.getFieldList().get(curFieldIdx);
 
                 Toast.makeText(this, "Image saved to:\n" +
-                        fileUri, Toast.LENGTH_LONG).show();
+                        fieldWithNewImage.getContentFileUri(), Toast.LENGTH_LONG).show();
 
-                FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
-                curField.setContentFileUri(fileUri);
                 incidentAdapter.notifyDataSetChanged();
                 //TODO set the content of this field appropriately. Probably in a background task?
-                //curField.setContent(new SerialBitmap(fileUri));
+                //fieldWithNewImage.setContent(new SerialBitmap(fileUri));
 
                 //TODO display the image in its field!
 
@@ -202,12 +204,11 @@ public class IncidentActivity extends ActionBarActivity {
         if (requestCode == RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal()) {
             if (resultCode == RESULT_OK) {
                 // Video captured and saved to fileUri specified in the Intent
+                FieldWithContent fieldWithNewVideo = incident.getFieldList().get(curFieldIdx);
 
                 Toast.makeText(this, "Video saved to:\n" +
-                        fileUri, Toast.LENGTH_LONG).show();
+                        fieldWithNewVideo.getContentFileUri(), Toast.LENGTH_LONG).show();
 
-                FieldWithContent curField = incident.getFieldList().get(curFieldIdx);
-                curField.setContentFileUri(fileUri);
                 incidentAdapter.notifyDataSetChanged();
                 //TODO set the content of this field appropriately. Probably in a background task?
 
