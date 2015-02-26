@@ -76,7 +76,6 @@
     seachedChannels: null,
 
     channelsChanged: function() {
-      this.channels.sort();
       this.subscribedChannels = []
       for(i=0; i<this.channels.length; i++) {
         if(this.channels[i].subscribed) {
