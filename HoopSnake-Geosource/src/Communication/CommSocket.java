@@ -1,5 +1,9 @@
 package Communication;
 
+import Control.Controller;
+import ServerClientShared.Commands.IOCommand;
+import ServerClientShared.FieldWithContent;
+import ServerClientShared.FieldWithoutContent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -15,31 +19,55 @@ import javax.crypto.spec.DESKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- *
+ * 
  * @author Connor
  */
-public class CommSocket {
+public class CommSocket implements Callable<Future<FieldWithContent>>{
     
-    int portNum = 0;
+    private static final int portNum = 0;
+    
+    private static Controller controller = null;
 
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    ServerSocket serverSocket;
-    Socket clientSocket;
+    protected static ServerSocket serverSocket = null;
+    private Socket clientSocket;
     
     // Password must be at least 8 characters
     private static final String password = "hiedlbrand";
     
-    public CommSocket()
+    public CommSocket(Controller parentControl)
     {
+        if (serverSocket == null)
+        {
+            try
+            {
+                serverSocket = new ServerSocket(portNum); //global socket bind
+            }
+            catch (IOException IOe)
+            {
+                System.out.println("Binding server Socket Failed");
+            }
+        }
         
+        if (controller == null)
+        {
+            controller = parentControl; //controller to query for data/files
+        }
+    }
+    
+    public Future<FieldWithContent> call()
+    {
         try
         {
             // Create Key
@@ -52,8 +80,7 @@ public class CommSocket {
             Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
             desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
             
-            serverSocket = new ServerSocket(portNum);
-            System.out.println("Server Bound");
+            // Bind client and create streams
             clientSocket = serverSocket.accept();
             OutputStream outStream = clientSocket.getOutputStream();
             InputStream inStream = clientSocket.getInputStream();
@@ -66,10 +93,29 @@ public class CommSocket {
             CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
             GZIPInputStream zipIn = new GZIPInputStream(cipherIn);
             in = new ObjectInputStream(zipIn);
+            
+            //Read command
+            IOCommand command = (IOCommand)in.readObject();
+            
+            //Read/Send appropriate data
+            switch (command)
+            {
+                case GetForm:
+                {
+                    String channelName = in.readUTF();
+                    ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
+                    out.writeObject(formList);
+                    break;
+                }
+                case SendIncident:
+                {
+                    break;
+                }
+            }
         }
         catch (IOException IOe)
         {
-            System.out.println("Binding server failed!");
+            System.out.println("IO Exception: " + IOe.getMessage());
         }
         catch (InvalidKeyException IKe)
         {
@@ -86,7 +132,7 @@ public class CommSocket {
         }
         finally
         {
-            return;
+            return null;
         }
     }
 }
