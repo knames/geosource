@@ -1,7 +1,5 @@
 package ServerClientShared;
 
-import static junit.framework.Assert.assertNotNull;
-
 /**
  * Created by wsv759 on 19/02/15.
  *
@@ -31,8 +29,11 @@ public abstract class Field {
         this.type = type;
         this.isRequired = isRequired;
 
-        assertNotNull(isRequired);
-        assertNotNull(title);
-        assertNotNull(type);
+        if (isRequired == null)
+		    throw new RuntimeException(isRequired + " is null.");
+        if (title == null)
+		    throw new RuntimeException(title + " is null.");
+        if (type == null)
+		    throw new RuntimeException(type + " is null.");
     }
 }

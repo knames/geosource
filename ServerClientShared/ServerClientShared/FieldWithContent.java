@@ -8,8 +8,6 @@ import java.io.Serializable;
 
 import hoopsnake.geosource.media.SerialBitmap;
 
-import static junit.framework.Assert.assertNotNull;
-
 /**
  * Created by wsv759 on 18/02/15.
  *
@@ -40,7 +38,8 @@ public class FieldWithContent extends Field implements Serializable
         super(title, type, isRequired);
 
         setContent(content);
-        assertNotNull(content);
+        if (content == null)
+		    throw new RuntimeException(content + " is null.");
 
     }
 
@@ -86,7 +85,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public void setContent(Serializable newContent)
     {
-        assertNotNull(type);
+        if (type == null)
+		    throw new RuntimeException(type + " is null.");
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -111,7 +111,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
-        assertNotNull(type);
+        if (type == null)
+		    throw new RuntimeException(type + " is null.");
 
         if (content == null)
             return true;
