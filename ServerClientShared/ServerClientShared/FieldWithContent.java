@@ -80,7 +80,6 @@ public class FieldWithContent extends Field implements Serializable
             case default:
                 throw new RuntimeException("invalid type");
         }
-        setContent((Serializable) in.readObject());
     }
 
     /** Serializable implementation. */
