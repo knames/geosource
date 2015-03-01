@@ -6,8 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import hoopsnake.geosource.media.SerialBitmap;
-
 /**
  * Created by wsv759 on 18/02/15.
  *
@@ -62,6 +60,26 @@ public class FieldWithContent extends Field implements Serializable
     {
         title = (String) in.readObject();
         type = (FieldType) in.readObject();
+
+        switch (type)
+        {
+            case IMAGE:
+                setContent((byte[]) in.readObject());
+                break;
+            case STRING:  
+                setContent((String) in.readObject());
+                break;
+            case VIDEO:
+                //TODO implement this.
+                throw new RuntimeException("unimplemented");
+                break;
+            case AUDIO:
+                //TODO implement this.
+                throw new RuntimeException("unimplemented");
+                break;
+            case default:
+                throw new RuntimeException("invalid type");
+        }
         setContent((Serializable) in.readObject());
     }
 
@@ -120,7 +138,7 @@ public class FieldWithContent extends Field implements Serializable
         switch (type)
         {
             case IMAGE:
-                return (content instanceof SerialBitmap);
+                return (content instanceof byte[]);
             case VIDEO:
                 //TODO implement this.
                 throw new RuntimeException("Video object type not yet implemented, sorry!");
