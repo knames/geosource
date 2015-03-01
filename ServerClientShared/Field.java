@@ -10,8 +10,7 @@ import static junit.framework.Assert.assertNotNull;
 public abstract class Field {
     protected String title;
     protected FieldType type;
-
-    boolean isRequired;
+    protected boolean isRequired;
 
     public FieldType getType() {
         return type;

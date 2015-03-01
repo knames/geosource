@@ -141,6 +141,10 @@ public class FieldWithContent extends Field implements Serializable
             throw new RuntimeException("type " + type + "can't have a Uri.");
     }
 
+    /**
+     * returns true if there is content associated with this field, either stored in the 
+     * serializable content object directly, or referenced by a file Uri.
+     */
     public boolean contentIsFilled()
     {
         if (contentFileUri != null)
@@ -149,6 +153,9 @@ public class FieldWithContent extends Field implements Serializable
         return content != null;
     }
 
+    /**
+     * Get a string representation of the content, for primitive displays.
+     */
     public String getContentStringRepresentation()
     {
         if (!contentIsFilled())
