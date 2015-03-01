@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package ServerClientShared;
 
 import android.net.Uri;
 

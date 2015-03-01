@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package ServerClientShared;
 
 /**
  * Created by wsv759 on 18/02/15. This enumerates the types of objects (or files) that could

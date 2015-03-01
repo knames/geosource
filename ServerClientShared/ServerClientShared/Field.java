@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package ServerClientShared;
 
 import static junit.framework.Assert.assertNotNull;
 
