@@ -1,5 +1,5 @@
 package hoopsnake.geosource.data;
-
+//TODO All the Field classes are now shared. remove them and import instead. This one should be converted into a subclass of the shared one, using Uris.
 import android.net.Uri;
 
 import java.io.IOException;

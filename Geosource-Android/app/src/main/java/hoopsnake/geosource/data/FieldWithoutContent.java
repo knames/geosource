@@ -1,5 +1,5 @@
 package hoopsnake.geosource.data;
-
+//TODO All the Field classes are now shared. remove them and import instead.
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
