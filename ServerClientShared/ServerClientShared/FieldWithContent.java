@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package ServerClientShared;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
