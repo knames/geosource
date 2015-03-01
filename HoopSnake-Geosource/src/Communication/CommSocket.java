@@ -31,7 +31,7 @@ import javax.crypto.NoSuchPaddingException;
  * 
  * @author Connor
  */
-public class CommSocket implements Callable<Future<FieldWithContent>>{
+public class CommSocket implements Callable<FieldWithContent>{
     
     private static final int portNum = 0;
     
@@ -66,7 +66,7 @@ public class CommSocket implements Callable<Future<FieldWithContent>>{
         }
     }
     
-    public Future<FieldWithContent> call()
+    public FieldWithContent call()
     {
         try
         {
@@ -109,6 +109,7 @@ public class CommSocket implements Callable<Future<FieldWithContent>>{
                 }
                 case SendIncident:
                 {
+                    //TODO implement later
                     break;
                 }
             }
