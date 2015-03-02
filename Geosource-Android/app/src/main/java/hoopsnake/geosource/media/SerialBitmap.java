@@ -1,5 +1,5 @@
 package hoopsnake.geosource.media;
-
+//TODO not use this class anymore, in the same capacity. It should not form the content for a field! As we are using byte arrays instead.
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;

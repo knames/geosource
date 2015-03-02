@@ -1,6 +1,4 @@
-package hoopsnake.geosource.data;
-//TODO All the Field classes are now shared. remove them and import instead.
-import static junit.framework.Assert.assertNotNull;
+package ServerClientShared;
 
 /**
  * Created by wsv759 on 19/02/15.
@@ -10,8 +8,7 @@ import static junit.framework.Assert.assertNotNull;
 public abstract class Field {
     protected String title;
     protected FieldType type;
-
-    boolean isRequired;
+    protected boolean isRequired;
 
     public FieldType getType() {
         return type;
@@ -32,8 +29,11 @@ public abstract class Field {
         this.type = type;
         this.isRequired = isRequired;
 
-        assertNotNull(isRequired);
-        assertNotNull(title);
-        assertNotNull(type);
+        if (isRequired == null)
+		    throw new RuntimeException(isRequired + " is null.");
+        if (title == null)
+		    throw new RuntimeException(title + " is null.");
+        if (type == null)
+		    throw new RuntimeException(type + " is null.");
     }
 }
