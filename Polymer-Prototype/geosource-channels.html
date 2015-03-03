@@ -4,7 +4,7 @@
 <link rel="import" href="components/core-menu/core-submenu.html">
 
 
-<polymer-element name="geosource-channels" attributes="channels">
+<polymer-element name="geosource-channels" attributes="channels subscribed">
 
   <template>
 
@@ -46,8 +46,8 @@
       <core-menu id="core_menu" selected="0">
         <core-item label="All"></core-item>
         <core-item label="Subscribed"></core-item>
-        <template repeat="{{channel in subscribedChannels}}">
-          <core-item label="{{channel.name}}" horizontal justified layout>
+        <template repeat="{{channel in subscribed}}">
+          <core-item label="{{channel}}" horizontal justified layout>
             <paper-icon-button icon="close" class="unsubscribe_button" 
               on-tap="{{unsubscribe}}">
             </paper-icon-button>
@@ -74,8 +74,8 @@
 
     selected: "All",
     channels: null,
-    subscribedChannels: null,
-    seachedChannels: null,
+    searchedChannels: null,
+    subscribed: null,
 
     /**
      * When 'channels' is changed, this skims through the 
@@ -176,8 +176,11 @@
       console.log(sender.templateInstance.model.channel);
 
       var channel = sender.templateInstance.model.channel;
-      channel.subscribed = false;
-      this.channelsChanged();
+
+      var index = this.subscribed.indexOf(channel);
+      if(index != -1) {
+        this.subscribed.splice(index, 1);
+      }
     },
 
     /**
@@ -185,8 +188,10 @@
      */
     subscribe: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
-      channel.subscribed = true;
-      this.channelsChanged();
+      var index = this.subscribed.indexOf(channel.name);
+      if(index == -1) {
+        this.subscribed.push(sender.templateInstance.model.channel.name);
+      }
     }
 
   });

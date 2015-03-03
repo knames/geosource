@@ -5,8 +5,9 @@
 <link rel="import" href="components/google-apis/google-apis.html">
 <link rel="import" href="components/google-apis/google-plusone-api.html">
 <link rel="import" href="components/core-item/core-item.html">
+<link rel="import" href="post-service/user-service.html">
 
-<polymer-element name="geosource-account" attributes="uid">
+<polymer-element name="geosource-account" attributes="uid user">
 
   <template>
     
@@ -58,6 +59,7 @@
 
       name: "",
       uid: null,
+      user: null,
 
       signIn: function(event, details, sender) {
         var geosource_account = this;

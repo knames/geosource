@@ -20,7 +20,8 @@
     </style>
       <div layout vertical center>
           <geosource-account id="account_panel" class="panel"
-            uid="{{uid}}">
+            uid="{{uid}}"
+            user="{{user}}">
           </geosource-account>
 
           <geosource-flags id="flags_panel" class="panel"
@@ -31,7 +32,8 @@
           </geosource-time>
 
           <geosource-channels id="channels_panel" class="panel"
-            channels="{{channels}}">
+            channels="{{channels}}"
+            subscribed="{{user.subscriber}}">
           </geosource-channels>
       </div>
   </template>
@@ -41,6 +43,7 @@
 
       channels: null,
       uid: null,
+      user: null,
 
       /**
        * Given a set of posts, returns the subset which apply to the filter
