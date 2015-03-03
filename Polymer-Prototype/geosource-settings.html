@@ -19,17 +19,21 @@
       }
     </style>
       <div layout vertical center>
-          <geosource-account id="account_panel" class="panel">
+          <geosource-account id="account_panel" class="panel"
+            uid="{{uid}}"
+            user="{{user}}">
           </geosource-account>
 
-          <geosource-flags id="flags_panel" class="panel">
+          <geosource-flags id="flags_panel" class="panel"
+            uid="{{uid}}">
           </geosource-flags>
           
           <geosource-time id="time_panel" class="panel">
           </geosource-time>
 
           <geosource-channels id="channels_panel" class="panel"
-            channels="{{channels}}">
+            channels="{{channels}}"
+            subscribed="{{user.subscriber}}">
           </geosource-channels>
       </div>
   </template>
@@ -38,11 +42,18 @@
     Polymer({
 
       channels: null,
+      uid: null,
+      user: null,
 
+      /**
+       * Given a set of posts, returns the subset which apply to the filter
+       * panels contained within this component.
+       */
       filterPosts: function(posts) {
         var filteredPosts = this.$.flags_panel.filterPosts(posts);
         filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
         filteredPosts = this.$.channels_panel.filterPosts(filteredPosts);
+        
         return filteredPosts;
       },
 

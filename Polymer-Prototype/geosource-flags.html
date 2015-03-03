@@ -1,7 +1,7 @@
 <link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="components/core-menu/core-submenu.html">
 
-<polymer-element name="geosource-flags">
+<polymer-element name="geosource-flags" attributes="uid">
 
   <template>
     
@@ -49,6 +49,12 @@
   <script>
     Polymer({
 
+      uid: null,
+
+      /**
+       * When the all flag is turned off, the other flags within this component
+       * become active. When it is turned on, the other flags are disabled.
+       */
       toggleAll: function(e) {
         var all_toggle = this.$.all_toggle_button;
         var fav_toggle = this.$.favorite_toggle_button;
@@ -61,13 +67,20 @@
           fav_toggle.disabled = false;
           mine_toggle.disabled = false;
         }
-        this.fire('filter-change');
       },
 
+      /**
+       * Fires a filter-change event, which is caught by geosource-main to
+       * determine that the posts should be re-filtered.
+       */
       toggleButton: function() {
         this.fire('filter-change');
       },
 
+      /**
+       * Given a set of posts, this returns the subset of those posts which are 
+       * applicable to the flags currently active within this component's state.
+       */
       filterPosts: function(posts) {
         var all = this.$.all_toggle_button.checked;
         var fav = this.$.favorite_toggle_button.checked;
@@ -75,7 +88,7 @@
 
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (!all && fav && posts[i].favorite)) {
+          if((all) || (!all && fav && posts[i].favorite) || mine && posts[i].uid == this.uid) {
             includedPosts.push(posts[i]);
           }
         }

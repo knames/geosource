@@ -1,0 +1,6 @@
+{ 
+    "subscriber": ["Birds", "Mushrooms"],
+    "moderator": ["Birds", "Mushrooms"],
+    "owner": ["Birds", "Mushrooms"],
+    "admin": true
+}

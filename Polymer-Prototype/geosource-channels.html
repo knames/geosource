@@ -1,8 +1,10 @@
 <link rel="import" href="components/polymer/polymer.html">
 <link rel="import" href="components/core-item/core-item.html">
 <link rel="import" href="components/paper-input/paper-input.html">
+<link rel="import" href="components/core-menu/core-submenu.html">
 
-<polymer-element name="geosource-channels" attributes="channels">
+
+<polymer-element name="geosource-channels" attributes="channels subscribed">
 
   <template>
 
@@ -44,8 +46,8 @@
       <core-menu id="core_menu" selected="0">
         <core-item label="All"></core-item>
         <core-item label="Subscribed"></core-item>
-        <template repeat="{{channel in subscribedChannels}}">
-          <core-item label="{{channel.name}}" horizontal justified layout>
+        <template repeat="{{channel in subscribed}}">
+          <core-item label="{{channel}}" horizontal justified layout>
             <paper-icon-button icon="close" class="unsubscribe_button" 
               on-tap="{{unsubscribe}}">
             </paper-icon-button>
@@ -72,9 +74,12 @@
 
     selected: "All",
     channels: null,
-    subscribedChannels: null,
-    seachedChannels: null,
+    searchedChannels: null,
+    subscribed: null,
 
+    /**
+     * When 'channels' is changed, this skims through the 
+     */
     channelsChanged: function() {
       this.subscribedChannels = []
       for(i=0; i<this.channels.length; i++) {
@@ -95,6 +100,10 @@
       }
     },
 
+    /**
+     * Given a set of posts, this returns the subset of those posts which are 
+     * applicable whichever channel(s) are selected.
+     */
     filterPosts: function(posts) {
       var includedPosts = [];
 
@@ -125,6 +134,12 @@
       return includedPosts;
     },
 
+    /**
+     * Displays all channels which apply to the current text within
+     * 'search_input'. A regex is constructed with .* between each character,
+     * so in the case where 'birds' is entered, the regex would appear as
+     * '^b.*i.*r.*d.*s.*'.
+     */
     searchChannels: function() {
 
       var search = this.$.search_input.value;
@@ -151,6 +166,9 @@
       }
     },
 
+    /**
+     * Unsubscribes from the selected channel.
+     */
     unsubscribe: function(event, detail, sender) {
       console.log('event', event);
       console.log('detail', detail);
@@ -158,14 +176,22 @@
       console.log(sender.templateInstance.model.channel);
 
       var channel = sender.templateInstance.model.channel;
-      channel.subscribed = false;
-      this.channelsChanged();
+
+      var index = this.subscribed.indexOf(channel);
+      if(index != -1) {
+        this.subscribed.splice(index, 1);
+      }
     },
 
+    /**
+     * Subscribes to the selected channel.
+     */
     subscribe: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
-      channel.subscribed = true;
-      this.channelsChanged();
+      var index = this.subscribed.indexOf(channel.name);
+      if(index == -1) {
+        this.subscribed.push(sender.templateInstance.model.channel.name);
+      }
     }
 
   });
