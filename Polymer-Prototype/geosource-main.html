@@ -257,6 +257,10 @@
         this.async(function(){ map.resize() }, null, 300);
       },
 
+      /**
+       * Returns a set of posts which are applicable to the filters defined in 
+       * the settings panel.
+       */
       filterPosts: function() {
         this.filteredPosts = this.$.settings.filterPosts(this.posts);
       }

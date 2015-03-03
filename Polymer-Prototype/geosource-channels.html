@@ -77,6 +77,9 @@
     subscribedChannels: null,
     seachedChannels: null,
 
+    /**
+     * When 'channels' is changed, this skims through the 
+     */
     channelsChanged: function() {
       this.subscribedChannels = []
       for(i=0; i<this.channels.length; i++) {
@@ -97,6 +100,10 @@
       }
     },
 
+    /**
+     * Given a set of posts, this returns the subset of those posts which are 
+     * applicable whichever channel(s) are selected.
+     */
     filterPosts: function(posts) {
       var includedPosts = [];
 
@@ -127,6 +134,12 @@
       return includedPosts;
     },
 
+    /**
+     * Displays all channels which apply to the current text within
+     * 'search_input'. A regex is constructed with .* between each character,
+     * so in the case where 'birds' is entered, the regex would appear as
+     * '^b.*i.*r.*d.*s.*'.
+     */
     searchChannels: function() {
 
       var search = this.$.search_input.value;
@@ -153,6 +166,9 @@
       }
     },
 
+    /**
+     * Unsubscribes from the selected channel.
+     */
     unsubscribe: function(event, detail, sender) {
       console.log('event', event);
       console.log('detail', detail);
@@ -164,6 +180,9 @@
       this.channelsChanged();
     },
 
+    /**
+     * Subscribes to the selected channel.
+     */
     subscribe: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
       channel.subscribed = true;

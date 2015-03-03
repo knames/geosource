@@ -51,6 +51,10 @@
 
       uid: null,
 
+      /**
+       * When the all flag is turned off, the other flags within this component
+       * become active. When it is turned on, the other flags are disabled.
+       */
       toggleAll: function(e) {
         var all_toggle = this.$.all_toggle_button;
         var fav_toggle = this.$.favorite_toggle_button;
@@ -65,10 +69,18 @@
         }
       },
 
+      /**
+       * Fires a filter-change event, which is caught by geosource-main to
+       * determine that the posts should be re-filtered.
+       */
       toggleButton: function() {
         this.fire('filter-change');
       },
 
+      /**
+       * Given a set of posts, this returns the subset of those posts which are 
+       * applicable to the flags currently active within this component's state.
+       */
       filterPosts: function(posts) {
         var all = this.$.all_toggle_button.checked;
         var fav = this.$.favorite_toggle_button.checked;

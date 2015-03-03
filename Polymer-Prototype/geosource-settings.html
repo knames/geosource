@@ -42,6 +42,10 @@
       channels: null,
       uid: null,
 
+      /**
+       * Given a set of posts, returns the subset which apply to the filter
+       * panels contained within this component.
+       */
       filterPosts: function(posts) {
         var filteredPosts = this.$.flags_panel.filterPosts(posts);
         filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
