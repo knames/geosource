@@ -39,6 +39,12 @@ public class DBAccess {
         }
     }
 
+    /**
+     * Get the file path where a serialized dynamic form specification can be
+     * found within the file system
+     * @param channelName the name of the channel whose form's spec should be retrieved
+     * @return a string representation of specification's location in the file system
+     */
     public String getFormSpecLocation(String channelName)
     {
         String filePath = null;

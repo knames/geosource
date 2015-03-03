@@ -17,28 +17,29 @@ import java.util.concurrent.Future;
  */
 public class Controller {
     
-    private DBAccess dbAccess;
-    private FileAccess fileAccess;
+    private DBAccess dbAccess; //database abstraction
+    private FileAccess fileAccess; //file system abstraction
     
-    private static int numConnections = 5;
+    private static int numConnections = 5; //maximum simultaneous socket inputs
     
     public void main(String[] args)
     {
-        //Main Server runtime code here
+        
         ExecutorService exec = Executors.newCachedThreadPool();
         LinkedList<Future<FieldWithContent>> list = new LinkedList();
         for (int x = 0; x < numConnections; x ++)
         {
-            list.add(exec.submit(new CommSocket(this)));
+            list.add(exec.submit(new CommSocket(this))); //fill list of future results
         }
         
-        //TODO loop through taking out done tasks, and making a new connection on the executor for each done one
+        //TODO loop through taking out done tasks, and making a new connection
+        //on the executor for each one completed
 
     }
     
     public ArrayList<FieldWithoutContent> getForm(String channelName)
     {
-        String filePath = dbAccess.getFormSpecLocation(channelName);
-        return fileAccess.getFormSpec(filePath);
+        String filePath = dbAccess.getFormSpecLocation(channelName); //get spec's path in filesystem
+        return fileAccess.getFormSpec(filePath); //retreive form spec
     }
 }

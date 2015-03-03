@@ -66,6 +66,11 @@ public class CommSocket implements Callable<FieldWithContent>{
         }
     }
     
+    /**
+     * a function often called by an executor that leaves behind a possibly
+     * filled future, allowing later checking for data once the task completes
+     * @return any Incident submission returned by a connection to an android app
+     */
     public FieldWithContent call()
     {
         try

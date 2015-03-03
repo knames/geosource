@@ -19,9 +19,9 @@ public class Packet implements Serializable{
     
     public static enum listFields{Picture, String, Video, Sound};
     
-    private LinkedList<String> fieldNames;
-    private LinkedList<listFields> fieldTypes;
-    private HashMap<String, Object> packetContents;
+    private LinkedList<String> fieldNames; //titles for each of the fields
+    private LinkedList<listFields> fieldTypes; //data types of the fields
+    private HashMap<String, Object> packetContents; //actual field contents
     
     public Packet(LinkedList<String> fieldNames, LinkedList<listFields> fieldTypes)
     {
@@ -29,6 +29,13 @@ public class Packet implements Serializable{
         this.fieldTypes = fieldTypes;
     }
     
+    /**
+     * A strictly defined method of reliably reading in an object through an
+     * ObjectInputStream in cooperation with this class' writeObject function
+     * @param in the ObjectInputtream to read the Packet from
+     * @throws ClassNotFoundException
+     * @throws IOException 
+     */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
     {
         fieldNames = (LinkedList<String>)in.readObject();
@@ -36,6 +43,12 @@ public class Packet implements Serializable{
         packetContents = (HashMap<String, Object>)in.readObject();
     }
     
+    /**
+     * A strictly defined method to reliably write an instance of this object,
+     * to be received by a corresponding readObject function
+     * @param out the ObjectOutputStream to use while writing the object
+     * @throws IOException 
+     */
     private void writeObject(ObjectOutputStream out) throws IOException
     {
         out.writeObject(fieldNames);
