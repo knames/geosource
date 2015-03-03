@@ -1,9 +1,7 @@
 package DataBase;
 
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -43,6 +41,18 @@ public class DBAccess {
 
     public String getFormSpecLocation(String channelName)
     {
-        return null;
+        String filePath = null;
+        try
+        {
+            Statement statement = dbconnection.createStatement();
+            ResultSet results = statement.executeQuery(Queries.getFormSpec(channelName));
+            filePath = results.getNString(1);
+            statement.close();
+        }
+        catch (SQLException SQLe)
+        {
+            System.out.println("formSpec not found!! Possible broken Incident request");
+        }
+        return filePath;
     }
 }
