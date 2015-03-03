@@ -2,8 +2,11 @@
 <link rel="import" href="components/core-menu/core-submenu.html">
 <link rel="import" href="components/google-signin/google-signin.html">
 <link rel="import" href="components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="components/google-apis/google-apis.html">
+<link rel="import" href="components/google-apis/google-plusone-api.html">
+<link rel="import" href="components/core-item/core-item.html">
 
-<polymer-element name="geosource-account">
+<polymer-element name="geosource-account" attributes="uid">
 
   <template>
     
@@ -35,34 +38,41 @@
         right: 3px;
         color: #636363;
       }
-      google-signin::shadow .buttonText {
-        padding-left: 1.75em;
-        padding-right: 1.75em;
-      }
     </style>
 
+    <user-service user="{{user}}"></user-service>
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
-<!--       <div center horizontal layout id="toggle_label">
-        <div flex>All</div>
-        <paper-toggle-button checked id="all_toggle_button" on-change="{{toggleAll}}"></paper-toggle-button>
-      </div>
-      <div center horizontal layout id="toggle_label">
-        <div flex>Mine</div>
-        <paper-toggle-button checked id="mine_toggle_button" disabled on-change="{{toggleMine}}"></paper-toggle-button>
-      </div>
-      <div center horizontal layout id="toggle_label">
-        <div flex>Favorites</div>
-        <paper-toggle-button checked id="favorite_toggle_button" disabled on-change="{{toggleFavorites}}"></paper-toggle-button>
-      </div> -->
-      <google-signin labelSignin="Sign-in with Google" theme="light"></google-signin>
+      <google-signin theme="light" 
+        clientId="1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com" 
+        scopes="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
+        width="wide"
+        on-google-signin-success="{{signIn}}">
+      </google-signin>
+      <core-item label="Hello, {{name}}"></core-item>
     </core-submenu>
-
-   
 
   </template>
 
   <script>
     Polymer({
+
+      name: "",
+      uid: null,
+
+      signIn: function(event, details, sender) {
+        var geosource_account = this;
+
+        details.gapi.client.load('plus', 'v1', function() {
+          var request = gapi.client.plus.people.get({userId: 'me'});
+
+          request.execute(function(resp) {
+            console.log(resp);
+            geosource_account.name = resp.name.givenName;
+            geosource_account.uid = resp.id;
+            geosource_account.fire('filter-change');
+          });
+        });
+      },
 
     });
   </script>
