@@ -1,30 +1,30 @@
 
 
 CREATE TABLE users (
-	u_email varchar(100) PRIMARY KEY,
+	u_identity varchar(256) PRIMARY KEY,
 	u_username varchar(25)
 	);
 
 CREATE TABLE channels (
 	ch_name varchar(50) NOT NULL,
-	ch_owner varchar(100) NOT NULL,
-	ch_spec varchar(100) NOT NULL,
+	ch_owner varchar(256) NOT NULL,
+	ch_spec varchar(256) NOT NULL,
 	ch_public BOOL NOT NULL,
-	FOREIGN KEY (ch_owner) REFERENCES users (u_email),
+	FOREIGN KEY (ch_owner) REFERENCES users (u_identity),
 	PRIMARY KEY (ch_name, ch_owner)
 	);
 
 CREATE TABLE channelmods (
-	cm_m_email varchar(100) NOT NULL,
+	cm_m_identity varchar(256) NOT NULL,
 	cm_m_name varchar(50) NOT NULL,
-	FOREIGN KEY (cm_m_email) REFERENCES users (u_email),
+	FOREIGN KEY (cm_m_identity) REFERENCES users (u_identity),
 	FOREIGN KEY (cm_m_name) REFERENCES channels (ch_name)
 	);
 
 CREATE TABLE channelfavs (
-	ch_fav_email varchar(100) NOT NULL,
+	ch_fav_identity varchar(256) NOT NULL,
 	ch_fav_chname varchar(50) NOT NULL,
-	FOREIGN KEY (ch_fav_email) REFERENCES users (u_email),
+	FOREIGN KEY (ch_fav_identity) REFERENCES users (u_identity),
 	FOREIGN KEY (ch_fav_chname) REFERENCES channels (ch_name)
 	);
 
