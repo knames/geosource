@@ -1,5 +1,3 @@
-BEGIN;
-SET AUTOCOMMIT=0;
 
 DROP TABLE channelfavs CASCADE;
 DROP TABLE channelmods CASCADE;

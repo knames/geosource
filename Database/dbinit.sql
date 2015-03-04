@@ -1,5 +1,4 @@
-BEGIN;
-SET AUTOCOMMIT=0;
+
 
 CREATE TABLE users (
 	u_email varchar(100) PRIMARY KEY,
