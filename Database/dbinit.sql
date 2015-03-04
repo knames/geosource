@@ -17,8 +17,8 @@ CREATE TABLE channels (
 CREATE TABLE channelmods (
 	cm_m_email varchar(100) NOT NULL,
 	cm_m_name varchar(50) NOT NULL,
-	FOREIGN KEY (cm_u_email) REFERENCES users (u_email),
-	FOREIGN KEY (cm_ch_name) REFERENCES channels (ch_name)
+	FOREIGN KEY (cm_m_email) REFERENCES users (u_email),
+	FOREIGN KEY (cm_m_name) REFERENCES channels (ch_name)
 	);
 
 CREATE TABLE channelfavs (
