@@ -71,13 +71,13 @@ public class FieldWithContent extends Field implements Serializable
                 break;
             case VIDEO:
                 //TODO implement this.
-                throw new RuntimeException("unimplemented");
+                throw new UnsupportedOperationException("Not supported yet.");
                 break;
             case AUDIO:
                 //TODO implement this.
-                throw new RuntimeException("unimplemented");
+                throw new UnsupportedOperationException("Not supported yet.");
                 break;
-            case default:
+            default:
                 throw new RuntimeException("invalid type");
         }
     }

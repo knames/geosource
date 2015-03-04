@@ -105,14 +105,14 @@ public class CommSocket implements Callable<FieldWithContent>{
             //Read/Send appropriate data
             switch (command)
             {
-                case GetForm:
+                case GET_FORM:
                 {
                     String channelName = in.readUTF();
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
                     out.writeObject(formList);
                     break;
                 }
-                case SendIncident:
+                case SEND_INCIDENT:
                 {
                     //TODO implement later
                     break;

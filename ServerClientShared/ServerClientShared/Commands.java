@@ -6,6 +6,6 @@ package ServerClientShared;
  */
 public final class Commands {
     
-    public static enum IOCommand{GetForm, SendIncident};
+    public static enum IOCommand{GET_FORM, SEND_INCIDENT;}
     
 }

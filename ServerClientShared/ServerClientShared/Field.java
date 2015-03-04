@@ -29,8 +29,6 @@ public abstract class Field {
         this.type = type;
         this.isRequired = isRequired;
 
-        if (isRequired == null)
-		    throw new RuntimeException(isRequired + " is null.");
         if (title == null)
 		    throw new RuntimeException(title + " is null.");
         if (type == null)
