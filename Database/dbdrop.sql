@@ -6,6 +6,3 @@ DROP TABLE channels CASCADE;
 DROP TABLE users CASCADE;
 
 
---COMMIT;
---ROLLBACK; -- replace with COMMIT; to submit.
-

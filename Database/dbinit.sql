@@ -38,6 +38,5 @@ CREATE TABLE tblname (
 );
 */
 
---COMMIT;
---ROLLBACK; -- replace with COMMIT; to submit.
+
 
