@@ -1,21 +1,5 @@
 BEGIN;
 
-
--- google stuff
-CREATE DOMAIN varchar(100) AS varchar(100);
-CREATE DOMAIN varchar(25) AS varchar(25); -- restriction
-
-
-
-
--- channel stuff
-CREATE DOMAIN varchar(50) as varchar(50); -- this is a restriction
-CREATE DOMAIN spec as varchar(100); -- the filepath string
-CREATE DOMAIN BOOLEAN as BOOLEAN; -- whether it is visible public or not
-
--- How will we handle posts?
--- Do we care about the date something was created?
-
 CREATE TABLE users (
 	u_email varchar(100) PRIMARY KEY,
 	u_username varchar(25)
