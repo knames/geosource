@@ -9,7 +9,7 @@ CREATE TABLE channels (
 	ch_name varchar(50) NOT NULL,
 	ch_owner varchar(100) NOT NULL,
 	ch_spec spec NOT NULL,
-	ch_public BOOLEAN NOT NULL,
+	ch_public BOOL NOT NULL,
 	FOREIGN KEY (ch_owner) REFERENCES users (u_email),
 	PRIMARY KEY (ch_name, ch_owner)
 	);
