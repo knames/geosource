@@ -60,10 +60,9 @@ public class FieldUTest
 // message.
 
     @Test
-    public void daTest()//This test will fail on the second statement
+    public void constructionTest()
     {
-        assertEquals("Arithmetic doesn't work properly",0,(4-4));
-        //assertEquals("This should fail",0,(7-6));//This will cause this test to fail.
+
     }
 
     @Test

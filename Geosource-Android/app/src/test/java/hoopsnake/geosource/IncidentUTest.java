@@ -115,6 +115,43 @@ public class IncidentUTest
 
     }
 
+    //Can we fill an incident with values successfully?
+    @Test
+    public void fillingTest()
+    {
+        //To make this simple, we'll use three text fields, and make one of them optional
+        ArrayList<FieldWithoutContent> basicSpec = new ArrayList(3);
+        basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, true));
+        basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, true));
+        basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, false));
+        Incident newIncident= new Incident(basicSpec);
+
+        //The program would use IncidentDisplayAdapter to fill the list. However, we can just take the content fields
+        //out and use them directly:
+
+        ArrayList<FieldWithContent> incidentList=newIncident.getFieldList();
+        FieldWithContent fieldWeModify=incidentList.get(0);
+        fieldWeModify.setContent("This is what we want to say.");
+        fieldWeModify=incidentList.get(1);
+        fieldWeModify.setContent("Q$^%ARd%r&thjddghjsdfgDFGSD%YE&*%#*-+*%^&$+__:><");
+
+        assertTrue(newIncident.isCompletelyFilledIn());
+
+        //Let's try one with pictures, now:
+        ArrayList<FieldWithoutContent> basicSpec2 = new ArrayList(4);
+        basicSpec2.add(new FieldWithoutContent("Description", FieldType.STRING, true));
+        basicSpec2.add(new FieldWithoutContent("Video", FieldType.STRING, true));
+        basicSpec2.add(new FieldWithoutContent("Video", FieldType.STRING, false));
+        basicSpec2.add(new FieldWithoutContent("Description", FieldType.STRING, false));
+        Incident newIncident2= new Incident(basicSpec);
+
+        incidentList=newIncident2.getFieldList();
+        fieldWeModify=incidentList.get(0);
+        fieldWeModify.setContent("This is what we want to say.");
+
+
+    }
+
 
 
 // TODO add test methods here.
