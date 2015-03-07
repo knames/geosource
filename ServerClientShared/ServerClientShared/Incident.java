@@ -11,6 +11,8 @@ public class Incident implements Serializable {
     /** The fields for this incident, including their content. Their content may be null. */
     private ArrayList<FieldWithContent> fieldList;
 
+    public Incident(){}
+    
     public Incident(ArrayList<FieldWithContent> fieldList)
     {
     	this.fieldList = fieldList;
