@@ -15,6 +15,7 @@ import hoopsnake.geosource.data.Incident;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by wwf594 on 07/03/15.
@@ -27,8 +28,8 @@ public class IncidentUTest
 
     private static int testCount=0;
 
-//Use @BeforeClass for stuff you want to run once before all the tests start. This includes things like
-//database connections.
+    //Use @BeforeClass for stuff you want to run once before all the tests start. This includes things like
+    //database connections.
 
     @BeforeClass
     public static void setUpClass()
@@ -36,8 +37,8 @@ public class IncidentUTest
 
     }
 
-//Use @AfterClass for stuff you want to run once after all the tests end. This includes stuff like
-//closing database connections, and other clean-up operations.
+    //Use @AfterClass for stuff you want to run once after all the tests end. This includes stuff like
+    //closing database connections, and other clean-up operations.
 
     @AfterClass
     public static void tearDownClass()
@@ -45,8 +46,8 @@ public class IncidentUTest
 
     }
 
-//Use @Before for things you want to run before every single test. This can cover setting up all the
-//objects you need for the tests, or reseting them to a certain state.
+    //Use @Before for things you want to run before every single test. This can cover setting up all the
+    //objects you need for the tests, or reseting them to a certain state.
 
     @Before
     public void setUp()
@@ -55,8 +56,8 @@ public class IncidentUTest
         System.out.println("Starting Test "+testCount);
     }
 
-//Use @After for things you want to run after every single test. You can use this to reset the items
-//to a base state.
+    //Use @After for things you want to run after every single test. You can use this to reset the items
+    //to a base state.
 
     @After
     public void tearDown()
@@ -64,9 +65,9 @@ public class IncidentUTest
         System.out.println("Finishing Test "+testCount);
     }
 
-// All tests are prefixed with @Test, which marks them as a test to be run when you run this a test file.
-// The basic type of test fails if an assertion fails, or if use fail(String), which contains an error
-// message.
+    // All tests are prefixed with @Test, which marks them as a test to be run when you run this a test file.
+    // The basic type of test fails if an assertion fails, or if use fail(String), which contains an error
+    // message.
 
     //Checks to see if an empty Incident can be constructed properly.
     @Test
@@ -88,7 +89,30 @@ public class IncidentUTest
         assertFalse(arrayCheck.get(1).contentIsFilled());
         assertFalse(arrayCheck.get(2).contentIsFilled());
 
+    }
+
+    //Checks to see if Incident can handle nulls properly.
+    @Test
+    public void nullCheck()
+    {
+        ArrayList<FieldWithContent> arrayCheck= new ArrayList(3);
+
+        ArrayList<FieldWithoutContent> basicSpec= new ArrayList(3);
+        basicSpec.add(null);
+        basicSpec.add(null);
+        Incident testIncident= new Incident(basicSpec);
         arrayCheck=testIncident.getFieldList();
+
+        //Check to see if everything is empty
+
+        //We have no fields, so technically all fields are filled in!
+        assertTrue(testIncident.isCompletelyFilledIn());
+
+        assertFalse(arrayCheck.get(0).contentIsFilled());
+        assertFalse(arrayCheck.get(1).contentIsFilled());
+        assertFalse(arrayCheck.get(2).contentIsFilled());
+        //assertFalse(arrayCheck.get(3).contentIsFilled());
+
     }
 
 
