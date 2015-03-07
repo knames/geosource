@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package ServerClientShared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ public class Incident implements Serializable {
     	this.fieldList = fieldList;
     }
 
-    public setFieldList(ArrayList<FieldWithContent> fieldList)
+    public void setFieldList(ArrayList<FieldWithContent> fieldList)
     {
-    	this.fieldList = fieldList;
+        this.fieldList = fieldList;
     }
 
     public ArrayList<FieldWithContent> getFieldList() {
