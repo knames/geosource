@@ -1,7 +1,7 @@
 
 
 CREATE TABLE users (
-	u_identity varchar(256),
+	u_identity varchar(256) NOT NULL,
 	u_username varchar(25) PRIMARY KEY
 	);
 
@@ -28,6 +28,7 @@ CREATE TABLE channelfavs (
 	FOREIGN KEY (ch_fav_chname) REFERENCES channels (ch_name)
 	);
 
+source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
 
 /** Sample Table
 CREATE TABLE tblname (
