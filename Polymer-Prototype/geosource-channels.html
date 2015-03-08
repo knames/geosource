@@ -2,7 +2,10 @@
 <link rel="import" href="components/core-item/core-item.html">
 <link rel="import" href="components/paper-input/paper-input.html">
 <link rel="import" href="components/core-menu/core-submenu.html">
-
+<link rel="import" href="components/core-icons/core-icons.html">
+<link rel="import" href="components/paper-fab/paper-fab.html">
+<link rel="import" href="geosource-channel-creator.html">
+<link rel="import" href="components/paper-dialog/paper-dialog.html">
 
 <polymer-element name="geosource-channels" attributes="channels subscribed">
 
@@ -40,7 +43,30 @@
       core-menu {
         margin: 0;
       }
+      paper-fab {
+        background-color: #0f9d58;
+        position: absolute;
+        right: 30px;
+        bottom: -20px;
+      }
+
+  html /deep/ paper-dialog {
+    color: black;
+  }
+
+  html /deep/ paper-dialog::shadow #scroller {
+      height: 500px;
+      width: 500px;
+  }
+
+
+
     </style>
+
+
+    <paper-dialog class="size-position" id="dialog" backdrop transition="core-transition-center">
+      <geosource-channel-creator>
+    </paper-dialog>
 
     <core-submenu opened active selected="0" icon="settings-remote" label="Channels" on-core-select="{{channelSelected}}">
       <core-menu id="core_menu" selected="0">
@@ -67,7 +93,12 @@
         </template>
       </core-menu>
     </core-submenu>
+    <paper-fab mini icon="add"
+      on-tap="{{createChannel}}">
+    </paper-fab>
+    
   </template>
+
 
   <script>
   Polymer({
@@ -192,6 +223,10 @@
       if(index == -1) {
         this.subscribed.push(sender.templateInstance.model.channel.name);
       }
+    },
+
+    createChannel: function() {
+      this.$.dialog.toggle();
     }
 
   });
