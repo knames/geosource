@@ -2,9 +2,11 @@ package FileSystem;
 
 import ServerClientShared.FieldWithoutContent;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -32,5 +34,19 @@ public class FileAccess {
             System.out.println("Parsing Specification failed");
             return null;
         }
+    }
+    
+    public String savePicture(byte[] picture)
+    {
+        UUID fileUUID = UUID.nameUUIDFromBytes(picture);
+        String fileName = fileUUID.toString();
+        try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
+            fileOut.write(picture);
+        }
+        catch (IOException IOe)
+        {
+            System.out.println("Error attempting to write picture file");
+        }
+        return fileName;
     }
 }

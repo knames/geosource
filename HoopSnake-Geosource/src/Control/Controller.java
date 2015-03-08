@@ -67,7 +67,35 @@ public class Controller {
     private void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
-        
+        for (FieldWithContent field : incident.getFieldList())
+        {
+            switch(field.getType())
+            {
+                case IMAGE:
+                {
+                    String filePath = fileAccess.savePicture((byte[])field.getContent());
+                    dbAccess.savePictureField(incident.getChannelName(), field.getTitle(), filePath);
+                    break;
+                }
+                case STRING:
+                {
+                    dbAccess.saveStringField(incident.getChannelName(), field.getTitle(), (String)field.getContent());
+                    break;
+                }
+                case VIDEO:
+                {
+                    break;
+                }
+                case AUDIO:
+                {
+                    break;
+                }
+                case OPTION_LIST:
+                {
+                    break;
+                }
+            }
+        }
         //TODO parse incident and save its fields
     }
     
