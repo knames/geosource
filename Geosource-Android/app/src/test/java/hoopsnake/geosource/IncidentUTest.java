@@ -17,6 +17,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+//New System broke all of the tests, none of these work properly now. Will rework later.
+
+
+
 /**
  * Created by wwf594 on 07/03/15.
  */
