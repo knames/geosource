@@ -1,5 +1,5 @@
 package hoopsnake.geosource.data;
-
+//TODO All the Field classes are now shared. remove them and import instead.
 /**
  * Created by wsv759 on 19/02/15.
  *

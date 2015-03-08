@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+//TODO All the Field classes are now shared. remove them and import instead.
+
 /**
  * Created by wsv759 on 18/02/15.
  * A single field within an incident.
