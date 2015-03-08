@@ -15,21 +15,11 @@ public class TestSuite
 {
     public static void main (String args[])
     {
-        Result result=null;
         JUnitCore junit = new JUnitCore();
-        //try
-       // {
-             result = junit.run(FieldTest.class);
-        /*}
-        catch(Exception e)
-        {
-            //The errors will be displayed in the results.
-        }
-        finally
-        {*/
-            System.out.println(parseResults(result,"FieldTest"));
-       // }
-        
+        Result result = junit.run(FieldTest.class);
+        System.out.println(parseResults(result,"FieldTest"));
+        result= junit.run(IncidentTest.class);
+        System.out.println(parseResults(result,"FieldTest"));   
     }
     
     public static String parseResults (Result testResults, String testName)
@@ -41,7 +31,7 @@ public class TestSuite
         }
         else
         {
-            slate=slate+"failed. \n";
+            slate=slate+"a failure. \n";
             List<Failure> failureList=testResults.getFailures();
             while(!(failureList.isEmpty()))
             {
