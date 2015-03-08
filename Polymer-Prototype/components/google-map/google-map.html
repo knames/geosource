@@ -277,6 +277,15 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
             post_card.favorite = this.post.favorite;
             post_card.mapInfo = true;
 
+
+            var image = {
+              url: '../' + this.post.avatar,
+              size: new google.maps.Size(120, 60),
+              scaledSize: new google.maps.Size(120, 60)
+            };
+
+            this.icon = image;
+
             this.info = new google.maps.InfoWindow({
               content: post_card
             });
@@ -318,7 +327,6 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
               //   }
               // });
               // this.dispatchEvent(event);
-              this.icon = null;
             }.bind(this));
 
           }
