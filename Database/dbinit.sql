@@ -8,7 +8,7 @@ CREATE TABLE users (
 CREATE TABLE channels (
 	ch_name varchar(50) NOT NULL,
 	ch_owner varchar(256) NOT NULL,
-	ch_spec varchar(256) NOT NULL,
+	ch_spec INT UNSIGNED  NOT NULL AUTO_INCREMENT,
 	ch_public BOOL NOT NULL,
 	FOREIGN KEY (ch_owner) REFERENCES users (u_identity),
 	PRIMARY KEY (ch_name, ch_owner)
