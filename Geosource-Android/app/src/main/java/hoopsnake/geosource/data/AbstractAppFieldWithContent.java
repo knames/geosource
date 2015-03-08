@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * A basic implementation of AppFieldWithContent, using the basic FieldWithContent
  */
 public abstract class AbstractAppFieldWithContent implements AppFieldWithContent {
 

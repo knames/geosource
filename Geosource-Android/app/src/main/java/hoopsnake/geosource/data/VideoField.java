@@ -52,11 +52,10 @@ public class VideoField extends AbstractAppFieldWithContentAndFile {
         if (resultCode == Activity.RESULT_OK) {
             // Video captured and saved to fileUri specified in the Intent
             Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
-            //TODO does this work??
-            activity.notify();
+
+            //TODO display the video in its field! This means notifying the UI.
             //TODO set the content of this field appropriately. Probably in a background task?
 
-            //TODO display the video in its field!
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
             // User cancelled the video capture

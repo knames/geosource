@@ -52,13 +52,11 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
             // Image captured and saved to fileUri specified in the Intent
 
             Toast.makeText(activity, "Image saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
-            //TODO does notify work??
-            activity.notify();
 
+            //TODO display the image in its field! This means notifying the UI.
             //TODO set the content of this field appropriately. Probably in a background task?
             //setContent(new SerialBitmap(fileUri));
 
-            //TODO display the image in its field!
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
             // User cancelled the image capture
