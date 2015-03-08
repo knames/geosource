@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.FieldType;
 import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
-import hoopsnake.geosource.data.Incident;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -80,7 +80,7 @@ public class IncidentUTest
         basicSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
         basicSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
         basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, true));
-        Incident testIncident= new Incident(basicSpec);
+        AppIncident testIncident= new AppIncident(basicSpec);
         arrayCheck=testIncident.getFieldList();
 
         //Check to see if everything is empty
@@ -100,7 +100,7 @@ public class IncidentUTest
         ArrayList<FieldWithoutContent> basicSpec= new ArrayList(3);
         basicSpec.add(null);
         basicSpec.add(null);
-        Incident testIncident= new Incident(basicSpec);
+        AppIncident testIncident= new AppIncident(basicSpec);
         arrayCheck=testIncident.getFieldList();
 
         //Check to see if everything is empty
@@ -124,7 +124,7 @@ public class IncidentUTest
         basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, true));
         basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, true));
         basicSpec.add(new FieldWithoutContent("Description", FieldType.STRING, false));
-        Incident newIncident= new Incident(basicSpec);
+        AppIncident newIncident= new AppIncident(basicSpec);
 
         //The program would use IncidentDisplayAdapter to fill the list. However, we can just take the content fields
         //out and use them directly:
@@ -143,7 +143,7 @@ public class IncidentUTest
         basicSpec2.add(new FieldWithoutContent("Video", FieldType.STRING, true));
         basicSpec2.add(new FieldWithoutContent("Video", FieldType.STRING, false));
         basicSpec2.add(new FieldWithoutContent("Description", FieldType.STRING, false));
-        Incident newIncident2= new Incident(basicSpec);
+        AppIncident newIncident2= new AppIncident(basicSpec);
 
         incidentList=newIncident2.getFieldList();
         fieldWeModify=incidentList.get(0);

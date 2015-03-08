@@ -1,14 +1,12 @@
 package hoopsnake.geosource.data;
-//TODO All the Field classes are now shared. remove them and import instead. This one should be converted into a subclass of the shared one, using Uris.
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import hoopsnake.geosource.media.SerialBitmap;
-
-import static junit.framework.Assert.assertNotNull;
+//TODO All the Field classes are now shared. remove them and import instead. This one should be converted into a subclass of the shared one, using Uris.
 
 /**
  * Created by wsv759 on 18/02/15.
@@ -40,7 +38,9 @@ public class FieldWithContent extends Field implements Serializable
         super(title, type, isRequired);
 
         setContent(content);
-        assertNotNull(content);
+
+        if (content == null)
+            throw new RuntimeException(content + " is null.");
     }
 
     /**
@@ -68,7 +68,26 @@ public class FieldWithContent extends Field implements Serializable
     {
         title = (String) in.readObject();
         type = (FieldType) in.readObject();
-        setContent((Serializable) in.readObject());
+
+        switch (type)
+        {
+            case IMAGE:
+                setContent((byte[]) in.readObject());
+                break;
+            case STRING:
+                setContent((String) in.readObject());
+                break;
+            case VIDEO:
+                //TODO implement this.
+                throw new UnsupportedOperationException("Not supported yet.");
+                //break; PUT THIS BACK AFTER IMPLEMENTATION
+            case AUDIO:
+                //TODO implement this.
+                throw new UnsupportedOperationException("Not supported yet.");
+                //break; PUT THIS BACK AFTER IMPLEMENTATION
+            default:
+                throw new RuntimeException("invalid type");
+        }
     }
 
     /** Serializable implementation. */
@@ -91,7 +110,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public void setContent(Serializable newContent)
     {
-        assertNotNull(type);
+        if (type == null)
+            throw new RuntimeException(type + " is null.");
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -116,7 +136,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
-        assertNotNull(type);
+        if (type == null)
+            throw new RuntimeException(type + " is null.");
 
         if (content == null)
             return true;
@@ -124,7 +145,7 @@ public class FieldWithContent extends Field implements Serializable
         switch (type)
         {
             case IMAGE:
-                return (content instanceof SerialBitmap);
+                return (content instanceof byte[]);
             case VIDEO:
                 //TODO implement this.
                 throw new RuntimeException("Video object type not yet implemented, sorry!");

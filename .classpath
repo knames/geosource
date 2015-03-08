@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="CameraTest/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="CameraTest/app/src/main/java"/>
+	<classpathentry kind="src" path="Geosource-Android/app/build/generated/source/buildConfig/debug"/>
+	<classpathentry kind="src" path="Geosource-Android/app/build/generated/source/buildConfig/test/debug"/>
+	<classpathentry kind="src" path="Geosource-Android/app/build/generated/source/r/debug"/>
+	<classpathentry kind="src" path="Geosource-Android/app/src/main/java"/>
+	<classpathentry kind="src" path="Geosource-Android/app/src/test/java"/>
+	<classpathentry kind="src" path="HoopSnake-Geosource/src"/>
+	<classpathentry kind="src" path="ListViewPlanets/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="ListViewPlanets/app/src/main/java"/>
+	<classpathentry kind="src" path="ServerClientShared"/>
+	<classpathentry kind="lib" path="CameraTest/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/jacoco/jacocoagent.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/classes-1d0c4d02d98b4c24efdeb621801463ea8090aed5.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/classes-a2248f93067d613734b0af3cb80db38ab98afe9e.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/espresso-1.1-34379d0c2c173d01e831d9711a077ef48d928a04.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-6bf376aae0eac62e5f3d75a694f0371168fe469e.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/jacocoagent-d1e0a0064b62f9361c91894908e2c88fd41bb090.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-708fa0294bf4c5e74b88f516f7dafa9f95bd6344.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/testrunner-1.1-05fd9bf6b1ae807600254975530aca514befd62b.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/pre-dexed/debug/testrunner-runtime-1.1-cdb27bad59857829e915fb565d083483764829c5.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/build/tmp/expandedArchives/org.jacoco.agent-0.7.1.201405082137.jar_8q9519nip2v606hv33l2t3t2m/jacocoagent.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/libs/espresso-1.1.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/libs/testrunner-1.1.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/app/libs/testrunner-runtime-1.1.jar"/>
+	<classpathentry kind="lib" path="Geosource-Android/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="ListViewPlanets/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="Geosource-Android/app/build/intermediates/coverage-instrumented-classes/debug"/>
+</classpath>

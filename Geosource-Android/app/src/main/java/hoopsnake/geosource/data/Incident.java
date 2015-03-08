@@ -9,9 +9,22 @@ import java.util.ArrayList;
 public class Incident implements Serializable {
 
     /** The fields for this incident, including their content. Their content may be null. */
-    protected ArrayList<FieldWithContent> fieldList;
+    private ArrayList<FieldWithContent> fieldList;
+
+    public Incident(){}
+
+    public Incident(ArrayList<FieldWithContent> fieldList)
+    {
+        this.fieldList = fieldList;
+    }
+
+    public void setFieldList(ArrayList<FieldWithContent> fieldList)
+    {
+        this.fieldList = fieldList;
+    }
 
     public ArrayList<FieldWithContent> getFieldList() {
         return fieldList;
     }
 }
+
