@@ -14,6 +14,7 @@ public class AppIncident extends Incident {
      * fieldWithoutContentList, and adding null content. */
     public AppIncident(ArrayList<FieldWithoutContent> fieldWithoutContentList)
     {
+        fieldList= new ArrayList<FieldWithContent>();
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
             FieldWithContent newFieldWithContent = new FieldWithContent(
