@@ -152,7 +152,24 @@ public class IncidentUTest
 
     }
 
+    /*NOTE When testing keep in mind the changes that will be made to the file structure in Data
+    *folder soon
+    */
+    //Incident tests of incidents with fieldList size of 1
+    //TODO StringField tests, incident with just StringField
+    //Build, test, destroy
 
+    //TODO VideoField tests, incident with just VideoField
+    //Build, test, destroy
+
+    //TODO ImageField tests, incident with just ImageField
+    //Build, test, destroy
+
+    //TODO AudioField tests, incident with just AudioField
+    //Build, test, destroy
+
+    //Incident tests of incidents with any fieldList size
+    //TODO
 
 // TODO add test methods here.
 // The methods must be annotated with annotation @Test. For example:

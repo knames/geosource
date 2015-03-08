@@ -71,6 +71,12 @@ public class FieldUTest
         assertEquals("This should pass!", 0,0);
     }
 
+
+    //Field tests
+    //TODO test getType()
+    //TODO test getTitle()
+    //TODO test isRequired()
+
 // TODO add test methods here.
 // The methods must be annotated with annotation @Test. For example:
 //
