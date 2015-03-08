@@ -1,16 +1,10 @@
 package hoopsnake.geosource.data;
-//TODO All the Field classes are now shared. remove them and import instead. This one should be converted into a subclass of the shared one, using Uris.
-import android.net.Uri;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import hoopsnake.geosource.media.SerialBitmap;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 18/02/15.
@@ -27,17 +21,6 @@ public class FieldWithContent extends Field implements Serializable
      */
     protected Serializable content;
 
-    /**
-     * The Uri representing the file which will be converted into the Serializable content object
-     * at some point. If this is non-null, the content field is assumed to be filled.
-     *
-     * If this is null, the content field may still be non-null!
-     *
-     * This should only ever be non-null if the content actually corresponds to a file
-     * (i.e. Image, Video, or Audio content.)
-     */
-    protected Uri contentFileUri;
-
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +36,8 @@ public class FieldWithContent extends Field implements Serializable
         super(title, type, isRequired);
 
         setContent(content);
-        assertNotNull(content);
+        if (content == null)
+            throw new RuntimeException(content + " is null.");
 
     }
 
@@ -76,7 +60,26 @@ public class FieldWithContent extends Field implements Serializable
     {
         title = (String) in.readObject();
         type = (FieldType) in.readObject();
-        setContent((Serializable) in.readObject());
+
+        switch (type)
+        {
+            case IMAGE:
+                setContent((byte[]) in.readObject());
+                break;
+            case STRING:
+                setContent((String) in.readObject());
+                break;
+            case VIDEO:
+                //TODO implement this.
+                throw new UnsupportedOperationException("Not supported yet.");
+                //break; PUT THIS BACK AFTER IMPLEMENTATION
+            case AUDIO:
+                //TODO implement this.
+                throw new UnsupportedOperationException("Not supported yet.");
+                //break; PUT THIS BACK AFTER IMPLEMENTATION
+            default:
+                throw new RuntimeException("invalid type");
+        }
     }
 
     /** Serializable implementation. */
@@ -99,7 +102,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public void setContent(Serializable newContent)
     {
-        assertNotNull(type);
+        if (type == null)
+            throw new RuntimeException(type + " is null.");
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -109,64 +113,6 @@ public class FieldWithContent extends Field implements Serializable
 
     public Serializable getContent() {
         return content;
-    }
-
-    private boolean typeCouldHaveUri()
-    {
-        switch(type)
-        {
-            case IMAGE:
-                return true;
-            case STRING:
-                return false;
-            case VIDEO:
-                return true;
-            case AUDIO:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public Uri getContentFileUri() {
-        return contentFileUri;
-    }
-
-    public void setContentFileUri(Uri contentFileUri) {
-        if (typeCouldHaveUri()) {
-            //TODO add file-type-checking, probably using Files.probeContentType().
-            this.contentFileUri = contentFileUri;
-        }
-        else
-            throw new RuntimeException("type " + type + "can't have a Uri.");
-    }
-
-    public boolean contentIsFilled()
-    {
-        if (contentFileUri != null)
-            return true;
-
-        return content != null;
-    }
-
-    public String getContentStringRepresentation()
-    {
-        if (!contentIsFilled())
-            return "";
-
-        switch(type)
-        {
-            case IMAGE:
-                return contentFileUri.toString();
-            case STRING:
-                return (String) content;
-            case VIDEO:
-                return contentFileUri.toString();
-            case AUDIO:
-                return contentFileUri.toString();
-            default:
-                return "";
-        }
     }
 
     /**
@@ -182,7 +128,8 @@ public class FieldWithContent extends Field implements Serializable
      */
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
-        assertNotNull(type);
+        if (type == null)
+            throw new RuntimeException(type + " is null.");
 
         if (content == null)
             return true;
@@ -190,7 +137,7 @@ public class FieldWithContent extends Field implements Serializable
         switch (type)
         {
             case IMAGE:
-                return (content instanceof SerialBitmap);
+                return (content instanceof byte[]);
             case VIDEO:
                 //TODO implement this.
                 throw new RuntimeException("Video object type not yet implemented, sorry!");
