@@ -19,7 +19,7 @@ public class TestSuite
         Result result = junit.run(FieldTest.class);
         System.out.println(parseResults(result,"FieldTest"));
         result= junit.run(IncidentTest.class);
-        System.out.println(parseResults(result,"FieldTest"));   
+        System.out.println(parseResults(result,"IncidentTest"));   
     }
     
     public static String parseResults (Result testResults, String testName)
