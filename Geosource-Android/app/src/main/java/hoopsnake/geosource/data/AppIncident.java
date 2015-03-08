@@ -8,17 +8,36 @@ import static junit.framework.Assert.assertNotNull;
  * Created by wsv759 on 07/03/15.
  */
 public class AppIncident extends Incident {
-
+    ArrayList<AppFieldWithContent> fieldList;
 
     /** Create a new incident by populating its fieldList by means of a
      * fieldWithoutContentList, and adding null content. */
     public AppIncident(ArrayList<FieldWithoutContent> fieldWithoutContentList)
     {
+        fieldList = new ArrayList<AppFieldWithContent>();
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
-            FieldWithContent newFieldWithContent = new FieldWithContent(
-                    fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired());
-            fieldList.add(newFieldWithContent);
+            FieldWithContent newField = new FieldWithContent(fieldWithoutContent);
+            AppFieldWithContent newFieldWithContentWrapper;
+            switch(fieldWithoutContent.getType())
+            {
+                case IMAGE:
+                    newFieldWithContentWrapper = new ImageField(newField);
+                    break;
+                case STRING:
+                    newFieldWithContentWrapper = new StringField(newField);
+                    break;
+                case VIDEO:
+                    newFieldWithContentWrapper = new VideoField(newField);
+                    break;
+                case AUDIO:
+                    newFieldWithContentWrapper = new AudioField(newField);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
+            }
+
+            fieldList.add(newFieldWithContentWrapper);
         }
     }
 
@@ -27,7 +46,7 @@ public class AppIncident extends Incident {
     {
         assertNotNull(fieldList);
 
-        for (FieldWithContent fieldWithContent : fieldList)
+        for (AppFieldWithContent fieldWithContent : fieldList)
         {
             assertNotNull(fieldWithContent);
 

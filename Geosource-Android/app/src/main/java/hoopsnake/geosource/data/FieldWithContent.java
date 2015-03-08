@@ -1,7 +1,5 @@
 package hoopsnake.geosource.data;
 //TODO All the Field classes are now shared. remove them and import instead. This one should be converted into a subclass of the shared one, using Uris.
-import android.net.Uri;
-
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -27,17 +25,6 @@ public class FieldWithContent extends Field implements Serializable
      */
     protected Serializable content;
 
-    /**
-     * The Uri representing the file which will be converted into the Serializable content object
-     * at some point. If this is non-null, the content field is assumed to be filled.
-     *
-     * If this is null, the content field may still be non-null!
-     *
-     * This should only ever be non-null if the content actually corresponds to a file
-     * (i.e. Image, Video, or Audio content.)
-     */
-    protected Uri contentFileUri;
-
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
@@ -54,7 +41,6 @@ public class FieldWithContent extends Field implements Serializable
 
         setContent(content);
         assertNotNull(content);
-
     }
 
     /**
@@ -70,6 +56,12 @@ public class FieldWithContent extends Field implements Serializable
         setContent(null);
     }
 
+    public FieldWithContent(FieldWithoutContent fieldWithoutContent)
+    {
+        super(fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired());
+
+        setContent(null);
+    }
 
     /** Serializable implementation. */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
@@ -109,64 +101,6 @@ public class FieldWithContent extends Field implements Serializable
 
     public Serializable getContent() {
         return content;
-    }
-
-    private boolean typeCouldHaveUri()
-    {
-        switch(type)
-        {
-            case IMAGE:
-                return true;
-            case STRING:
-                return false;
-            case VIDEO:
-                return true;
-            case AUDIO:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public Uri getContentFileUri() {
-        return contentFileUri;
-    }
-
-    public void setContentFileUri(Uri contentFileUri) {
-        if (typeCouldHaveUri()) {
-            //TODO add file-type-checking, probably using Files.probeContentType().
-            this.contentFileUri = contentFileUri;
-        }
-        else
-            throw new RuntimeException("type " + type + "can't have a Uri.");
-    }
-
-    public boolean contentIsFilled()
-    {
-        if (contentFileUri != null)
-            return true;
-
-        return content != null;
-    }
-
-    public String getContentStringRepresentation()
-    {
-        if (!contentIsFilled())
-            return "";
-
-        switch(type)
-        {
-            case IMAGE:
-                return contentFileUri.toString();
-            case STRING:
-                return (String) content;
-            case VIDEO:
-                return contentFileUri.toString();
-            case AUDIO:
-                return contentFileUri.toString();
-            default:
-                return "";
-        }
     }
 
     /**
