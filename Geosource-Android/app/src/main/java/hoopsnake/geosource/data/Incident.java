@@ -3,6 +3,8 @@ package hoopsnake.geosource.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+//TODO This class will be shared. remove and import instead.
+
 /**
  * Created by wsv759 on 19/02/15.
  */
