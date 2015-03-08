@@ -1,10 +1,12 @@
 package hoopsnake.geosource.data;
-//TODO All the Field classes are now shared. remove them and import instead.
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+//TODO All the Field classes are now shared. remove them and import instead.
 
 /**
  * Created by wsv759 on 18/02/15.
@@ -18,7 +20,7 @@ public class FieldWithoutContent extends Field implements Serializable {
 
     public FieldWithoutContent(String title, FieldType type, boolean isRequired)
     {
-       super(title, type, isRequired);
+        super(title, type, isRequired);
     }
 
     /** Serializable implementation. */

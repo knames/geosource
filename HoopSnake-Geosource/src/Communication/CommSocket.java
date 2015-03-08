@@ -4,6 +4,7 @@ import Control.Controller;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Incident;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -31,7 +32,7 @@ import javax.crypto.NoSuchPaddingException;
  * 
  * @author Connor
  */
-public class CommSocket implements Callable<FieldWithContent>{
+public class CommSocket implements Callable<Incident>{
     
     private static final int portNum = 0;
     
@@ -71,7 +72,7 @@ public class CommSocket implements Callable<FieldWithContent>{
      * filled future, allowing later checking for data once the task completes
      * @return any Incident submission returned by a connection to an android app
      */
-    public FieldWithContent call()
+    public Incident call()
     {
         try
         {
@@ -110,12 +111,13 @@ public class CommSocket implements Callable<FieldWithContent>{
                     String channelName = in.readUTF();
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
                     out.writeObject(formList);
-                    break;
+                    return null;
                 }
                 case SEND_INCIDENT:
                 {
                     //TODO implement later
-                    break;
+                    Incident newIncident = (Incident)in.readObject();
+                    return newIncident;
                 }
             }
         }

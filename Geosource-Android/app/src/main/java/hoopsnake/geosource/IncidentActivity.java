@@ -22,6 +22,7 @@ import java.util.List;
 
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
+import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.FieldType;
 import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
@@ -42,7 +43,7 @@ public class IncidentActivity extends ActionBarActivity {
     ListView incidentDisplay;
 
     /** The incident to be created and edited by the user on this screen. */
-    Incident incident;
+    AppIncident incident;
 
     public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
 
@@ -77,7 +78,7 @@ public class IncidentActivity extends ActionBarActivity {
         mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
         mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
 
-        incident = new Incident(mockedSpec);
+        incident = new AppIncident(mockedSpec);
         // We get the ListView component from the layout
         incidentDisplay = (ListView) findViewById(R.id.listView);
 
@@ -313,7 +314,7 @@ public class IncidentActivity extends ActionBarActivity {
 
             }
 
-            incident = new Incident(fieldsToBeFilled);
+            incident = new AppIncident(fieldsToBeFilled);
 
             incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
             incidentDisplay.setAdapter(incidentAdapter);
