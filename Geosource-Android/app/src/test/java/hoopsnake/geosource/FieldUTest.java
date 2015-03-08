@@ -7,6 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+//New System broke all of the tests, none of these work properly now. Will rework later.
+
 /**
  * Created by wwf594 on 07/03/15.
  */
@@ -65,10 +67,32 @@ public class FieldUTest
 
     }
 
+    //Tests the ImageField functionality
     @Test
-    public void anotherTest()//This will pass.
+    public void imageFieldTest()
     {
-        assertEquals("This should pass!", 0,0);
+
+    }
+
+    //Tests the StringField functionality
+    @Test
+    public void stringFieldTest()
+    {
+
+    }
+
+    //Tests the VideoField functionality
+    @Test
+    public void videoFieldTest()
+    {
+
+    }
+
+    //Tests the audioField functionality
+    @Test
+    public void AudioFieldTest()
+    {
+
     }
 
 // TODO add test methods here.
