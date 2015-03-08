@@ -19,11 +19,19 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
         this.wrappedField = fieldToWrap;
     }
 
+    @Override
+    public String getTitle()
+    {
+        return wrappedField.getTitle();
+    }
+
+    @Override
     public boolean isRequired()
     {
         return wrappedField.isRequired();
     }
 
+    @Override
     public boolean contentIsSuitable(Serializable content)
     {
         return FieldWithContent.contentMatchesType(content, wrappedField.getType());

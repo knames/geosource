@@ -15,19 +15,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import hoopsnake.geosource.data.FieldWithContent;
+import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
+public class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
 
     private String logTag = MainActivity.APP_LOG_TAG;
-    private ArrayList<FieldWithContent> fieldList;
+    private ArrayList<AppFieldWithContent> fieldList;
     private Context context;
 
-    public IncidentDisplayAdapter(ArrayList<FieldWithContent> fieldList, Context ctx) {
-        super(ctx, R.layout.img_row_layout, fieldList);
-        this.fieldList = fieldList;
+    public IncidentDisplayAdapter(AppIncident incident, Context ctx) {
+        super(ctx, R.layout.img_row_layout, incident.getFieldList());
+        this.fieldList = incident.getFieldList();
         this.context = ctx;
     }
 
@@ -35,7 +36,7 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         return fieldList.size();
     }
 
-    public FieldWithContent getItem(int position) {
+    public AppFieldWithContent getItem(int position) {
         return fieldList.get(position);
     }
 
@@ -57,7 +58,6 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
             TextView tv = (TextView) v.findViewById(R.id.name);
             TextView distView = (TextView) v.findViewById(R.id.dist);
 
-
             holder.fieldTitleView = tv;
             holder.promptView = distView;
 
@@ -66,7 +66,7 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         else
             holder = (FieldHolder) v.getTag();
 
-        FieldWithContent f = fieldList.get(position);
+        AppFieldWithContent f = fieldList.get(position);
 
         String fieldTitle = f.getTitle();
         assertNotNull(fieldTitle);
@@ -77,25 +77,8 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
 
         if (f.contentIsFilled())
             prompt.setText(f.getContentStringRepresentation());
-        else {
-            switch (f.getType())
-            {
-                case IMAGE:
-                    prompt.setText("Click to take a picture.");
-                    break;
-                case STRING:
-                    prompt.setText("Click to fill in text.");
-                    break;
-                case VIDEO:
-                    prompt.setText("Click to take a video.");
-                    break;
-                case AUDIO:
-                    prompt.setText("Click to record audio.");
-                    break;
-                default:
-                    throw new RuntimeException("invalid type." + f.getType());
-            }
-        }
+        else
+            prompt.setText(f.getPromptStringForUi());
 
         return v;
     }

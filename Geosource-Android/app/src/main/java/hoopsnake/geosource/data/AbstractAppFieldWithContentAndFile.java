@@ -27,6 +27,7 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
         return contentFileUri;
     }
 
+    @Override
     public boolean contentIsFilled()
     {
         if (contentFileUri != null)
@@ -35,6 +36,7 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
         return wrappedField.content != null;
     }
 
+    @Override
     public String getContentStringRepresentation()
     {
         if (!contentIsFilled())
