@@ -1,5 +1,5 @@
 <link rel="import" href="components/polymer/polymer.html">
-<link rel="import" href="post-card.html">
+<link rel="import" href="geosource-post-summary.html">
 
 <polymer-element name="geosource-feed" attributes="posts">
   <template>
@@ -7,20 +7,20 @@
     :host {
       display: block;
     }
-    post-card {
+    geosource-post-summary {
       margin-bottom: 30px;
     }
     </style>
     
     <div layout vertical center>
       <template repeat="{{post in posts}}">
-        <post-card 
+        <geosource-post-summary 
           post="{{post}}"
           favorite="{{post.favorite}}"
           on-location-click="{{handleLocation}}"
           on-favorite-click="{{handleFavorite}}"
           on-more-click="{{handleMore}}">
-        </post-card>
+        </geosource-post-summary>
       </template>
     </div>
   </template>
