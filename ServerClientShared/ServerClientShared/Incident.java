@@ -17,6 +17,9 @@ public class Incident implements Serializable {
     public Incident(ArrayList<FieldWithContent> fieldList, String channel)
     {
     	setFieldList(fieldList);
+        if(channel==null)
+            throw new RuntimeException("channel cannot be null.");
+            
         setChannelName(channel);
     }
 
@@ -37,9 +40,12 @@ public class Incident implements Serializable {
     }
 
     /**
+     * @precond channelName cannot be null
      * @param channelName the channelName to set
      */
     public void setChannelName(String channelName) {
+        if(channelName==null)
+            throw new RuntimeException("channel cannot be null.");
         this.channelName = channelName;
     }
 }

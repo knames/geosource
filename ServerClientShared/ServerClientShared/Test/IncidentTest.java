@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Warren
+ * @author add118
  */
 public class IncidentTest 
 {
@@ -49,17 +49,25 @@ public class IncidentTest
     public void constructionTest() {
     	ArrayList<FieldWithContent> basicSpec = new ArrayList<FieldWithContent>(1);
     	basicSpec.add(new FieldWithContent("Image", FieldType.IMAGE, true));
-    	Incident testIncident1 = new Incident(basicSpec);
+    	Incident testIncident1 = new Incident(basicSpec,"daChannel");
     	
     	//Test getFieldList returns proper content
     	assertEquals(testIncident1.getFieldList().get(0), basicSpec.get(0));
     	assertEquals(testIncident1.getFieldList(), basicSpec);
     	
     	//Null ArrayList<FieldWithContent> test
-    	Incident testIncident2 = new Incident(null);
+    	Incident testIncident2 = new Incident(null,"testChannel5");
     	assertEquals(null, testIncident2.getFieldList());
     	testIncident2.setFieldList(basicSpec); 
     	assertEquals(testIncident1.getFieldList(), basicSpec);
+        
+        //Test for null channel names
+        try
+        {
+            Incident testIncident3 = new Incident(basicSpec,null);
+            fail("Failed to throw exception on null channel name");
+        }
+        catch(RuntimeException e){};//expected
 
     	 
     }
