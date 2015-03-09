@@ -12,6 +12,13 @@ import java.sql.Statement;
  * @author Connor
  */
 public class DBAccess {
+	   // JDBC driver name and database URL
+	   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+	   static final String DB_URL = "jdbc:mysql://www.okenso.com:3306/dev";
+
+	   //  Database credentials
+	   static final String USER = "hdev";
+	   static final String PASS = "devsnake371";
     
     private Connection dbconnection;
     
@@ -19,7 +26,7 @@ public class DBAccess {
     {
         try
         {
-            Class.forName("org.postgresql.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
         }
         catch (ClassNotFoundException e)
         {
@@ -29,9 +36,8 @@ public class DBAccess {
         
         try
         {
-            dbconnection = DriverManager.getConnection
-            ("jdbc:postgresql://SERVER_URL:PORTNUM/", "DB_NAME",
-            "PASSWORD");
+        	//DriverManager.getConnection(DB_URL,USER,PASS);
+            dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
         }
         catch(SQLException sqle)
         {
