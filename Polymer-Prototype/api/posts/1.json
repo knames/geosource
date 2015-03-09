@@ -1,0 +1,16 @@
+{
+	"pid": 1,
+	"uid": 115161761450794914816,
+	"username": "Josh",
+	"channel": "Birds",
+    "favorite": false,
+    "title": "Have you seen this sparrow?",
+	"fields": 
+		[
+			{"type": "Text", "label": "Description", "value": "I didn't manage to catch a video of it, but check this out!"},
+			{"type": "Video", "label": "Video", "value": "/videos/small.mp4"},
+			{"type": "Image", "label": "Picture", "value": "/images/avatar-01.svg"}
+		],
+	"time": "2015-02-26 12:00:00.000",
+    "location": {"latitude": 52.1333, "longitude": -106.6853}
+}

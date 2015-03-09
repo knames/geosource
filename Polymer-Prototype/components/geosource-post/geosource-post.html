@@ -1,0 +1,121 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../geosource-services/post-service.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<polymer-element name="geosource-post" attributes="pid">
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        color: #FFFFFF;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .footer {
+        padding: 20px;
+        padding-top: 0;
+        font-size: 14px;
+        color: #636363;
+        text-transform: uppercase;
+      }
+
+      video {
+        background-color: #000000;
+      }
+
+    </style>
+
+    <post-service post="{{post}}" pid="{{pid}}"></post-service>
+
+    <div vertical layout>
+      <h2 class="header">{{post.title}}</h2>
+      <div class="content" id="content" vertical layout></div>
+      <div class="footer">posted by {{post.username}} {{time}} to {{post.channel}}</div>
+    </div>
+
+  </template>
+
+
+  <script>
+  Polymer({
+
+    time: null,
+    post: null,
+
+    postChanged: function() {
+      this.time = moment(this.post.time).fromNow();
+
+      content = "";
+
+      for(i=0; i<this.post.fields.length; i++) {
+
+        content += '<h3>' + this.post.fields[i].label + '</h3>';
+
+        switch(this.post.fields[i].type) {
+          case "Video":
+            content += 
+              '<video width="auto" height="auto" controls>' +
+                '<source src="' + this.post.fields[i].value + '" type="video/mp4">' +
+                'Your browser does not support the video tag.' +
+              '</video>';
+            break;
+          case "Audio":
+            content += 
+              '<audio controls>' +
+                '<source src="' + this.post.fields[i].value + '" type="audio/mpeg">' +
+                'Your browser does not support the audio element.' +
+              '</audio>';
+            break;
+          case "Image":
+            content += '<img src="' + this.post.fields[i].value + '">';
+            break;
+          case "Text":
+            content += '<div>' + this.post.fields[i].value + '</div>';
+            break;
+          case "Checkbox":
+            break;
+          case "Radio Button":
+            break;
+
+
+        }
+      }
+
+      this.$.content.innerHTML = content;
+
+
+
+    }
+
+  });
+  </script>
+  
+</polymer-element>

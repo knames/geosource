@@ -47,7 +47,7 @@
   @type Array
   @default []
 -->
-<polymer-element name="post-service" attributes="pid post">
+<polymer-element name="post-summary-service" attributes="posts">
   <template>
     <style>
     :host {
@@ -56,19 +56,22 @@
     </style>
     <core-ajax id="ajax"
       auto
-      url="/api/posts/{{pid}}.json"
-      on-core-response="{{postLoaded}}"
+      url="/api/posts.json"
+      on-core-response="{{postsLoaded}}"
       handleAs="json">
     </core-ajax>
   </template>
   <script>
-  Polymer('post-service', {
+  Polymer('post-summary-service', {
     created: function() {
-      this.post = null;
+      this.posts = [];
     },
-    postLoaded: function() {
+    postsLoaded: function() {
       // Make a copy of the loaded data
-      this.post = this.$.ajax.response;
+      this.posts = this.$.ajax.response.slice(0).sort(function(a,b) {
+        return moment(b.time).diff(moment(a.time));
+      });
+
     },
     /** 
      * Update the service with the current favorite value.

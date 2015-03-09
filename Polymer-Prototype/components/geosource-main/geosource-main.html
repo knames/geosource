@@ -13,8 +13,9 @@
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-spinner/paper-spinner.html">
 
-<link rel="import" href="../geosource-services/post-service.html">
+<link rel="import" href="../geosource-services/post-summary-service.html">
 <link rel="import" href="../geosource-services/channel-service.html">
+<link rel="import" href="../geosource-post/geosource-post.html">
 
 
 <polymer-element name="geosource-main">
@@ -120,11 +121,11 @@
         }      
   </style>
 
-    <post-service id="post_service" posts="{{posts}}"></post-service>
+    <post-summary-service id="post_service" posts="{{posts}}"></post-summary-service>
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
-      <div flex id="dialog_content"></div>
+      <geosource-post pid="{{pid}}"></geosource-post>
     </paper-dialog>
 
     <core-header-panel id="core_header_panel">
@@ -187,16 +188,10 @@
        * information 
        */
       openDialog: function(e) {
+
+
         var dialog = this.$.dialog;
-        var dialog_content = this.$.dialog_content;
-
-        this.injectBoundHTML(
-          '<h2>' + e.detail.post.username + '</h2>' +
-          '<p>' + e.detail.post.text + '</p>' +
-          '<img src="' + e.detail.post.avatar + '" width="auto" height="auto"/>' +
-          '<p>' + e.detail.post.time + '</p>',
-          dialog_content);
-
+        this.pid = e.detail.post.pid;
         dialog.toggle();
       },
 
