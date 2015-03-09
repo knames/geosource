@@ -16,8 +16,8 @@ public class Incident implements Serializable {
     
     public Incident(ArrayList<FieldWithContent> fieldList, String channel)
     {
-    	this.fieldList = fieldList;
-        channelName = channel;
+    	setFieldList(fieldList);
+        setChannelName(channel);
     }
 
     public void setFieldList(ArrayList<FieldWithContent> fieldList)
