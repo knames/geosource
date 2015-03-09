@@ -51,9 +51,13 @@
         background-color: #000000;
       }
 
+      audio {
+        width: auto;
+      }
+
     </style>
 
-    <post-service post="{{post}}" pid="{{pid}}"></post-service>
+    <post-service id="post_service" post="{{post}}" pid="{{pid}}"></post-service>
 
     <div vertical layout>
       <h2 class="header">{{post.title}}</h2>
@@ -67,8 +71,13 @@
   <script>
   Polymer({
 
+    pid: null,
     time: null,
     post: null,
+
+    pidChanged: function() {
+      this.$.post_service.load(this.pid);
+    },
 
     postChanged: function() {
       this.time = moment(this.post.time).fromNow();
@@ -109,10 +118,11 @@
         }
       }
 
+      console.log("HELLO");
+
       this.$.content.innerHTML = content;
 
-
-
+      this.fire('post-loaded');
     }
 
   });

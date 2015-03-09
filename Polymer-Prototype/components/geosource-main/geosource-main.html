@@ -125,7 +125,7 @@
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop transition="core-transition-center">
-      <geosource-post pid="{{pid}}"></geosource-post>
+      <geosource-post pid="{{pid}}" on-post-loaded="{{openDialog}}"></geosource-post>
     </paper-dialog>
 
     <core-header-panel id="core_header_panel">
@@ -155,14 +155,14 @@
                   <div class="container" layout vertical center>
                     <geosource-feed id='feed' 
                         posts="{{filteredPosts}}" 
-                        on-open-dialog="{{openDialog}}"
+                        on-open-dialog="{{loadPost}}"
                         on-set-location="{{moveMap}}"
                         on-favorite="{{filterPosts}}">
                     </geosource-feed>
                   </div>
                 </section>
                 <section id="section4" main>
-                  <geosource-map id="map" posts="{{filteredPosts}}" on-open-dialog="{{openDialog}}"></geosource-map>
+                  <geosource-map id="map" posts="{{filteredPosts}}" on-open-dialog="{{loadPost}}"></geosource-map>
                 </section>
               </core-drawer-panel>
             </section>
@@ -187,12 +187,17 @@
        * Opens a dialog, given an event containing detail 'post', which contains
        * information 
        */
-      openDialog: function(e) {
+      loadPost: function(e) {
+        if(this.pid == e.detail.post.pid) {
+          this.openDialog();
+        }
+        else {
+          this.pid = e.detail.post.pid;
+        }
+      },
 
-
-        var dialog = this.$.dialog;
-        this.pid = e.detail.post.pid;
-        dialog.toggle();
+      openDialog: function() {
+        this.$.dialog.toggle();
       },
 
       /**
