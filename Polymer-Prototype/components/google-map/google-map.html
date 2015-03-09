@@ -2,7 +2,7 @@
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-apis/google-maps-api.html">
-<link rel="import" href="../../geosource-post-summary.html">
+<link rel="import" href="../geosource-post-summary/geosource-post-summary.html">
 
 <!--
 The `google-map-marker` element represents a map marker. It is used as a
@@ -279,7 +279,7 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
 
 
             var image = {
-              url: '../' + this.post.avatar,
+              url: this.post.avatar,
               size: new google.maps.Size(120, 60),
               scaledSize: new google.maps.Size(120, 60)
             };

@@ -1,5 +1,5 @@
-<link rel="import" href="../components/polymer/polymer.html">
-<link rel="import" href="../components/core-ajax/core-ajax.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
 <!-- 
   `<post-service>` provides an API for a fake service -- 
   _unquote_, the read-only social networking service!
@@ -56,7 +56,7 @@
     </style>
     <core-ajax id="ajax"
       auto
-      url="../api/posts.json"
+      url="api/posts.json"
       on-core-response="{{postsLoaded}}"
       handleAs="json">
     </core-ajax>
