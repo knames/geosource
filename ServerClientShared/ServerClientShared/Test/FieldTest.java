@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ *  Tests all classes in the "Field" family.
  * @author wwf594
  */
 public class FieldTest {

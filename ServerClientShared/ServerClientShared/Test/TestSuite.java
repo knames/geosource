@@ -6,6 +6,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 /**
+ * Runs all the tests we have developed.
  * @author wwf594
  */
 public class TestSuite 
@@ -22,6 +23,13 @@ public class TestSuite
         
     }
     
+    
+    /**
+     * This parses the Results we get from our tests, and turns them into a readable format.
+     * @param testResults The Results we get from running a JUnit test
+     * @param testName The name of the test
+     * @return A human readable String containing the results of the given test.
+     */
     private static String parseResults (Result testResults, String testName)
     {
         String slate="Test "+testName+" was ";
