@@ -144,7 +144,7 @@
             <paper-dropdown class="dropdown">
               <div class="menu">
                 <paper-item on-tap="{{addText}}"><core-icon icon="text-format"></core-icon>Text</paper-item>
-                <paper-item on-tap="{{addPicture}}"><core-icon icon="image:photo-camera"></core-icon>Picture</paper-item>
+                <paper-item on-tap="{{addImage}}"><core-icon icon="image:photo-camera"></core-icon>Image</paper-item>
                 <paper-item on-tap="{{addAudio}}"><core-icon icon="av:mic"></core-icon>Audio</paper-item>
                 <paper-item on-tap="{{addVideo}}"><core-icon icon="av:videocam"></core-icon>Video</paper-item>
                 <paper-item on-tap="{{addCheckbox}}"><core-icon icon="check-box"></core-icon>Checkbox</paper-item>
@@ -172,8 +172,8 @@
       this.fields.push({name:"Text", icon:"text-format", input:"", required:false});
     },
 
-    addPicture: function() {
-      this.fields.push({name:"Picture", icon:"image:photo-camera", input:"", required:false});
+    addImage: function() {
+      this.fields.push({name:"Image", icon:"image:photo-camera", input:"", required:false});
     },
 
     addAudio: function() {
