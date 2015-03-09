@@ -7,6 +7,8 @@ import android.view.View;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Implementation of an app field with type String. This can be used for all basic text fields.
  */
 public class StringField extends AbstractAppFieldWithContent {
     public StringField(FieldWithContent fieldToWrap) {

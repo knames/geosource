@@ -11,6 +11,8 @@ import hoopsnake.geosource.media.MediaManagement;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Implementation of an app field with type Video.
  */
 public class VideoField extends AbstractAppFieldWithContentAndFile {
 
@@ -19,7 +21,7 @@ public class VideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public boolean isCorrectFileType(Uri contentFileUri) {
+    public boolean usesFilesOfType(Uri contentFileUri) {
         //TODO implement this.
         return true;
     }

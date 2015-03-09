@@ -6,17 +6,22 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Implementation of an app field with type Audio.
  */
 public class AudioField extends AbstractAppFieldWithContentAndFile{
 
     public AudioField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
+        assertEquals(fieldToWrap.getType(), FieldType.AUDIO);
     }
 
     @Override
-    public boolean isCorrectFileType(Uri contentFileUri) {
+    public boolean usesFilesOfType(Uri contentFileUri) {
         //TODO implement this.
         return true;
     }

@@ -6,15 +6,35 @@ import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Implementation of AppIncident, using a wrapper around a regular Incident to access its basic functionality.
  */
 public class AppIncidentWithWrapper implements AppIncident {
 
+    /**
+     * the list of app-side fields contained within this incident.
+     */
     protected ArrayList<AppFieldWithContent> fieldList;
 
+    /**
+     * The basic server-side incident underlying this incident.
+     */
     protected Incident wrappedIncident;
 
-    /** Create a new incident by populating its fieldList by means of a
-     * fieldWithoutContentList, and adding null content.
+    /**
+     * Create a new incident by populating its fieldList by means of a
+     * fieldWithoutContentList; simply creates a corresponding fieldWithContentList,
+     * and adds null content.
+     *
+     * The various app-side implementations of the different field types are instantiated here,
+     * by means of a switch statement on each input field's type.
+     *
+     * Since each AppFieldWithContent wraps a regular FieldWithContent, the underlying wrappedIncident's
+     * list of FieldsWithContent can share the same FieldsWithContent as this AppIncident's list of AppFieldsWithContent.
+     * Both lists end up containing references to the same underlying objects.
+     *
+     * Thus an Incident is fully constructed at the same time as this AppIncident, and will share all its
+     * future modifications (and all the new content that is added).
      */
     public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList)
     {
@@ -56,7 +76,6 @@ public class AppIncidentWithWrapper implements AppIncident {
         wrappedIncident.setFieldList(fieldWithContentList);
     }
 
-    /** Is the incident ready to be shipped off? That is, has it been completely filled out? */
     @Override
     public boolean isCompletelyFilledIn()
     {
@@ -73,6 +92,7 @@ public class AppIncidentWithWrapper implements AppIncident {
         return true;
     }
 
+    /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */
     @Override
     public Incident toIncident() {
         //TODO delete this if the below todo works.

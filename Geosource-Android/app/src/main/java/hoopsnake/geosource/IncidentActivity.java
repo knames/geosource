@@ -29,7 +29,12 @@ import hoopsnake.geosource.data.Incident;
 
 import static junit.framework.Assert.assertNotNull;
 
-
+/**
+ * @author wsv759
+ * The activity that controls the app when the user is filling out a new incident.
+ * This is called from MainActivity when the "add new incident" button is pressed.
+ * This activity also launches the tasks to receive a new incident spec and send a new incident.
+ */
 public class IncidentActivity extends ActionBarActivity {
     /** TODO ensure that only one button is ever clicked at a time. */
     private boolean clickable = true;
@@ -48,14 +53,25 @@ public class IncidentActivity extends ActionBarActivity {
     /** The name of the channel to which to submit the new incident. */
     String channelName;
 
-    /** The position of the currently-selected field in the incidentDisplay.
-     * This is recorded for when the Camera or Video activity returns. */
+    /**
+     * The position of the currently-selected field in the incidentDisplay.
+     * This is recorded so that different activities/fragments can be called whenever a field is clicked,
+     * and the corresponding field can be remembered upon their return.
+     */
     int curFieldIdx;
 
+    /**
+     * The set of all request codes that are used by this activity when starting new activities or fragments.
+     */
     private enum RequestCode {
         FIELD_ACTION_REQUEST_CODE
     }
 
+    /**
+     * Initialize the display and the adapted, and send off for the incident spec, based on the channel name
+     * provided by the MainActivity that called this.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +86,7 @@ public class IncidentActivity extends ActionBarActivity {
         //TODO Query the server for the spec!
         //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
+        //TODO remove this mockedSpec eventually! It is just for testing.
         ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
         mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
         mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
@@ -98,12 +115,21 @@ public class IncidentActivity extends ActionBarActivity {
         });
     }
 
+    /**
+     * When an activity launched from here returns, respond accordingly.
+     * @param requestCode the request code with which the activity was launched.
+     * @param resultCode the result of the activity.
+     * @param data any extra data associated with the result. This could be null.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         RequestCode requestCodeVal = RequestCode.values()[requestCode];
         switch(requestCodeVal)
         {
             case FIELD_ACTION_REQUEST_CODE:
+                /**
+                 * Delegate the response to the field whose selection launched the returning activity in the first place.
+                 */
                 AppFieldWithContent curField = incident.getFieldList().get(curFieldIdx);
                 curField.onResultFromSelection(IncidentActivity.this, resultCode, data);
                 break;
@@ -112,17 +138,18 @@ public class IncidentActivity extends ActionBarActivity {
         }
     }
 
-    /** Try to submit the incident to the server!
+    /**
+     * Try to submit the incident to the server.
      * //TODO this function is not connected to anything yet!
      * @param v the submit button.
+     * @precond incident is not null.
+     * @postcond the new incident is submitted to the server. The new incident may not end up going through.
      */
     public void onSubmitButtonClicked(View v)
     {
         if (incident.isCompletelyFilledIn()) {
             //TODO actually call this task.
             //new TaskSendIncident(IncidentActivity.this).execute(incident);
-
-            this.finish();
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
@@ -130,11 +157,12 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * Created by wsv759 on 19/02/15.
+     * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
      */
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
         private Context context;
 
-        String logTag = MainActivity.APP_LOG_TAG;
+        public static final String LOG_TAG = "geosource comm";
 
         public TaskReceiveIncidentSpec(Context context)
         {
@@ -164,7 +192,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(logTag, "Shit got no connection, son!");
+                Log.e(LOG_TAG, "Shit got no connection, son!");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -175,27 +203,27 @@ public class IncidentActivity extends ActionBarActivity {
             try
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(logTag, "Attempting to send incident.");
+                Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(channelName);
 
-                Log.i(logTag, "Retrieving reply...");
+                Log.i(LOG_TAG, "Retrieving reply...");
                 //TODO this is a bit presumptuous on my part.
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
 
-                Log.i(logTag, "Connection Closing");
+                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
-                Log.i(logTag, "Connection Closed");
+                Log.i(LOG_TAG, "Connection Closed");
             }
             catch (IOException e)
             {
-                Log.e(logTag,"Unknown Error");
+                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(logTag, "incoming class not found.");
+                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
@@ -214,18 +242,18 @@ public class IncidentActivity extends ActionBarActivity {
             switch (result) {
                 case UNKNOWN_ERROR:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Unknown error.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Unknown error.");
                     break;
                 case FAILED_CONNECTION:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Connection failed.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Connection failed.");
                     break;
                 case CLASS_NOT_FOUND:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Server response object class not found.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Server response object class not found.");
                     break;
                 case SUCCESS:
-                    Log.i(logTag, "incident spec for channel " + channelName + "downloaded successfully.");
+                    Log.i(LOG_TAG, "incident spec for channel " + channelName + "downloaded successfully.");
 
                     //TODO notify the ui of the new incident. We probably need more than this.
                     incidentAdapter.notifyDataSetChanged();
@@ -235,11 +263,12 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * Created by wsv759 on 19/02/15.
+     * Task to send a new completed incident to the server.
      */
     private class TaskSendIncident extends AsyncTask<Incident, Void, SocketResult> {
 
         private Context context;
-        String logTag = MainActivity.APP_LOG_TAG;
+        public static final String LOG_TAG = "geosource comm";
 
         public TaskSendIncident(Context context)
         {
@@ -272,7 +301,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(logTag,"Shit got no connection, son!");
+                Log.e(LOG_TAG,"Shit got no connection, son!");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -282,27 +311,27 @@ public class IncidentActivity extends ActionBarActivity {
             try
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(logTag, "Attempting to send incident.");
+                Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(fieldsToSend);
 
-                Log.i(logTag, "Retrieving reply...");
+                Log.i(LOG_TAG, "Retrieving reply...");
                 //TODO this is a bit presumptuous on my part.
                 String reply = (String) inStream.readObject();
 
-                Log.i(logTag, "Connection Closing");
+                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
-                Log.i(logTag, "Connection Closed");
+                Log.i(LOG_TAG, "Connection Closed");
             }
             catch (IOException e)
             {
-                Log.e(logTag,"Unknown Error");
+                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(logTag, "incoming class not found.");
+                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
@@ -316,19 +345,22 @@ public class IncidentActivity extends ActionBarActivity {
             switch (result) {
                 case UNKNOWN_ERROR:
                     Toast.makeText(context, "Incident upload failed. Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Unknown error.");
+                    Log.e(LOG_TAG, "Incident upload failed. Unknown error.");
                     break;
                 case FAILED_CONNECTION:
                     Toast.makeText(context, "Incident upload failed. Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Connection failed.");
+                    Log.e(LOG_TAG, "Incident upload failed. Connection failed.");
                     break;
                 case CLASS_NOT_FOUND:
                     Toast.makeText(context, "Incident upload failed. Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Server response object class not found.");
+                    Log.e(LOG_TAG, "Incident upload failed. Server response object class not found.");
                     break;
                 case SUCCESS:
                     Toast.makeText(context, "New incident uploaded successfully.", Toast.LENGTH_LONG).show();
-                    Log.i(logTag,"New incident uploaded successfully.");
+                    Log.i(LOG_TAG,"New incident uploaded successfully.");
+
+                    //Return the main page. The incident has been submitted, and our work is done.
+                    IncidentActivity.this.finish();
             }
         }
     }

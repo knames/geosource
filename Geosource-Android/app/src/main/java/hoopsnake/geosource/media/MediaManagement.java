@@ -22,12 +22,20 @@ import static junit.framework.Assert.assertTrue;
  */
 public class MediaManagement {
 
+    /**
+     * Any logcat messages from this class use this tag.
+     */
     public static final String LOG_TAG = "geosource media";
 
-    public static final String GEOSOURCE_MEDIA_DIR_NAME = "geosource";
+    /**
+     * The name of the directory to which to save all media files created by this app.
+     */
+    public static final String GEOSOURCE_MEDIA_DIR_NAME = "geosource_media_files";
+
     public enum MediaType {
         IMAGE,
-        VIDEO
+        VIDEO,
+        AUDIO
     }
 
     /**
@@ -83,7 +91,12 @@ public class MediaManagement {
         activity.startActivityForResult(mediaIntent, requestCodeForIntent);
     }
 
-    /** Checks if external storage is available for read and write. */
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return returns true if the device allows this app to create new external storage files for writing,
+     *  or false otherwise.
+     */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -110,15 +123,22 @@ public class MediaManagement {
 
     /** Create a file Uri for saving an image or video.
      * @param type the type of file to create. This dictates the file name.
-     * @precond type is IMAGE OR VIDEO.
+     * @precond type is not null.
      * @postcond a new empty file is created on the system, and its Uri is returned. If no new file
      * could be created, null is returned. */
     private static Uri getOutputMediaFileUri(MediaType type){
-        assertTrue(type.equals(MediaType.VIDEO) || type.equals(MediaType.IMAGE));
+        assertNotNull(type);
         return Uri.fromFile(getOutputMediaFile(type));
     }
 
-    /** Create a File for saving an image or video. */
+    /**
+     * @param type The type of media to be saved.
+     * @precond type is not null. Currently we are not saving files to internal storage, so
+     *  external storage must be writable (permissions & space required).
+     * @postcond a new file is created on the device in geosource's media folder, with a filename
+     *  governed by timestamp and file type.
+     * @return The File object that is created.
+     */
     private static File getOutputMediaFile(MediaType type){
 
         // Check that the SDCard is mounted. If it is, initialize an external file.
@@ -151,6 +171,9 @@ public class MediaManagement {
                     mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                             "VID_" + timeStamp + ".mp4");
                     break;
+                case AUDIO:
+                    //TODO implement this.
+                    throw new RuntimeException("Audio files are unimplemented, sorry.");
                 default:
                     throw new InvalidParameterException("media file type is invalid.");
             }

@@ -13,14 +13,12 @@ import java.io.Serializable;
 
 /**
  * Created by wsv759 on 18/02/15.
- * A Serializable
+ * A Serializable Bitmap (Bitmaps are not serializable by default).
  */
 public class SerialBitmap implements Serializable {
 
     /** this stores the image. */
     public Bitmap bitmap;
-
-    // TODO: Finish this constructor
 
     /**
      *

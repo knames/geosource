@@ -12,7 +12,9 @@ import android.webkit.WebView;
  * @author wsv759
  *
  * This activity is the entry point for the Geosource Android app. It displays a webview,
- * as well as the option to add an incident.
+ * as well as a button to add an incident. If the add incident button is clicked, this class
+ * delegates to IncidentActivity to fill out a new incident. When that incident has been filled out
+ * and sent, IncidentActivity returns here.
  */
 public class MainActivity extends Activity {
     public static final String APP_LOG_TAG = "geosource";
@@ -20,10 +22,17 @@ public class MainActivity extends Activity {
     //TODO make this something other than a hard-coded string.
     String curChannelName = "mushrooms";
 
+    /**
+     * The set of all request codes that are used by this activity when starting new activities or fragments.
+     */
     private enum RequestCode {
         CREATE_INCIDENT_ACTIVITY_REQUEST_CODE
     }
 
+    /**
+     * Start up, and load the webview for the website.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

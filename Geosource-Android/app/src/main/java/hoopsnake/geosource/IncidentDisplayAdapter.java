@@ -1,9 +1,11 @@
 package hoopsnake.geosource;
 
 /**
- * Created by Anam on 2015-02-09. Modified by William. This adapts the array of fields
- * (or prompts to create fields) that are to be displayed while a user is filling out the
- * form for an incident.
+ * Created by Anam on 2015-02-09. Modified by William to fit with the app, and limit the use-cases:
+ * only allows filling out an existing incident, not creating a new one.
+ *
+ * This adapts the array of fields that are to be displayed while a user is filling out the
+ * form for an incident. It calls each field individually to ask how it should be displayed.
  */
 
 import android.content.Context;
@@ -44,6 +46,15 @@ public class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
         return fieldList.get(position).hashCode();
     }
 
+    /**
+     * Return the view for the field at the current position in the ListView being adapted.
+     * This is called automatically, whenever the underlying ListView needs a given view.
+     * As such it should probably not be called manually, unless you are very sure of yourself.
+     * @param position the position of the current field in the list.
+     * @param convertView
+     * @param parent the ListView that this is adapting.
+     * @return the view for the current field.
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
 

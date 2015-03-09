@@ -2,10 +2,15 @@ package hoopsnake.geosource.data;
 
 import java.io.Serializable;
 
+import static junit.framework.Assert.assertNotNull;
+
 /**
  * Created by wsv759 on 07/03/15.
  *
- * A basic implementation of AppFieldWithContent, using the basic FieldWithContent
+ * Abstract implementation of AppFieldWithContent, wrapping an underlying vanilla Java FieldWithContent
+ * object. (the object that is actually sent to the server.)
+ *
+ * All implementations of AppFieldWithContent should extend this.
  */
 public abstract class AbstractAppFieldWithContent implements AppFieldWithContent {
 
@@ -15,9 +20,15 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
      */
     protected FieldWithContent wrappedField;
 
+    /**
+     * Construct a new AppFieldWithContent.
+     * @param fieldToWrap a FieldWithContent.
+     * @precond fieldToWrap is not null, and is of the correct type.
+     * @postcond a new AppFieldWithContent is created with fieldToWrap as an underlying field.
+     */
     public AbstractAppFieldWithContent(FieldWithContent fieldToWrap)
     {
-        //TODO add checking.
+        assertNotNull(fieldToWrap);
         this.wrappedField = fieldToWrap;
     }
 

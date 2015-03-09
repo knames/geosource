@@ -9,6 +9,10 @@ import java.io.Serializable;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Interface for Fields, to be accessed by the UI and control level of the android app.
+ * Each implementation of field defines its own UI-level behaviour, as well as its basic
+ * underlying Field behaviour.
  */
 public interface AppFieldWithContent {
 
@@ -54,8 +58,10 @@ public interface AppFieldWithContent {
     public boolean contentIsSuitable(Serializable content);
 
     /**
-     * return a View representing this field, to be displayed by the UI.
      * @param context The UI to be populated.
+     * @precond context is not null.
+     * @postcond see return.
+     * @return a View representing this field, to be displayed by the UI.
      */
     public View getContentViewRepresentation(Context context);
 

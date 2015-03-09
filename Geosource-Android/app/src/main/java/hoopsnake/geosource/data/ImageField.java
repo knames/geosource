@@ -11,6 +11,8 @@ import hoopsnake.geosource.media.MediaManagement;
 
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Implementation of an app field with type Image.
  */
 public class ImageField extends AbstractAppFieldWithContentAndFile {
     public ImageField(FieldWithContent fieldToWrap) {
@@ -18,7 +20,7 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public boolean isCorrectFileType(Uri contentFileUri) {
+    public boolean usesFilesOfType(Uri contentFileUri) {
         //TODO implement this.
         return true;
     }

@@ -2,8 +2,13 @@ package hoopsnake.geosource.data;
 
 import android.net.Uri;
 
+import static junit.framework.Assert.assertNotNull;
+
 /**
  * Created by wsv759 on 07/03/15.
+ *
+ * Abstract implementation of AppFieldWithContent, intended to be extended by all content types
+ * whose content is stored in a file on android (e.g. image, video, audio.)
  */
 public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFieldWithContent {
 
@@ -45,21 +50,29 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
         return contentFileUri.toString();
     }
 
+    /**
+     *
+     * @param contentFileUri the Uri referring to a file on the device. This file should currently
+     *                       store the content associated with this field.
+     * @precond the contentFileUri is not null.
+     * @postcond sets the fileUri of this field to be contentFileUri.
+     */
     public void setContentFileUri(Uri contentFileUri)
     {
-        if (contentFileUri == null)
-            throw new RuntimeException("null Uri.");
+        assertNotNull(contentFileUri);
 
-        if (isCorrectFileType(contentFileUri))
+        if (usesFilesOfType(contentFileUri))
             this.contentFileUri = contentFileUri;
         else
             throw new RuntimeException(contentFileUri.toString() + "has incorrect file type.");
     }
 
     /**
+     * @param contentFileUri the Uri representing the content file to check. Does it contain the correct
+     *                       filetype for this field?
      * @precond contentFileUri is not null.
-     * @param contentFileUri
-     * @return
+     * @postcond see return.
+     * @return return true if this field uses this type of file for its content, or false otherwise.
      */
-    public abstract boolean isCorrectFileType(Uri contentFileUri);
+    public abstract boolean usesFilesOfType(Uri contentFileUri);
 }
