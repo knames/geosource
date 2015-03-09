@@ -43,12 +43,10 @@
       core-menu {
         margin: 0;
       }
-      paper-fab {
-        background-color: #0f9d58;
-        position: absolute;
-        right: 30px;
-        bottom: -20px;
+      paper-button {
+        color: #5CC0A2;
       }
+
 
     </style>
 
@@ -57,16 +55,14 @@
       <geosource-channel-creator>
     </paper-dialog>
 
-    <core-submenu opened active selected="0" icon="settings-remote" label="Channels" on-core-select="{{channelSelected}}">
-      <core-menu id="core_menu" selected="0">
+    <core-submenu opened active selected="0" id="core_submenu" icon="settings-remote" label="Channels" on-core-select="{{channelSelected}}">
         <core-item label="All"></core-item>
         <core-item label="Subscribed"></core-item>
         <template repeat="{{channel in subscribed}}">
-          <core-item label="{{channel}}" horizontal justified layout>
-            <paper-icon-button icon="close" class="unsubscribe_button" 
-              on-tap="{{unsubscribe}}">
-            </paper-icon-button>
-          </core-item>
+            <core-item label="{{channel}}" horizontal justified layout>
+             <paper-icon-button icon="close" class="unsubscribe_button" on-tap="{{unsubscribe}}"></paper-icon-button>
+            </core-item>
+            
         </template>
         <div center horizontal layout class="search">
           <paper-input id="search_input" flex 
@@ -80,11 +76,8 @@
             <paper-icon-button icon="add" class="subscribe_button" on-tap="{{subscribe}}"></paper-icon-button>
           </core-item>
         </template>
-      </core-menu>
+      <paper-button on-tap="{{createChannel}}" flex>Create a channel</paper-button>
     </core-submenu>
-    <paper-fab mini icon="add"
-      on-tap="{{createChannel}}">
-    </paper-fab>
     
   </template>
 
@@ -94,30 +87,28 @@
 
     selected: "All",
     channels: null,
-    searchedChannels: null,
     subscribed: null,
-
-    /**
-     * When 'channels' is changed, this skims through the 
-     */
-    channelsChanged: function() {
-      this.subscribedChannels = []
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].subscribed) {
-          this.subscribedChannels.push(this.channels[i])
-        }
-      }
-    },
-
+    searchedChannels: null,
+    
     /**
      * Fires a 'selection-change' event, and changes the 'selected' attribute to
      * whichever attribute has been selected.
      */
-    channelSelected: function(e) {
-      if(e.detail.item.label) {
-        this.selected = e.detail.item.label;
-        this.fire('filter-change');
+    channelSelected: function(event, detail, sender) {
+      
+      if(detail.isSelected)
+      {
+        console.log(event);
+        console.log(detail);
+
+        console.log(this.$.core_submenu.selected);
+
+        if(event.detail.item.label) {
+          this.selected = event.detail.item.label;
+          this.fire('filter-change');
+        }   
       }
+
     },
 
     /**
@@ -133,8 +124,8 @@
           break;
         case 'Subscribed':
           for(i=0; i<posts.length; i++) {
-            for(j=0; j<this.subscribedChannels.length; j++) {
-              if(posts[i].channel == this.subscribedChannels[j].name)
+            for(j=0; j<this.subscribed.length; j++) {
+              if(posts[i].channel == this.subscribed[j])
               {
                 includedPosts.push(posts[i]);
                 break;
