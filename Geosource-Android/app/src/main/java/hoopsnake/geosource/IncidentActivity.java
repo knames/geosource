@@ -2,10 +2,8 @@ package hoopsnake.geosource;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,16 +20,21 @@ import java.util.List;
 
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
-import hoopsnake.geosource.data.AppIncident;
+import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncidentWithWrapper;
 import hoopsnake.geosource.data.FieldType;
 import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
-import hoopsnake.geosource.media.MediaManagement;
 
 import static junit.framework.Assert.assertNotNull;
 
-
+/**
+ * @author wsv759
+ * The activity that controls the app when the user is filling out a new incident.
+ * This is called from MainActivity when the "add new incident" button is pressed.
+ * This activity also launches the tasks to receive a new incident spec and send a new incident.
+ */
 public class IncidentActivity extends ActionBarActivity {
     /** TODO ensure that only one button is ever clicked at a time. */
     private boolean clickable = true;
@@ -43,22 +46,32 @@ public class IncidentActivity extends ActionBarActivity {
     ListView incidentDisplay;
 
     /** The incident to be created and edited by the user on this screen. */
-    AppIncident incident;
+    AppIncidentWithWrapper incident;
 
     public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
 
     /** The name of the channel to which to submit the new incident. */
     String channelName;
 
-    /** The position of the currently-selected field in the incidentDisplay.
-     * This is recorded for when the Camera or Video activity returns. */
+    /**
+     * The position of the currently-selected field in the incidentDisplay.
+     * This is recorded so that different activities/fragments can be called whenever a field is clicked,
+     * and the corresponding field can be remembered upon their return.
+     */
     int curFieldIdx;
 
+    /**
+     * The set of all request codes that are used by this activity when starting new activities or fragments.
+     */
     private enum RequestCode {
-        CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,
-        CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE
+        FIELD_ACTION_REQUEST_CODE
     }
 
+    /**
+     * Initialize the display and the adapted, and send off for the incident spec, based on the channel name
+     * provided by the MainActivity that called this.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,16 +86,17 @@ public class IncidentActivity extends ActionBarActivity {
         //TODO Query the server for the spec!
         //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
+        //TODO remove this mockedSpec eventually! It is just for testing.
         ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
         mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
         mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
         mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
 
-        incident = new AppIncident(mockedSpec);
+        incident = new AppIncidentWithWrapper(mockedSpec);
         // We get the ListView component from the layout
         incidentDisplay = (ListView) findViewById(R.id.listView);
 
-        incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
+        incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
         incidentDisplay.setAdapter(incidentAdapter);
 
         incidentAdapter.notifyDataSetChanged();
@@ -92,149 +106,50 @@ public class IncidentActivity extends ActionBarActivity {
 
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
                                     long id) {
-                FieldWithContent field = incidentAdapter.getItem(position);
+                AppFieldWithContent field = incidentAdapter.getItem(position);
 
                 curFieldIdx = position;
 
-                switch (field.getType()) {
-                    case IMAGE:
-                        startCameraActivityForImage(incident.getFieldList().get(curFieldIdx));
-                        break;
-                    case STRING:
-                        //TODO implement this.
-                        field.setContent("This is a user-entered string.");
-                        incidentAdapter.notifyDataSetChanged();
-                        break;
-                    case VIDEO:
-                        startCameraActivityForVideo(incident.getFieldList().get(curFieldIdx));
-                        break;
-                    case AUDIO:
-                        //TODO implement this.
-                        throw new RuntimeException("Sorry, unimplemented.");
-                    default:
-                        throw new RuntimeException("Invalid field type.");
-                }
-
+                field.onSelected(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             }
         });
     }
 
     /**
-     * start Android's built-in Camera activity, allowing the user to take a picture, and save it
-     * to their image gallery.
-     * @param fieldForNewImage the field in which to store the new image.
+     * When an activity launched from here returns, respond accordingly.
+     * @param requestCode the request code with which the activity was launched.
+     * @param resultCode the result of the activity.
+     * @param data any extra data associated with the result. This could be null.
      */
-    private void startCameraActivityForImage(FieldWithContent fieldForNewImage)
-    {
-        // create Intent to take a picture and return control to the calling application
-        Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (MediaManagement.isExternalStorageWritable()) {
-            //TODO rather than using a field fileUriForNewImage, just use the contentFileUri for the current field.
-            // create a file to save the image
-            fieldForNewImage.setContentFileUri(MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.IMAGE));
-            Uri fileUriForNewImage = fieldForNewImage.getContentFileUri();
-            if (fileUriForNewImage == null) {
-                Toast.makeText(IncidentActivity.this, "New image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewImage); // set the image file name
-
-            // start the image capture Intent
-            startActivityForResult(imageIntent, RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal());
-        } else {
-            //TODO Potentially save a file to internal storage, instead.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        RequestCode requestCodeVal = RequestCode.values()[requestCode];
+        switch(requestCodeVal)
+        {
+            case FIELD_ACTION_REQUEST_CODE:
+                /**
+                 * Delegate the response to the field whose selection launched the returning activity in the first place.
+                 */
+                AppFieldWithContent curField = incident.getFieldList().get(curFieldIdx);
+                curField.onResultFromSelection(IncidentActivity.this, resultCode, data);
+                break;
+            default:
+                throw new RuntimeException("invalid request code " + requestCode + ".");
         }
     }
 
     /**
-     * start Android's built-in Camera activity, allowing the user to take a video, and save it
-     * to their video gallery.
-     * @param fieldForNewVideo the field in which to store the new video.
-     */
-    private void startCameraActivityForVideo(FieldWithContent fieldForNewVideo)
-    {
-        //create new Intent
-        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-        if (MediaManagement.isExternalStorageWritable()) {
-            //TODO rather than using a field fileUri, just use the contentFileUri for the current field.
-            // create a file to save the video
-            fieldForNewVideo.setContentFileUri(MediaManagement.getOutputMediaFileUri(IncidentActivity.this, MediaManagement.MediaType.VIDEO));
-            Uri fileUriForNewVideo = fieldForNewVideo.getContentFileUri();
-            if (fileUriForNewVideo == null) {
-                Toast.makeText(IncidentActivity.this, "New video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewVideo);  // set the image file name
-            videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
-
-            // start the Video Capture Intent
-            startActivityForResult(videoIntent, RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal());
-        } else {
-            //TODO Potentially save a file to internal storage, instead.
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RequestCode.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE.ordinal()) {
-            if (resultCode == RESULT_OK) {
-                // Image captured and saved to fileUri specified in the Intent
-                FieldWithContent fieldWithNewImage = incident.getFieldList().get(curFieldIdx);
-
-                Toast.makeText(this, "Image saved to:\n" +
-                        fieldWithNewImage.getContentFileUri(), Toast.LENGTH_LONG).show();
-
-                incidentAdapter.notifyDataSetChanged();
-                //TODO set the content of this field appropriately. Probably in a background task?
-                //fieldWithNewImage.setContent(new SerialBitmap(fileUri));
-
-                //TODO display the image in its field!
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the image capture
-            } else {
-                // Image capture failed, advise user
-                Toast.makeText(IncidentActivity.this, "Failed to capture image.", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        if (requestCode == RequestCode.CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE.ordinal()) {
-            if (resultCode == RESULT_OK) {
-                // Video captured and saved to fileUri specified in the Intent
-                FieldWithContent fieldWithNewVideo = incident.getFieldList().get(curFieldIdx);
-
-                Toast.makeText(this, "Video saved to:\n" +
-                        fieldWithNewVideo.getContentFileUri(), Toast.LENGTH_LONG).show();
-
-                incidentAdapter.notifyDataSetChanged();
-                //TODO set the content of this field appropriately. Probably in a background task?
-
-                //TODO display the video in its field!
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the video capture
-            } else {
-                // Video capture failed, advise user
-                Toast.makeText(IncidentActivity.this, "Failed to capture video.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    /** Try to submit the incident to the server!
+     * Try to submit the incident to the server.
      * //TODO this function is not connected to anything yet!
      * @param v the submit button.
+     * @precond incident is not null.
+     * @postcond the new incident is submitted to the server. The new incident may not end up going through.
      */
     public void onSubmitButtonClicked(View v)
     {
         if (incident.isCompletelyFilledIn()) {
             //TODO actually call this task.
             //new TaskSendIncident(IncidentActivity.this).execute(incident);
-
-            this.finish();
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
@@ -242,11 +157,12 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * Created by wsv759 on 19/02/15.
+     * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
      */
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
         private Context context;
 
-        String logTag = MainActivity.APP_LOG_TAG;
+        public static final String LOG_TAG = "geosource comm";
 
         public TaskReceiveIncidentSpec(Context context)
         {
@@ -276,7 +192,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(logTag, "Shit got no connection, son!");
+                Log.e(LOG_TAG, "Shit got no connection, son!");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -287,36 +203,36 @@ public class IncidentActivity extends ActionBarActivity {
             try
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(logTag, "Attempting to send incident.");
+                Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(channelName);
 
-                Log.i(logTag, "Retrieving reply...");
+                Log.i(LOG_TAG, "Retrieving reply...");
                 //TODO this is a bit presumptuous on my part.
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
 
-                Log.i(logTag, "Connection Closing");
+                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
-                Log.i(logTag, "Connection Closed");
+                Log.i(LOG_TAG, "Connection Closed");
             }
             catch (IOException e)
             {
-                Log.e(logTag,"Unknown Error");
+                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(logTag, "incoming class not found.");
+                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
 
             }
 
-            incident = new AppIncident(fieldsToBeFilled);
+            incident = new AppIncidentWithWrapper(fieldsToBeFilled);
 
-            incidentAdapter = new IncidentDisplayAdapter(incident.getFieldList(), IncidentActivity.this);
+            incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
             incidentDisplay.setAdapter(incidentAdapter);
 
             return SocketResult.SUCCESS;
@@ -326,18 +242,18 @@ public class IncidentActivity extends ActionBarActivity {
             switch (result) {
                 case UNKNOWN_ERROR:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Unknown error.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Unknown error.");
                     break;
                 case FAILED_CONNECTION:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Connection failed.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Connection failed.");
                     break;
                 case CLASS_NOT_FOUND:
                     Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Could not download incident spec for channel " + channelName + ". Server response object class not found.");
+                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Server response object class not found.");
                     break;
                 case SUCCESS:
-                    Log.i(logTag, "incident spec for channel " + channelName + "downloaded successfully.");
+                    Log.i(LOG_TAG, "incident spec for channel " + channelName + "downloaded successfully.");
 
                     //TODO notify the ui of the new incident. We probably need more than this.
                     incidentAdapter.notifyDataSetChanged();
@@ -347,11 +263,12 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * Created by wsv759 on 19/02/15.
+     * Task to send a new completed incident to the server.
      */
     private class TaskSendIncident extends AsyncTask<Incident, Void, SocketResult> {
 
         private Context context;
-        String logTag = MainActivity.APP_LOG_TAG;
+        public static final String LOG_TAG = "geosource comm";
 
         public TaskSendIncident(Context context)
         {
@@ -384,7 +301,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(logTag,"Shit got no connection, son!");
+                Log.e(LOG_TAG,"Shit got no connection, son!");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -394,27 +311,27 @@ public class IncidentActivity extends ActionBarActivity {
             try
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(logTag, "Attempting to send incident.");
+                Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(fieldsToSend);
 
-                Log.i(logTag, "Retrieving reply...");
+                Log.i(LOG_TAG, "Retrieving reply...");
                 //TODO this is a bit presumptuous on my part.
                 String reply = (String) inStream.readObject();
 
-                Log.i(logTag, "Connection Closing");
+                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
-                Log.i(logTag, "Connection Closed");
+                Log.i(LOG_TAG, "Connection Closed");
             }
             catch (IOException e)
             {
-                Log.e(logTag,"Unknown Error");
+                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(logTag, "incoming class not found.");
+                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
@@ -428,19 +345,22 @@ public class IncidentActivity extends ActionBarActivity {
             switch (result) {
                 case UNKNOWN_ERROR:
                     Toast.makeText(context, "Incident upload failed. Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Unknown error.");
+                    Log.e(LOG_TAG, "Incident upload failed. Unknown error.");
                     break;
                 case FAILED_CONNECTION:
                     Toast.makeText(context, "Incident upload failed. Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Connection failed.");
+                    Log.e(LOG_TAG, "Incident upload failed. Connection failed.");
                     break;
                 case CLASS_NOT_FOUND:
                     Toast.makeText(context, "Incident upload failed. Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(logTag, "Incident upload failed. Server response object class not found.");
+                    Log.e(LOG_TAG, "Incident upload failed. Server response object class not found.");
                     break;
                 case SUCCESS:
                     Toast.makeText(context, "New incident uploaded successfully.", Toast.LENGTH_LONG).show();
-                    Log.i(logTag,"New incident uploaded successfully.");
+                    Log.i(LOG_TAG,"New incident uploaded successfully.");
+
+                    //Return the main page. The incident has been submitted, and our work is done.
+                    IncidentActivity.this.finish();
             }
         }
     }

@@ -10,6 +10,9 @@ import java.util.ArrayList;
  */
 public class Incident implements Serializable {
 
+    /** The name of the channel to which this incident will be submitted. */
+    private String channelName;
+
     /** The fields for this incident, including their content. Their content may be null. */
     private ArrayList<FieldWithContent> fieldList;
 
@@ -18,6 +21,14 @@ public class Incident implements Serializable {
     public Incident(ArrayList<FieldWithContent> fieldList)
     {
         this.fieldList = fieldList;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public void setFieldList(ArrayList<FieldWithContent> fieldList)

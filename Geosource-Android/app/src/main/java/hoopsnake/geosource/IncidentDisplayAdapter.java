@@ -1,9 +1,11 @@
 package hoopsnake.geosource;
 
 /**
- * Created by Anam on 2015-02-09. Modified by William. This adapts the array of fields
- * (or prompts to create fields) that are to be displayed while a user is filling out the
- * form for an incident.
+ * Created by Anam on 2015-02-09. Modified by William to fit with the app, and limit the use-cases:
+ * only allows filling out an existing incident, not creating a new one.
+ *
+ * This adapts the array of fields that are to be displayed while a user is filling out the
+ * form for an incident. It calls each field individually to ask how it should be displayed.
  */
 
 import android.content.Context;
@@ -15,19 +17,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import hoopsnake.geosource.data.FieldWithContent;
+import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
+public class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
 
     private String logTag = MainActivity.APP_LOG_TAG;
-    private ArrayList<FieldWithContent> fieldList;
+    private ArrayList<AppFieldWithContent> fieldList;
     private Context context;
 
-    public IncidentDisplayAdapter(ArrayList<FieldWithContent> fieldList, Context ctx) {
-        super(ctx, R.layout.img_row_layout, fieldList);
-        this.fieldList = fieldList;
+    public IncidentDisplayAdapter(AppIncident incident, Context ctx) {
+        super(ctx, R.layout.img_row_layout, incident.getFieldList());
+        this.fieldList = incident.getFieldList();
         this.context = ctx;
     }
 
@@ -35,7 +38,7 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         return fieldList.size();
     }
 
-    public FieldWithContent getItem(int position) {
+    public AppFieldWithContent getItem(int position) {
         return fieldList.get(position);
     }
 
@@ -43,6 +46,15 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         return fieldList.get(position).hashCode();
     }
 
+    /**
+     * Return the view for the field at the current position in the ListView being adapted.
+     * This is called automatically, whenever the underlying ListView needs a given view.
+     * As such it should probably not be called manually, unless you are very sure of yourself.
+     * @param position the position of the current field in the list.
+     * @param convertView
+     * @param parent the ListView that this is adapting.
+     * @return the view for the current field.
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
 
@@ -57,7 +69,6 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
             TextView tv = (TextView) v.findViewById(R.id.name);
             TextView distView = (TextView) v.findViewById(R.id.dist);
 
-
             holder.fieldTitleView = tv;
             holder.promptView = distView;
 
@@ -66,7 +77,7 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
         else
             holder = (FieldHolder) v.getTag();
 
-        FieldWithContent f = fieldList.get(position);
+        AppFieldWithContent f = fieldList.get(position);
 
         String fieldTitle = f.getTitle();
         assertNotNull(fieldTitle);
@@ -77,25 +88,8 @@ public class IncidentDisplayAdapter extends ArrayAdapter<FieldWithContent> {
 
         if (f.contentIsFilled())
             prompt.setText(f.getContentStringRepresentation());
-        else {
-            switch (f.getType())
-            {
-                case IMAGE:
-                    prompt.setText("Click to take a picture.");
-                    break;
-                case STRING:
-                    prompt.setText("Click to fill in text.");
-                    break;
-                case VIDEO:
-                    prompt.setText("Click to take a video.");
-                    break;
-                case AUDIO:
-                    prompt.setText("Click to record audio.");
-                    break;
-                default:
-                    throw new RuntimeException("invalid type." + f.getType());
-            }
-        }
+        else
+            prompt.setText(f.getPromptStringForUi());
 
         return v;
     }

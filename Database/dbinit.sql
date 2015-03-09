@@ -28,6 +28,8 @@ CREATE TABLE channelfavs (
 	FOREIGN KEY (ch_fav_chname) REFERENCES channels (ch_name)
 	);
 
+
+
 source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
 
 /** Sample Table

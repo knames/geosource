@@ -115,7 +115,6 @@ public class CommSocket implements Callable<Incident>{
                 }
                 case SEND_INCIDENT:
                 {
-                    //TODO implement later
                     Incident newIncident = (Incident)in.readObject();
                     return newIncident;
                 }
