@@ -8,7 +8,7 @@
 	"fields": 
 		[
 			{"type": "Text", "label": "Description", "value": "Oops, I guess I recorded some audio. Not that useful for a mushroom..."},
-			{"type": "Audio", "label": "Audio", "value": "/audio/small.mp4"},
+			{"type": "Audio", "label": "Audio", "value": "/audio/terran.mp3"},
 			{"type": "Image", "label": "Picture", "value": "/images/avatar-02.svg"}
 		],
 	"time": "2015-02-25 12:00:00.000",
