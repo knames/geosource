@@ -1,0 +1,210 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<polymer-element name="geosource-channel-creator" attributes="channels subscribed">
+
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .footer {
+        padding: 20px;
+        padding-top: 0;
+      }
+
+      core-icon {
+        margin-right: 0.5em;
+      }
+      .form {
+        background-color: #EDEDED;
+      }
+      paper-menu-button {
+        margin: 15px;
+        margin-top: 0px;
+        margin-bottom: 10px;
+      }
+
+      paper-button {
+        color: #4285f4;
+      }
+
+      .field-type {
+        margin-left: 10px;
+        width: 140px;
+      }
+      .field-remove {
+        width: 40px;
+      }
+
+      paper-checkbox {
+        padding-top: 15px;
+      }
+
+      .fields {
+        padding: 20px;
+        padding-bottom: 0;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      .add {
+        color: #5CC0A2;
+      }
+      .remove {
+        color: #FF6666;
+      }
+      th {
+        text-align: left;
+      }
+
+      h2 {
+        font-size: 1.6em;
+        font-weight: 300;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+
+
+    </style>
+
+    <div vertical layout>
+      <h2 class="header">Create a Channel</h2>
+      <div class="content" vertical layout>
+        <paper-input floating label="Enter a channel name..."></paper-input>
+        <paper-radio-group selected="public">
+          <paper-radio-button name="public" label="Public" disabled></paper-radio-button>
+          <paper-radio-button name="private" label="Private" disabled></paper-radio-button>
+        </paper-radio-group>
+
+        <h2>Form</h2>
+        <div class="form">
+          <table id="fields" class="fields" style="width:100%">
+            <tr>
+              <th class="field-type">Type</th>
+              <th class="field-label">Label</th> 
+              <th class="field-required">Required</th>
+              <th class="field-remove"></th>
+            </tr>
+            <tr>
+              <td><core-icon icon="text-format"></core-icon>Text</td>
+              <td><paper-input value="Title" disabled></td> 
+              <td horizontal center-justified layout><paper-checkbox checked disabled></paper-checkbox></td>
+              <td></td>
+            </tr>
+            <template repeat="{{field in fields}}">
+              <tr>
+                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.name}}</td>
+                <td><paper-input label="Enter a label..." value="{{field.input}}"></td> 
+                <td horizontal center-justified layout><paper-checkbox checked="{{field.required}}"></paper-checkbox></td>
+                <td><paper-icon-button class="remove" icon="close" on-tap="{{removeField}}"></paper-icon-button></td>
+              </tr>
+            </template>
+          </table>
+          <paper-menu-button>
+            <paper-icon-button class="add" icon="add"></paper-icon-button>
+            <paper-dropdown class="dropdown">
+              <div class="menu">
+                <paper-item on-tap="{{addText}}"><core-icon icon="text-format"></core-icon>Text</paper-item>
+                <paper-item on-tap="{{addImage}}"><core-icon icon="image:photo-camera"></core-icon>Image</paper-item>
+                <paper-item on-tap="{{addAudio}}"><core-icon icon="av:mic"></core-icon>Audio</paper-item>
+                <paper-item on-tap="{{addVideo}}"><core-icon icon="av:videocam"></core-icon>Video</paper-item>
+                <paper-item on-tap="{{addCheckbox}}"><core-icon icon="check-box"></core-icon>Checkbox</paper-item>
+                <paper-item on-tap="{{addRadioButton}}"><core-icon icon="radio-button-on"></core-icon>Radio Button</paper-item>
+              </div>
+            </paper-dropdown>
+          </paper-menu-button>
+      </div>
+    </div>
+
+    <div class="footer" horizontal around-justifed layout>
+      <paper-button flex>Cancel</paper-button>
+      <paper-button flex>Submit</paper-button>
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    fields: [],
+
+    addText: function() {
+      this.fields.push({name:"Text", icon:"text-format", input:"", required:false});
+    },
+
+    addImage: function() {
+      this.fields.push({name:"Image", icon:"image:photo-camera", input:"", required:false});
+    },
+
+    addAudio: function() {
+      this.fields.push({name:"Audio", icon:"av:mic", input:"", required:false});
+    },
+
+    addVideo: function() {
+      this.fields.push({name:"Video", icon:"av:videocam", input:"", required:false});
+    },
+
+    addCheckbox: function() {
+      this.fields.push({name:"Checkbox", icon:"check-box", input:"", required:false});
+    },
+
+    addRadioButton: function() {
+      this.fields.push({name:"Radio Button", icon:"radio-button-on", input:"", required:false});
+    },
+
+    removeField: function(event, detail, sender) {
+      console.log(event);
+      console.log(detail);
+      console.log(sender);
+      var field = sender.templateInstance.model.field;
+      console.log(field);
+
+      var index = this.fields.indexOf(field);
+
+      if(index > -1) {
+        this.fields.splice(index, 1);
+      }
+    }
+
+
+  });
+  </script>
+  
+</polymer-element>

@@ -1,0 +1,156 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../core-icons/communication-icons.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<polymer-element name="geosource-post-summary" attributes="post favorite mapInfo">
+  <template>
+    <style>
+    :host {
+      display: block;
+      position: relative;
+      background-color: white;
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+    polyfill-next-selector { content: '.card-header h2'; }
+    .card-header ::content h2 {
+      margin: 0px;
+      font-size: 1.3em;
+      font-weight: 300;
+    }
+    .thumbnail {
+      min-width: 70px;
+      width: 70px;
+      margin: 15px;
+      margin-bottom: 0;
+    }
+    .title {
+      margin: 0;
+      margin-top: 15px;
+    }
+    .content {
+
+    }
+    img {
+            border-radius: 100%;
+      -webkit-border-radius: 100%;
+    }
+    #more-button {
+      color: #4285f4;
+    }
+    .buttons {
+      color: #636363;
+      padding: 3px;
+      height: auto;
+      min-width: 40px;
+    }
+
+    :host([favorite]) #favicon {
+      color: #FF6666;
+    }
+    .card-footer {
+      font-size: 14px;
+      padding: 3px;
+      padding-left: 15px;
+      padding-bottom: 5px;
+    }
+    .info {
+      color: #636363;
+      text-transform: uppercase;
+      margin-top: 10px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    #decsription {
+      margin: 17px;
+    }
+    :host([mapInfo]) paper-button {
+      display: none;
+    }
+    :host([mapInfo]) {
+      width: auto;
+      max-width:500px;
+    }
+    :host([mapInfo]) .buttons {
+      display: none;
+      min-width: 0;
+      width: 0;
+    }
+    </style>
+
+    <div class="content" horizontal layout>
+      <div class="card-header" horizontal layout center flex>
+        <div class="thumbnail"><img src="{{post.avatar}}" width="70" height="70"></div>
+        <div class="title" flex>{{post.text}}</div>
+      </div>
+      <div class="buttons" vertical layout>
+        <paper-icon-button
+          id="favicon"
+          icon="favorite"
+          on-tap="{{favoriteTapped}}">
+        </paper-icon-button>
+
+        <paper-icon-button
+          id="location-button"
+          icon="room"
+          on-tap="{{locationTapped}}">
+        </paper-icon-button>
+      </div>
+<!--         <paper-icon-button
+        id="more-button"
+        icon="launch"
+        on-tap="{{moreTapped}}">
+      </paper-icon-button> -->
+    </div>       
+    <div end horizontal layout class="card-footer">
+      <div flex class="info">posted by {{post.username}} {{time}} to {{post.channel}}</div> 
+      <paper-button 
+        id="more-button"
+        icon="launch"
+        on-tap="{{moreTapped}}">
+      </paper-icon-button>see more</paper-button>
+    </div>
+    
+  </template>
+
+  <script type="text/javascript" src="../moment/moment.js"></script>
+  <script>
+  Polymer({
+    publish: {
+      post: {
+        value: null,
+        reflect: true
+      },
+      favorite: { //temporary hack, 
+        value: false,
+        reflect: true
+      },
+      mapInfo: {
+        value: false,
+        reflect: true
+      }
+    },
+
+    time: null,
+
+    favoriteTapped: function(event, detail, sender) {
+      this.post.favorite = !this.post.favorite;
+      this.favorite = this.post.favorite;
+      this.fire('favorite-click');
+    },
+    locationTapped: function(event, detail, sender) {
+      this.fire('location-click');
+    },
+    moreTapped: function(event, detail, sender) {
+      this.fire('more-click');
+    },
+
+    postChanged: function() {
+      this.time = moment(this.post.time).fromNow();
+    }
+
+  });
+  </script>
+</polymer-element>

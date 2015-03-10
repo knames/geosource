@@ -37,7 +37,7 @@ public class FieldWithContent extends Field implements Serializable
 
         setContent(content);
         if (content == null)
-		    throw new RuntimeException(content + " is null.");
+		    throw new RuntimeException("content is null.");
 
     }
 
@@ -103,7 +103,7 @@ public class FieldWithContent extends Field implements Serializable
     public void setContent(Serializable newContent)
     {
         if (type == null)
-		    throw new RuntimeException(type + " is null.");
+		    throw new RuntimeException("type is null.");
 
         if (contentMatchesType(newContent, type))
             content =  newContent;
@@ -129,7 +129,7 @@ public class FieldWithContent extends Field implements Serializable
     public static boolean contentMatchesType(Serializable content, FieldType type)
     {
         if (type == null)
-		    throw new RuntimeException(type + " is null.");
+		    throw new RuntimeException("type is null.");
 
         if (content == null)
             return true;

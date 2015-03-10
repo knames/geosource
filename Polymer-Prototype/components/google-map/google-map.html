@@ -2,7 +2,7 @@
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-apis/google-maps-api.html">
-<link rel="import" href="../../post-card.html">
+<link rel="import" href="../geosource-post-summary/geosource-post-summary.html">
 
 <!--
 The `google-map-marker` element represents a map marker. It is used as a
@@ -272,10 +272,19 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
           if (!this.info) {
             // Create a new infowindow
 
-            var post_card = document.createElement('post-card');
+            var post_card = document.createElement('geosource-post-summary');
             post_card.post = this.post;
             post_card.favorite = this.post.favorite;
             post_card.mapInfo = true;
+
+
+            var image = {
+              url: this.post.avatar,
+              size: new google.maps.Size(60, 60),
+              scaledSize: new google.maps.Size(60, 60)
+            };
+
+            this.icon = image;
 
             this.info = new google.maps.InfoWindow({
               content: post_card
@@ -318,7 +327,6 @@ Fired for a rightclick on the marker. Requires the clickEvents attribute to be t
               //   }
               // });
               // this.dispatchEvent(event);
-              this.icon = null;
             }.bind(this));
 
           }

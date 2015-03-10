@@ -1,0 +1,75 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!-- 
+  `<post-service>` provides an API for a fake service -- 
+  _unquote_, the read-only social networking service!
+
+  Provides a very simple API: `posts` returns the list of posts.
+  `setFavorite` pretends to persist a user's favorite choice.
+
+  @element post-service
+  @demo 
+  @homepage http://www.polymer-project.org/docs/start/tutorial.html
+-->
+`
+<!--
+  An array of post objects, with the following format:
+
+  <table border="0">
+    <tr>
+      <td><code>uid</code></td>
+      <td>Number</td>
+      <td>Unique ID for this post.</td>
+    </tr>
+     <tr>
+      <td><code>username</code></td>
+      <td>String</td>
+      <td>Poster's username.</td>
+    </tr>
+    <tr>
+      <td><code>avatar</code></td>
+      <td>String</td>
+      <td>URL for the user's avatar.</td>
+    </tr>  
+    <tr>
+      <td><code>text</code></td>
+      <td>String</td>
+      <td>Post text.</td>
+    </tr>  
+    <tr>
+      <td><code>favorite</code></td>
+      <td>Boolean</td>
+      <td>True if the current user favorited this post.</td>
+    </tr>
+  </table>
+  
+  @attribute posts 
+  @type Array
+  @default []
+-->
+<polymer-element name="user-service" attributes="user">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <core-ajax id="ajax"
+      auto
+      url="/api/user.json"
+      on-core-response="{{userLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer('user-service', {
+    created: function() {
+      this.user = null;
+    },
+    userLoaded: function() {
+      // Make a copy of the loaded data
+      this.user = this.$.ajax.response;
+    }
+  });
+  </script>
+</polymer-element>

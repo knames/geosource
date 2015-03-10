@@ -11,9 +11,9 @@
 
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <script src="components/webcomponentsjs/webcomponents.js"></script>
-
-  <link rel="import" href="geosource-main.html">
+  
   <link rel="import" href="components/polymer/polymer.html">
+  <link rel="import" href="components/geosource-main/geosource-main.html">
   <link rel="import" href="test_suite/assert.html">
 
   <style>
@@ -24,6 +24,15 @@
     background-color: #E5E5E5;
     font-family: 'RobotoDraft', sans-serif;
   }
+
+  html /deep/ paper-dialog::shadow #scroller {
+    padding: 0;
+  }
+
+    paper-dialog #scroller {
+      padding: 0;
+  }
+
 
   </style>
 

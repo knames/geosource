@@ -21,13 +21,19 @@ public class Queries {
     /**
      * get a query to save a string value from an incident post to the database
      * @param channelName the channel being posted to
+     * @param ownername the owner of the channel
+     * @postnumber the posts unique number id
      * @param fieldName the name (title) of the string field
      * @param content the string to be posted
      * @return a query that can be executed to save the string correctly
      */
-    public static String saveStringField(String channelName, String fieldName, String content)
+    public static String saveStringField(String channelName, String ownername, int postnumber, String fieldName, String content)
     {
-        return null; //TODO Ken please implement here
+    	//TODO Needs testing.
+    	//update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
+    	String sql = "update posts_" + ownername + "_" + channelName 
+    			+ " set p_" + fieldName + " = \"" + content + "\" where p_number = " + postnumber;
+        return sql;
     }
     
     /**
@@ -37,8 +43,12 @@ public class Queries {
      * @param filePath the file path to the picture
      * @return a query that can be executed to save the filepath to the database
      */
-    public static String savePictureField(String channelName, String fieldName, String filePath)
+    public static String savePictureField(String channelName, String ownername, int postnumber, String fieldName, String filePath)
     {
-        return null; //TODO Ken please implement here
+    	//TODO Needs testing.
+    	//update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
+    	String sql = "update posts_" + ownername + "_" + channelName 
+    			+ " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postnumber;
+        return sql;
     }
 }

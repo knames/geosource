@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../geosource-services/post-service.html">
+<link rel="import" href="../google-map/google-map.html">
+
+<polymer-element name="geosource-map" attributes="latitude longitude posts">
+  <template>
+
+    <style>
+      #google_map {
+        width: 100%;
+        height: 100%;
+        display: block;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+      }
+    </style>
+
+   <google-map latitude="{{latitude}}" longitude="{{longitude}}" id="google_map">
+
+    <template repeat="{{post in posts}}">
+      <google-map-marker id="marker"
+        latitude="{{post.location.latitude}}"
+        longitude="{{post.location.longitude}}"
+        post="{{post}}"
+        clickEvents="false"
+        on-marker-click="{{markerClick}}">
+      </google-map-marker>
+    </template>
+    </google-map>
+  </template>
+  
+
+  <script>
+  Polymer({
+    latitude: 52.1333,
+    longitude: -106.6833,
+    markerClick: function(e) {
+      this.fire('open-dialog', {post: e.detail.marker.post});
+    },
+    resize: function() {
+      this.$.google_map.resize();
+    }
+  });
+  </script>
+</polymer-element>

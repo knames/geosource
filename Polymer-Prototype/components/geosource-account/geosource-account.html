@@ -1,0 +1,82 @@
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../google-signin/google-signin.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../google-apis/google-apis.html">
+<link rel="import" href="../google-apis/google-plusone-api.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../geosource-services/user-service.html">
+
+<polymer-element name="geosource-account" attributes="uid user">
+
+  <template>
+    
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
+      #toggle_label {
+        margin: 15px;
+        margin-left: 0;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin: 0;
+      }
+      google-signin {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      #dropdown {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        color: #636363;
+      }
+    </style>
+
+    <user-service user="{{user}}"></user-service>
+    <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
+      <google-signin theme="light" 
+        clientId="1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com" 
+        scopes="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
+        width="wide"
+        on-google-signin-success="{{signIn}}">
+      </google-signin>
+      <core-item label="Hello, {{name}}"></core-item>
+    </core-submenu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      name: "",
+      uid: null,
+      user: null,
+
+      signIn: function(event, details, sender) {
+        var geosource_account = this;
+
+        details.gapi.client.load('plus', 'v1', function() {
+          var request = gapi.client.plus.people.get({userId: 'me'});
+
+          request.execute(function(resp) {
+            console.log(resp);
+            geosource_account.name = resp.name.givenName;
+            geosource_account.uid = resp.id;
+            geosource_account.fire('filter-change');
+          });
+        });
+      },
+
+    });
+  </script>
+
+</polymer-element>

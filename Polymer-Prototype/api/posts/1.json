@@ -1,0 +1,18 @@
+{
+	"pid": 1,
+	"uid": 115161761450794914816,
+	"username": "Josh",
+	"channel": "Birds",
+    "favorite": false,
+    "title": "Have you seen this sparrow?",
+	"fields": 
+		[
+			{"type": "Text", "label": "Description", "value": "On second though, this might not be a sparrow... Check out my KNEX though!"},
+			{"type": "Video", "label": "Video", "value": "/videos/small.mp4"},
+			{"type": "Image", "label": "Picture", "value": "/images/bird-01.jpg"},
+			{"type": "Checkbox", "label": "Sparrow", "value": true},
+			{"type": "Checkbox", "label": "Pink", "value": false}
+		],
+	"time": "2015-02-26 12:00:00.000",
+    "location": {"latitude": 52.1333, "longitude": -106.6853}
+}
