@@ -22,6 +22,26 @@ public class AppIncidentWithWrapper implements AppIncident {
     protected Incident wrappedIncident;
 
     /**
+     *
+     * @param channelName the name of the channel for which to create the new incident.
+     * @precond channelName corresponds to an existing channel.
+     * @postcond a new AppIncidentWithWrapper is created, and its
+     * wrappedIncident is assigned this channel name.
+     * fieldList remains null.
+     */
+    public AppIncidentWithWrapper(String channelName)
+    {
+        wrappedIncident = new Incident();
+        wrappedIncident.setChannelName(channelName);
+        fieldList = null;
+    }
+
+    /**
+     * @param fieldWithoutContentList a list of FieldWithoutContent.
+     * @param channelName the name of the channel corresponding to the new incident.
+     * @precond fieldWithoutContentList and channelName are not null. And each FieldWithoutContent is also
+     *  fully constructed.
+     * @postcond
      * Create a new incident by populating its fieldList by means of a
      * fieldWithoutContentList; simply creates a corresponding fieldWithContentList,
      * and adds null content.
@@ -36,10 +56,8 @@ public class AppIncidentWithWrapper implements AppIncident {
      * Thus an Incident is fully constructed at the same time as this AppIncident, and will share all its
      * future modifications (and all the new content that is added).
      */
-    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList)
+    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName)
     {
-        wrappedIncident = new Incident();
-
         int listSize = fieldWithoutContentList.size();
         fieldList = new ArrayList<AppFieldWithContent>(listSize);
         ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<FieldWithContent>(listSize);
@@ -75,7 +93,7 @@ public class AppIncidentWithWrapper implements AppIncident {
         }
 
         //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
-        wrappedIncident.setFieldList(fieldWithContentList);
+        wrappedIncident = new Incident(fieldWithContentList, channelName);
     }
 
     @Override
@@ -91,7 +109,8 @@ public class AppIncidentWithWrapper implements AppIncident {
                 return false;
         }
 
-        return true;
+        String channelName = getChannelName();
+        return channelName != null && !channelName.isEmpty();
     }
 
     /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */

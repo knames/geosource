@@ -11,6 +11,16 @@
     <string name="submit_incident">Submit</string>
     <string name="create_incident">Create New Incident</string>
 
+    <!--socket communication strings for Toast.-->
+    <string name="downloaded_incident_spec_for_channel">incident spec for channel %1$ downloaded successfully.</string>
+    <string name="failed_to_download_incident_spec_for_channel">Could not download incident spec for channel %1$.</string>
+    <string name="uploaded_incident">New incident uploaded successfully.</string>
+    <string name="failed_to_upload_incident">Incident upload failed.</string>
+
+    <string name="unknown_error">Unknown error.</string>
+    <string name="connection_failed">Connection failed.</string>
+    <string name="incomprehensible_server_response">Incomprehensible server response.</string>
+
     <!--&lt;!&ndash;Anam's stuff &ndash;&gt;-->
     <!--<string name="menu_settings">Settings</string>-->
     <!--<string name="title_activity_main">MainActivity</string>-->

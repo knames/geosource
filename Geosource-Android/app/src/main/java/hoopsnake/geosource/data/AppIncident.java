@@ -15,7 +15,8 @@ public interface AppIncident
     /**
      * @precond the underlying FieldList is not null.
      * @postcond see return.
-     * @return true if this incident's required fields are all filled in, or false otherwise.
+     * @return true if this incident's required fields are all filled in
+     *  AND its channel name has been properly set, or false otherwise.
      */
     public boolean isCompletelyFilledIn();
 
