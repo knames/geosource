@@ -22,7 +22,6 @@ import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import hoopsnake.geosource.data.FieldType;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
 
@@ -79,24 +78,24 @@ public class IncidentActivity extends ActionBarActivity {
         String channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
         assertNotNull(channelName);
 
-        //TODO Query the server for the spec!
-        //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
-
-        //TODO remove this mockedSpec eventually! It is just for testing.
-        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
-        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
-        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
-
-        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
-        // We get the ListView component from the layout
         incidentDisplay = (ListView) findViewById(R.id.listView);
 
-        incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
-        incidentDisplay.setAdapter(incidentAdapter);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
-        //TODO this may not be needed.
-        incidentAdapter.notifyDataSetChanged();
+//        //TODO remove this mockedSpec eventually! It is just for testing.
+//        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
+//        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
+//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
+//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+//
+//        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
+//        // We get the ListView component from the layout
+
+//        incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
+//        incidentDisplay.setAdapter(incidentAdapter);
+//
+//        //TODO this may not be needed.
+//        incidentAdapter.notifyDataSetChanged();
 
         // React to user clicks on item
         incidentDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -145,8 +144,7 @@ public class IncidentActivity extends ActionBarActivity {
     public void onSubmitButtonClicked(View v)
     {
         if (incident.isCompletelyFilledIn()) {
-            //TODO actually call this task.
-            //new TaskSendIncident(IncidentActivity.this).execute(incident);
+            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
@@ -186,7 +184,6 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(LOG_TAG, "Shit got no connection, son!");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -198,13 +195,12 @@ public class IncidentActivity extends ActionBarActivity {
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
                 Log.i(LOG_TAG, "Attempting to send incident.");
+                outStream.writeObject(IOCommand.GET_FORM);
                 outStream.writeObject(channelName);
 
                 Log.i(LOG_TAG, "Retrieving reply...");
-                //TODO this is a bit presumptuous on my part.
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
 
-                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
@@ -212,12 +208,10 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch (IOException e)
             {
-                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
@@ -281,7 +275,6 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(LOG_TAG,"Connection failed.");
                 e.printStackTrace();
 
                 return SocketResult.FAILED_CONNECTION; //end program if connection failed
@@ -295,11 +288,8 @@ public class IncidentActivity extends ActionBarActivity {
                 outStream.writeObject(IOCommand.SEND_INCIDENT);
                 outStream.writeObject(incidentToSend);
 
-                Log.i(LOG_TAG, "Retrieving reply...");
-                //TODO this is a bit presumptuous on my part.
-                String reply = (String) inStream.readObject();
+                //TODO is a reply really not necessary?
 
-                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
@@ -307,17 +297,18 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch (IOException e)
             {
-                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
-            } catch (ClassNotFoundException e) {
-                Log.e(LOG_TAG, "incoming class not found.");
-                e.printStackTrace();
-
-                return SocketResult.CLASS_NOT_FOUND;
-
             }
+            //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
+//            catch (ClassNotFoundException e) {
+//                Log.e(LOG_TAG, "incoming class not found.");
+//                e.printStackTrace();
+//
+//                return SocketResult.CLASS_NOT_FOUND;
+//
+//            }
 
             return SocketResult.SUCCESS;
         }
