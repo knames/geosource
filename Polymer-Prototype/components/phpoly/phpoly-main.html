@@ -1,0 +1,39 @@
+<!doctype html>
+
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/core-ajax/core-ajax.html">
+
+<polymer-element name="phpoly-main">
+
+    <template>
+        <style>
+        :host {
+          display: none;
+        }
+        </style>
+        <core-ajax id="ajax"
+        auto
+        url="dbtest.php"
+        on-core-response="{{categoriesLoaded}}"
+        handleAs="json">
+        </core-ajax>
+    </template>
+    <script>
+        Polymer('category-list',
+        {
+            created: function()
+            {
+                this.categories = [];
+            },
+
+            categoriesLoaded: function()
+            {
+                console.log('call cat loaded');
+                this.categories = this.$.ajax.response.slice(0);
+            }
+        });
+    </script>
+</polymer-element>
+
+
+

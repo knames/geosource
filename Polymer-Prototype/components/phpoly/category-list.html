@@ -1,0 +1,34 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/paper-item/paper-item.html">
+<link rel="import" href="category-service.html">
+
+<polymer-element name="category-list" attributes="show">
+    <template>
+        <style>
+        :host {
+          display: block;
+          width: 100%;
+        }
+        .paper_item 
+        {
+            margin: 10px;
+            background-color: rgb(255, 255, 255);
+        }
+        </style>
+        <category-service id="service" categories="{{categories}}"></category-service>
+
+        <template repeat="{{category in categories}}">
+            <paper-item label="{{category.category_name}}"
+                        icon="settings"
+                        class="paper_item"
+                        center horizontal layout>
+            </paper-item>
+        </template>
+    </template>
+    <script>
+        Polymer('category-list',
+            {
+            }
+        );
+    </script>
+</polymer-element>
