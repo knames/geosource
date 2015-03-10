@@ -48,7 +48,9 @@ public class AppIncidentWithWrapper implements AppIncident {
         {
             FieldWithContent newField = new FieldWithContent(fieldWithoutContent);
 
-            AppFieldWithContent newFieldWithContentWrapper;
+            //AbstractAppFieldWithContent is guaranteed to keep the fieldWithContent reference
+            //passed to it in the constructor up to date.
+            AbstractAppFieldWithContent newFieldWithContentWrapper;
             switch(fieldWithoutContent.getType())
             {
                 case IMAGE:
@@ -67,7 +69,7 @@ public class AppIncidentWithWrapper implements AppIncident {
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
             }
 
-            //Ideally, these should now refer to the same underlying fields in each item.
+            //These now refer to the same underlying fields in each item. They are parallel lists.
             fieldWithContentList.add(newField);
             fieldList.add(newFieldWithContentWrapper);
         }
