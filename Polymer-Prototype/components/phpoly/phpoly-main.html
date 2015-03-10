@@ -13,13 +13,13 @@
         </style>
         <core-ajax id="ajax"
         auto
-        url="dbtest.php"
+        url="http://localhost:8000/components/phpoly/dbtest.php"
         on-core-response="{{categoriesLoaded}}"
         handleAs="json">
         </core-ajax>
     </template>
     <script>
-        Polymer('category-list',
+        Polymer(
         {
             created: function()
             {
@@ -28,8 +28,8 @@
 
             categoriesLoaded: function()
             {
-                console.log('call cat loaded');
                 this.categories = this.$.ajax.response.slice(0);
+                console.log(this.categories);
             }
         });
     </script>
