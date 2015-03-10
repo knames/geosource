@@ -26,7 +26,7 @@
         padding: 10px;
       }
       core-submenu::shadow #submenu {
-        margin-left: 15px;
+        margin-left: 0px;
       }
 /*      core-item.core-selected {
         color: #3C8670;
@@ -40,11 +40,15 @@
       #subscribed {
         padding: 0;
       }
-      core-menu {
-        margin: 0;
-      }
       paper-button {
-        color: #5CC0A2;
+        color: #4285f4;
+        font-size: 14px;
+      }
+      core-item {
+        padding-left: 15px;
+      }
+      .search {
+        padding-left: 15px;
       }
 
 
@@ -76,7 +80,9 @@
             <paper-icon-button icon="add" class="subscribe_button" on-tap="{{subscribe}}"></paper-icon-button>
           </core-item>
         </template>
-      <paper-button on-tap="{{createChannel}}" flex>Create a channel</paper-button>
+      <div horizontal layout center-justified>
+       <paper-button on-tap="{{createChannel}}" flex>Create a channel</paper-button>
+      </div>
     </core-submenu>
     
   </template>
