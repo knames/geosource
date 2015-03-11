@@ -68,6 +68,7 @@ public class FieldWithContent extends Field implements Serializable
     {
         title = (String) in.readObject();
         type = (FieldType) in.readObject();
+        isRequired = in.readBoolean();
 
         switch (type)
         {
@@ -95,6 +96,7 @@ public class FieldWithContent extends Field implements Serializable
     {
         out.writeObject(title);
         out.writeObject(type);
+        out.writeBoolean(isRequired);
         out.writeObject(content);
     }
 
