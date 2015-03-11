@@ -186,7 +186,7 @@ public class IncidentActivity extends ActionBarActivity {
             {
                 e.printStackTrace();
 
-                return SocketResult.FAILED_CONNECTION; //end program if connection failed
+                return SocketResult.FAILED_CONNECTION;
             }
 
 
@@ -277,7 +277,7 @@ public class IncidentActivity extends ActionBarActivity {
             {
                 e.printStackTrace();
 
-                return SocketResult.FAILED_CONNECTION; //end program if connection failed
+                return SocketResult.FAILED_CONNECTION;
             }
 
 
