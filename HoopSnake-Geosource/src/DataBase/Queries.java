@@ -51,4 +51,14 @@ public class Queries {
     			+ " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postnumber;
         return sql;
     }
+    
+    /** returns a query which will grab the highest post number in a given channel table
+     * @param channelName the channel name
+     * @param ownername the owner of the channel
+     * @return the sql query that will give the highest number in the post */
+    public static String getPostNum(String channelName, String ownername){
+		String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;"; 
+    	return sql;
+    	
+    }
 }
