@@ -1,4 +1,4 @@
-package ServerClientShared;
+package spec;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import ServerClientShared.FieldType;
+import ServerClientShared.FieldWithoutContent;
 
 
 
