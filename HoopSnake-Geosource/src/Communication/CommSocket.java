@@ -108,9 +108,13 @@ public class CommSocket implements Callable<Incident>{
             {
                 case GET_FORM:
                 {
+                    System.out.println("111");
                     String channelName = in.readUTF();
+                    System.out.println("112");
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
+                    System.out.println("114");
                     out.writeObject(formList);
+                    System.out.println("116");
                     return null;
                 }
                 case SEND_INCIDENT:
