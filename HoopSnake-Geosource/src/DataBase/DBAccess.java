@@ -30,8 +30,7 @@ public class DBAccess {
         }
         catch (ClassNotFoundException e)
         {
-            e.printStackTrace();
-            System.out.println("fail");
+            System.err.println("fail: " + e.getLocalizedMessage());
         }
         
         try
@@ -61,7 +60,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("formSpec not found!! Possible broken Incident request");
+            System.err.println("formSpec not found!! Possible broken Incident request");
         }
         return filePath;
     }
@@ -81,7 +80,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving string field failed");
+            System.err.println("Saving string field failed");
         }
     }
     
@@ -100,7 +99,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving picture field failed");
+            System.err.println("Saving picture field failed");
         }
     }
 
@@ -118,7 +117,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving picture field failed");
+            System.out.println("Creating new Post failed");
             return -1;
         }
     }

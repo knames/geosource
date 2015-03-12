@@ -6,9 +6,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import hoopsnake.geosource.data.AbstractAppFieldWithContent;
-import hoopsnake.geosource.data.FieldType;
-import hoopsnake.geosource.data.FieldWithContent;
+import ServerClientShared.FieldWithContent;
+import ServerClientShared.FieldType;
 import hoopsnake.geosource.data.ImageField;
 import hoopsnake.geosource.data.StringField;
 

@@ -22,6 +22,8 @@ public class Incident implements Serializable {
             throw new RuntimeException("channel cannot be null.");
             
         channelName = channel;
+        if(owner==null)
+            throw new RuntimeException("owner cannot be null.");
         ownerName = owner;
     }
 

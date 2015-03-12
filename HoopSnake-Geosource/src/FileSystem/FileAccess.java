@@ -26,12 +26,12 @@ public class FileAccess {
         }
         catch (IOException IOe)
         {
-            System.out.println("Reader initialization failed!");
+            System.err.println("Reader initialization failed!");
             return null;
         }
         catch (ClassNotFoundException CNFe)
         {
-            System.out.println("Parsing Specification failed");
+            System.err.println("Parsing Specification failed");
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class FileAccess {
         }
         catch (IOException IOe)
         {
-            System.out.println("Error attempting to write picture file");
+            System.err.println("Error attempting to write picture file");
         }
         return fileName;
     }
