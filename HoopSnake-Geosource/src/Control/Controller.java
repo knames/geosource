@@ -22,17 +22,23 @@ public class Controller {
     private DBAccess dbAccess; //database abstraction
     private FileAccess fileAccess; //file system abstraction
     
-    private final static int numConnections = 5; //maximum simultaneous socket inputs
+    private static int numConnections = 5; //maximum simultaneous socket inputs
     
+    /**
+     * runs the server
+     * @param args specifies the port number and concurrent thread count
+     */
     public static void main(String[] args)
     {
+    	numConnections = Integer.parseInt(args[1]);
         Controller Server = new Controller();
-        Server.run();
+        Server.run(Integer.parseInt(args[0]));
         
     }
     
-    public void run()
+    public void run(int portNum)
     {
+    	CommSocket.portNum = portNum;
         ExecutorService exec = Executors.newCachedThreadPool();
         LinkedList<Future<Incident>> list = new LinkedList();
         for (int x = 0; x < numConnections; x ++)

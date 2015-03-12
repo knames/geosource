@@ -34,7 +34,7 @@ import javax.crypto.NoSuchPaddingException;
  */
 public class CommSocket implements Callable<Incident>{
     
-    private static final int portNum = 0;
+    public static int portNum = 0;
     
     private static Controller controller = null;
 
