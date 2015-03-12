@@ -1,9 +1,13 @@
 package hoopsnake.geosource.data;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
+
+import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -11,6 +15,9 @@ import android.view.View;
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
 public class StringField extends AbstractAppFieldWithContent {
+    //TODO hardcoded until we get params implemented.
+    public int maxLength = 140;
+
     public StringField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
@@ -34,14 +41,28 @@ public class StringField extends AbstractAppFieldWithContent {
     }
 
     @Override
-    public View getContentViewRepresentation(Context context) {
-        //TODO implement this.
-        return null;
-    }
+    public View getContentViewRepresentation(final Activity activity, final int requestCodeForIntent) {
+        EditText contentEditor = (EditText) activity.findViewById(R.id.field_edit_text);
+        String content = (String) wrappedField.content;
+        //TODO check the length of the text.
+        if (content != null)
+            contentEditor.setText(content);
+        contentEditor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-    @Override
-    public void onSelected(Activity activity, int requestCodeForIntent) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = s.toString();
+                if (contentIsSuitable(text))
+                    setContent(text);
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        return contentEditor;
     }
 
     @Override

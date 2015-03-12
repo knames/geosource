@@ -1,23 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
 
-
-    <ListView android:id="@+id/listView"
-        android:layout_height="match_parent"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:orientation="vertical">
 
-    <Button android:id="@+id/submitBtn"
-        android:text="@string/submit_incident"
-        android:layout_weight="0.5"
-        android:layout_height="80dp"
+        <LinearLayout
+            android:id="@+id/incident_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
         android:layout_width="match_parent"
-        android:nestedScrollingEnabled="true"
-        android:onClick="onSubmitButtonClicked" />
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="bottom"
+        android:onClick="onSubmitButtonClicked"
+        android:text="@string/submit_incident" />
 
 </LinearLayout>
+

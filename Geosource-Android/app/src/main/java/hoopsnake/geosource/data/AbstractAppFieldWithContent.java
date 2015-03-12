@@ -3,6 +3,7 @@ package hoopsnake.geosource.data;
 import java.io.Serializable;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -53,5 +54,13 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
     public boolean contentIsSuitable(Serializable content)
     {
         return FieldWithContent.contentMatchesType(content, wrappedField.getType());
+    }
+
+    @Override
+    public void setContent(Serializable content)
+    {
+        assertTrue(contentIsSuitable(content));
+
+        wrappedField.setContent(content);
     }
 }

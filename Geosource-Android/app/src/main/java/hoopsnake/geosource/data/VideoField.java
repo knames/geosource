@@ -1,12 +1,13 @@
 package hoopsnake.geosource.data;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
 
 /**
@@ -32,21 +33,24 @@ public class VideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public View getContentViewRepresentation(Context context) {
-        //TODO implement this.
-        return null;
-    }
+    public View getContentViewRepresentation(final Activity activity,final int requestCodeForIntent) {
+        ImageView iv = (ImageView) activity.findViewById(R.id.field_image_view);
 
-    @Override
-    public void onSelected(Activity activity, int requestCodeForIntent) {
-        Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
-        if (fileUriForNewVideo == null)
-        {
-            Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-            return;
-        }
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
+                if (fileUriForNewVideo == null)
+                {
+                    Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-        MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
+                MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
+            }
+        });
+
+        return iv;
     }
 
     @Override

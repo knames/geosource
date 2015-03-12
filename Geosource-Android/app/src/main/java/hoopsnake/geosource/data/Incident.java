@@ -18,9 +18,10 @@ public class Incident implements Serializable {
 
     public Incident(){}
 
-    public Incident(ArrayList<FieldWithContent> fieldList)
+    public Incident(ArrayList<FieldWithContent> fieldList, String channelName)
     {
-        this.fieldList = fieldList;
+        setFieldList(fieldList);
+        setChannelName(channelName);
     }
 
     public String getChannelName() {
@@ -28,6 +29,7 @@ public class Incident implements Serializable {
     }
 
     public void setChannelName(String channelName) {
+        //TODO validate channel name.
         this.channelName = channelName;
     }
 

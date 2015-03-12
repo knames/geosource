@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -16,14 +15,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
+import hoopsnake.geosource.comm.IOCommand;
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import hoopsnake.geosource.data.FieldType;
-import hoopsnake.geosource.data.FieldWithContent;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
 
@@ -42,16 +40,13 @@ public class IncidentActivity extends ActionBarActivity {
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
-    /** The ListView that is actually visible to the user, displaying all the fields of the incident. */
-    ListView incidentDisplay;
+    /** The LinearLayout that displays all the fields of the incident. */
+    LinearLayout incidentDisplay;
 
     /** The incident to be created and edited by the user on this screen. */
-    AppIncidentWithWrapper incident;
+    AppIncident incident;
 
     public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
-
-    /** The name of the channel to which to submit the new incident. */
-    String channelName;
 
     /**
      * The position of the currently-selected field in the incidentDisplay.
@@ -80,39 +75,37 @@ public class IncidentActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
         assertNotNull(extras);
 
-        channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
+        String channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
         assertNotNull(channelName);
 
-        //TODO Query the server for the spec!
-        //new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
+        incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        //TODO remove this mockedSpec eventually! It is just for testing.
-        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
-        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
-        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
-        incident = new AppIncidentWithWrapper(mockedSpec);
-        // We get the ListView component from the layout
-        incidentDisplay = (ListView) findViewById(R.id.listView);
+//        //TODO remove this mockedSpec eventually! It is just for testing.
+//        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
+//        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
+//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
+//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+//
+//        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
+    }
 
-        incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
-        incidentDisplay.setAdapter(incidentAdapter);
+    /**
+     * @precond the current incident and all its fields are not null.
+     * @postcond each field's custom view is added to the linear layout.
+     */
+    private void renderIncident()
+    {
+        assertNotNull(incident);
+        assertNotNull(incident.getFieldList());
+        for (AppFieldWithContent field : incident.getFieldList())
+        {
+            assertNotNull(field);
+            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
 
-        incidentAdapter.notifyDataSetChanged();
-
-        // React to user clicks on item
-        incidentDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
-                                    long id) {
-                AppFieldWithContent field = incidentAdapter.getItem(position);
-
-                curFieldIdx = position;
-
-                field.onSelected(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-            }
-        });
+            incidentDisplay.addView(v);
+        }
     }
 
     /**
@@ -148,8 +141,7 @@ public class IncidentActivity extends ActionBarActivity {
     public void onSubmitButtonClicked(View v)
     {
         if (incident.isCompletelyFilledIn()) {
-            //TODO actually call this task.
-            //new TaskSendIncident(IncidentActivity.this).execute(incident);
+            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
@@ -162,6 +154,7 @@ public class IncidentActivity extends ActionBarActivity {
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
         private Context context;
 
+        String channelName;
         public static final String LOG_TAG = "geosource comm";
 
         public TaskReceiveIncidentSpec(Context context)
@@ -171,16 +164,12 @@ public class IncidentActivity extends ActionBarActivity {
         }
 
         protected SocketResult doInBackground(String... params) {
-            //TODO make this the actual ip address.
-            String ipaddress = "10.227.145.56";
-            int portNum = 80;
-
             ObjectOutputStream outStream; //wrapped stream to client
 
             ObjectInputStream inStream; //stream from client
             Socket outSocket;
 
-            String channelName = params[0];
+            channelName = params[0];
             assertNotNull(channelName);
 
             try //create socket
@@ -192,10 +181,9 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(LOG_TAG, "Shit got no connection, son!");
                 e.printStackTrace();
 
-                return SocketResult.FAILED_CONNECTION; //end program if connection failed
+                return SocketResult.FAILED_CONNECTION;
             }
 
 
@@ -204,13 +192,12 @@ public class IncidentActivity extends ActionBarActivity {
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
                 Log.i(LOG_TAG, "Attempting to send incident.");
+                outStream.writeObject(IOCommand.GET_FORM);
                 outStream.writeObject(channelName);
 
                 Log.i(LOG_TAG, "Retrieving reply...");
-                //TODO this is a bit presumptuous on my part.
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
 
-                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
@@ -218,46 +205,34 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch (IOException e)
             {
-                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
-                Log.e(LOG_TAG, "incoming class not found.");
                 e.printStackTrace();
 
                 return SocketResult.CLASS_NOT_FOUND;
 
             }
 
-            incident = new AppIncidentWithWrapper(fieldsToBeFilled);
-
-            incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
-            incidentDisplay.setAdapter(incidentAdapter);
+            //TODO some of this code should maybe go on the ui thread.
+            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName);
 
             return SocketResult.SUCCESS;
         }
 
         protected void onPostExecute(SocketResult result) {
-            switch (result) {
-                case UNKNOWN_ERROR:
-                    Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Unknown error.");
-                    break;
-                case FAILED_CONNECTION:
-                    Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Connection failed.");
-                    break;
-                case CLASS_NOT_FOUND:
-                    Toast.makeText(context, "Could not download incident spec for channel " + channelName + ". Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Could not download incident spec for channel " + channelName + ". Server response object class not found.");
-                    break;
-                case SUCCESS:
-                    Log.i(LOG_TAG, "incident spec for channel " + channelName + "downloaded successfully.");
+            String failedToDownload = String.format(getString(R.string.failed_to_download_incident_spec_for_channel), channelName);
 
-                    //TODO notify the ui of the new incident. We probably need more than this.
-                    incidentAdapter.notifyDataSetChanged();
-            }
+            makeToastAndLogOnSocketResult(getString(R.string.downloaded_incident_spec_for_channel),
+                    failedToDownload,
+                    result,
+                    context,
+                    LOG_TAG);
+
+            //TODO this may not be needed.
+            if (result.equals(SocketResult.SUCCESS))
+                renderIncident();
         }
     }
 
@@ -277,10 +252,6 @@ public class IncidentActivity extends ActionBarActivity {
         }
 
         protected SocketResult doInBackground(Incident... params) {
-            //TODO make this the actual ip address.
-            String ipaddress = "10.227.145.56";
-            int portNum = 80;
-
             ObjectOutputStream outStream; //wrapped stream to client
 
             ObjectInputStream inStream; //stream from client
@@ -288,9 +259,6 @@ public class IncidentActivity extends ActionBarActivity {
 
             Incident incidentToSend = params[0];
             assertNotNull(incidentToSend);
-
-            List<FieldWithContent> fieldsToSend = incidentToSend.getFieldList();
-            assertNotNull(fieldsToSend);
 
             try //create socket
             {
@@ -301,10 +269,9 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch(IOException e)
             {
-                Log.e(LOG_TAG,"Shit got no connection, son!");
                 e.printStackTrace();
 
-                return SocketResult.FAILED_CONNECTION; //end program if connection failed
+                return SocketResult.FAILED_CONNECTION;
             }
 
 
@@ -312,13 +279,11 @@ public class IncidentActivity extends ActionBarActivity {
             {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
                 Log.i(LOG_TAG, "Attempting to send incident.");
-                outStream.writeObject(fieldsToSend);
+                outStream.writeObject(IOCommand.SEND_INCIDENT);
+                outStream.writeObject(incidentToSend);
 
-                Log.i(LOG_TAG, "Retrieving reply...");
-                //TODO this is a bit presumptuous on my part.
-                String reply = (String) inStream.readObject();
+                //TODO is a reply really not necessary?
 
-                Log.i(LOG_TAG, "Connection Closing");
                 inStream.close();
                 outStream.close();
                 outSocket.close();
@@ -326,42 +291,65 @@ public class IncidentActivity extends ActionBarActivity {
             }
             catch (IOException e)
             {
-                Log.e(LOG_TAG,"Unknown Error");
                 e.printStackTrace();
 
                 return SocketResult.UNKNOWN_ERROR;
-            } catch (ClassNotFoundException e) {
-                Log.e(LOG_TAG, "incoming class not found.");
-                e.printStackTrace();
-
-                return SocketResult.CLASS_NOT_FOUND;
-
             }
+            //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
+//            catch (ClassNotFoundException e) {
+//                Log.e(LOG_TAG, "incoming class not found.");
+//                e.printStackTrace();
+//
+//                return SocketResult.CLASS_NOT_FOUND;
+//
+//            }
 
             return SocketResult.SUCCESS;
         }
 
         protected void onPostExecute(SocketResult result) {
-            switch (result) {
-                case UNKNOWN_ERROR:
-                    Toast.makeText(context, "Incident upload failed. Unknown error.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Incident upload failed. Unknown error.");
-                    break;
-                case FAILED_CONNECTION:
-                    Toast.makeText(context, "Incident upload failed. Connection failed.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Incident upload failed. Connection failed.");
-                    break;
-                case CLASS_NOT_FOUND:
-                    Toast.makeText(context, "Incident upload failed. Server response object class not found.", Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, "Incident upload failed. Server response object class not found.");
-                    break;
-                case SUCCESS:
-                    Toast.makeText(context, "New incident uploaded successfully.", Toast.LENGTH_LONG).show();
-                    Log.i(LOG_TAG,"New incident uploaded successfully.");
+            makeToastAndLogOnSocketResult(getString(R.string.uploaded_incident),
+                    getString(R.string.failed_to_upload_incident),
+                    result,
+                    context,
+                    LOG_TAG);
 
-                    //Return the main page. The incident has been submitted, and our work is done.
-                    IncidentActivity.this.finish();
-            }
+            if (result.equals(SocketResult.SUCCESS))
+                IncidentActivity.this.finish();
+        }
+    }
+
+    /**
+     * Helper function. Allows the two socket tasks to react similarly to various results.
+     * @param onSuccess the string to toast and log on success.
+     * @param onFailure the string to toast and log on failure.
+     * @param result the socket result for this task.
+     * @param context the context upon which to toast and log.
+     * @param logTag the log tag to use when logging.
+     */
+    private void makeToastAndLogOnSocketResult(String onSuccess, String onFailure, SocketResult result, Context context, String logTag)
+    {
+        String message;
+        switch (result) {
+            case UNKNOWN_ERROR:
+                message = onFailure + " " + getString(R.string.unknown_error);
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                Log.e(logTag, message);
+                break;
+            case FAILED_CONNECTION:
+                message = onFailure + " " + getString(R.string.connection_failed);
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                Log.e(logTag, message);
+                break;
+            case CLASS_NOT_FOUND:
+                Toast.makeText(context, onFailure + " " + getString(R.string.incomprehensible_server_response), Toast.LENGTH_LONG).show();
+                Log.e(logTag, onFailure + "Server response object class not found.");
+                break;
+            case SUCCESS:
+                Toast.makeText(context, onSuccess, Toast.LENGTH_LONG).show();
+                Log.i(logTag,onSuccess);
+            default:
+                throw new RuntimeException("invalid result.");
         }
     }
 }

@@ -1,7 +1,6 @@
 package hoopsnake.geosource.data;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
@@ -26,6 +25,14 @@ public interface AppFieldWithContent {
      * @return true if this is a required field, false otherwise.
      */
     public boolean isRequired();
+
+    /**
+     *
+     * @param newContent the new content for this field.
+     * @precond newContent is suitable for this field. null newContent is always accepted.
+     * @postcond this field's content is set to newContent.
+     */
+    public void setContent(Serializable newContent);
 
     /**
      *
@@ -58,26 +65,18 @@ public interface AppFieldWithContent {
     public boolean contentIsSuitable(Serializable content);
 
     /**
-     * @param context The UI to be populated.
+     * @param activity The UI to be populated.
+     * @param requestCodeForIntent a request code by which the returned view will be able to launch new activities.
      * @precond context is not null.
      * @postcond see return.
      * @return a View representing this field, to be displayed by the UI.
      */
-    public View getContentViewRepresentation(Context context);
+    public View getContentViewRepresentation(final Activity activity, final int requestCodeForIntent);
 
-    //TODO uncomment this if it isn't needed.
+    //TODO uncomment this if it is needed.
 //    /** Extract a vanilla field with content, for sending to the server. */
 //    public FieldWithContent toFieldWithContent();
 //
-
-    /**
-     * When this field is selected by the UI, execute the correct action.
-     * @param activity the UI from which this field was selected.
-     * @param requestCodeForIntent a request code this field may use if it uses the context to create an intent.
-     * @precond context is not null.
-     * @postcond the correct action is executed for the UI in question.
-     */
-    public void onSelected(Activity activity, int requestCodeForIntent);
 
     /**
      * When the result from this field being selected by the UI is returned, execute the correct action.
