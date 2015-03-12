@@ -20,20 +20,19 @@
     </style>
       <div layout vertical center>
           <geosource-account id="account_panel" class="panel"
-            uid="{{uid}}"
             user="{{user}}">
           </geosource-account>
 
           <geosource-flags id="flags_panel" class="panel"
-            uid="{{uid}}">
+            username="{{user.username}}">
           </geosource-flags>
           
           <geosource-time id="time_panel" class="panel">
           </geosource-time>
 
           <geosource-channels id="channels_panel" class="panel"
-            channels="{{channels}}"
-            subscribed="{{user.subscriber}}">
+            user="{{user}}"
+            channelSummaries="{{channels}}">
           </geosource-channels>
       </div>
   </template>
@@ -42,7 +41,6 @@
     Polymer({
 
       channels: null,
-      uid: null,
       user: null,
 
       /**

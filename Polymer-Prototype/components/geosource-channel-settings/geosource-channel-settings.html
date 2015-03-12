@@ -1,0 +1,244 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<polymer-element name="geosource-channel-settings" attributes="channels subscribed">
+
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .footer {
+        padding: 20px;
+        padding-top: 0;
+      }
+
+      core-icon {
+        margin-right: 0.5em;
+      }
+      .user-list {
+        background-color: #EDEDED;
+        padding: 15px;
+        padding-top: 25px;
+      }
+      paper-icon-button {
+        
+        margin-top: 0px;
+        
+      }
+
+      paper-button {
+        color: #4285f4;
+      }
+
+      .field-type {
+        margin-left: 10px;
+        width: 140px;
+      }
+      .field-remove {
+        width: 40px;
+      }
+
+      paper-checkbox {
+        padding-top: 15px;
+      }
+
+      .fields {
+        padding: 20px;
+        padding-bottom: 0;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      .add {
+        
+      }
+      .remove {
+        color: #FF6666;
+      }
+      th {
+        text-align: left;
+      }
+
+      h2 {
+        font-size: 1.6em;
+        font-weight: 300;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        min-width: 500px;
+      }
+      .add-user {
+        margin-left: 15px;
+        margin-bottom: 5px;
+      }
+      .add-button {
+        margin-left: 15px;
+        color: #5CC0A2;
+      }
+      .user {
+        margin-left: 15px;
+      }
+
+      :host([publiclyVisible]) #viewer_user_list {
+        display: none;
+      }
+
+    </style>
+
+    <div vertical layout>
+      <h2 class="header">Channel Settings</h2>
+      <div class="content" vertical layout>
+        <paper-radio-group selected="public">
+          <paper-radio-button name="public" id="public" label="Public" disabled></paper-radio-button>
+          <paper-radio-button name="private" label="Private" disabled></paper-radio-button>
+        </paper-radio-group>
+
+      <h2>Moderators</h2>
+      <div class="user-list">
+        <template repeat="{{user in moderators}}">
+          <div class="user" horizontal layout center>
+            <div flex>{{user}}</div>
+            <td><paper-icon-button class="remove" icon="close" on-tap="{{removeModerator}}"></paper-icon-button></td>
+          </div>
+        </template>
+        <div horizontal layout center class="add-user">
+          <paper-input label="Enter a username..." flex id="moderator_input"></paper-input>
+          <paper-icon-button class="add-button" icon="add" on-tap="{{addModerator}}"></paper-icon-button>
+        </div>
+      </div>
+
+      <h2>Viewers</h2>
+      <div class="user-list" id="viewer_user_list">
+        <template repeat="{{user in viewers}}">
+          <div class="user" horizontal layout center>
+            <div flex>{{user}}</div>
+            <td><paper-icon-button class="remove" icon="close" on-tap="{{removeViewer}}"></paper-icon-button></td>
+          </div>
+        </template>
+        <div horizontal layout center class="add-user">
+          <paper-input label="Enter a username..." flex id="viewer_input"></paper-input>
+          <paper-icon-button class="add-button" icon="add" on-tap="{{addViewer}}"></paper-icon-button>
+        </div>
+      </div>
+
+      <h2>Banned</h2>
+      <div class="user-list">
+        <template repeat="{{user in banned}}">
+          <div class="user" horizontal layout center>
+            <div flex>{{user}}</div>
+            <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBan}}"></paper-icon-button></td>
+          </div>
+        </template>
+        <div horizontal layout center class="add-user">
+          <paper-input label="Enter a username..." flex id="ban_input"></paper-input>
+          <paper-icon-button class="add-button" icon="add" on-tap="{{addBan}}"></paper-icon-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" horizontal around-justifed layout>
+      <paper-button flex on-tap="{{cancel}}">Cancel</paper-button>
+      <paper-button flex on-tap="{{apply}}">Apply</paper-button>
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    visibility: null,
+    moderators: [],
+    viewers: [],
+    banned: [],
+
+    addBan: function() {
+      if(this.$.ban_input.value != "") {
+        this.banned.push(this.$.ban_input.value);
+      }
+      this.$.ban_input.value = "";
+    },
+
+    addViewer: function() {
+      if(this.$.viewer_input.value != "") {
+        this.viewers.push(this.$.viewer_input.value);
+      }
+      this.$.viewer_input.value = "";
+    },
+
+    addModerator: function() {
+      if(this.$.moderator_input.value != "") {
+        this.moderators.push(this.$.moderator_input.value);
+      }
+      this.$.moderator_input.value = "";
+    },
+
+    removeBan: function(event, detail, sender) {
+      var user = sender.templateInstance.model.user;
+      var index = this.banned.indexOf(user);
+      if(index > -1) {
+        this.banned.splice(index, 1);
+      }
+    },
+
+    removeViewer: function(event, detail, sender) {
+      var user = sender.templateInstance.model.user;
+      var index = this.viewers.indexOf(user);
+      if(index > -1) {
+        this.viewers.splice(index, 1);
+      }
+    },
+
+    removeModerator: function(event, detail, sender) {
+      var user = sender.templateInstance.model.user;
+      var index = this.moderators.indexOf(user);
+      if(index > -1) {
+        this.moderators.splice(index, 1);
+      }
+    },
+
+    cancel: function() {
+      this.fire('finished');
+    },
+
+    apply: function() {
+      this.fire('finished');
+    }
+
+  });
+  </script>
+  
+</polymer-element>

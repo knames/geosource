@@ -8,6 +8,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 
@@ -57,6 +58,14 @@ public class WriteAndStore implements Serializable  {
 	public static void main (String[] args) throws Exception{
 		System.out.println("oy");
 		FolderExists();
+		ArrayList<FieldWithoutContent> newSpec = new ArrayList<FieldWithoutContent>();
+		newSpec.add(new FieldWithoutContent("TitleText", FieldType.STRING, true));
+		newSpec.add(new FieldWithoutContent("PictureField", FieldType.IMAGE, false));
+		
+		
+		WriteAndStore test = new WriteAndStore(newSpec, "march13", "okenso", true); // this tests the string version.
+
+		
 		/*
 		dbInsertSpec spec = new dbInsertSpec("pothozlezz", "frank", true);
 		System.out.println(spec.getSpecNum());

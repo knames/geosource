@@ -1,7 +1,7 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../core-menu/core-submenu.html">
 
-<polymer-element name="geosource-flags" attributes="uid">
+<polymer-element name="geosource-flags" attributes="username">
 
   <template>
     
@@ -86,9 +86,11 @@
         var fav = this.$.favorite_toggle_button.checked;
         var mine = this.$.mine_toggle_button.checked;
 
+        console.log(this.username);
+
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (!all && fav && posts[i].favorite) || mine && posts[i].uid == this.uid) {
+          if((all) || (fav && posts[i].favorite) || (mine && posts[i].username == this.username)) {
             includedPosts.push(posts[i]);
           }
         }
