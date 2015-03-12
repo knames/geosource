@@ -25,7 +25,7 @@ import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
 import ServerClientShared.FieldWithoutContent;
-import hoopsnake.geosource.sharedCopiesToDelete.Incident;
+import ServerClientShared.Incident;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
