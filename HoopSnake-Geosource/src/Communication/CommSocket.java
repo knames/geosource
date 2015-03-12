@@ -122,20 +122,20 @@ public class CommSocket implements Callable<Incident>{
         }
         catch (IOException IOe)
         {
-            System.out.println("IO Exception: " + IOe.getMessage());
+            System.err.println("IO Exception: " + IOe.getMessage());
         }
         catch (InvalidKeyException IKe)
         {
-            System.out.println("invalid encryption password");
+            System.err.println("invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            System.out.println("invalid key specification");
+            System.err.println("invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            System.out.println("invalid encryption algorithm");
+            System.err.println("invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            System.out.println("No Such Padding");
+            System.err.println("No Such Padding");
         }
         finally
         {
