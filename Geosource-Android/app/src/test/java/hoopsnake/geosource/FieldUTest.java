@@ -5,6 +5,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import hoopsnake.geosource.data.AbstractAppFieldWithContent;
+import hoopsnake.geosource.data.FieldType;
+import hoopsnake.geosource.data.FieldWithContent;
+import hoopsnake.geosource.data.ImageField;
+import hoopsnake.geosource.data.StringField;
+
 import static org.junit.Assert.*;
 
 //New System broke all of the tests, none of these work properly now. Will rework later.
@@ -61,11 +68,110 @@ public class FieldUTest
 // The basic type of test fails if an assertion fails, or if use fail(String), which contains an error
 // message.
 
+    //FieldWithContent and FieldWithoutContent have unit tests ServerclientShared. These tests for the android-only fields.
+
+
+
+
+    //Does the Field properly determine whether the input given is valid or not?
     @Test
-    public void constructionTest()
+    public void typeCheckerTest()
     {
 
+        String inputString= "This is a test line.";
+        String inputString2="THIS IS A DIFFERENT LINE";
+        //Technically not an image,but as long we get the images in this format, this should be valid enough to test.
+        //Will probably need to test the conversion in some other class.
+        //If not given a value, bytes will default to 0. We won't have to check for nulls because of this.
+        byte[] testImage= new byte[3];
+        testImage[0]=4;
+        testImage[1]=7;
+        testImage[2]=3;
+
+
+        StringField stringContentTest= new StringField(new FieldWithContent("Testing Strings!",FieldType.STRING,true));
+        ImageField imageContentTest= new ImageField(new FieldWithContent("Testing Pictures!",FieldType.IMAGE,true));
+        boolean comparisonSuccess;
+
+
+
+
+        //null checks
+        try
+        {
+            comparisonSuccess= stringContentTest.contentIsSuitable(null);
+            fail("Didn't throw exception!(null type)");
+        }
+        catch(RuntimeException e){};//Expected
+
+
+
+        //Test on type STRING
+        comparisonSuccess=stringContentTest.contentIsSuitable(inputString);
+        assertTrue("Comparison Failed, String<->String",comparisonSuccess);
+        stringContentTest.setContent(inputString);
+        assertTrue("Didn't add String to Content!", stringContentTest.getContentStringRepresentation()==inputString);
+
+
+        //We allow null fields, so this should be good.
+        comparisonSuccess=stringContentTest.contentIsSuitable(null);
+        assertTrue("Comparison Failed, null<->String",comparisonSuccess);
+        stringContentTest.setContent(null);
+        assertTrue("Didn't add null to Content!", stringContentTest.getContentStringRepresentation()==null);
+
+
+        comparisonSuccess=stringContentTest.contentIsSuitable(101);
+        assertFalse("Comparison Failed Int<->String", comparisonSuccess);
+        try
+        {
+            stringContentTest.setContent(101);
+            fail("Illegaly added Integer to a String field!");
+        }
+        catch(RuntimeException e){};//Expected
+
+
+
+        //No easy way to check setContent for Images, will check later.
+
+        //Test on type IMAGE
+
+//        comparisonSuccess=imageContentTest.contentIsSuitable(testImage);
+//        assertTrue("Comparison Failed, Image<->Image",comparisonSuccess);
+//        imageContentTest.setContent(testImage);
+//        //assertTrue("Didn't add String to Content!", imageContentTest.wrappedField==testImage);//How to check if assigned properly?
+//
+//
+//        //We allow null fields, so this should be good.
+//        comparisonSuccess=imageContentTest.contentIsSuitable(null,FieldType.IMAGE);
+//        assertTrue("Comparison Failed, null<->Image",comparisonSuccess);
+//        imageField.setContent(null);
+//        assertTrue("Didn't add null to Content!(2)", imageField.getContent()==null);
+//
+//
+//        comparisonSuccess=FieldWithContent.contentMatchesType(101,FieldType.IMAGE);
+//        assertFalse("Comparison Failed Int<->Image", comparisonSuccess);
+//        try
+//        {
+//            imageField.setContent(101);
+//            fail("Illegaly added Integer to a Image field!");
+//        }
+//        catch(RuntimeException e){};//Expected
+
+
+
+        //TODO When AUDIO and VIDEO have been implemented, build tests for them here.
+
+
     }
+
+
+
+
+
+
+
+
+
 
     //Tests the ImageField functionality
     @Test
