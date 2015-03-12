@@ -94,18 +94,6 @@ public class FieldUTest
         boolean comparisonSuccess;
 
 
-
-
-        //null checks
-        try
-        {
-            comparisonSuccess= stringContentTest.contentIsSuitable(null);
-            fail("Didn't throw exception!(null type)");
-        }
-        catch(RuntimeException e){};//Expected
-
-
-
         //Test on type STRING
         comparisonSuccess=stringContentTest.contentIsSuitable(inputString);
         assertTrue("Comparison Failed, String<->String",comparisonSuccess);

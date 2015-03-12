@@ -22,11 +22,17 @@ public class Controller {
     private DBAccess dbAccess; //database abstraction
     private FileAccess fileAccess; //file system abstraction
     
-    private static int numConnections = 5; //maximum simultaneous socket inputs
+    private final static int numConnections = 5; //maximum simultaneous socket inputs
     
-    public void main(String[] args)
+    public static void main(String[] args)
     {
+        Controller Server = new Controller();
+        Server.run();
         
+    }
+    
+    public void run()
+    {
         ExecutorService exec = Executors.newCachedThreadPool();
         LinkedList<Future<Incident>> list = new LinkedList();
         for (int x = 0; x < numConnections; x ++)

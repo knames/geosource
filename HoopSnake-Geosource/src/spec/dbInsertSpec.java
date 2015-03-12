@@ -1,4 +1,4 @@
-package ServerClientShared;
+package spec;
 
 /**
  * Created by kts192 on 7/03/15.
