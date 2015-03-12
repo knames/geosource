@@ -162,7 +162,7 @@ public class IncidentActivity extends ActionBarActivity {
      */
     public void onSubmitButtonClicked(View v)
     {
-        if (incident.isCompletelyFilledIn()) {
+        if (incident != null && incident.isCompletelyFilledIn()) {
             new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
