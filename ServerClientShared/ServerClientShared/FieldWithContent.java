@@ -42,6 +42,17 @@ public class FieldWithContent extends Field implements Serializable
     }
 
     /**
+     * Construct with null content, out of a field without content.
+     * @param fieldWithoutContent the fieldWithoutContent to construct this out of.
+     */
+    public FieldWithContent(FieldWithoutContent fieldWithoutContent)
+    {
+        super(fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired());
+
+        setContent(null);
+    }
+
+    /**
      * Construct with null content.
      * @param title
      * @param type

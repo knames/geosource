@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
+import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -25,10 +26,10 @@ public class StringField extends AbstractAppFieldWithContent {
 
     @Override
     public String getContentStringRepresentation() {
-        if (wrappedField.content == null)
+        if (wrappedField.getContent() == null)
             return "";
         else
-            return (String) wrappedField.content;
+            return (String) wrappedField.getContent();
     }
 
     @Override
@@ -38,13 +39,13 @@ public class StringField extends AbstractAppFieldWithContent {
 
     @Override
     public boolean contentIsFilled() {
-        return wrappedField.content != null;
+        return wrappedField.getContent() != null;
     }
 
     @Override
     public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
         EditText contentEditor = (EditText) activity.findViewById(R.id.field_edit_text);
-        String content = (String) wrappedField.content;
+        String content = (String) wrappedField.getContent();
         //TODO check the length of the text.
         if (content != null)
             contentEditor.setText(content);

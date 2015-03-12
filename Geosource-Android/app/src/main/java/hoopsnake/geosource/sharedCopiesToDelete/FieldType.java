@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package hoopsnake.geosource.sharedCopiesToDelete;
 //TODO All the Field classes are now shared. remove them and import instead.
 
 /**

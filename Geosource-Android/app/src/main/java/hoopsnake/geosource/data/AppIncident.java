@@ -2,6 +2,8 @@ package hoopsnake.geosource.data;
 
 import java.util.ArrayList;
 
+import ServerClientShared.Incident;
+
 /**
  * Created by wsv759 on 08/03/15.
  *

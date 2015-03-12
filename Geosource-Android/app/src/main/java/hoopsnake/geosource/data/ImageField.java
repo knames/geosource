@@ -10,6 +10,7 @@ import android.widget.Toast;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
+import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.

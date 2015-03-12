@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.view.View;
 
 import hoopsnake.geosource.IncidentActivity;
+import ServerClientShared.FieldType;
+import ServerClientShared.FieldWithContent;
 
 import static junit.framework.Assert.assertEquals;
 

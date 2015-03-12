@@ -2,6 +2,10 @@ package hoopsnake.geosource.data;
 
 import java.util.ArrayList;
 
+import ServerClientShared.FieldWithContent;
+import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Incident;
+
 import static junit.framework.Assert.assertNotNull;
 
 /**

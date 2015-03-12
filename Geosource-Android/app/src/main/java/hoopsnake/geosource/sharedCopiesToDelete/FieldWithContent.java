@@ -1,4 +1,4 @@
-package hoopsnake.geosource.data;
+package hoopsnake.geosource.sharedCopiesToDelete;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
