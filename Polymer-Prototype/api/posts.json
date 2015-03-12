@@ -1,90 +1,82 @@
 [
   {
     "pid": 1,
-    "text" : "Have you seen this sparrow?",
+    "title" : "Have you seen this sparrow?",
     "username" : "Josh",
-    "uid" : 115161761450794914816,
-    "avatar" : "/images/bird-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/bird-01.jpg",
     "time": "2015-02-26 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6853},
-    "channel": "Birds"
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "favorite": true
   },
   {
     "pid": 2,
-    "text" : "Loving this mushroom.",
+    "title" : "Loving this mushroom.",
     "username" : "Rob",
-    "uid": 123456789123456789,
-    "avatar" : "/images/mushroom-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-25 12:00:00.000",
     "location": {"latitude": 52.2333, "longitude": -106.6633},
-    "channel": "Mushrooms"
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "favorite": false
   },
-    {
+  {
     "pid": 3,
-    "text" : "I think I saw this bird last year...",
+    "title" : "I think I saw this bird last year...",
     "username" : "Dimitri",
-    "uid": 123456789123456789,
-    "avatar" : "/images/bird-02.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/bird-02.jpg",
     "time": "2015-02-24 12:00:00.000",
     "location": {"latitude": 52.1833, "longitude": -106.6333},
-    "channel": "Birds"
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "favorite": false
   },
   {
     "pid": 4,
-    "text" : "Pretty sure I found that mushroom first.",
+    "title" : "Pretty sure I found that mushroom first.",
     "username" : "Ada",
-    "uid": 123456789123456789,
-    "avatar" : "/images/mushroom-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-20 12:00:00.000",
     "location": {"latitude": 52.0833, "longitude": -106.6833},
-    "channel": "Mushrooms"
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "favorite": false
   },
   {
     "pid": 5,
-    "text" : "Yo, I heard you like mushrooms, so I grew mushrooms on your mushrooms.",
+    "title" : "Yo, I heard you like mushrooms, so I grew mushrooms on your mushrooms.",
     "username" : "Grace",
-    "uid": 123456789123456789,
-    "avatar" : "/images/mushroom-02.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/mushroom-02.jpg",
     "time": "2015-02-16 12:00:00.000",
     "location": {"latitude": 52.0633, "longitude": -106.6933},
-    "channel": "Mushrooms"
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "favorite": false
   },
   {
     "pid": 6,
-    "text" : "Almost drove over this pothole.",
+    "title" : "Almost drove over this pothole.",
     "username" : "John",
-    "uid": 123456789123456789,
-    "avatar" : "/images/pothole-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/pothole-01.jpg",
     "time": "2015-02-01 12:00:00.000",
     "location": {"latitude": 52.1033, "longitude": -106.6533},
-    "channel": "Potholes"
+    "channel": {"name": "Potholes", "owner": "Josh"},
+    "favorite": false
   },
   {
     "pid": 7,
-    "text" : "Has anyone seen my cat?",
+    "title" : "Has anyone seen my cat?",
     "username" : "Zelda",
-    "uid": 123456789123456789,
-    "avatar" : "/images/cat-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/cat-01.jpg",
     "time": "2015-01-20 12:00:00.000",
     "location": {"latitude": 52.1533, "longitude": -106.7333},
-    "channel": "Birds"
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "favorite": false
   },
   {
     "pid": 8,
-    "text" : "Help, my car is stuck!",
+    "title" : "Help, my car is stuck!",
     "username" : "Norbert",
-    "uid": 123456789123456789,
-    "avatar" : "/images/snow-01.jpg",
-    "favorite": false,
+    "thumbnail" : "/images/snow-01.jpg",
     "time": "2015-01-01 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6333},
-    "channel": "Snow"
+    "channel": {"name": "Snow", "owner": "Josh"},
+    "favorite": false
   }
 ]

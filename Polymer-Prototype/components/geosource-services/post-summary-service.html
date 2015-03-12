@@ -72,6 +72,19 @@
         return moment(b.time).diff(moment(a.time));
       });
 
+      for(i=0; i<this.posts.length; i++) {
+        if(!this.posts[i].thumbnail) {
+          //if the post does not have a thumbnail, one of the 200 default images
+          //is chosen, each of which has a different hue. 43 is a prime number
+          //somewhat arbitrarily chosen to space out hues selected (since pids
+          //are incremented), while still ensuring all hues are selected at some
+          //point. Because the value is based off of a pid, the thumbnail will
+          //remain constant between viewers and sessions.
+          var num = (this.posts[i].pid * 43 % 200);
+          this.posts[i].thumbnail = "/images/thumbnails/default/" + num + ".png";
+        }
+      }
+
     },
     /** 
      * Update the service with the current favorite value.

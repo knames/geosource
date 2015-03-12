@@ -82,8 +82,8 @@
 
     <div class="content" horizontal layout>
       <div class="card-header" horizontal layout center flex>
-        <div class="thumbnail"><img src="{{post.avatar}}" width="70" height="70"></div>
-        <div class="title" flex>{{post.text}}</div>
+        <div class="thumbnail"><img src="{{post.thumbnail}}" width="70" height="70"></div>
+        <div class="title" flex>{{post.title}}</div>
       </div>
       <div class="buttons" vertical layout>
         <paper-icon-button
@@ -105,7 +105,7 @@
       </paper-icon-button> -->
     </div>       
     <div end horizontal layout class="card-footer">
-      <div flex class="info" title="{{post.time}}">posted by {{post.username}} {{time}} to {{post.channel}}</div> 
+      <div flex class="info" title="{{post.time}}">posted by {{post.username}} {{time}} to {{post.channel.name}}</div> 
       <paper-button 
         id="more-button"
         icon="launch"
@@ -149,7 +149,7 @@
 
     postChanged: function() {
       this.time = moment(this.post.time).fromNow();
-    }
+    },
 
   });
   </script>
