@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class IncidentActivity extends ActionBarActivity {
     private ReentrantLock clickableLock = new ReentrantLock();
 
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
+    public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
 
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
@@ -83,11 +85,13 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(extras);
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
+        String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
         assertNotNull(channelName);
+        assertNotNull(channelOwner);
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
 
 //        //TODO remove this mockedSpec eventually! It is just for testing.
 //        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
@@ -113,12 +117,15 @@ public class IncidentActivity extends ActionBarActivity {
         int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
+            //TODO make this work for the real case, not just a test case.
             assertNotNull(field);
-            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-            assertNotNull(v);
-            incidentDisplay.addView(v);
+            TextView tv = new TextView(IncidentActivity.this);
+            tv.setText(field.getContentStringRepresentation());
+//            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+//            assertNotNull(v);
+            incidentDisplay.addView(tv);
             //All views are given a tag that is equal to their position in the linear layout.
-            v.setTag(i);
+            tv.setTag(i);
             i++;
         }
     }
@@ -212,7 +219,7 @@ public class IncidentActivity extends ActionBarActivity {
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
         private Context context;
 
-        String channelName;
+        String channelName, channelOwner;
         public static final String LOG_TAG = "geosource comm";
 
         public TaskReceiveIncidentSpec(Context context)
@@ -228,7 +235,9 @@ public class IncidentActivity extends ActionBarActivity {
             Socket outSocket;
 
             channelName = params[0];
+            channelOwner = params[1];
             assertNotNull(channelName);
+            assertNotNull(channelOwner);
 
             try //create socket
             {
@@ -274,7 +283,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
 
             //TODO some of this code should maybe go on the ui thread.
-            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName);
+            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner);
 
             return SocketResult.SUCCESS;
         }
@@ -288,9 +297,9 @@ public class IncidentActivity extends ActionBarActivity {
                     context,
                     LOG_TAG);
 
-            //TODO this may not be needed.
-            if (result.equals(SocketResult.SUCCESS))
+            if (result.equals(SocketResult.SUCCESS)) {
                 renderIncident();
+            }
         }
     }
 

@@ -56,7 +56,7 @@ public class AppIncidentWithWrapper implements AppIncident {
      * Thus an Incident is fully constructed at the same time as this AppIncident, and will share all its
      * future modifications (and all the new content that is added).
      */
-    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName)
+    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner)
     {
         int listSize = fieldWithoutContentList.size();
         fieldList = new ArrayList<AppFieldWithContent>(listSize);
@@ -93,7 +93,7 @@ public class AppIncidentWithWrapper implements AppIncident {
         }
 
         //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
-        wrappedIncident = new Incident(fieldWithContentList, channelName);
+        wrappedIncident = new Incident(fieldWithContentList, channelName, channelOwner);
     }
 
     @Override
