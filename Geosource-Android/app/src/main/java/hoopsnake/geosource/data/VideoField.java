@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
 
@@ -33,20 +34,28 @@ public class VideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public View getContentViewRepresentation(final Activity activity,final int requestCodeForIntent) {
+    public View getContentViewRepresentation(final IncidentActivity activity,final int requestCodeForIntent) {
         ImageView iv = (ImageView) activity.findViewById(R.id.field_image_view);
 
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
-                if (fileUriForNewVideo == null)
-                {
-                    Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                    return;
-                }
+            public void onClick(final View v) {
+                activity.doIfClickable(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Make sure the activity knows which view was clicked.
+                        activity.setCurFieldIdx((int) v.getTag());
 
-                MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
+                        Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
+                        if (fileUriForNewVideo == null)
+                        {
+                            Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
+                    }
+                });
             }
         });
 

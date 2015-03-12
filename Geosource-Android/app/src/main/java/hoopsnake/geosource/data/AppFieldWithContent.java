@@ -6,6 +6,8 @@ import android.view.View;
 
 import java.io.Serializable;
 
+import hoopsnake.geosource.IncidentActivity;
+
 /**
  * Created by wsv759 on 07/03/15.
  *
@@ -71,7 +73,7 @@ public interface AppFieldWithContent {
      * @postcond see return.
      * @return a View representing this field, to be displayed by the UI.
      */
-    public View getContentViewRepresentation(final Activity activity, final int requestCodeForIntent);
+    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent);
 
     //TODO uncomment this if it is needed.
 //    /** Extract a vanilla field with content, for sending to the server. */

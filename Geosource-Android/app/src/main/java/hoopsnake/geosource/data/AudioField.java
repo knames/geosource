@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 
+import hoopsnake.geosource.IncidentActivity;
+
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -31,7 +33,7 @@ public class AudioField extends AbstractAppFieldWithContentAndFile{
     }
 
     @Override
-    public View getContentViewRepresentation(Activity activity, int requestCodeForIntent) {
+    public View getContentViewRepresentation(IncidentActivity activity, int requestCodeForIntent) {
         return null;
     }
 

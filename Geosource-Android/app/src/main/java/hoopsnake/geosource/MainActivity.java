@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
         //TODO determine the current channel.
 
-        intent.putExtra(IncidentActivity.CHANNEL_NAME_PARAM_STRING, curChannelName);
+        intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
         startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal());
     }
 
