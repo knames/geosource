@@ -1,7 +1,6 @@
 package hoopsnake.geosource.data;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -32,14 +31,8 @@ public class AudioField extends AbstractAppFieldWithContentAndFile{
     }
 
     @Override
-    public View getContentViewRepresentation(Context context) {
-        //TODO implement this.
+    public View getContentViewRepresentation(Activity activity, int requestCodeForIntent) {
         return null;
-    }
-
-    @Override
-    public void onSelected(Activity activity, int requestCodeForIntent) {
-       //TODO implement this
     }
 
     @Override

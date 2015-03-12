@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -21,6 +20,7 @@ import hoopsnake.geosource.comm.IOCommand;
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
 import hoopsnake.geosource.data.FieldWithoutContent;
 import hoopsnake.geosource.data.Incident;
@@ -40,11 +40,11 @@ public class IncidentActivity extends ActionBarActivity {
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
-    /** The ListView that is actually visible to the user, displaying all the fields of the incident. */
-    ListView incidentDisplay;
+    /** The LinearLayout that displays all the fields of the incident. */
+    LinearLayout incidentDisplay;
 
     /** The incident to be created and edited by the user on this screen. */
-    AppIncidentWithWrapper incident;
+    AppIncident incident;
 
     public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
 
@@ -78,7 +78,7 @@ public class IncidentActivity extends ActionBarActivity {
         String channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
         assertNotNull(channelName);
 
-        incidentDisplay = (ListView) findViewById(R.id.listView);
+        incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
 
@@ -89,26 +89,23 @@ public class IncidentActivity extends ActionBarActivity {
 //        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
 //
 //        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
-//        // We get the ListView component from the layout
+    }
 
-//        incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
-//        incidentDisplay.setAdapter(incidentAdapter);
-//
-//        //TODO this may not be needed.
-//        incidentAdapter.notifyDataSetChanged();
+    /**
+     * @precond the current incident and all its fields are not null.
+     * @postcond each field's custom view is added to the linear layout.
+     */
+    private void renderIncident()
+    {
+        assertNotNull(incident);
+        assertNotNull(incident.getFieldList());
+        for (AppFieldWithContent field : incident.getFieldList())
+        {
+            assertNotNull(field);
+            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
 
-        // React to user clicks on item
-        incidentDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
-                                    long id) {
-                AppFieldWithContent field = incidentAdapter.getItem(position);
-
-                curFieldIdx = position;
-
-                field.onSelected(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-            }
-        });
+            incidentDisplay.addView(v);
+        }
     }
 
     /**
@@ -221,9 +218,6 @@ public class IncidentActivity extends ActionBarActivity {
             //TODO some of this code should maybe go on the ui thread.
             incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName);
 
-            incidentAdapter = new IncidentDisplayAdapter(incident, IncidentActivity.this);
-            incidentDisplay.setAdapter(incidentAdapter);
-
             return SocketResult.SUCCESS;
         }
 
@@ -238,7 +232,7 @@ public class IncidentActivity extends ActionBarActivity {
 
             //TODO this may not be needed.
             if (result.equals(SocketResult.SUCCESS))
-                incidentAdapter.notifyDataSetChanged();
+                renderIncident();
         }
     }
 
