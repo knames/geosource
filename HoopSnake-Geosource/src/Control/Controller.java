@@ -67,6 +67,7 @@ public class Controller {
     private void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
+        int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName());
         for (FieldWithContent field : incident.getFieldList())
         {
             switch(field.getType())
@@ -74,12 +75,12 @@ public class Controller {
                 case IMAGE:
                 {
                     String filePath = fileAccess.savePicture((byte[])field.getContent());
-                    dbAccess.savePictureField(incident.getChannelName(), field.getTitle(), filePath);
+                    dbAccess.savePictureField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
                     break;
                 }
                 case STRING:
                 {
-                    dbAccess.saveStringField(incident.getChannelName(), field.getTitle(), (String)field.getContent());
+                    dbAccess.saveStringField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), (String)field.getContent());
                     break;
                 }
                 case VIDEO:

@@ -11,16 +11,18 @@ public class Incident implements Serializable {
     /** The fields for this incident, including their content. Their content may be null. */
     private ArrayList<FieldWithContent> fieldList;
     private String channelName;
+    private String ownerName;
 
     public Incident(){}
     
-    public Incident(ArrayList<FieldWithContent> fieldList, String channel)
+    public Incident(ArrayList<FieldWithContent> fieldList, String channel, String owner)
     {
-    	setFieldList(fieldList);
+    	this.fieldList = fieldList;
         if(channel==null)
             throw new RuntimeException("channel cannot be null.");
             
-        setChannelName(channel);
+        channelName = channel;
+        ownerName = owner;
     }
 
     public void setFieldList(ArrayList<FieldWithContent> fieldList)
@@ -47,5 +49,12 @@ public class Incident implements Serializable {
         if(channelName==null)
             throw new RuntimeException("channel cannot be null.");
         this.channelName = channelName;
+    }
+
+    /**
+     * @return the ownerName
+     */
+    public String getOwnerName() {
+        return ownerName;
     }
 }
