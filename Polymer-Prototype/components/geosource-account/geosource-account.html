@@ -56,7 +56,7 @@
         width="wide"
         on-google-signin-success="{{signIn}}">
       </google-signin>
-      <core-item label="Hello, {{name}}"></core-item>
+      <div hidden?="{{!user}}">Hello, {{name}}</div>
     </core-submenu>
 
   </template>

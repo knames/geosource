@@ -105,7 +105,7 @@
             </div>
           </paper-button>
       </div> 
-      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}">
+      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!user}}">
           <paper-button flex toggle class="channel-button">
             <div layout vertical flex class="channel-info">
               <div class="channel-name">Subscribed</div>
@@ -155,24 +155,24 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{openChannelSettings}}" 
-                hidden?="{{!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer}}">
+                hidden?="{{!user || (!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)}}">
               </paper-icon-button>
               <paper-icon-button icon="add" 
                 class="subscribe_button" 
                 on-tap="{{subscribe}}"
-                hidden?="{{channel.isSubscriber}}">
+                hidden?="{{!user || channel.isSubscriber}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
                 on-tap="{{unsubscribe}}"
-                hidden?="{{!channel.isSubscriber}}">
+                hidden?="{{!user || !channel.isSubscriber}}">
               </paper-icon-button>
             </div>
           </div>
       </template>
 
       <div horizontal layout center-justified>
-       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex>Create a channel</paper-button>
+       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!user}}">Create a channel</paper-button>
       </div>
 
     </core-submenu>
