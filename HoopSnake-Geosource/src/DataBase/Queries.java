@@ -9,12 +9,13 @@ public class Queries {
     /**
      * get a query used to get dynamic form specifications from the database
      * @param channelName the string name of the channel whose spec will be retrieved
+     * @param ownerName the channel's creator, for uniqueness
      * @return a query that will execute to retrieve the file path
      */
-    public static String getFormSpec(String channelName)
+    public static String getFormSpec(String channelName, String ownerName)
     {
         String returnString = "SELECT spec FROM channels WHERE name = '"
-                + channelName + "'";
+                + channelName + "'"; //TODO Ken, add ownername in here
         return returnString;
     }
     
@@ -59,8 +60,7 @@ public class Queries {
      * @param ownername the owner of the channel
      * @return the sql query that will give the highest number in the post */
     public static String getPostNum(String channelName, String ownername){
-		String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;"; 
+	String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;"; 
     	return sql;
-    	
     }
 }

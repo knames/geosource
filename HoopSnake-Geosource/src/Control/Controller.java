@@ -112,9 +112,9 @@ public class Controller {
         //TODO parse incident and save its fields
     }
     
-    public ArrayList<FieldWithoutContent> getForm(String channelName)
+    public ArrayList<FieldWithoutContent> getForm(String channelName, String ownerName)
     {
-        String filePath = dbAccess.getFormSpecLocation(channelName); //get spec's path in filesystem
+        String filePath = dbAccess.getFormSpecLocation(channelName, ownerName); //get spec's path in filesystem
         return fileAccess.getFormSpec(filePath); //retreive form spec
     }
 }

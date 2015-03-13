@@ -110,8 +110,9 @@ public class CommSocket implements Callable<Incident>{
                 {
                     System.out.println("111");
                     String channelName = in.readUTF();
+                    String ownerName = in.readUTF();
                     System.out.println("112");
-                    ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
+                    ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
                     System.out.println("114");
                     out.writeObject(formList);
                     System.out.println("116");
