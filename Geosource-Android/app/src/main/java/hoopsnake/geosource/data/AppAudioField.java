@@ -16,9 +16,9 @@ import static junit.framework.Assert.assertEquals;
  *
  * Implementation of an app field with type Audio.
  */
-public class AudioField extends AbstractAppFieldWithContentAndFile{
+public class AppAudioField extends AbstractAppFieldWithContentAndFile{
 
-    public AudioField(FieldWithContent fieldToWrap) {
+    public AppAudioField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
         assertEquals(fieldToWrap.getType(), FieldType.AUDIO);
     }

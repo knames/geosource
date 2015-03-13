@@ -16,18 +16,18 @@ import ServerClientShared.FieldWithContent;
  *
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
-public class StringField extends AbstractAppFieldWithContent {
+public class AppStringField extends AbstractAppFieldWithContent {
     //TODO hardcoded until we get params implemented.
     public int maxLength = 140;
 
-    public StringField(FieldWithContent fieldToWrap) {
+    public AppStringField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 
     @Override
     public String getContentStringRepresentation() {
         if (wrappedField.getContent() == null)
-            return "";
+            return "this is an empty string";
         else
             return (String) wrappedField.getContent();
     }
@@ -44,7 +44,7 @@ public class StringField extends AbstractAppFieldWithContent {
 
     @Override
     public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
-        EditText contentEditor = (EditText) activity.findViewById(R.id.field_edit_text);
+        EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
         String content = (String) wrappedField.getContent();
         //TODO check the length of the text.
         if (content != null)

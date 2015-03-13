@@ -1,9 +1,5 @@
 package ServerClientShared;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -13,7 +9,7 @@ import java.io.Serializable;
  * Includes title, type, and a content field. The content field may be null.
  * Type and content are guaranteed to match.
  */
-public abstract class FieldWithContent extends Field implements Serializable
+public abstract class FieldWithContent extends Field
 {
     /**
      * The contents of the field, as entered in by the user. This must adhere to the type of this
@@ -65,44 +61,6 @@ public abstract class FieldWithContent extends Field implements Serializable
         setContent(null);
     }
 
-
-    /** Serializable implementation. */
-    public abstract void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException;
-//        title = (String) in.readObject();
-//        type = (FieldType) in.readObject();
-//
-//        switch (type)
-//        {
-//            case IMAGE:
-//                setContent((byte[]) in.readObject());
-//                break;
-//            case STRING:  
-//                setContent((String) in.readObject());
-//                break;
-//            case VIDEO:
-//                //TODO implement this.
-//                throw new UnsupportedOperationException("Not supported yet.");
-//                //break; PUT THIS BACK AFTER IMPLEMENTATION
-//            case AUDIO:
-//                //TODO implement this.
-//                throw new UnsupportedOperationException("Not supported yet.");
-//                //break; PUT THIS BACK AFTER IMPLEMENTATION
-//            default:
-//                throw new RuntimeException("invalid type");
-
-    /** Serializable implementation. */
-    public abstract void writeObject(ObjectOutputStream out) throws IOException;
-//    {
-//        out.writeObject(title);
-//        out.writeObject(type);
-//        out.writeObject(content);
-//    }
-
-    /** Serializable implementation. */
-    private void readObjectNoData() throws InvalidObjectException {
-        throw new InvalidObjectException("Stream data required");
-    }
-
     /**
      * Sets content to the specified value, but only if newContent matches the current type.
      * newContent can be null.
@@ -133,27 +91,4 @@ public abstract class FieldWithContent extends Field implements Serializable
      * @return true if the content and type match, false otherwise.
      */
     public abstract boolean contentMatchesType(Serializable content);
-//    {
-//        if (type == null)
-//		    throw new RuntimeException("type is null.");
-//
-//        if (content == null)
-//            return true;
-//
-//        switch (type)
-//        {
-//            case IMAGE:
-//                return (content instanceof byte[]);
-//            case VIDEO:
-//                //TODO implement this.
-//                throw new RuntimeException("Video object type not yet implemented, sorry!");
-//            case STRING:
-//                return (content instanceof String);
-//            case AUDIO:
-//                //TODO implement this.
-//                throw new RuntimeException("Sound object type not yet implemented, sorry!");
-//            default:
-//                throw new RuntimeException("field type is invalid.");
-//        }
-//    }
 }

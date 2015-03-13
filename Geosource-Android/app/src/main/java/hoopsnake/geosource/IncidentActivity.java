@@ -18,14 +18,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-import hoopsnake.geosource.comm.IOCommand;
+import ServerClientShared.Commands.IOCommand;
+import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Incident;
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import ServerClientShared.FieldWithoutContent;
-import ServerClientShared.Incident;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -95,11 +95,12 @@ public class IncidentActivity extends ActionBarActivity {
 
 //        //TODO remove this mockedSpec eventually! It is just for testing.
 //        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-//        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
-//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
-//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+//        mockedSpec.add(new FieldWithoutContent("Title", FieldType.STRING, true));
+//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, true));
+//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, false));
 //
-//        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
+//        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner);
+//        renderIncident();
     }
 
     /**
@@ -123,6 +124,7 @@ public class IncidentActivity extends ActionBarActivity {
             tv.setText(field.getContentStringRepresentation());
 //            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
 //            assertNotNull(v);
+
             incidentDisplay.addView(tv);
             //All views are given a tag that is equal to their position in the linear layout.
             tv.setTag(i);
@@ -260,7 +262,8 @@ public class IncidentActivity extends ActionBarActivity {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
                 Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(IOCommand.GET_FORM);
-                outStream.writeObject(channelName);
+                outStream.writeUTF(channelName);
+                outStream.writeUTF(channelOwner);
 
                 Log.i(LOG_TAG, "Retrieving reply...");
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();

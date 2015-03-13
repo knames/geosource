@@ -15,10 +15,11 @@ import ServerClientShared.FieldWithContent;
 /**
  * Created by wsv759 on 07/03/15.
  *
- * Implementation of an app field with type Image.
+ * Implementation of an app field with type Video.
  */
-public class ImageField extends AbstractAppFieldWithContentAndFile {
-    public ImageField(FieldWithContent fieldToWrap) {
+public class AppVideoField extends AbstractAppFieldWithContentAndFile {
+
+    public AppVideoField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 
@@ -30,12 +31,13 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
 
     @Override
     public String getPromptStringForUi() {
-        return "Click to take a picture";
+        return "Click to record a video.";
     }
 
     @Override
-    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
-        ImageView iv = (ImageView) activity.findViewById(R.id.field_image_view);
+    public View getContentViewRepresentation(final IncidentActivity activity,final int requestCodeForIntent) {
+        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+
 
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,14 +48,14 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
                         //Make sure the activity knows which view was clicked.
                         activity.setCurFieldIdx((int) v.getTag());
 
-                        Uri fileUriForNewImage = MediaManagement.getOutputImageFileUri();
-                        if (fileUriForNewImage == null)
+                        Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
+                        if (fileUriForNewVideo == null)
                         {
-                            Toast.makeText(activity, "Cannot take picture; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                             return;
                         }
 
-                        MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
+                        MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
                     }
                 });
             }
@@ -65,20 +67,18 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
     @Override
     public void onResultFromSelection(Activity activity, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            // Image captured and saved to fileUri specified in the Intent
+            // Video captured and saved to fileUri specified in the Intent
+            Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
 
-            Toast.makeText(activity, "Image saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
-
-            //TODO display the image in its field! This means notifying the UI.
+            //TODO display the video in its field! This means notifying the UI.
             //TODO set the content of this field appropriately. Probably in a background task?
-            //setContent(new SerialBitmap(fileUri));
 
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            // User cancelled the image capture
+            // User cancelled the video capture
         } else {
-            // Image capture failed, advise user
-            Toast.makeText(activity, "Failed to capture image.", Toast.LENGTH_LONG).show();
+            // Video capture failed, advise user
+            Toast.makeText(activity, "Failed to capture video.", Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -47,7 +47,7 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
     public String getContentStringRepresentation()
     {
         if (!contentIsFilled())
-            return "";
+            return "this is an empty file";
 
         return contentFileUri.toString();
     }

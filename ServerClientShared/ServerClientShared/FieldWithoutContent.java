@@ -1,9 +1,5 @@
 package ServerClientShared;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -19,24 +15,5 @@ public abstract class FieldWithoutContent extends Field implements Serializable 
     public FieldWithoutContent(String title, String type, boolean isRequired)
     {
        super(title, type, isRequired);
-    }
-
-    /** Serializable implementation. */
-    public abstract void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException;
-//    {
-//        title = (String) in.readObject();
-//        type = (FieldType) in.readObject();
-//    }
-
-    /** Serializable implementation. */
-    public abstract void writeObject(ObjectOutputStream out) throws IOException;
-//    {
-//        out.writeObject(title);
-//        out.writeObject(type);
-//    }
-
-    /** Serializable implementation. */
-    private void readObjectNoData() throws InvalidObjectException {
-        throw new InvalidObjectException("Stream data required");
     }
 }

@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldType;
-import hoopsnake.geosource.data.ImageField;
-import hoopsnake.geosource.data.StringField;
+import hoopsnake.geosource.data.AppImageField;
+import hoopsnake.geosource.data.AppStringField;
 
 import static org.junit.Assert.*;
 
@@ -88,8 +88,8 @@ public class FieldUTest
         testImage[2]=3;
 
 
-        StringField stringContentTest= new StringField(new FieldWithContent("Testing Strings!",FieldType.STRING,true));
-        ImageField imageContentTest= new ImageField(new FieldWithContent("Testing Pictures!",FieldType.IMAGE,true));
+        AppStringField stringContentTest= new AppStringField(new FieldWithContent("Testing Strings!",FieldType.STRING,true));
+        AppImageField imageContentTest= new AppImageField(new FieldWithContent("Testing Pictures!",FieldType.IMAGE,true));
         boolean comparisonSuccess;
 
 

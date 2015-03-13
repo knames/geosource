@@ -2,9 +2,13 @@ package hoopsnake.geosource.data;
 
 import java.util.ArrayList;
 
+import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.Incident;
+import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.VideoFieldWithContent;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -68,24 +72,28 @@ public class AppIncidentWithWrapper implements AppIncident {
 
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
-            FieldWithContent newField = new FieldWithContent(fieldWithoutContent);
+            FieldWithContent newField;
 
             //AbstractAppFieldWithContent is guaranteed to keep the fieldWithContent reference
             //passed to it in the constructor up to date.
-            AbstractAppFieldWithContent newFieldWithContentWrapper;
+            AbstractAppFieldWithContent newFieldWrapper;
             switch(fieldWithoutContent.getType())
             {
-                case IMAGE:
-                    newFieldWithContentWrapper = new ImageField(newField);
+                case "image":
+                    newField = new ImageFieldWithContent(fieldWithoutContent);
+                    newFieldWrapper = new AppImageField(newField);
                     break;
-                case STRING:
-                    newFieldWithContentWrapper = new StringField(newField);
+                case "string":
+                    newField = new StringFieldWithContent(fieldWithoutContent);
+                    newFieldWrapper = new AppStringField(newField);
                     break;
-                case VIDEO:
-                    newFieldWithContentWrapper = new VideoField(newField);
+                case "video":
+                    newField = new VideoFieldWithContent(fieldWithoutContent);
+                    newFieldWrapper = new AppVideoField(newField);
                     break;
-                case AUDIO:
-                    newFieldWithContentWrapper = new AudioField(newField);
+                case "audio":
+                    newField = new AudioFieldWithContent(fieldWithoutContent);
+                    newFieldWrapper = new AppAudioField(newField);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
@@ -93,7 +101,7 @@ public class AppIncidentWithWrapper implements AppIncident {
 
             //These now refer to the same underlying fields in each item. They are parallel lists.
             fieldWithContentList.add(newField);
-            fieldList.add(newFieldWithContentWrapper);
+            fieldList.add(newFieldWrapper);
         }
 
         //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
