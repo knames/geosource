@@ -68,13 +68,13 @@ public abstract class FieldWithContent extends Field
      */
     public void setContent(Serializable newContent)
     {
-        if (type == null)
+        if (getType() == null)
 		    throw new RuntimeException("type is null.");
 
         if (contentMatchesType(newContent))
             content =  newContent;
         else
-            throw new RuntimeException("field content is not of type " + type + ".");
+            throw new RuntimeException("field content is not of type " + getType() + ".");
     }
 
     public Serializable getContent() {
