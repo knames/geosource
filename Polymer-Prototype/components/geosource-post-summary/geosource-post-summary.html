@@ -3,7 +3,7 @@
 <link rel="import" href="../core-icons/communication-icons.html">
 <link rel="import" href="../paper-button/paper-button.html">
 
-<polymer-element name="geosource-post-summary" attributes="post favorite mapInfo">
+<polymer-element name="geosource-post-summary" attributes="user post favorite mapInfo">
   <template>
     <style>
     :host {
@@ -89,7 +89,8 @@
         <paper-icon-button
           id="favicon"
           icon="favorite"
-          on-tap="{{favoriteTapped}}">
+          on-tap="{{favoriteTapped}}"
+          hidden?="{{!user}}">
         </paper-icon-button>
 
         <paper-icon-button

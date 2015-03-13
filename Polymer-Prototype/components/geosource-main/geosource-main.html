@@ -144,6 +144,7 @@
               <geosource-settings id="settings"
                 channels="{{channels}}"
                 posts="{{posts}}"
+                user="{{user}}"
                 on-filter-change="{{filterPosts}}">
               </geosource-settings>  
               </div>        
@@ -156,6 +157,7 @@
                   <div class="container" layout vertical center>
                     <geosource-feed id='feed' 
                         posts="{{filteredPosts}}" 
+                        user="{{user}}"
                         on-open-dialog="{{loadPost}}"
                         on-set-location="{{moveMap}}"
                         on-favorite="{{filterPosts}}">
@@ -175,6 +177,7 @@
   <script>
     Polymer({
 
+      user: null,
       channels: null,
       posts: null,
       filteredPosts: null,

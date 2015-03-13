@@ -46,7 +46,7 @@
     <user-service id="user_service" user="{{user}}" on-core-error="{{openDialog}}"></user-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
-      <geosource-account-creator on-finished="{{closeDialog}}"></geosource-account-creator>
+      <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}"></geosource-account-creator>
     </paper-dialog>
 
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
@@ -54,7 +54,8 @@
         clientId="1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com" 
         scopes="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
         width="wide"
-        on-google-signin-success="{{signIn}}">
+        on-google-signin-success="{{signIn}}"
+        on-google-signed-out="{{signOut}}">
       </google-signin>
       <div hidden?="{{!user}}">Hello, {{user.username}}</div>
     </core-submenu>
@@ -67,6 +68,8 @@
       user: null,
 
       signIn: function(event, details, sender) {
+        console.log('signed in');
+
         var geosource_account = this;
         var user_service = this.$.user_service;
 
@@ -80,6 +83,11 @@
             geosource_account.fire('filter-change');
           });
         });
+      },
+
+      signOut: function() {
+        console.log('signed out');
+        this.user = null;
       },
 
       openDialog: function() {

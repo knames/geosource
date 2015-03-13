@@ -17,7 +17,7 @@
 <link rel="import" href="../paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 
-<polymer-element name="geosource-account-creator" attributes="channels subscribed">
+<polymer-element name="geosource-account-creator" attributes="user">
 
 
   <template>
@@ -70,7 +70,7 @@
         In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
       </div>
 
-        <paper-input floating label="Enter a username..."></paper-input>
+        <paper-input id="input" floating label="Enter a username..."></paper-input>
 
       </div>
     </div>
@@ -86,6 +86,15 @@
   Polymer({
 
     submit: function() {
+      this.user = { 
+        "username": this.$.input.value,
+        "admin": false,
+        "subscriber": [],
+        "viewer": [],
+        "moderator": [],
+        "owner": [],
+        "favorites": [] 
+      };
       this.fire('finished');
     }
 
