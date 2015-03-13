@@ -24,9 +24,21 @@ public class Controller {
     
     private static int numConnections = 5; //maximum simultaneous socket inputs
     
-    public void main(String[] args)
+    /**
+     * runs the server
+     * @param args specifies the port number and concurrent thread count
+     */
+    public static void main(String[] args)
     {
+    	numConnections = Integer.parseInt(args[1]);
+        Controller Server = new Controller();
+        Server.run(Integer.parseInt(args[0]));
         
+    }
+    
+    public void run(int portNum)
+    {
+    	CommSocket.portNum = portNum;
         ExecutorService exec = Executors.newCachedThreadPool();
         LinkedList<Future<Incident>> list = new LinkedList();
         for (int x = 0; x < numConnections; x ++)
@@ -67,6 +79,7 @@ public class Controller {
     private void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
+        int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName());
         for (FieldWithContent field : incident.getFieldList())
         {
             switch(field.getType())
@@ -74,12 +87,12 @@ public class Controller {
                 case IMAGE:
                 {
                     String filePath = fileAccess.savePicture((byte[])field.getContent());
-                    dbAccess.savePictureField(incident.getChannelName(), field.getTitle(), filePath);
+                    dbAccess.savePictureField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
                     break;
                 }
                 case STRING:
                 {
-                    dbAccess.saveStringField(incident.getChannelName(), field.getTitle(), (String)field.getContent());
+                    dbAccess.saveStringField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), (String)field.getContent());
                     break;
                 }
                 case VIDEO:
@@ -96,12 +109,11 @@ public class Controller {
                 }
             }
         }
-        //TODO parse incident and save its fields
     }
     
-    public ArrayList<FieldWithoutContent> getForm(String channelName)
+    public ArrayList<FieldWithoutContent> getForm(String channelName, String ownerName)
     {
-        String filePath = dbAccess.getFormSpecLocation(channelName); //get spec's path in filesystem
+        String filePath = dbAccess.getFormSpecLocation(channelName, ownerName); //get spec's path in filesystem
         return fileAccess.getFormSpec(filePath); //retreive form spec
     }
 }

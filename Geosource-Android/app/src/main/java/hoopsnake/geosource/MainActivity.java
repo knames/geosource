@@ -19,8 +19,9 @@ import android.webkit.WebView;
 public class MainActivity extends Activity {
     public static final String APP_LOG_TAG = "geosource";
 
-    //TODO make this something other than a hard-coded string.
+    //TODO make these something other than a hard-coded string.
     String curChannelName = "mushrooms";
+    String curChannelOwner = "josh";
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
@@ -74,7 +75,8 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
         //TODO determine the current channel.
 
-        intent.putExtra(IncidentActivity.CHANNEL_NAME_PARAM_STRING, curChannelName);
+        intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
+        intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
         startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal());
     }
 

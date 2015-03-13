@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="website_url">www.placeholder.com</string>
+    <string name="website_url">www.google.ca</string>
     <string name="app_name">Geosource</string>
     <string name="action_settings">Settings</string>
     <string name="add_picture">Take Picture</string>

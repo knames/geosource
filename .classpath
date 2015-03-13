@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="Geosource-Android/gradle/wrapper/gradle-wrapper.jar"/>
 	<classpathentry kind="lib" path="ListViewPlanets/gradle/wrapper/gradle-wrapper.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.34-bin.jar"/>
 	<classpathentry kind="output" path="Geosource-Android/app/build/intermediates/coverage-instrumented-classes/debug"/>
 </classpath>

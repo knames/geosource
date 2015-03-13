@@ -2,6 +2,8 @@ package hoopsnake.geosource.data;
 
 import android.net.Uri;
 
+import ServerClientShared.FieldWithContent;
+
 import static junit.framework.Assert.assertNotNull;
 
 /**
@@ -38,14 +40,14 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
         if (contentFileUri != null)
             return true;
 
-        return wrappedField.content != null;
+        return wrappedField.getContent() != null;
     }
 
     @Override
     public String getContentStringRepresentation()
     {
         if (!contentIsFilled())
-            return "";
+            return "this is an empty file";
 
         return contentFileUri.toString();
     }

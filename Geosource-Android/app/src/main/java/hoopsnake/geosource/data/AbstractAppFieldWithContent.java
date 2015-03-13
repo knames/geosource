@@ -2,6 +2,8 @@ package hoopsnake.geosource.data;
 
 import java.io.Serializable;
 
+import ServerClientShared.FieldWithContent;
+
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 

@@ -34,7 +34,7 @@ import javax.crypto.NoSuchPaddingException;
  */
 public class CommSocket implements Callable<Incident>{
     
-    private static final int portNum = 0;
+    public static int portNum = 0;
     
     private static Controller controller = null;
 
@@ -108,9 +108,14 @@ public class CommSocket implements Callable<Incident>{
             {
                 case GET_FORM:
                 {
+                    System.out.println("111");
                     String channelName = in.readUTF();
-                    ArrayList<FieldWithoutContent> formList = controller.getForm(channelName);
+                    String ownerName = in.readUTF();
+                    System.out.println("112");
+                    ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
+                    System.out.println("114");
                     out.writeObject(formList);
+                    System.out.println("116");
                     return null;
                 }
                 case SEND_INCIDENT:
@@ -122,20 +127,20 @@ public class CommSocket implements Callable<Incident>{
         }
         catch (IOException IOe)
         {
-            System.out.println("IO Exception: " + IOe.getMessage());
+            System.err.println("IO Exception: " + IOe.getMessage());
         }
         catch (InvalidKeyException IKe)
         {
-            System.out.println("invalid encryption password");
+            System.err.println("invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            System.out.println("invalid key specification");
+            System.err.println("invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            System.out.println("invalid encryption algorithm");
+            System.err.println("invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            System.out.println("No Such Padding");
+            System.err.println("No Such Padding");
         }
         finally
         {

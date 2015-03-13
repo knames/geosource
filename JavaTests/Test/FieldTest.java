@@ -1,4 +1,4 @@
-package ServerClientShared.Test;
+package Test;
 
 import ServerClientShared.FieldType;
 import ServerClientShared.FieldWithContent;

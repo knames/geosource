@@ -1,5 +1,7 @@
-package ServerClientShared.Test;
+package Test;
 
+import Test.IncidentTest;
+import Test.FieldTest;
 import java.util.List;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

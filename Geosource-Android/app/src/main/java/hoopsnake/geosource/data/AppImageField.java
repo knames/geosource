@@ -7,16 +7,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
+import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.
  *
  * Implementation of an app field with type Image.
  */
-public class ImageField extends AbstractAppFieldWithContentAndFile {
-    public ImageField(FieldWithContent fieldToWrap) {
+public class AppImageField extends AbstractAppFieldWithContentAndFile {
+    public AppImageField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 
@@ -32,20 +34,28 @@ public class ImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public View getContentViewRepresentation(final Activity activity, final int requestCodeForIntent) {
-        ImageView iv = (ImageView) activity.findViewById(R.id.field_image_view);
+    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
+        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
 
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Uri fileUriForNewImage = MediaManagement.getOutputImageFileUri();
-                if (fileUriForNewImage == null)
-                {
-                    Toast.makeText(activity, "Cannot take picture; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                    return;
-                }
+            public void onClick(final View v) {
+                activity.doIfClickable(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Make sure the activity knows which view was clicked.
+                        activity.setCurFieldIdx((int) v.getTag());
 
-                MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
+                        Uri fileUriForNewImage = MediaManagement.getOutputImageFileUri();
+                        if (fileUriForNewImage == null)
+                        {
+                            Toast.makeText(activity, "Cannot take picture; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
+                    }
+                });
             }
         });
 

@@ -34,9 +34,9 @@ import hoopsnake.geosource.MainActivity;
  */
 public class SocketWrapper {
 
-    int portNum = 80;
+    int portNum = 9001;
     //TODO change the IP address to come from a config file, or some other option.
-    String ipaddress = "10.227.145.56";
+    String ipaddress = "104.236.112.44";
 
     ObjectOutputStream out;
     ObjectInputStream in;

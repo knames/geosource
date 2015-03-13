@@ -37,6 +37,7 @@ android {
         androidTest {
             setRoot('src/test')
         }
+        main.java.srcDirs += '../../ServerClientShared'
     }
 }
 

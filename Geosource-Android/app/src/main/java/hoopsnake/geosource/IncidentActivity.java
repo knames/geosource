@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -15,16 +16,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
-import hoopsnake.geosource.comm.IOCommand;
+import ServerClientShared.Commands.IOCommand;
+import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Incident;
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import hoopsnake.geosource.data.FieldWithoutContent;
-import hoopsnake.geosource.data.Incident;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 
 /**
@@ -34,8 +37,11 @@ import static junit.framework.Assert.assertNotNull;
  * This activity also launches the tasks to receive a new incident spec and send a new incident.
  */
 public class IncidentActivity extends ActionBarActivity {
-    /** TODO ensure that only one button is ever clicked at a time. */
     private boolean clickable = true;
+    private ReentrantLock clickableLock = new ReentrantLock();
+
+    public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
+    public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
 
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
@@ -46,19 +52,22 @@ public class IncidentActivity extends ActionBarActivity {
     /** The incident to be created and edited by the user on this screen. */
     AppIncident incident;
 
-    public static final String CHANNEL_NAME_PARAM_STRING = "channelName";
+    public void setCurFieldIdx(int curFieldIdx) {
+        this.curFieldIdx = curFieldIdx;
+    }
 
     /**
      * The position of the currently-selected field in the incidentDisplay.
      * This is recorded so that different activities/fragments can be called whenever a field is clicked,
      * and the corresponding field can be remembered upon their return.
      */
-    int curFieldIdx;
+    int curFieldIdx = NO_CUR_FIELD_SELECTED;
+    public static final int NO_CUR_FIELD_SELECTED = -1;
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
      */
-    private enum RequestCode {
+    public enum RequestCode {
         FIELD_ACTION_REQUEST_CODE
     }
 
@@ -75,36 +84,51 @@ public class IncidentActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
         assertNotNull(extras);
 
-        String channelName = extras.getString(CHANNEL_NAME_PARAM_STRING);
+        String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
+        String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
         assertNotNull(channelName);
+        assertNotNull(channelOwner);
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
 
 //        //TODO remove this mockedSpec eventually! It is just for testing.
 //        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-//        mockedSpec.add(new FieldWithoutContent("Image", FieldType.IMAGE, true));
-//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, false));
-//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, true));
+//        mockedSpec.add(new FieldWithoutContent("Title", FieldType.STRING, true));
+//        mockedSpec.add(new FieldWithoutContent("Video", FieldType.VIDEO, true));
+//        mockedSpec.add(new FieldWithoutContent("Description",FieldType.STRING, false));
 //
-//        incident = new AppIncidentWithWrapper(mockedSpec, channelName);
+//        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner);
+//        renderIncident();
     }
 
     /**
-     * @precond the current incident and all its fields are not null.
-     * @postcond each field's custom view is added to the linear layout.
+     * @precond the current incident, and all its fields, and the incidentDisplay, are not null.
+     * @postcond each field's custom view is added to the linear layout, replacing all the old
+     * views in the linear layout (if they existed).
      */
     private void renderIncident()
     {
         assertNotNull(incident);
         assertNotNull(incident.getFieldList());
+        assertNotNull(incidentDisplay);
+
+        incidentDisplay.removeAllViews();
+        int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
+            //TODO make this work for the real case, not just a test case.
             assertNotNull(field);
-            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+            TextView tv = new TextView(IncidentActivity.this);
+            tv.setText(field.getContentStringRepresentation());
+//            View v = field.getContentViewRepresentation(IncidentActivity.this, RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+//            assertNotNull(v);
 
-            incidentDisplay.addView(v);
+            incidentDisplay.addView(tv);
+            //All views are given a tag that is equal to their position in the linear layout.
+            tv.setTag(i);
+            i++;
         }
     }
 
@@ -123,6 +147,7 @@ public class IncidentActivity extends ActionBarActivity {
                 /**
                  * Delegate the response to the field whose selection launched the returning activity in the first place.
                  */
+                assertFalse(curFieldIdx == NO_CUR_FIELD_SELECTED);
                 AppFieldWithContent curField = incident.getFieldList().get(curFieldIdx);
                 curField.onResultFromSelection(IncidentActivity.this, resultCode, data);
                 break;
@@ -133,20 +158,62 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * Try to submit the incident to the server.
-     * //TODO this function is not connected to anything yet!
      * @param v the submit button.
      * @precond incident is not null.
      * @postcond the new incident is submitted to the server. The new incident may not end up going through.
      */
     public void onSubmitButtonClicked(View v)
     {
-        if (incident.isCompletelyFilledIn()) {
+        if (incident != null && incident.isCompletelyFilledIn()) {
             new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
     }
 
+
+    /**
+     * Test-and-set: atomically check if this activity can be clicked, and if it can, say that no other
+     * thread can click it.
+     * @return true if the activity is not busy and can be clicked, false otherwise.
+     */
+    private boolean canBeClicked() {
+        clickableLock.lock();
+        if (clickable) {
+            clickable = false;
+            clickableLock.unlock();
+            return true;
+        }
+
+        clickableLock.unlock();
+        return false;
+    }
+
+    /**
+     * When a thread is done using this activity, allow other threads to use it again.
+     */
+    private void doneClicking() {
+        clickableLock.lock();
+        assertFalse(clickable);
+        clickable = true;
+        clickableLock.unlock();
+    }
+
+    /**
+     *
+     * @param taskUsingActivity a task that needs to be run by some other class, using this activity's code.
+     * @precond taskUsingActivity is not null.
+     * @postcond taskUsingActivity is run if this activity is not busy; otherwise it does not run.
+     */
+    public void doIfClickable(Runnable taskUsingActivity)
+    {
+        if (canBeClicked())
+        {
+            taskUsingActivity.run();
+
+            doneClicking();
+        }
+    }
     /**
      * Created by wsv759 on 19/02/15.
      * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
@@ -154,7 +221,7 @@ public class IncidentActivity extends ActionBarActivity {
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
         private Context context;
 
-        String channelName;
+        String channelName, channelOwner;
         public static final String LOG_TAG = "geosource comm";
 
         public TaskReceiveIncidentSpec(Context context)
@@ -170,7 +237,9 @@ public class IncidentActivity extends ActionBarActivity {
             Socket outSocket;
 
             channelName = params[0];
+            channelOwner = params[1];
             assertNotNull(channelName);
+            assertNotNull(channelOwner);
 
             try //create socket
             {
@@ -193,7 +262,8 @@ public class IncidentActivity extends ActionBarActivity {
                 //TODO identify with the server whether I am asking for an incident spec or sending an incident.
                 Log.i(LOG_TAG, "Attempting to send incident.");
                 outStream.writeObject(IOCommand.GET_FORM);
-                outStream.writeObject(channelName);
+                outStream.writeUTF(channelName);
+                outStream.writeUTF(channelOwner);
 
                 Log.i(LOG_TAG, "Retrieving reply...");
                 fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
@@ -216,7 +286,7 @@ public class IncidentActivity extends ActionBarActivity {
             }
 
             //TODO some of this code should maybe go on the ui thread.
-            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName);
+            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner);
 
             return SocketResult.SUCCESS;
         }
@@ -230,9 +300,9 @@ public class IncidentActivity extends ActionBarActivity {
                     context,
                     LOG_TAG);
 
-            //TODO this may not be needed.
-            if (result.equals(SocketResult.SUCCESS))
+            if (result.equals(SocketResult.SUCCESS)) {
                 renderIncident();
+            }
         }
     }
 
