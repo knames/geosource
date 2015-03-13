@@ -14,9 +14,9 @@ public class Queries {
      */
     public static String getFormSpec(String channelName, String ownerName)
     {
-        String returnString = "SELECT spec FROM channels WHERE name = '"
-                + channelName + "'"; //TODO Ken, add ownername in here
-        return returnString;
+        String sql = "SELECT spec FROM channels WHERE ch_name = \""
+                + channelName + "\" and ch_owner = \"" + ownerName + "\";";
+        return sql;
     }
     
     /**
