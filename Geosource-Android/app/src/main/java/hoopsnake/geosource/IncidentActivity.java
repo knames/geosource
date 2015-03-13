@@ -38,7 +38,7 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
-    private ReentrantLock clickableLock = new ReentrantLock();
+    private final ReentrantLock clickableLock = new ReentrantLock();
 
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
@@ -47,10 +47,10 @@ public class IncidentActivity extends ActionBarActivity {
     IncidentDisplayAdapter incidentAdapter;
 
     /** The LinearLayout that displays all the fields of the incident. */
-    LinearLayout incidentDisplay;
+    private LinearLayout incidentDisplay;
 
     /** The incident to be created and edited by the user on this screen. */
-    AppIncident incident;
+    private AppIncident incident;
 
     public void setCurFieldIdx(int curFieldIdx) {
         this.curFieldIdx = curFieldIdx;
@@ -61,7 +61,7 @@ public class IncidentActivity extends ActionBarActivity {
      * This is recorded so that different activities/fragments can be called whenever a field is clicked,
      * and the corresponding field can be remembered upon their return.
      */
-    int curFieldIdx = NO_CUR_FIELD_SELECTED;
+    private int curFieldIdx = NO_CUR_FIELD_SELECTED;
     public static final int NO_CUR_FIELD_SELECTED = -1;
 
     /**
@@ -214,12 +214,13 @@ public class IncidentActivity extends ActionBarActivity {
             doneClicking();
         }
     }
+
     /**
      * Created by wsv759 on 19/02/15.
      * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
      */
     private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
-        private Context context;
+        private final Context context;
 
         String channelName, channelOwner;
         public static final String LOG_TAG = "geosource comm";
@@ -312,7 +313,7 @@ public class IncidentActivity extends ActionBarActivity {
      */
     private class TaskSendIncident extends AsyncTask<Incident, Void, SocketResult> {
 
-        private Context context;
+        private final Context context;
         public static final String LOG_TAG = "geosource comm";
 
         public TaskSendIncident(Context context)

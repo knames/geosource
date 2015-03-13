@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class StringFieldWithContent extends FieldWithContent implements Serializable {
 
-    public StringFieldWithContent(FieldWithoutContent fieldWithoutContent) {
+    public StringFieldWithContent(StringFieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by wsv759 on 12/03/15.
  */
 public class AudioFieldWithContent extends FileFieldWithContent implements Serializable {
-    public AudioFieldWithContent(FieldWithoutContent fieldWithoutContent) {
+    public AudioFieldWithContent(AudioFieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }
 

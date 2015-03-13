@@ -12,7 +12,7 @@ public abstract class FieldWithoutContent extends Field implements Serializable 
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public FieldWithoutContent(String title, String type, boolean isRequired)
+    FieldWithoutContent(String title, String type, boolean isRequired)
     {
        super(title, type, isRequired);
     }

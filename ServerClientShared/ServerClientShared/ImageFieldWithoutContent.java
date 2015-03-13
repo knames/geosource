@@ -9,8 +9,10 @@ import java.io.ObjectStreamException;
  * Created by wsv759 on 12/03/15.
  */
 public class ImageFieldWithoutContent extends FieldWithoutContent {
+    public static final String TYPE = "image";
+
     public ImageFieldWithoutContent(String title, boolean isRequired) {
-        super(title, "image", isRequired);
+        super(title, TYPE, isRequired);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException

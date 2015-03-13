@@ -15,7 +15,7 @@ public abstract class FieldWithContent extends Field
      * The contents of the field, as entered in by the user. This must adhere to the type of this
      * Field.
      */
-    protected Serializable content;
+    Serializable content;
 
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public abstract class FieldWithContent extends Field
      * Construct with null content, out of a field without content.
      * @param fieldWithoutContent the fieldWithoutContent to construct this out of.
      */
-    public FieldWithContent(FieldWithoutContent fieldWithoutContent)
+    FieldWithContent(FieldWithoutContent fieldWithoutContent)
     {
         super(fieldWithoutContent.getTitle(), fieldWithoutContent.getType(), fieldWithoutContent.isRequired());
 
@@ -68,13 +68,13 @@ public abstract class FieldWithContent extends Field
      */
     public void setContent(Serializable newContent)
     {
-        if (type == null)
+        if (getType() == null)
 		    throw new RuntimeException("type is null.");
 
         if (contentMatchesType(newContent))
             content =  newContent;
         else
-            throw new RuntimeException("field content is not of type " + type + ".");
+            throw new RuntimeException("field content is not of type " + getType() + ".");
     }
 
     public Serializable getContent() {

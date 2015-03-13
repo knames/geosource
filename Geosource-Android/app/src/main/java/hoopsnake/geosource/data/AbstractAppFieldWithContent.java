@@ -25,7 +25,7 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
      * Underlying field object that contains the attributes to be acted upon by
      * the app. Its type should match the AppField that wraps it.
      */
-    protected FieldWithContent wrappedField;
+    final FieldWithContent wrappedField;
 
     /**
      * Construct a new AppFieldWithContent, wrapping (not copying) a FieldWithContent.
@@ -55,7 +55,7 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
     @Override
     public boolean contentIsSuitable(Serializable content)
     {
-        return FieldWithContent.contentMatchesType(content, wrappedField.getType());
+        return wrappedField.contentMatchesType(content);
     }
 
     @Override

@@ -28,19 +28,16 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
      * This should only ever be non-null if the content actually corresponds to a file
      * (i.e. Image, Video, or Audio content.)
      */
-    protected Uri contentFileUri;
+    private Uri contentFileUri;
 
-    public Uri getContentFileUri() {
+    Uri getContentFileUri() {
         return contentFileUri;
     }
 
     @Override
     public boolean contentIsFilled()
     {
-        if (contentFileUri != null)
-            return true;
-
-        return wrappedField.getContent() != null;
+        return contentFileUri != null || wrappedField.getContent() != null;
     }
 
     @Override
@@ -76,5 +73,5 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
      * @postcond see return.
      * @return return true if this field uses this type of file for its content, or false otherwise.
      */
-    public abstract boolean usesFilesOfType(Uri contentFileUri);
+    abstract boolean usesFilesOfType(Uri contentFileUri);
 }

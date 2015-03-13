@@ -22,11 +22,11 @@ import hoopsnake.geosource.data.AppIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
+class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
 
     private String logTag = MainActivity.APP_LOG_TAG;
-    private ArrayList<AppFieldWithContent> fieldList;
-    private Context context;
+    private final ArrayList<AppFieldWithContent> fieldList;
+    private final Context context;
 
     public IncidentDisplayAdapter(AppIncident incident, Context ctx) {
         super(ctx, R.layout.img_row_layout, incident.getFieldList());

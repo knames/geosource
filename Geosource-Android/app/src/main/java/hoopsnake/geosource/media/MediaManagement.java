@@ -25,7 +25,7 @@ public class MediaManagement {
     /**
      * Any logcat messages from this class use this tag.
      */
-    public static final String LOG_TAG = "geosource media";
+    private static final String LOG_TAG = "geosource media";
 
     /**
      * The name of the directory to which to save all media files created by this app.
@@ -99,10 +99,7 @@ public class MediaManagement {
      */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     /** Create a file Uri for saving an image.
