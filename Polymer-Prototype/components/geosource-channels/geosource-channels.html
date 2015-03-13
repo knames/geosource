@@ -222,43 +222,48 @@
 
     userChanged: function() {
 
-      console.log(this.channels.length);
-      console.log(this.user.owner.length);
 
-      for(i=0; i<this.channels.length; i++) {
-        for(j=0; j<this.user.owner.length; j++) {
-          if(this.user.owner[j].name == this.channels[i].name 
-            && this.user.owner[j].owner == this.channels[i].owner) {
-            console.log("TEST");
-            this.channels[i].isOwner = true;
+      if(this.user) {
+        console.log(this.channels.length);
+        console.log(this.user.owner.length);
+
+        for(i=0; i<this.channels.length; i++) {
+          for(j=0; j<this.user.owner.length; j++) {
+            if(this.user.owner[j].name == this.channels[i].name 
+              && this.user.owner[j].owner == this.channels[i].owner) {
+              console.log("TEST");
+              this.channels[i].isOwner = true;
+            }
+          }
+          for(j=0; j<this.user.moderator.length; j++) {
+            if(this.user.moderator[j].name == this.channels[i].name 
+              && this.user.moderator[j].owner == this.channels[i].owner) {
+              this.channels[i].isModerator = true;
+            }
+          }
+          for(j=0; j<this.user.viewer.length; j++) {
+            if(this.user.viewer[j].name == this.channels[i].name 
+              && this.user.viewer[j].owner == this.channels[i].owner) {
+              this.channels[i].isViewer = true;
+            }
+          }
+          for(j=0; j<this.user.subscriber.length; j++) {
+            if(this.user.subscriber[j].name == this.channels[i].name 
+              && this.user.subscriber[j].owner == this.channels[i].owner) {
+              this.channels[i].isSubscriber = true;
+            }
           }
         }
-        for(j=0; j<this.user.moderator.length; j++) {
-          if(this.user.moderator[j].name == this.channels[i].name 
-            && this.user.moderator[j].owner == this.channels[i].owner) {
-            this.channels[i].isModerator = true;
-          }
-        }
-        for(j=0; j<this.user.viewer.length; j++) {
-          if(this.user.viewer[j].name == this.channels[i].name 
-            && this.user.viewer[j].owner == this.channels[i].owner) {
-            this.channels[i].isViewer = true;
-          }
-        }
-        for(j=0; j<this.user.subscriber.length; j++) {
-          if(this.user.subscriber[j].name == this.channels[i].name 
-            && this.user.subscriber[j].owner == this.channels[i].owner) {
-            this.channels[i].isSubscriber = true;
+
+        for(i=0; i<this.channels.length; i++) {
+          var channel = this.channels[i];
+          if(channel.isSubscriber) {
+            this.subscribedChannels.push(channel);
           }
         }
       }
-
-      for(i=0; i<this.channels.length; i++) {
-        var channel = this.channels[i];
-        if(channel.isSubscriber) {
-          this.subscribedChannels.push(channel);
-          console.log("ADDED");
-        }
+      else {
+        this.subscribedChannels = [];
       }
     },
 
