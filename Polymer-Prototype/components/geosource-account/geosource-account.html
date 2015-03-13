@@ -9,7 +9,7 @@
 <link rel="import" href="../geosource-account-creator/geosource-account-creator.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 
-<polymer-element name="geosource-account" attributes="uid user">
+<polymer-element name="geosource-account" attributes="user">
 
   <template>
     
@@ -43,11 +43,12 @@
       }
     </style>
 
+    <user-service id="user_service" user="{{user}}" on-core-error="{{openDialog}}"></user-service>
+
     <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
       <geosource-account-creator on-finished="{{closeDialog}}"></geosource-account-creator>
     </paper-dialog>
 
-    <user-service user="{{user}}"></user-service>
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
       <google-signin theme="light" 
         clientId="1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com" 
@@ -64,28 +65,27 @@
     Polymer({
 
       name: "",
-      uid: null,
       user: null,
-
-      ready: function()  {
-        var dialog = this.$.create_dialog;
-        this.$.create_dialog.toggle();
-        console.log('login dialog', dialog);
-      },
 
       signIn: function(event, details, sender) {
         var geosource_account = this;
+        var user_service = this.$.user_service;
 
         details.gapi.client.load('plus', 'v1', function() {
           var request = gapi.client.plus.people.get({userId: 'me'});
 
           request.execute(function(resp) {
             console.log(resp);
+            console.log(user_service);
             geosource_account.name = resp.name.givenName;
-            geosource_account.uid = resp.id;
+            user_service.load(resp.id);
             geosource_account.fire('filter-change');
           });
         });
+      },
+
+      openDialog: function() {
+        this.$.create_dialog.open();
       },
 
       closeDialog: function() {

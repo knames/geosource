@@ -1,0 +1,24 @@
+{ 
+	"username": "Josh",
+    "subscriber": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "viewer":
+    	[
+			{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "moderator": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "owner": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "admin": true
+}
