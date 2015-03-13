@@ -9,7 +9,7 @@
 <link rel="import" href="../geosource-account-creator/geosource-account-creator.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 
-<polymer-element name="geosource-account" attributes="user">
+<polymer-element name="geosource-account" attributes="user posts">
 
   <template>
     
@@ -90,6 +90,21 @@
 
       closeDialog: function() {
         this.$.create_dialog.close();
+      },
+
+      userChanged: function() {
+
+        console.log(this.posts);
+
+        for(i=0; i<this.user.favorites.length; i++) {
+          for(j=0; j<this.posts.length; j++) {
+            if(this.user.favorites[i] == this.posts[j].pid) {
+              console.log('asdf');
+              this.posts[j].favorite = true;
+              break;
+            }
+          }
+        }
       }
 
     });

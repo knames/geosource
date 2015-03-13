@@ -1,5 +1,6 @@
 { 
 	"username": "Josh",
+	"admin": true,
     "subscriber": 
     	[
     		{"name": "Birds", "owner": "Josh"}, 
@@ -20,5 +21,8 @@
     		{"name": "Birds", "owner": "Josh"}, 
     		{"name": "Mushrooms", "owner": "Josh"}
     	],
-    "admin": true
+    "favorites":
+    	[
+    		2
+    	]
 }
