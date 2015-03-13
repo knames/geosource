@@ -7,9 +7,9 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import ServerClientShared.StringFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
-import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -20,7 +20,7 @@ public class AppStringField extends AbstractAppFieldWithContent {
     //TODO hardcoded until we get params implemented.
     public int maxLength = 140;
 
-    public AppStringField(FieldWithContent fieldToWrap) {
+    public AppStringField(StringFieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 

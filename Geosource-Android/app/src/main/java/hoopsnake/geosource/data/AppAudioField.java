@@ -5,11 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 
+import ServerClientShared.AudioFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
-import ServerClientShared.FieldType;
-import ServerClientShared.FieldWithContent;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -18,9 +15,8 @@ import static junit.framework.Assert.assertEquals;
  */
 public class AppAudioField extends AbstractAppFieldWithContentAndFile{
 
-    public AppAudioField(FieldWithContent fieldToWrap) {
+    public AppAudioField(AudioFieldWithContent fieldToWrap) {
         super(fieldToWrap);
-        assertEquals(fieldToWrap.getType(), FieldType.AUDIO);
     }
 
     @Override

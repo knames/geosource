@@ -7,10 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import ServerClientShared.ImageFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
-import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -18,7 +18,7 @@ import ServerClientShared.FieldWithContent;
  * Implementation of an app field with type Image.
  */
 public class AppImageField extends AbstractAppFieldWithContentAndFile {
-    public AppImageField(FieldWithContent fieldToWrap) {
+    public AppImageField(ImageFieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 

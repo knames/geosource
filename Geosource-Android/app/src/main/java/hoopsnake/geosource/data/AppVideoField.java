@@ -7,10 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import ServerClientShared.VideoFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
-import ServerClientShared.FieldWithContent;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -19,7 +19,7 @@ import ServerClientShared.FieldWithContent;
  */
 public class AppVideoField extends AbstractAppFieldWithContentAndFile {
 
-    public AppVideoField(FieldWithContent fieldToWrap) {
+    public AppVideoField(VideoFieldWithContent fieldToWrap) {
         super(fieldToWrap);
     }
 

@@ -3,12 +3,16 @@ package hoopsnake.geosource.data;
 import java.util.ArrayList;
 
 import ServerClientShared.AudioFieldWithContent;
+import ServerClientShared.AudioFieldWithoutContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
+import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
+import ServerClientShared.VideoFieldWithoutContent;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -22,12 +26,12 @@ public class AppIncidentWithWrapper implements AppIncident {
     /**
      * the list of app-side fields contained within this incident.
      */
-    protected ArrayList<AppFieldWithContent> fieldList;
+    private final ArrayList<AppFieldWithContent> fieldList;
 
     /**
      * The basic server-side incident underlying this incident.
      */
-    protected Incident wrappedIncident;
+    private Incident wrappedIncident;
 
     /**
      *
@@ -79,21 +83,21 @@ public class AppIncidentWithWrapper implements AppIncident {
             AbstractAppFieldWithContent newFieldWrapper;
             switch(fieldWithoutContent.getType())
             {
-                case "image":
-                    newField = new ImageFieldWithContent(fieldWithoutContent);
-                    newFieldWrapper = new AppImageField(newField);
+                case ImageFieldWithoutContent.TYPE:
+                    newField = new ImageFieldWithContent((ImageFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppImageField((ImageFieldWithContent) newField);
                     break;
-                case "string":
-                    newField = new StringFieldWithContent(fieldWithoutContent);
-                    newFieldWrapper = new AppStringField(newField);
+                case StringFieldWithoutContent.TYPE:
+                    newField = new StringFieldWithContent((StringFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppStringField((StringFieldWithContent) newField);
                     break;
-                case "video":
-                    newField = new VideoFieldWithContent(fieldWithoutContent);
-                    newFieldWrapper = new AppVideoField(newField);
+                case VideoFieldWithoutContent.TYPE:
+                    newField = new VideoFieldWithContent((VideoFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) newField);
                     break;
-                case "audio":
-                    newField = new AudioFieldWithContent(fieldWithoutContent);
-                    newFieldWrapper = new AppAudioField(newField);
+                case AudioFieldWithoutContent.TYPE:
+                    newField = new AudioFieldWithContent((AudioFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");

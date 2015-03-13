@@ -97,7 +97,7 @@ public class FieldUTest
         comparisonSuccess=stringContentTest.contentIsSuitable(inputString);
         assertTrue("Comparison Failed, String<->String",comparisonSuccess);
         stringContentTest.setContent(inputString);
-        assertTrue("Didn't add String to Content!", stringContentTest.getContentStringRepresentation()==inputString);
+        assertTrue("Didn't add String to Content!", stringContentTest.getContentStringRepresentation().equals(inputString));
 
 
         //We allow null fields, so this should be good.

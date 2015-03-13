@@ -23,8 +23,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import hoopsnake.geosource.MainActivity;
-
 /**
  *
  * @author Connor, with changes for Android compatibility by William.
@@ -34,16 +32,16 @@ import hoopsnake.geosource.MainActivity;
  */
 public class SocketWrapper {
 
-    int portNum = 9001;
+    private int portNum = 9001;
     //TODO change the IP address to come from a config file, or some other option.
-    String ipaddress = "104.236.112.44";
+    private String ipaddress = "104.236.112.44";
 
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    Socket outSocket;
+    private Socket outSocket;
 
-    String logTag = MainActivity.APP_LOG_TAG;
+    private static final String logTag = "geosource comm";
     // Password must be at least 8 characters
     private static final String password = "hiedlbrand";
 
@@ -101,10 +99,6 @@ public class SocketWrapper {
         }
         catch (NoSuchPaddingException NSPe) {
             Log.e(logTag, "No Such Padding");
-        }
-        finally
-        {
-            return;
         }
     }
 }

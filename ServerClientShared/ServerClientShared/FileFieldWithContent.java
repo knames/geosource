@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by wsv759 on 12/03/15.
  */
 public abstract class FileFieldWithContent extends FieldWithContent {
-    public FileFieldWithContent(FieldWithoutContent fieldWithoutContent) {
+    FileFieldWithContent(FieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }
 
