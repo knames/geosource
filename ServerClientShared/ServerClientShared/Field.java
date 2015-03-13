@@ -7,10 +7,10 @@ package ServerClientShared;
  */
 public abstract class Field {
     protected String title;
-    protected FieldType type;
+    protected String type;
     protected boolean isRequired;
 
-    public FieldType getType() {
+    public String getType() {
         return type;
     }
 
@@ -23,7 +23,7 @@ public abstract class Field {
         return isRequired;
     }
 
-    public Field(String title, FieldType type, boolean isRequired)
+    public Field(String title, String type, boolean isRequired)
     {
         this.title = title;
         this.type = type;

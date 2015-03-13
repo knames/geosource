@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Includes title, type, and a content field. The content field may be null.
  * Type and content are guaranteed to match.
  */
-public class FieldWithContent extends Field implements Serializable
+public abstract class FieldWithContent extends Field implements Serializable
 {
     /**
      * The contents of the field, as entered in by the user. This must adhere to the type of this
@@ -31,7 +31,7 @@ public class FieldWithContent extends Field implements Serializable
      * @param isRequired
      * @param content
      */
-    public FieldWithContent(String title, FieldType type, boolean isRequired, Serializable content)
+    public FieldWithContent(String title, String type, boolean isRequired, Serializable content)
     {
         super(title, type, isRequired);
 
@@ -58,7 +58,7 @@ public class FieldWithContent extends Field implements Serializable
      * @param type
      * @param isRequired
      */
-    public FieldWithContent(String title, FieldType type, boolean isRequired)
+    public FieldWithContent(String title, String type, boolean isRequired)
     {
         super(title, type, isRequired);
 
@@ -67,39 +67,36 @@ public class FieldWithContent extends Field implements Serializable
 
 
     /** Serializable implementation. */
-    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
-    {
-        title = (String) in.readObject();
-        type = (FieldType) in.readObject();
-
-        switch (type)
-        {
-            case IMAGE:
-                setContent((byte[]) in.readObject());
-                break;
-            case STRING:  
-                setContent((String) in.readObject());
-                break;
-            case VIDEO:
-                //TODO implement this.
-                throw new UnsupportedOperationException("Not supported yet.");
-                //break; PUT THIS BACK AFTER IMPLEMENTATION
-            case AUDIO:
-                //TODO implement this.
-                throw new UnsupportedOperationException("Not supported yet.");
-                //break; PUT THIS BACK AFTER IMPLEMENTATION
-            default:
-                throw new RuntimeException("invalid type");
-        }
-    }
+    public abstract void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException;
+//        title = (String) in.readObject();
+//        type = (FieldType) in.readObject();
+//
+//        switch (type)
+//        {
+//            case IMAGE:
+//                setContent((byte[]) in.readObject());
+//                break;
+//            case STRING:  
+//                setContent((String) in.readObject());
+//                break;
+//            case VIDEO:
+//                //TODO implement this.
+//                throw new UnsupportedOperationException("Not supported yet.");
+//                //break; PUT THIS BACK AFTER IMPLEMENTATION
+//            case AUDIO:
+//                //TODO implement this.
+//                throw new UnsupportedOperationException("Not supported yet.");
+//                //break; PUT THIS BACK AFTER IMPLEMENTATION
+//            default:
+//                throw new RuntimeException("invalid type");
 
     /** Serializable implementation. */
-    private void writeObject(ObjectOutputStream out) throws IOException
-    {
-        out.writeObject(title);
-        out.writeObject(type);
-        out.writeObject(content);
-    }
+    public abstract void writeObject(ObjectOutputStream out) throws IOException;
+//    {
+//        out.writeObject(title);
+//        out.writeObject(type);
+//        out.writeObject(content);
+//    }
 
     /** Serializable implementation. */
     private void readObjectNoData() throws InvalidObjectException {
@@ -116,7 +113,7 @@ public class FieldWithContent extends Field implements Serializable
         if (type == null)
 		    throw new RuntimeException("type is null.");
 
-        if (contentMatchesType(newContent, type))
+        if (contentMatchesType(newContent))
             content =  newContent;
         else
             throw new RuntimeException("field content is not of type " + type + ".");
@@ -132,33 +129,31 @@ public class FieldWithContent extends Field implements Serializable
      *
      * NOTE: null content is always admissible.
      *
-     * @param content a Serializable content object. This is probably the 'content' field from a
-     *                FieldWithContent object.
-     * @param type  An instance of FieldType. This is probably the 'type' field from a FieldWithContent object.
+     * @param content the item to compare for suitability
      * @return true if the content and type match, false otherwise.
      */
-    public static boolean contentMatchesType(Serializable content, FieldType type)
-    {
-        if (type == null)
-		    throw new RuntimeException("type is null.");
-
-        if (content == null)
-            return true;
-
-        switch (type)
-        {
-            case IMAGE:
-                return (content instanceof byte[]);
-            case VIDEO:
-                //TODO implement this.
-                throw new RuntimeException("Video object type not yet implemented, sorry!");
-            case STRING:
-                return (content instanceof String);
-            case AUDIO:
-                //TODO implement this.
-                throw new RuntimeException("Sound object type not yet implemented, sorry!");
-            default:
-                throw new RuntimeException("field type is invalid.");
-        }
-    }
+    public abstract boolean contentMatchesType(Serializable content);
+//    {
+//        if (type == null)
+//		    throw new RuntimeException("type is null.");
+//
+//        if (content == null)
+//            return true;
+//
+//        switch (type)
+//        {
+//            case IMAGE:
+//                return (content instanceof byte[]);
+//            case VIDEO:
+//                //TODO implement this.
+//                throw new RuntimeException("Video object type not yet implemented, sorry!");
+//            case STRING:
+//                return (content instanceof String);
+//            case AUDIO:
+//                //TODO implement this.
+//                throw new RuntimeException("Sound object type not yet implemented, sorry!");
+//            default:
+//                throw new RuntimeException("field type is invalid.");
+//        }
+//    }
 }

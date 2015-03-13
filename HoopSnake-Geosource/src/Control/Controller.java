@@ -109,7 +109,6 @@ public class Controller {
                 }
             }
         }
-        //TODO parse incident and save its fields
     }
     
     public ArrayList<FieldWithoutContent> getForm(String channelName, String ownerName)
