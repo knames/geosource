@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.view.View;
 
 import hoopsnake.geosource.IncidentActivity;
-import ServerClientShared.FieldType;
 import ServerClientShared.FieldWithContent;
 
 import static junit.framework.Assert.assertEquals;
@@ -20,7 +19,6 @@ public class AppAudioField extends AbstractAppFieldWithContentAndFile{
 
     public AppAudioField(FieldWithContent fieldToWrap) {
         super(fieldToWrap);
-        assertEquals(fieldToWrap.getType(), FieldType.AUDIO);
     }
 
     @Override

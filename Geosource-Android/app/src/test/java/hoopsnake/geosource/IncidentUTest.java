@@ -9,9 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import hoopsnake.geosource.data.AppIncident;
-import hoopsnake.geosource.data.FieldType;
-import hoopsnake.geosource.data.FieldWithContent;
-import hoopsnake.geosource.data.FieldWithoutContent;
+import ServerClientShared.FieldWithContent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

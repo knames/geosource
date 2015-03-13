@@ -55,7 +55,7 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
     @Override
     public boolean contentIsSuitable(Serializable content)
     {
-        return FieldWithContent.contentMatchesType(content, wrappedField.getType());
+        return this.contentIsSuitable(content);
     }
 
     @Override
