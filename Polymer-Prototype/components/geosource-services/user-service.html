@@ -55,20 +55,27 @@
     }
     </style>
     <core-ajax id="ajax"
-      auto
-      url="/api/user.json"
+      url="/api/users/{{gid}}.json"
       on-core-response="{{userLoaded}}"
       handleAs="json">
     </core-ajax>
   </template>
   <script>
   Polymer('user-service', {
+
+    gid: null,
+
     created: function() {
       this.user = null;
     },
     userLoaded: function() {
       // Make a copy of the loaded data
+      console.log('user loaded');
       this.user = this.$.ajax.response;
+    },
+    load: function(gid) {
+      this.gid = gid;
+      this.$.ajax.go();
     }
   });
   </script>

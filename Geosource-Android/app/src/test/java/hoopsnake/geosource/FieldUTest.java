@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ServerClientShared.FieldWithContent;
-import ServerClientShared.FieldType;
 import hoopsnake.geosource.data.AppImageField;
 import hoopsnake.geosource.data.AppStringField;
 
@@ -77,7 +76,7 @@ public class FieldUTest
     public void typeCheckerTest()
     {
 
-        String inputString= "This is a test line.";
+        /*String inputString= "This is a test line.";
         String inputString2="THIS IS A DIFFERENT LINE";
         //Technically not an image,but as long we get the images in this format, this should be valid enough to test.
         //Will probably need to test the conversion in some other class.
@@ -88,8 +87,8 @@ public class FieldUTest
         testImage[2]=3;
 
 
-        AppStringField stringContentTest= new AppStringField(new FieldWithContent("Testing Strings!",FieldType.STRING,true));
-        AppImageField imageContentTest= new AppImageField(new FieldWithContent("Testing Pictures!",FieldType.IMAGE,true));
+        AppStringField stringContentTest= new AppStringField(new FieldWithContent("Testing Strings!","string",true));
+        AppImageField imageContentTest= new AppImageField(new FieldWithContent("Testing Pictures!","image",true));
         boolean comparisonSuccess;
 
 
@@ -114,7 +113,7 @@ public class FieldUTest
             stringContentTest.setContent(101);
             fail("Illegaly added Integer to a String field!");
         }
-        catch(RuntimeException e){};//Expected
+        catch(RuntimeException e){};//Expected*/
 
 
 

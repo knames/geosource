@@ -1,0 +1,95 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<polymer-element name="geosource-account-creator" attributes="channels subscribed">
+
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        color: #FFFFFF;
+      }
+
+      .content {
+        max-width: 400px;
+        padding: 20px;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      paper-button {
+        color: #4285f4;
+        margin: 20px;
+        margin-top: 0;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      #description {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      paper-input {
+        margin-bottom: 10px;
+      }
+
+    </style>
+
+    <div vertical layout>
+      <h2 class="header">Create an Account</h2>
+      <div class="content" vertical layout>
+        
+      <div id="description">
+        In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
+      </div>
+
+        <paper-input floating label="Enter a username..."></paper-input>
+
+      </div>
+    </div>
+
+    <div class="footer" horizontal around-justifed layout>
+      <paper-button flex on-tap="{{submit}}">Submit</paper-button>
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    submit: function() {
+      this.fire('finished');
+    }
+
+  });
+  </script>
+  
+</polymer-element>

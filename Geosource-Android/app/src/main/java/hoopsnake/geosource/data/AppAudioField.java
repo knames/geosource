@@ -8,6 +8,9 @@ import android.view.View;
 import ServerClientShared.AudioFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 
+import static junit.framework.Assert.assertEquals;
+
+
 /**
  * Created by wsv759 on 07/03/15.
  *
