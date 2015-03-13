@@ -6,6 +6,8 @@
 <link rel="import" href="../google-apis/google-plusone-api.html">
 <link rel="import" href="../core-item/core-item.html">
 <link rel="import" href="../geosource-services/user-service.html">
+<link rel="import" href="../geosource-account-creator/geosource-account-creator.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 
 <polymer-element name="geosource-account" attributes="uid user">
 
@@ -41,6 +43,10 @@
       }
     </style>
 
+    <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
+      <geosource-account-creator on-finished="{{closeDialog}}"></geosource-account-creator>
+    </paper-dialog>
+
     <user-service user="{{user}}"></user-service>
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
       <google-signin theme="light" 
@@ -61,6 +67,12 @@
       uid: null,
       user: null,
 
+      ready: function()  {
+        var dialog = this.$.create_dialog;
+        this.$.create_dialog.toggle();
+        console.log('login dialog', dialog);
+      },
+
       signIn: function(event, details, sender) {
         var geosource_account = this;
 
@@ -75,6 +87,10 @@
           });
         });
       },
+
+      closeDialog: function() {
+        this.$.create_dialog.close();
+      }
 
     });
   </script>
