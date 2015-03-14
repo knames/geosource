@@ -7,10 +7,10 @@
 	<classpathentry kind="src" path="Geosource-Android/app/build/generated/source/r/debug"/>
 	<classpathentry kind="src" path="Geosource-Android/app/src/main/java"/>
 	<classpathentry kind="src" path="Geosource-Android/app/src/test/java"/>
+	<classpathentry kind="src" path="ServerClientShared"/>
 	<classpathentry kind="src" path="HoopSnake-Geosource/src"/>
 	<classpathentry kind="src" path="ListViewPlanets/app/src/androidTest/java"/>
 	<classpathentry kind="src" path="ListViewPlanets/app/src/main/java"/>
-	<classpathentry kind="src" path="ServerClientShared"/>
 	<classpathentry kind="lib" path="CameraTest/gradle/wrapper/gradle-wrapper.jar"/>
 	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"/>
 	<classpathentry kind="lib" path="Geosource-Android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"/>
