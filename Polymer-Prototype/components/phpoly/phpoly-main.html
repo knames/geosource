@@ -13,11 +13,15 @@
         </style>
         <core-ajax id="ajax"
         auto
-        url="http://localhost:8000/components/phpoly/dbtest.php"
+        url="http://localhost:4567/components/phpoly/dbtest.php"
         on-core-response="{{categoriesLoaded}}"
         handleAs="json">
         </core-ajax>
     </template>
+
+
+
+    
     <script>
         Polymer(
         {
