@@ -12,8 +12,6 @@ import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -22,6 +20,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+
+import ServerClientShared.CompressedBlockInputStream;
+import ServerClientShared.CompressedBlockOutputStream;
 
 /**
  *
@@ -32,6 +33,7 @@ import javax.crypto.spec.DESKeySpec;
  */
 public class SocketWrapper {
 
+    private static final int COMPRESSION_BLOCK_SIZE = 1024;
     private int portNum = 9001;
     //TODO change the IP address to come from a config file, or some other option.
     private String ipaddress = "104.236.112.44";
@@ -78,11 +80,11 @@ public class SocketWrapper {
             InputStream inStream = outSocket.getInputStream();
 
             CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
-            GZIPOutputStream zipOut = new GZIPOutputStream(cipherOut);
+            CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, COMPRESSION_BLOCK_SIZE);
             out = new ObjectOutputStream(zipOut);
 
             CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
-            GZIPInputStream zipIn = new GZIPInputStream(cipherIn);
+            CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
             in = new ObjectInputStream(zipIn);
 
             Log.i(logTag, "Stream Created");

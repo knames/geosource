@@ -22,6 +22,10 @@ public class AppStringField extends AbstractAppFieldWithContent {
 
     @Override
     public String getContentStringRepresentation() {
+        //TODO remove the null case here. This is just for testing.
+        if (wrappedField.getContent() == null)
+            return "empty string here.";
+
         return (String) wrappedField.getContent();
     }
 

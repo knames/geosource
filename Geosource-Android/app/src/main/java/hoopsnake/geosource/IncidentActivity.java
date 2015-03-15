@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -117,16 +118,16 @@ public class IncidentActivity extends ActionBarActivity {
         int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
-            //TODO get rid of the commented test case.
+            //TODO change this from a test case to a regular case.
             assertNotNull(field);
-//            TextView tv = new TextView(IncidentActivity.this);
-//            tv.setText(field.getContentStringRepresentation());
-            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-            assertNotNull(v);
+            TextView tv = new TextView(IncidentActivity.this);
+            tv.setText(field.getContentStringRepresentation());
+//            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+//            assertNotNull(v);
 
-            incidentDisplay.addView(v);
+            incidentDisplay.addView(tv);
             //All views are given a tag that is equal to their position in the linear layout.
-            v.setTag(i);
+            tv.setTag(i);
             i++;
         }
     }
