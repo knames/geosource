@@ -82,32 +82,8 @@ public class Controller {
         int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName());
         for (FieldWithContent field : incident.getFieldList())
         {
-            switch(field.getType())
-            {
-                case IMAGE:
-                {
-                    String filePath = fileAccess.savePicture((byte[])field.getContent());
-                    dbAccess.savePictureField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
-                    break;
-                }
-                case STRING:
-                {
-                    dbAccess.saveStringField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), (String)field.getContent());
-                    break;
-                }
-                case VIDEO:
-                {
-                    break;
-                }
-                case AUDIO:
-                {
-                    break;
-                }
-                case OPTION_LIST:
-                {
-                    break;
-                }
-            }
+            String filePath = fileAccess.saveField(field.getContent());
+            dbAccess.saveField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
         }
     }
     
