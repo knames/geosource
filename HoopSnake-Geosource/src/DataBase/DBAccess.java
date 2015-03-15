@@ -65,35 +65,35 @@ public class DBAccess {
         }
         return filePath;
     }
+//    
+//    /**
+//     * saves a string to it's field position on a channel's database table
+//     * @param channelName the channel who's table will be saved to
+//     * @param ownerName the creator of the channel, for uniqueness
+//     * @param postNum the number of the post we are populating
+//     * @param fieldName the name of the field we are saving
+//     * @param content the string to save
+//     */
+//    public void saveStringField(String channelName, String ownerName, int postNum, String fieldName, String content)
+//    {
+//        try (Statement statement = dbconnection.createStatement()) {
+//            statement.execute(Queries.saveStringField(channelName, ownerName, postNum, fieldName, content));
+//        }
+//        catch (SQLException SQLe)
+//        {
+//            System.err.println("Saving string field failed");
+//        }
+//    }
     
     /**
-     * saves a string to it's field position on a channel's database table
-     * @param channelName the channel who's table will be saved to
-     * @param ownerName the creator of the channel, for uniqueness
-     * @param postNum the number of the post we are populating
-     * @param fieldName the name of the field we are saving
-     * @param content the string to save
-     */
-    public void saveStringField(String channelName, String ownerName, int postNum, String fieldName, String content)
-    {
-        try (Statement statement = dbconnection.createStatement()) {
-            statement.execute(Queries.saveStringField(channelName, ownerName, postNum, fieldName, content));
-        }
-        catch (SQLException SQLe)
-        {
-            System.err.println("Saving string field failed");
-        }
-    }
-    
-    /**
-     * saves the filepath to the database for a picture previously saved to the filesystem
+     * saves the filepath to the database for a Field's contents previously saved to the filesystem
      * @param channelName the name of the channel being posted to
      * @param ownerName the creator of the channel, used for uniqueness
      * @param postNum the number of the post we are populating
      * @param fieldName the title of this picture's field
      * @param filePath the filepath to be posted
      */
-    public void savePictureField(String channelName, String ownerName, int postNum, String fieldName, String filePath)
+    public void saveField(String channelName, String ownerName, int postNum, String fieldName, String filePath)
     {
         try (Statement statement = dbconnection.createStatement()) {
             statement.execute(Queries.savePictureField(channelName, ownerName, postNum, fieldName, filePath));

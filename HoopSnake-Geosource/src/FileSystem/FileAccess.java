@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -36,16 +38,16 @@ public class FileAccess {
         }
     }
     
-    public String savePicture(byte[] picture)
+    public String saveField(Serializable fieldContent)
     {
-        UUID fileUUID = UUID.nameUUIDFromBytes(picture);
+        UUID fileUUID = UUID.randomUUID();
         String fileName = fileUUID.toString();
-        try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
-            fileOut.write(picture);
+        try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            fileOut.writeObject(fieldContent);
         }
         catch (IOException IOe)
         {
-            System.err.println("Error attempting to write picture file");
+            System.err.println("Error attempting to write field");
         }
         return fileName;
     }

@@ -3,7 +3,7 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <link rel="import" href="../../components/core-ajax/core-ajax.html">
 
-<polymer-element name="phpoly-main">
+<polymer-element name="phpoly-main" attributes="categories">
 
     <template>
         <style>
@@ -13,11 +13,15 @@
         </style>
         <core-ajax id="ajax"
         auto
-        url="http://localhost:8000/components/phpoly/dbtest.php"
+        url="http://localhost:4567/components/phpoly/dbtest.php"
         on-core-response="{{categoriesLoaded}}"
         handleAs="json">
         </core-ajax>
     </template>
+
+
+
+    
     <script>
         Polymer(
         {
@@ -34,6 +38,3 @@
         });
     </script>
 </polymer-element>
-
-
-
