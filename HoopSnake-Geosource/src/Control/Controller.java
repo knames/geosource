@@ -8,6 +8,7 @@ import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,8 +49,10 @@ public class Controller {
         
         while (true)
         {
-            for (Future<Incident> incident : list)
+            ListIterator<Future<Incident>> iter = list.listIterator();
+            while (iter.hasNext())
             {
+                Future<Incident> incident = iter.next();
                 if (incident.isDone()) //filter out completed socket tasks
                 {
                     try
@@ -65,8 +68,8 @@ public class Controller {
                     {
                         throw new RuntimeException("Socket Crashed:" + Ee.getCause().getMessage());
                     }
-                    list.remove(incident); //remove completed task
-                    list.add(exec.submit(new CommSocket(this))); //replace new socket
+                    iter.remove();
+                    iter.add(exec.submit(new CommSocket(this))); //replace new socket
                 }
             }
         }
