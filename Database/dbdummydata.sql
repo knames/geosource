@@ -11,6 +11,10 @@ insert into channels values ("frank and beans", "frank", 2, true);
 insert into channels values ("you only yolo once", "xxLegolasxxYoloxx", 1, true);
 insert into channels values ("pothole", "cindy", 1, true);
 
+insert into channelfavs values ("okenso", "pothole", "cindy");
+insert into channelfavs values ("okenso", "pothole", "okenso");
+insert into channelfavs values ("okenso", "okenso's channel", "okenso");
+
 CREATE TABLE posts_okenso_pothole (
 	p_poster varchar(25) NOT NULL,
 	p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,

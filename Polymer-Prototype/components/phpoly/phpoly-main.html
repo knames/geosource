@@ -13,7 +13,7 @@
         </style>
         <core-ajax id="ajax"
         auto
-        url="http://localhost:4567/components/phpoly/dbtest.php"
+        url="http://localhost:4567/components/phpoly/dbgetusername.php"
         on-core-response="{{categoriesLoaded}}"
         handleAs="json">
         </core-ajax>
@@ -36,5 +36,8 @@
                 console.log(this.categories);
             }
         });
+
+    //<url="http://localhost:4567/components/phpoly/dbgetusername.php">
+    //url="http://localhost:4567/components/phpoly/dbtest.php"
     </script>
 </polymer-element>

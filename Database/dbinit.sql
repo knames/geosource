@@ -24,8 +24,10 @@ CREATE TABLE channelmods (
 CREATE TABLE channelfavs (
 	ch_fav_username varchar(25) NOT NULL,
 	ch_fav_chname varchar(50) NOT NULL,
+	ch_fav_chowner varchar(25) NOT NULL,
 	FOREIGN KEY (ch_fav_username) REFERENCES users (u_username),
-	FOREIGN KEY (ch_fav_chname) REFERENCES channels (ch_name)
+	FOREIGN KEY (ch_fav_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (ch_fav_chowner) REFERENCES users (u_username)
 	);
 
 
