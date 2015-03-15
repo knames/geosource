@@ -65,11 +65,6 @@ public interface AppFieldWithContent {
      */
     public View getContentViewRepresentation(final int requestCodeForIntent);
 
-    //TODO uncomment this if it is needed.
-//    /** Extract a vanilla field with content, for sending to the server. */
-//    public FieldWithContent toFieldWithContent();
-//
-
     /**
      * When the result from this field being selected by the UI is returned, execute the correct action.
      * @param resultCode the result, encoded as an Activity RESULT_* constant.
