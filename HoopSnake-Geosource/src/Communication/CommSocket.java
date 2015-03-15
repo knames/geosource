@@ -91,12 +91,12 @@ public class CommSocket implements Callable<Incident>{
             System.out.println("Client Connected");
             
             OutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
-            CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, compressionBlockSize);
-            out = new ObjectOutputStream(zipOut);
+            //CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, compressionBlockSize);
+            out = new ObjectOutputStream(cipherOut);
             
             CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
-            CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
-            in = new ObjectInputStream(zipIn);
+            //CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
+            in = new ObjectInputStream(cipherIn);
             
             //Read command
             IOCommand command = (IOCommand)in.readObject();
