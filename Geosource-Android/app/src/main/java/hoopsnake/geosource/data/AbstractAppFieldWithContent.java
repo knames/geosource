@@ -3,6 +3,7 @@ package hoopsnake.geosource.data;
 import java.io.Serializable;
 
 import ServerClientShared.FieldWithContent;
+import hoopsnake.geosource.IncidentActivity;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -28,16 +29,24 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
     final FieldWithContent wrappedField;
 
     /**
+     * The activity that will be displaying this field on the UI.
+     */
+    final IncidentActivity activity;
+
+    /**
      * Construct a new AppFieldWithContent, wrapping (not copying) a FieldWithContent.
      * Thus the reference to that FieldWithContent is guaranteed to remain up to date.
      * @param fieldToWrap a FieldWithContent that will be wrapped (not copied).
+     * @param activity
      * @precond fieldToWrap is not null, and is of the correct type.
      * @postcond a new AppFieldWithContent is created with fieldToWrap as an underlying field.
      */
-    public AbstractAppFieldWithContent(FieldWithContent fieldToWrap)
+    public AbstractAppFieldWithContent(FieldWithContent fieldToWrap, IncidentActivity activity)
     {
         assertNotNull(fieldToWrap);
+        assertNotNull(activity);
         this.wrappedField = fieldToWrap;
+        this.activity = activity;
     }
 
     @Override

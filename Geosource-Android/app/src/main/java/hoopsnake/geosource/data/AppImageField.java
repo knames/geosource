@@ -18,8 +18,8 @@ import hoopsnake.geosource.media.MediaManagement;
  * Implementation of an app field with type Image.
  */
 public class AppImageField extends AbstractAppFieldWithContentAndFile {
-    public AppImageField(ImageFieldWithContent fieldToWrap) {
-        super(fieldToWrap);
+    public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
+        super(fieldToWrap, activity);
     }
 
     @Override
@@ -29,13 +29,10 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public String getPromptStringForUi() {
-        return "Click to take a picture";
-    }
-
-    @Override
-    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
+    public View getContentViewRepresentation(final int requestCodeForIntent) {
         ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+        iv.setImageDrawable(super.getDrawableIconFromSVGResource(R.raw.camera_alt));
+        iv.setClickable(true);
 
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +60,7 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public void onResultFromSelection(Activity activity, int resultCode, Intent data) {
+    public void onResultFromSelection(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             // Image captured and saved to fileUri specified in the Intent
 

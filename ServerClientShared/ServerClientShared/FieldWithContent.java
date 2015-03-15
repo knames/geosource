@@ -63,7 +63,7 @@ public abstract class FieldWithContent extends Field
 
     /**
      * Sets content to the specified value, but only if newContent matches the current type.
-     * newContent can be null.
+     * newContent can always be null.
      * @param newContent a Serializable object.
      */
     public void setContent(Serializable newContent)
@@ -71,7 +71,7 @@ public abstract class FieldWithContent extends Field
         if (getType() == null)
 		    throw new RuntimeException("type is null.");
 
-        if (contentMatchesType(newContent))
+        if (content == null || contentMatchesType(newContent))
             content =  newContent;
         else
             throw new RuntimeException("field content is not of type " + getType() + ".");

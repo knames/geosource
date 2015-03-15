@@ -19,8 +19,8 @@ import hoopsnake.geosource.media.MediaManagement;
  */
 public class AppVideoField extends AbstractAppFieldWithContentAndFile {
 
-    public AppVideoField(VideoFieldWithContent fieldToWrap) {
-        super(fieldToWrap);
+    public AppVideoField(VideoFieldWithContent fieldToWrap, IncidentActivity activity) {
+        super(fieldToWrap, activity);
     }
 
     @Override
@@ -30,12 +30,7 @@ public class AppVideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public String getPromptStringForUi() {
-        return "Click to record a video.";
-    }
-
-    @Override
-    public View getContentViewRepresentation(final IncidentActivity activity,final int requestCodeForIntent) {
+    public View getContentViewRepresentation(final int requestCodeForIntent) {
         ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
 
 
@@ -65,7 +60,7 @@ public class AppVideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public void onResultFromSelection(Activity activity, int resultCode, Intent data) {
+    public void onResultFromSelection(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             // Video captured and saved to fileUri specified in the Intent
             Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();

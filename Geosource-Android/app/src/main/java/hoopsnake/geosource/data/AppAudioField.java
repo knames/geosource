@@ -1,14 +1,11 @@
 package hoopsnake.geosource.data;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 
 import ServerClientShared.AudioFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
-
-import static junit.framework.Assert.assertEquals;
 
 
 /**
@@ -18,8 +15,8 @@ import static junit.framework.Assert.assertEquals;
  */
 public class AppAudioField extends AbstractAppFieldWithContentAndFile{
 
-    public AppAudioField(AudioFieldWithContent fieldToWrap) {
-        super(fieldToWrap);
+    public AppAudioField(AudioFieldWithContent fieldToWrap, IncidentActivity activity) {
+        super(fieldToWrap, activity);
     }
 
     @Override
@@ -29,17 +26,12 @@ public class AppAudioField extends AbstractAppFieldWithContentAndFile{
     }
 
     @Override
-    public String getPromptStringForUi() {
-        return "Click to record audio.";
-    }
-
-    @Override
-    public View getContentViewRepresentation(IncidentActivity activity, int requestCodeForIntent) {
+    public View getContentViewRepresentation(int requestCodeForIntent) {
         return null;
     }
 
     @Override
-    public void onResultFromSelection(Activity activity, int resultCode, Intent data) {
+    public void onResultFromSelection(int resultCode, Intent data) {
         //TODO implement this.
     }
 }
