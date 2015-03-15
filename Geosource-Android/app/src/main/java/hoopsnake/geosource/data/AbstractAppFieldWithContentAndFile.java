@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
@@ -8,6 +9,7 @@ import com.larvalabs.svgandroid.SVGParser;
 
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
+import hoopsnake.geosource.R;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -72,6 +74,7 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
     }
 
     /**
+     * //TODO This doesn't work yet, at least not on emulator?
      * //TODO move this somewhere more suitable.
      * Draw an icon from a svg file.
      * @param svgFileResourceCode the R.raw.* resource code defining the svg file to draw.
@@ -79,7 +82,9 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
      */
     Drawable getDrawableIconFromSVGResource(int svgFileResourceCode)
     {
-        SVG svg = SVGParser.getSVGFromResource(activity.getResources(), svgFileResourceCode);
+        Resources resources = activity.getResources();
+        assertNotNull(resources);
+        SVG svg = SVGParser.getSVGFromResource(resources, R.raw.mic);
         return svg.createPictureDrawable();
     }
 

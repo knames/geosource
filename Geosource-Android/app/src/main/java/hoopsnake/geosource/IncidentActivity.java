@@ -20,7 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
-import ServerClientShared.StringFieldWithoutContent;
 import hoopsnake.geosource.comm.SocketResult;
 import hoopsnake.geosource.comm.SocketWrapper;
 import hoopsnake.geosource.data.AppFieldWithContent;
@@ -91,16 +90,16 @@ public class IncidentActivity extends ActionBarActivity {
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
         //TODO uncomment this for real app.
-//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
 
         //TODO remove this mockedSpec eventually! It is just for testing.
-        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-        mockedSpec.add(new StringFieldWithoutContent("Title", true));
-        mockedSpec.add(new StringFieldWithoutContent("Description", false));
-        mockedSpec.add(new StringFieldWithoutContent("date", true));
-
-        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner, IncidentActivity.this);
-        renderIncident();
+//        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
+//        mockedSpec.add(new StringFieldWithoutContent("Title", true));
+//        mockedSpec.add(new ImageFieldWithoutContent("Image", true));
+//        mockedSpec.add(new StringFieldWithoutContent("Description", false));
+//
+//        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner, IncidentActivity.this);
+//        renderIncident();
     }
 
     /**
@@ -295,10 +294,9 @@ public class IncidentActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(SocketResult result) {
-            String failedToDownload = String.format(getString(R.string.failed_to_download_incident_spec_for_channel), channelName);
-
-            makeToastAndLogOnSocketResult(getString(R.string.downloaded_incident_spec_for_channel),
-                    failedToDownload,
+            makeToastAndLogOnSocketResult(
+                    getString(R.string.downloaded_incident_spec_for_channel) + channelName + ".",
+                    getString(R.string.failed_to_download_incident_spec_for_channel)  + channelName + ".",
                     result,
                     context,
                     LOG_TAG);
