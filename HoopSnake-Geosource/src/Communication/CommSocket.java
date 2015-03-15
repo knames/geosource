@@ -2,7 +2,6 @@ package Communication;
 
 import Control.Controller;
 import ServerClientShared.Commands.IOCommand;
-import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import java.io.IOException;
@@ -22,9 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
 
@@ -35,6 +31,7 @@ import javax.crypto.NoSuchPaddingException;
 public class CommSocket implements Callable<Incident>{
     
     public static int portNum = 0;
+    private final static int compressionBlockSize = 1024; //indicates the size in bytes of the blocks that are sent over the stream
     
     private static Controller controller = null;
 
@@ -72,6 +69,7 @@ public class CommSocket implements Callable<Incident>{
      * filled future, allowing later checking for data once the task completes
      * @return any Incident submission returned by a connection to an android app
      */
+    @Override
     public Incident call()
     {
         try
@@ -92,12 +90,12 @@ public class CommSocket implements Callable<Incident>{
             InputStream inStream = clientSocket.getInputStream();
             System.out.println("Client Connected");
             
-            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
-            GZIPOutputStream zipOut = new GZIPOutputStream(cipherOut);
+            OutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
+            CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, compressionBlockSize);
             out = new ObjectOutputStream(zipOut);
             
             CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
-            GZIPInputStream zipIn = new GZIPInputStream(cipherIn);
+            CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
             in = new ObjectInputStream(zipIn);
             
             //Read command
@@ -108,14 +106,10 @@ public class CommSocket implements Callable<Incident>{
             {
                 case GET_FORM:
                 {
-                    System.out.println("111");
                     String channelName = in.readUTF();
                     String ownerName = in.readUTF();
-                    System.out.println("112");
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
-                    System.out.println("114");
                     out.writeObject(formList);
-                    System.out.println("116");
                     return null;
                 }
                 case SEND_INCIDENT:
@@ -124,10 +118,12 @@ public class CommSocket implements Callable<Incident>{
                     return newIncident;
                 }
             }
+            clientSocket.close();
         }
         catch (IOException IOe)
         {
-            System.err.println("IO Exception: " + IOe.getMessage());
+            System.err.println("IO Exception: ");
+            IOe.printStackTrace();
         }
         catch (InvalidKeyException IKe)
         {
@@ -142,9 +138,9 @@ public class CommSocket implements Callable<Incident>{
         catch (NoSuchPaddingException NSPe) {
             System.err.println("No Such Padding");
         }
-        finally
-        {
+        finally {
             return null;
         }
+
     }
 }
