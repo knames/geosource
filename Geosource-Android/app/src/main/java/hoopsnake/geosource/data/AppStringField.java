@@ -1,6 +1,5 @@
 package hoopsnake.geosource.data;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,24 +16,21 @@ import hoopsnake.geosource.R;
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
 public class AppStringField extends AbstractAppFieldWithContent {
-    //TODO hardcoded until we get params implemented.
-    public int maxLength = 140;
-
-    public AppStringField(StringFieldWithContent fieldToWrap) {
-        super(fieldToWrap);
+    public AppStringField(StringFieldWithContent fieldToWrap, IncidentActivity activity) {
+        super(fieldToWrap, activity);
     }
 
     @Override
     public String getContentStringRepresentation() {
-        if (wrappedField.getContent() == null)
-            return "this is an empty string";
-        else
-            return (String) wrappedField.getContent();
+        return (String) wrappedField.getContent();
     }
 
-    @Override
-    public String getPromptStringForUi() {
-        return "Click to enter text.";
+    /**
+     *
+     * @return a prompt string to be used by the UI when this class has no content. Guaranteed not null.
+     */
+    private String getPromptStringForUi() {
+        return activity.getString(R.string.prompt_enter_text);
     }
 
     @Override
@@ -43,12 +39,18 @@ public class AppStringField extends AbstractAppFieldWithContent {
     }
 
     @Override
-    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent) {
-        EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
+    public View getContentViewRepresentation(final int requestCodeForIntent) {
+        //TODO both these lines seem to work for the same purpose. Which is better?
+//        EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
+        EditText contentEditor = (EditText) activity.findViewById(R.id.field_edit_text);
         String content = (String) wrappedField.getContent();
         //TODO check the length of the text.
         if (content != null)
             contentEditor.setText(content);
+        else
+            contentEditor.setHint(getPromptStringForUi());
+        contentEditor.setClickable(true);
+
         contentEditor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -58,6 +60,9 @@ public class AppStringField extends AbstractAppFieldWithContent {
                 String text = s.toString();
                 if (contentIsSuitable(text))
                     setContent(text);
+                else
+                    //Their new entry is not valid, but they have still eliminated their old entry. Thus it becomes null.
+                    setContent(null);
             }
 
             @Override
@@ -68,7 +73,7 @@ public class AppStringField extends AbstractAppFieldWithContent {
     }
 
     @Override
-    public void onResultFromSelection(Activity activity, int resultCode, Intent data) {
+    public void onResultFromSelection(int resultCode, Intent data) {
         //TODO implement this.
     }
 }

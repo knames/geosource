@@ -1,8 +1,13 @@
 package hoopsnake.geosource.data;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
+
 import ServerClientShared.FieldWithContent;
+import hoopsnake.geosource.IncidentActivity;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -14,9 +19,9 @@ import static junit.framework.Assert.assertNotNull;
  */
 public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFieldWithContent {
 
-    public AbstractAppFieldWithContentAndFile(FieldWithContent fieldToWrap)
+    public AbstractAppFieldWithContentAndFile(FieldWithContent fieldToWrap, IncidentActivity activity)
     {
-        super(fieldToWrap);
+        super(fieldToWrap, activity);
     }
 
     /**
@@ -64,6 +69,18 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
             this.contentFileUri = contentFileUri;
         else
             throw new RuntimeException(contentFileUri.toString() + "has incorrect file type.");
+    }
+
+    /**
+     * //TODO move this somewhere more suitable.
+     * Draw an icon from a svg file.
+     * @param svgFileResourceCode the R.raw.* resource code defining the svg file to draw.
+     * @return the icon to draw, in Drawable format.
+     */
+    Drawable getDrawableIconFromSVGResource(int svgFileResourceCode)
+    {
+        SVG svg = SVGParser.getSVGFromResource(activity.getResources(), svgFileResourceCode);
+        return svg.createPictureDrawable();
     }
 
     /**

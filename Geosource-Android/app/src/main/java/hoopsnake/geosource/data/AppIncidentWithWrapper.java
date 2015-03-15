@@ -13,6 +13,7 @@ import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
+import hoopsnake.geosource.IncidentActivity;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -51,6 +52,8 @@ public class AppIncidentWithWrapper implements AppIncident {
     /**
      * @param fieldWithoutContentList a list of FieldWithoutContent.
      * @param channelName the name of the channel corresponding to the new incident.
+     * @param channelOwner then name of the channel owner corresponding to the new incident.
+     * @param activity the activity displaying this AppIncident.
      * @precond fieldWithoutContentList and channelName are not null. And each FieldWithoutContent is also
      *  fully constructed.
      * @postcond
@@ -68,7 +71,7 @@ public class AppIncidentWithWrapper implements AppIncident {
      * Thus an Incident is fully constructed at the same time as this AppIncident, and will share all its
      * future modifications (and all the new content that is added).
      */
-    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner)
+    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner, IncidentActivity activity)
     {
         int listSize = fieldWithoutContentList.size();
         fieldList = new ArrayList<AppFieldWithContent>(listSize);
@@ -85,19 +88,19 @@ public class AppIncidentWithWrapper implements AppIncident {
             {
                 case ImageFieldWithoutContent.TYPE:
                     newField = new ImageFieldWithContent((ImageFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppImageField((ImageFieldWithContent) newField);
+                    newFieldWrapper = new AppImageField((ImageFieldWithContent) newField, activity);
                     break;
                 case StringFieldWithoutContent.TYPE:
                     newField = new StringFieldWithContent((StringFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppStringField((StringFieldWithContent) newField);
+                    newFieldWrapper = new AppStringField((StringFieldWithContent) newField, activity);
                     break;
                 case VideoFieldWithoutContent.TYPE:
                     newField = new VideoFieldWithContent((VideoFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) newField);
+                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) newField, activity);
                     break;
                 case AudioFieldWithoutContent.TYPE:
                     newField = new AudioFieldWithContent((AudioFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField);
+                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");

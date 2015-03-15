@@ -89,7 +89,7 @@ class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
         if (f.contentIsFilled())
             prompt.setText(f.getContentStringRepresentation());
         else
-            prompt.setText(f.getPromptStringForUi());
+            prompt.setText("nothing here");
 
         return v;
     }

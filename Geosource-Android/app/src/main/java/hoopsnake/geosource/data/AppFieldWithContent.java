@@ -1,12 +1,9 @@
 package hoopsnake.geosource.data;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 
 import java.io.Serializable;
-
-import hoopsnake.geosource.IncidentActivity;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -22,6 +19,7 @@ public interface AppFieldWithContent {
      * @return the title of this field.
      */
     public String getTitle();
+
     /**
      *
      * @return true if this is a required field, false otherwise.
@@ -49,13 +47,6 @@ public interface AppFieldWithContent {
     public String getContentStringRepresentation();
 
     /**
-     *
-     * @return a prompt string to be displayed to the ui, describing what occurs when the field's
-     *  associated view is selected.
-     */
-    public String getPromptStringForUi();
-
-    /**
      * @param content an object that is intended to be serialized and sent back to the server,
      *          presumably as part of this field.
      * @precond content may be any implementation of Serializable, and could be null.
@@ -67,13 +58,12 @@ public interface AppFieldWithContent {
     public boolean contentIsSuitable(Serializable content);
 
     /**
-     * @param activity The UI to be populated.
      * @param requestCodeForIntent a request code by which the returned view will be able to launch new activities.
      * @precond context is not null.
      * @postcond see return.
      * @return a View representing this field, to be displayed by the UI.
      */
-    public View getContentViewRepresentation(final IncidentActivity activity, final int requestCodeForIntent);
+    public View getContentViewRepresentation(final int requestCodeForIntent);
 
     //TODO uncomment this if it is needed.
 //    /** Extract a vanilla field with content, for sending to the server. */
@@ -82,12 +72,11 @@ public interface AppFieldWithContent {
 
     /**
      * When the result from this field being selected by the UI is returned, execute the correct action.
-     * @param activity the UI which received the result.
      * @param resultCode the result, encoded as an Activity RESULT_* constant.
      * @param data any data that comes with the result.
      * @precond activity is not null, and resultCode consists of one of the predefined Activity.RESULT_* constants.
      *  data may be null.
      * @postcond the correct action is executed for the UI in question.
      */
-    public void onResultFromSelection(Activity activity, int resultCode, Intent data);
+    public void onResultFromSelection(int resultCode, Intent data);
 }
