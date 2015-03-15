@@ -1,31 +1,18 @@
 package hoopsnake.geosource;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-import ServerClientShared.Commands.IOCommand;
-import ServerClientShared.FieldWithoutContent;
-import ServerClientShared.Incident;
-import hoopsnake.geosource.comm.SocketResult;
-import hoopsnake.geosource.comm.SocketWrapper;
+import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
-import hoopsnake.geosource.data.AppIncidentWithWrapper;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -48,6 +35,10 @@ public class IncidentActivity extends ActionBarActivity {
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
+
+    public void setIncident(AppIncident incident) {
+        this.incident = incident;
+    }
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -108,7 +99,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @postcond each field's custom view is added to the linear layout, replacing all the old
      * views in the linear layout (if they existed).
      */
-    private void renderIncident()
+    public void renderIncident()
     {
         assertNotNull(incident);
         assertNotNull(incident.getFieldList());
@@ -214,214 +205,6 @@ public class IncidentActivity extends ActionBarActivity {
             taskUsingActivity.run();
 
             doneClicking();
-        }
-    }
-
-    /**
-     * Created by wsv759 on 19/02/15.
-     * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
-     */
-    private class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
-        private final Context context;
-
-        String channelName, channelOwner;
-        public static final String LOG_TAG = "geosource comm";
-
-        public TaskReceiveIncidentSpec(Context context)
-        {
-            this.context = context;
-            assertNotNull(context);
-        }
-
-        protected SocketResult doInBackground(String... params) {
-            ObjectOutputStream outStream; //wrapped stream to client
-
-            ObjectInputStream inStream; //stream from client
-            Socket outSocket;
-
-            channelName = params[0];
-            channelOwner = params[1];
-            assertNotNull(channelName);
-            assertNotNull(channelOwner);
-
-            try //create socket
-            {
-                SocketWrapper socketWrapper = new SocketWrapper();
-                outSocket = socketWrapper.getOutSocket();
-                outStream = socketWrapper.getOut();
-                inStream = socketWrapper.getIn();
-            }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-
-                return SocketResult.FAILED_CONNECTION;
-            }
-
-
-            ArrayList<FieldWithoutContent> fieldsToBeFilled;
-            try
-            {
-                //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(LOG_TAG, "Attempting to send incident.");
-                outStream.writeObject(IOCommand.GET_FORM);
-                outStream.writeUTF(channelName);
-                outStream.writeUTF(channelOwner);
-
-                Log.i(LOG_TAG, "Retrieving reply...");
-                fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
-
-                inStream.close();
-                outStream.close();
-                outSocket.close();
-                Log.i(LOG_TAG, "Connection Closed");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                return SocketResult.UNKNOWN_ERROR;
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-
-                return SocketResult.CLASS_NOT_FOUND;
-
-            }
-
-            //TODO some of this code should maybe go on the ui thread.
-            incident = new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner, IncidentActivity.this);
-
-            return SocketResult.SUCCESS;
-        }
-
-        protected void onPostExecute(SocketResult result) {
-            makeToastAndLogOnSocketResult(
-                    getString(R.string.downloaded_incident_spec_for_channel) + channelName + ".",
-                    getString(R.string.failed_to_download_incident_spec_for_channel)  + channelName + ".",
-                    result,
-                    context,
-                    LOG_TAG);
-
-            if (result.equals(SocketResult.SUCCESS)) {
-                renderIncident();
-            }
-        }
-    }
-
-    /**
-     * Created by wsv759 on 19/02/15.
-     * Task to send a new completed incident to the server.
-     */
-    private class TaskSendIncident extends AsyncTask<Incident, Void, SocketResult> {
-
-        private final Context context;
-        public static final String LOG_TAG = "geosource comm";
-
-        public TaskSendIncident(Context context)
-        {
-            this.context = context;
-            assertNotNull(context);
-        }
-
-        protected SocketResult doInBackground(Incident... params) {
-            ObjectOutputStream outStream; //wrapped stream to client
-
-            ObjectInputStream inStream; //stream from client
-            Socket outSocket;
-
-            Incident incidentToSend = params[0];
-            assertNotNull(incidentToSend);
-
-            try //create socket
-            {
-                SocketWrapper socketWrapper = new SocketWrapper();
-                outSocket = socketWrapper.getOutSocket();
-                outStream = socketWrapper.getOut();
-                inStream = socketWrapper.getIn();
-            }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-
-                return SocketResult.FAILED_CONNECTION;
-            }
-
-
-            try
-            {
-                //TODO identify with the server whether I am asking for an incident spec or sending an incident.
-                Log.i(LOG_TAG, "Attempting to send incident.");
-                outStream.writeObject(IOCommand.SEND_INCIDENT);
-                outStream.writeObject(incidentToSend);
-
-                //TODO is a reply really not necessary?
-
-                inStream.close();
-                outStream.close();
-                outSocket.close();
-                Log.i(LOG_TAG, "Connection Closed");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                return SocketResult.UNKNOWN_ERROR;
-            }
-            //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
-//            catch (ClassNotFoundException e) {
-//                Log.e(LOG_TAG, "incoming class not found.");
-//                e.printStackTrace();
-//
-//                return SocketResult.CLASS_NOT_FOUND;
-//
-//            }
-
-            return SocketResult.SUCCESS;
-        }
-
-        protected void onPostExecute(SocketResult result) {
-            makeToastAndLogOnSocketResult(getString(R.string.uploaded_incident),
-                    getString(R.string.failed_to_upload_incident),
-                    result,
-                    context,
-                    LOG_TAG);
-
-            if (result.equals(SocketResult.SUCCESS))
-                IncidentActivity.this.finish();
-        }
-    }
-
-    /**
-     * Helper function. Allows the two socket tasks to react similarly to various results.
-     * @param onSuccess the string to toast and log on success.
-     * @param onFailure the string to toast and log on failure.
-     * @param result the socket result for this task.
-     * @param context the context upon which to toast and log.
-     * @param logTag the log tag to use when logging.
-     */
-    private void makeToastAndLogOnSocketResult(String onSuccess, String onFailure, SocketResult result, Context context, String logTag)
-    {
-        String message;
-        switch (result) {
-            case UNKNOWN_ERROR:
-                message = onFailure + " " + getString(R.string.unknown_error);
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-                Log.e(logTag, message);
-                break;
-            case FAILED_CONNECTION:
-                message = onFailure + " " + getString(R.string.connection_failed);
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-                Log.e(logTag, message);
-                break;
-            case CLASS_NOT_FOUND:
-                Toast.makeText(context, onFailure + " " + getString(R.string.incomprehensible_server_response), Toast.LENGTH_LONG).show();
-                Log.e(logTag, onFailure + "Server response object class not found.");
-                break;
-            case SUCCESS:
-                Toast.makeText(context, onSuccess, Toast.LENGTH_LONG).show();
-                Log.i(logTag,onSuccess);
-            default:
-                throw new RuntimeException("invalid result.");
         }
     }
 }
