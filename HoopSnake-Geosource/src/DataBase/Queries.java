@@ -7,10 +7,11 @@ package DataBase;
 public class Queries {
     
     /**
-     * get a query used to get dynamic form specifications from the database
+     * get a query used to get the dynamic form specifications number from the database
      * @param channelName the string name of the channel whose spec will be retrieved
      * @param ownerName the channel's creator, for uniqueness
-     * @return a query that will execute to retrieve the file path
+     * @return a query that will execute to retrieve the form spec number. this can be combined with
+     * the ownerName to get the name of the spec file ex: okenso.6 if given owner: okenso.
      */
     public static String getFormSpec(String channelName, String ownerName)
     {
