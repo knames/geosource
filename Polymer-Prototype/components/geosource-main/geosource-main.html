@@ -185,6 +185,9 @@
       posts: null,
       filteredPosts: null,
 
+      feedWidth: "400px",
+      settingsWidth: "300px",
+
       observe: {
         posts: 'filterPosts',
         channels: 'filterPosts'
@@ -274,7 +277,7 @@
         }
         else {
           this.$.feed_drawer.drawerWidth = "400px";
-          this.$.settings_drawer.drawerWidth = "256px";
+          this.$.settings_drawer.drawerWidth = "300px";
         }
       }
 
