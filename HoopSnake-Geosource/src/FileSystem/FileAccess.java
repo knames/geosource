@@ -44,27 +44,19 @@ public class FileAccess {
     /** Checks if the media/spec folder exists..
      * @return true if there, false otherwise
      * @throws Exception */
-    private static boolean FolderExists() throws Exception{
+    private void FolderExists(){
     	String[] folderNames = {"media","media/spec", "media/audio","media/video", "media/image", "media/string"};
     	
     	for (int i = 0; i < folderNames.length; i++) {
-    		Path folder = Paths.get(folderNames[i]);
+    		Path folder = Paths.get(homeDirectory+folderNames[i]);
     		if (Files.notExists(folder, LinkOption.NOFOLLOW_LINKS)){
-    			File dir = new File(folderNames[i]);
+    			File dir = new File(homeDirectory+folderNames[i]);
     			dir.mkdir();
-    			System.out.println(folderNames[i] + " has been created.");
+    			System.out.println(homeDirectory+folderNames[i] + " has been created.");
     		} else {
-    			System.out.println(folderNames[i] + " exists!");
+    			System.out.println(homeDirectory+folderNames[i] + " exists!");
     		}
     	}
-    	
-    	
-        Path folder = Paths.get("media/spec");
-        if (Files.notExists(folder, LinkOption.NOFOLLOW_LINKS)){
-            throw new Exception("The media/spec folder does not exist");
-        } else {
-            return true;
-        }
     }
     
     public ArrayList<FieldWithoutContent> getFormSpec(String fileName)

@@ -29,7 +29,7 @@ public class DBAccess {
         }
         catch (ClassNotFoundException e)
         {
-            System.err.println("fail: " + e.getLocalizedMessage());
+            System.err.println("fail: " + e.getMessage());
         }
         
         dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
