@@ -17,3 +17,9 @@ before_script:
   - adb shell input keyevent 82 &
 
 script: cd $TEST_DIRECTORY && ./gradlew $TEST
+
+notifications:
+  email:
+    - jih320@mail.usask.ca
+    - wwf594@mail.usask.ca
+    - cbl013@mail.usask.ca
