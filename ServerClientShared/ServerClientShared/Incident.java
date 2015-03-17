@@ -17,6 +17,11 @@ public class Incident implements Serializable {
     
     public Incident(ArrayList<FieldWithContent> fieldList, String channel, String owner)
     {
+        if(fieldList==null)
+            throw new RuntimeException("fieldList cannot be null");
+        else if(fieldList.isEmpty())
+            throw new RuntimeException("fieldList cannot be empty");
+            
     	this.fieldList = fieldList;
         if(channel==null)
             throw new RuntimeException("channel cannot be null.");
