@@ -1,0 +1,24 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+
+dependencies {
+    testCompile 'junit:junit:4.10'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir '../ServerClientShared/ServerClientShared'
+        }
+    }
+    test {
+    	java {
+    		srcDir 'Test'
+    	}
+    }
+}
