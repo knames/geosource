@@ -63,7 +63,7 @@ public class FileAccess {
 	public ArrayList<FieldWithoutContent> getFormSpec(String fileName) {
 		FileInputStream fileRead;
 		ObjectInputStream in;
-		String filePath = homeDirectory + fileName;
+		String filePath = fileName;
 		try {
 			fileRead = new FileInputStream(filePath); // file input
 			in = new ObjectInputStream(fileRead); // stream to object
