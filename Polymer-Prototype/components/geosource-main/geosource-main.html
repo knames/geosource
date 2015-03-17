@@ -271,7 +271,7 @@
       },
 
       drawerChange: function(event, detail, sender) {
-        if(this.$.feed_drawer.narrow) {
+        if(!this.$.feed_drawer.forceNarrow && this.$.feed_drawer.narrow) {
           this.$.feed_drawer.drawerWidth = "90%";
           this.$.settings_drawer.drawerWidth = "90%";
         }
