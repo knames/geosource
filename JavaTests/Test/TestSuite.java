@@ -18,8 +18,8 @@ public class TestSuite
         JUnitCore junit = new JUnitCore();
         Result result = junit.run(FieldTest.class);
         System.out.println(parseResults(result,"FieldTest"));
-        //result= junit.run(IncidentTest.class);
-        //System.out.println(parseResults(result,"IncidentTest"));
+        result= junit.run(IncidentTest.class);
+        System.out.println(parseResults(result,"IncidentTest"));
         
 
         
