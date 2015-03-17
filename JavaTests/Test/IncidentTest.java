@@ -1,8 +1,6 @@
 package Test;
 
 import java.util.ArrayList;
-
-import ServerClientShared.FieldType;
 import ServerClientShared.Incident;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
@@ -47,7 +45,7 @@ public class IncidentTest
     
     @Test
     public void constructionTest() {
-    	ArrayList<FieldWithContent> basicSpec = new ArrayList<FieldWithContent>(1);
+    	/*ArrayList<FieldWithContent> basicSpec = new ArrayList<FieldWithContent>(1);
     	basicSpec.add(new FieldWithContent("Image", FieldType.IMAGE, true));
     	Incident testIncident1 = new Incident(basicSpec,"daChannel","Randy");
     	
@@ -76,7 +74,7 @@ public class IncidentTest
             fail("Failed to throw exception on null channel name");
         }
         catch(RuntimeException e){};//expected
-    	 
+    	 */
     }
     // add test methods here.
     // The methods must be annotated with annotation @Test. For example:

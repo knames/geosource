@@ -108,45 +108,6 @@ public class FieldTest {
         catch(RuntimeException e){};//Expected
         
     }
-
-     //Test that the constructor properly works for FieldWithContent, and stops passed in null values.
-    @Test
-    public void withContentConstructorTest()
-    {
-        /*
-        //Check if the given  field type can be built.
-        StringFieldWithoutContent t1 = new StringFieldWithoutContent("Description", true);
-        ImageFieldWithoutContent t2 = new ImageFieldWithoutContent("A Picture", false);
-        VideoFieldWithoutContent t3 = new VideoFieldWithoutContent("LOLCATS", false);
-        AudioFieldWithoutContent t4 = new AudioFieldWithoutContent("The 1812 Symphony",true);
-        
-        //Building from withoutContent files
-        StringFieldWithContent stringCon = new StringFieldWithContent(t1);
-        ImageFieldWithContent imageCon = new ImageFieldWithContent(t2);
-        VideoFieldWithContent videoCon = new VideoFieldWithContent(t3);
-        AudioFieldWithContent audioCon = new AudioFieldWithContent(t4);
-        
-        assertTrue(stringCon.getContent()==null);
-        assertTrue(imageCon.getContent()==null);
-        assertTrue(videoCon.getContent()==null);
-        assertTrue(audioCon.getContent()==null);
-        
-        //This shouldn't be allowed
-        try
-        {
-            FieldWithContent badField = new FieldWithContent(null,FieldType.STRING,true,null);
-            fail("Failed to throw exception at null value.");
-        }
-        catch(RuntimeException e){};//Expected
-        
-        try
-        {
-            FieldWithContent badField2 = new FieldWithContent("A Troll",null,true,null);
-            fail("Failed to throw exception at null value.");
-        }
-        catch(RuntimeException e){};//Expected
-        */
-    }
     
     @Test
     public void stringFieldTest()
@@ -163,9 +124,6 @@ public class FieldTest {
         assertFalse(stringCon.contentMatchesType(new LinkedList<Integer>()));
         assertTrue(stringCon.contentMatchesType("Hello"));
         
-        //stringCon.setContent((new LinkedList<Integer>()));
-        //System.out.println(stringCon.getContent().toString());
-        //System.out.println(stringCon.getType());
         try
         {
             stringCon.setContent(new LinkedList<Integer>());
@@ -181,10 +139,11 @@ public class FieldTest {
         
     }
     
-     @Test
+    @Test
     public void imageFieldTest()
     {
-        /*//Check if the given  field type can be built.
+        byte[] image = new byte[]{1,2,4};
+        //Check if the given  field type can be built.
         ImageFieldWithoutContent t1 = new ImageFieldWithoutContent("Description", true);
         
         ImageFieldWithContent imageCon = new ImageFieldWithContent(t1);
@@ -193,8 +152,8 @@ public class FieldTest {
         
         //Check to see if it allows/disallows certain types to be added
         
-        assertFalse(imageCon.contentMatchesType(101));
-        assertTrue(imageCon.contentMatchesType("TROLOLOLOL"));
+        assertFalse(imageCon.contentMatchesType("TROLOLOL"));
+        assertTrue(imageCon.contentMatchesType(image));
         
         try
         {
@@ -205,115 +164,72 @@ public class FieldTest {
         
         assertTrue(imageCon.getContent()==null);
         
-        imageCon.setContent("Stuff and Things");
+        imageCon.setContent(image);
         
-        assertTrue(imageCon.getContent()=="Stuff and Things");*/
+        assertTrue(imageCon.getContent()==image);
         
     }
     
-    //Does the Field properly determine whether the input given is valid or not?
     @Test
-    public void typeCheckerTest()
+    public void videoFieldTest()
     {
+        byte[] video = new byte[]{1,2,4};
+        //Check if the given  field type can be built.
+        VideoFieldWithoutContent t1 = new VideoFieldWithoutContent("Description", true);
         
-        /*String inputString= "This is a test line.";
-        String inputString2="THIS IS A DIFFERENT LINE";
-        //Technically not an image,but as long we get the images in this format, this should be valid enough to test.
-        //Will probably need to test the conversion in some other class.
-        //If not given a value, bytes will default to 0. We won't have to check for nulls because of this.
-        byte[] testImage= new byte[3];
-        testImage[0]=4;
-        testImage[1]=7;
-        testImage[2]=3;
+        VideoFieldWithContent videoCon = new VideoFieldWithContent(t1);
         
+        assertTrue(videoCon.getContent()==null);
         
-        FieldWithContent stringContentTest= new FieldWithContent("Testing Strings!",FieldType.STRING,true);
-        FieldWithContent imageContentTest= new FieldWithContent("Testing Pictures!",FieldType.IMAGE,true);
-        boolean comparisonSuccess;
+        //Check to see if it allows/disallows certain types to be added
         
+        assertFalse(videoCon.contentMatchesType("TROLOLOL"));
+        assertTrue(videoCon.contentMatchesType(video));
         
-        
-        
-        //null checks
         try
         {
-            comparisonSuccess=FieldWithContent.contentMatchesType(inputString,null);
-            fail("Didn't throw exception!(null type)");
+            videoCon.setContent("LOLOLOL");
+            fail("Accepted String->Video");
         }
         catch(RuntimeException e){};//Expected
         
+        assertTrue(videoCon.getContent()==null);
         
-        //Check for proper FieldType
-        try
-        {
-            comparisonSuccess=FieldWithContent.contentMatchesType(inputString,FieldType.OPTION_LIST);
-            fail("Didn't throw exception!(improper fieldtype)");
-        }
-        catch(RuntimeException e){}; //Expected
+        videoCon.setContent(video);
         
-        
-        
-       
-        
-        //Test on type STRING
-        FieldWithContent goodField = new FieldWithContent("Description",FieldType.STRING,true);
-        
-        comparisonSuccess=FieldWithContent.contentMatchesType(inputString,FieldType.STRING);
-        assertTrue("Comparison Failed, String<->String",comparisonSuccess);
-        stringContentTest.setContent(inputString);
-        assertTrue("Didn't add String to Content!", stringContentTest.getContent()==inputString);
-        
-        
-        //We allow null fields, so this should be good.
-        comparisonSuccess=FieldWithContent.contentMatchesType(null,FieldType.STRING);
-        assertTrue("Comparison Failed, null<->String",comparisonSuccess);
-        stringContentTest.setContent(null);
-        assertTrue("Didn't add null to Content!", stringContentTest.getContent()==null);
-        
-        
-        comparisonSuccess=FieldWithContent.contentMatchesType(101,FieldType.STRING);
-        assertFalse("Comparison Failed Int<->String", comparisonSuccess);
-        try
-        {
-            stringContentTest.setContent(101);
-            fail("Illegaly added Integer to a String field!");
-        }
-        catch(RuntimeException e){};//Expected
-        
-        
-        
-        
-        
-        //Test on type IMAGE
-        FieldWithContent imageField = new FieldWithContent("Picture",FieldType.IMAGE,true);
-        
-        comparisonSuccess=FieldWithContent.contentMatchesType(testImage,FieldType.IMAGE);
-        assertTrue("Comparison Failed, Image<->Image",comparisonSuccess);
-        imageField.setContent(testImage);
-        assertTrue("Didn't add String to Content!", imageField.getContent()==testImage);
-        
-        
-        //We allow null fields, so this should be good.
-        comparisonSuccess=FieldWithContent.contentMatchesType(null,FieldType.IMAGE);
-        assertTrue("Comparison Failed, null<->Image",comparisonSuccess);
-        imageField.setContent(null);
-        assertTrue("Didn't add null to Content!(2)", imageField.getContent()==null);
-        
-        
-        comparisonSuccess=FieldWithContent.contentMatchesType(101,FieldType.IMAGE);
-        assertFalse("Comparison Failed Int<->Image", comparisonSuccess);
-        try
-        {
-            imageField.setContent(101);
-            fail("Illegaly added Integer to a Image field!");
-        }
-        catch(RuntimeException e){};//Expected
-        
-        
-        
-        //TODO When AUDIO and VIDEO have been implemented, build tests for them here.*/
-        
+        assertTrue(videoCon.getContent()==video);
         
     }
-  
+    
+    @Test
+    public void audioFieldTest()
+    {
+        byte[] audio = new byte[]{1,2,4};
+        //Check if the given  field type can be built.
+        AudioFieldWithoutContent t1 = new AudioFieldWithoutContent("Description", true);
+        
+        AudioFieldWithContent audioCon = new AudioFieldWithContent(t1);
+        
+        assertTrue(audioCon.getContent()==null);
+        
+        //Check to see if it allows/disallows certain types to be added
+        
+        assertFalse(audioCon.contentMatchesType("TROLOLOL"));
+        assertTrue(audioCon.contentMatchesType(audio));
+        
+        try
+        {
+            audioCon.setContent("LOLOLOL");
+            fail("Accepted String->Audio");
+        }
+        catch(RuntimeException e){};//Expected
+        
+        assertTrue(audioCon.getContent()==null);
+        
+        audioCon.setContent(audio);
+        
+        assertTrue(audioCon.getContent()==audio);
+        
+    }
+    
 }

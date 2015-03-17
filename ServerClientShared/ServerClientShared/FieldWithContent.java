@@ -71,7 +71,7 @@ public abstract class FieldWithContent extends Field
         if (getType() == null)
 		    throw new RuntimeException("type is null.");
 
-        if (content == null || contentMatchesType(newContent))
+        if (newContent == null || contentMatchesType(newContent))
             content =  newContent;
         else
             throw new RuntimeException("field content is not of type " + getType() + ".");
