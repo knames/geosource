@@ -6,6 +6,8 @@ import FileSystem.FileAccess;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
+import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -27,8 +29,25 @@ public class Controller {
     
     public Controller()
     {
-        dbAccess = new DBAccess();
-        fileAccess = new FileAccess();
+        boolean successful = false;
+        try
+        {
+            dbAccess = new DBAccess();
+            fileAccess = new FileAccess();
+            successful = true;
+        }
+        catch (SQLException SQLe)
+        {
+            System.out.println("Database initialization failed");
+        }
+        catch (URISyntaxException URISe)
+        {
+            System.out.println("Filesystem not consistent, error initializing path");
+        }
+        finally
+        {
+            if (!successful) throw new RuntimeException("Controller Initialization failed");
+        }
     }
     
     /**

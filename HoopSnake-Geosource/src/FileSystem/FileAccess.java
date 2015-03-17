@@ -1,5 +1,6 @@
 package FileSystem;
 
+import Control.Controller;
 import ServerClientShared.FieldWithoutContent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -16,15 +18,20 @@ import java.util.UUID;
  */
 public class FileAccess {
     
-    String specFolder = "media/spec/";
+    String homeDirectory;
     
-    public FileAccess() {}
+    public FileAccess() throws URISyntaxException
+    {
+        homeDirectory = Controller.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+//        System.out.println("Home Directory is " + homeDirectory);
+//        System.out.println("would find specs at " + homeDirectory + "media/spec/okenso.6");
+    }
     
     public ArrayList<FieldWithoutContent> getFormSpec(String fileName)
     {
         FileInputStream fileRead;
         ObjectInputStream in;
-        String filePath = specFolder + fileName;
+        String filePath = homeDirectory + fileName;
         try
         {
             fileRead = new FileInputStream(filePath); //file input
