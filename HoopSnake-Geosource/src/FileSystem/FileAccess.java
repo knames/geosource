@@ -24,11 +24,13 @@ import java.util.UUID;
  */
 public class FileAccess {
     
-    String homeDirectory;
+    String homeDirectory = "";
     
     public FileAccess() throws URISyntaxException
     {
         homeDirectory = Controller.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+        System.out.println(homeDirectory);
+        homeDirectory = "";
     	try {
 			FolderExists();
 		} catch (Exception e) {
