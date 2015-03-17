@@ -16,10 +16,15 @@ import java.util.UUID;
  */
 public class FileAccess {
     
-    public ArrayList<FieldWithoutContent> getFormSpec(String filePath)
+    String specFolder = "media/spec/";
+    
+    public FileAccess() {}
+    
+    public ArrayList<FieldWithoutContent> getFormSpec(String fileName)
     {
         FileInputStream fileRead;
         ObjectInputStream in;
+        String filePath = specFolder + fileName;
         try
         {
             fileRead = new FileInputStream(filePath); //file input

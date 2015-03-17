@@ -86,17 +86,19 @@ public class CommSocket implements Callable<Incident>{
             
             // Bind client and create streams
             clientSocket = serverSocket.accept();
-            OutputStream outStream = clientSocket.getOutputStream();
-            InputStream inStream = clientSocket.getInputStream();
+            
+            
             System.out.println("Client Connected");
             
-            OutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
+            OutputStream outStream = clientSocket.getOutputStream();
+            InputStream inStream = clientSocket.getInputStream();
+            //CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
+            //CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
             //CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, compressionBlockSize);
-            out = new ObjectOutputStream(cipherOut);
-            
-            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
             //CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
-            in = new ObjectInputStream(cipherIn);
+            out = new ObjectOutputStream(outStream);
+            in = new ObjectInputStream(inStream);
+            out.flush();
             
             //Read command
             IOCommand command = (IOCommand)in.readObject();
@@ -110,6 +112,7 @@ public class CommSocket implements Callable<Incident>{
                     String ownerName = in.readUTF();
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
                     out.writeObject(formList);
+                    out.flush();
                     return null;
                 }
                 case SEND_INCIDENT:
@@ -138,9 +141,11 @@ public class CommSocket implements Callable<Incident>{
         catch (NoSuchPaddingException NSPe) {
             System.err.println("No Such Padding");
         }
-        finally {
-            return null;
+        catch (Exception e){
+            e.printStackTrace();
         }
+        
+        return null;
 
     }
 }

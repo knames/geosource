@@ -25,6 +25,12 @@ public class Controller {
     
     private static int numConnections = 5; //maximum simultaneous socket inputs
     
+    public Controller()
+    {
+        dbAccess = new DBAccess();
+        fileAccess = new FileAccess();
+    }
+    
     /**
      * runs the server
      * @param args specifies the port number and concurrent thread count
@@ -92,7 +98,7 @@ public class Controller {
     
     public ArrayList<FieldWithoutContent> getForm(String channelName, String ownerName)
     {
-        String filePath = dbAccess.getFormSpecLocation(channelName, ownerName); //get spec's path in filesystem
-        return fileAccess.getFormSpec(filePath); //retreive form spec
+        String fileName = dbAccess.getFormSpecLocation(channelName, ownerName); //get spec's file name in filesystem
+        return fileAccess.getFormSpec(fileName); //retreive form spec
     }
 }
