@@ -29,17 +29,21 @@
       <div on-change="{{toggleButton}}">
         <div center horizontal layout class="toggle_label">
           <div flex>All</div>
-          <paper-toggle-button id="all_toggle_button" checked
+          <paper-toggle-button id="all" checked
             on-change="{{toggleAll}}">
           </paper-toggle-button>
         </div>
         <div center horizontal layout class="toggle_label">
           <div flex>Mine</div>
-          <paper-toggle-button id="mine_toggle_button" checked disabled></paper-toggle-button>
+          <paper-toggle-button id="mine" checked disabled></paper-toggle-button>
         </div>
         <div center horizontal layout class="toggle_label">
           <div flex>Favorites</div>
-          <paper-toggle-button id="favorite_toggle_button" checked disabled></paper-toggle-button>
+          <paper-toggle-button id="favorites" checked disabled></paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label">
+          <div flex>Questions</div>
+          <paper-toggle-button id="questions" checked disabled></paper-toggle-button>
         </div>
       </div>
     </core-submenu>
@@ -56,16 +60,20 @@
        * become active. When it is turned on, the other flags are disabled.
        */
       toggleAll: function(e) {
-        var all_toggle = this.$.all_toggle_button;
-        var fav_toggle = this.$.favorite_toggle_button;
-        var mine_toggle = this.$.mine_toggle_button;
-        if(all_toggle.checked) {
-          fav_toggle.disabled = true;
-          mine_toggle.disabled = true;
+        var all = this.$.all;
+        var favorites = this.$.favorites;
+        var mine = this.$.mine;
+        var questions = this.$.questions;
+
+        if(all.checked) {
+          favorites.disabled = true;
+          mine.disabled = true;
+          questions.disabled = true;
         }
         else {
-          fav_toggle.disabled = false;
-          mine_toggle.disabled = false;
+          favorites.disabled = false;
+          mine.disabled = false;
+          questions.disabled = false;
         }
       },
 
@@ -82,15 +90,16 @@
        * applicable to the flags currently active within this component's state.
        */
       filterPosts: function(posts) {
-        var all = this.$.all_toggle_button.checked;
-        var fav = this.$.favorite_toggle_button.checked;
-        var mine = this.$.mine_toggle_button.checked;
+        var all = this.$.all.checked;
+        var favorites = this.$.favorites.checked;
+        var mine = this.$.mine.checked;
+        var questions = this.$.questions.checked;
 
         console.log(this.username);
 
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (fav && posts[i].favorite) || (mine && posts[i].username == this.username)) {
+          if((all) || (favorites && posts[i].favorite) || (mine && posts[i].username == this.username) || (questions && posts[i].question)) {
             includedPosts.push(posts[i]);
           }
         }

@@ -6,7 +6,8 @@
     "thumbnail" : "/images/bird-01.jpg",
     "time": "2015-02-26 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6853},
-    "channel": {"name": "Birds", "owner": "Josh"}
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "question": true
   },
   {
     "pid": 2,
@@ -15,7 +16,8 @@
     "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-25 12:00:00.000",
     "location": {"latitude": 52.2333, "longitude": -106.6633},
-    "channel": {"name": "Mushrooms", "owner": "Josh"}
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "question": false
   },
   {
     "pid": 3,
@@ -24,7 +26,8 @@
     "thumbnail" : "/images/bird-02.jpg",
     "time": "2015-02-24 12:00:00.000",
     "location": {"latitude": 52.1833, "longitude": -106.6333},
-    "channel": {"name": "Birds", "owner": "Josh"}
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "question": false
   },
   {
     "pid": 4,
@@ -33,7 +36,8 @@
     "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-20 12:00:00.000",
     "location": {"latitude": 52.0833, "longitude": -106.6833},
-    "channel": {"name": "Mushrooms", "owner": "Josh"}
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "question": false
   },
   {
     "pid": 5,
@@ -42,7 +46,8 @@
     "thumbnail" : "/images/mushroom-02.jpg",
     "time": "2015-02-16 12:00:00.000",
     "location": {"latitude": 52.0633, "longitude": -106.6933},
-    "channel": {"name": "Mushrooms", "owner": "Josh"}
+    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "question": false
   },
   {
     "pid": 6,
@@ -51,7 +56,8 @@
     "thumbnail" : "/images/pothole-01.jpg",
     "time": "2015-02-01 12:00:00.000",
     "location": {"latitude": 52.1033, "longitude": -106.6533},
-    "channel": {"name": "Potholes", "owner": "Josh"}
+    "channel": {"name": "Potholes", "owner": "Josh"},
+    "question": false
   },
   {
     "pid": 7,
@@ -60,7 +66,8 @@
     "thumbnail" : "/images/cat-01.jpg",
     "time": "2015-01-20 12:00:00.000",
     "location": {"latitude": 52.1533, "longitude": -106.7333},
-    "channel": {"name": "Birds", "owner": "Josh"}
+    "channel": {"name": "Birds", "owner": "Josh"},
+    "question": true
   },
   {
     "pid": 8,
@@ -69,6 +76,7 @@
     "thumbnail" : "/images/snow-01.jpg",
     "time": "2015-01-01 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6333},
-    "channel": {"name": "Snow", "owner": "Josh"}
+    "channel": {"name": "Snow", "owner": "Josh"},
+    "question": false
   }
 ]

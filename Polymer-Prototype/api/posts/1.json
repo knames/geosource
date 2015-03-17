@@ -14,5 +14,6 @@
 			{"type": "Checkbox", "label": "Pink", "value": false}
 		],
 	"time": "2015-02-26 12:00:00.000",
-    "location": {"latitude": 52.1333, "longitude": -106.6853}
+    "location": {"latitude": 52.1333, "longitude": -106.6853},
+    "question": true
 }
