@@ -10,14 +10,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-<<<<<<< Updated upstream
 import java.net.URISyntaxException;
-=======
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
->>>>>>> Stashed changes
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -29,22 +26,19 @@ public class FileAccess {
     
     String homeDirectory;
     
-<<<<<<< Updated upstream
     public FileAccess() throws URISyntaxException
     {
         homeDirectory = Controller.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
-//        System.out.println("Home Directory is " + homeDirectory);
-//        System.out.println("would find specs at " + homeDirectory + "media/spec/okenso.6");
-    }
-=======
-    public FileAccess() {
     	try {
 			FolderExists();
 		} catch (Exception e) {
 			System.out.println("Failed to check/create folders!");
 			e.printStackTrace();
 		}
+//        System.out.println("Home Directory is " + homeDirectory);
+//        System.out.println("would find specs at " + homeDirectory + "media/spec/okenso.6");
     }
+
     
     
     /** Checks if the media/spec folder exists..
@@ -72,8 +66,6 @@ public class FileAccess {
             return true;
         }
     }
-    
->>>>>>> Stashed changes
     
     public ArrayList<FieldWithoutContent> getFormSpec(String fileName)
     {
