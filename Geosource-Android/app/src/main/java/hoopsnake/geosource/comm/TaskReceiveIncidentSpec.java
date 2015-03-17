@@ -63,7 +63,9 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
+            outStream.flush();
             outStream.writeUTF(channelOwner);
+            outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();

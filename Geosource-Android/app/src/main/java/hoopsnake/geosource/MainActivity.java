@@ -20,8 +20,8 @@ public class MainActivity extends Activity {
     public static final String APP_LOG_TAG = "geosource";
 
     //TODO make these something other than a hard-coded string.
-    private String curChannelName = "mushrooms";
-    private String curChannelOwner = "josh";
+    private String curChannelName = "march13";
+    private String curChannelOwner = "okenso";
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
