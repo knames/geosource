@@ -2,9 +2,9 @@ language: android
 jdk: oraclejdk7
 env:
   matrix: 
-    - TEST_DIRECTORY=Geosource-Android TEST=$(./gradlew connectedAndroidTest)
-    - TEST_DIRECTORY=Geosource-Android TEST=(./gradlew test)
-    - TEST_DIRECTORY=JavaTests TEST=$(gradle test)
+    - TEST_DIRECTORY=Geosource-Android TEST=connectedAndroidTest
+    - TEST_DIRECTORY=Geosource-Android TEST=test
+    - TEST_DIRECTORY=JavaTests TEST=test
 
 android:
   components:
@@ -17,7 +17,7 @@ before_script:
   - adb wait-for-device
   - adb shell input keyevent 82 &
 
-script: cd $TEST_DIRECTORY && echo $TEST
+script: cd $TEST_DIRECTORY && ./gradlew $TEST
 
 notifications:
   email:
