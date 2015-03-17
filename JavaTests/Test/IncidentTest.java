@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import ServerClientShared.Incident;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.StringFieldWithoutContent;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -46,7 +48,7 @@ public class IncidentTest
     @Test
     public void constructionTest() {
     	/*ArrayList<FieldWithContent> basicSpec = new ArrayList<FieldWithContent>(1);
-    	basicSpec.add(new FieldWithContent("Image", FieldType.IMAGE, true));
+    	basicSpec.add(new StringFieldWithContent(new StringFieldWithoutContent("Hello World", true)));
     	Incident testIncident1 = new Incident(basicSpec,"daChannel","Randy");
     	
     	//Test getFieldList returns proper content
@@ -74,7 +76,7 @@ public class IncidentTest
             fail("Failed to throw exception on null channel name");
         }
         catch(RuntimeException e){};//expected
-    	 */
+    	*/
     }
     // add test methods here.
     // The methods must be annotated with annotation @Test. For example:
