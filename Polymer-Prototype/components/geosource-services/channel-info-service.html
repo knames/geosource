@@ -1,25 +1,25 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!-- 
-  `<post-service>` provides an API for a fake service -- 
+  `<channel-service>` provides an API for a fake service -- 
   _unquote_, the read-only social networking service!
 
-  Provides a very simple API: `posts` returns the list of posts.
+  Provides a very simple API: `channels` returns the list of channels.
   `setFavorite` pretends to persist a user's favorite choice.
 
-  @element post-service
+  @element channel-service
   @demo 
   @homepage http://www.polymer-project.org/docs/start/tutorial.html
 -->
 `
 <!--
-  An array of post objects, with the following format:
+  An array of channel objects, with the following format:
 
   <table border="0">
     <tr>
       <td><code>uid</code></td>
       <td>Number</td>
-      <td>Unique ID for this post.</td>
+      <td>Unique ID for this channel.</td>
     </tr>
      <tr>
       <td><code>username</code></td>
@@ -39,15 +39,15 @@
     <tr>
       <td><code>favorite</code></td>
       <td>Boolean</td>
-      <td>True if the current user favorited this post.</td>
+      <td>True if the current user favorited this channel.</td>
     </tr>
   </table>
   
-  @attribute posts 
+  @attribute channels 
   @type Array
   @default []
 -->
-<polymer-element name="user-service" attributes="user">
+<polymer-element name="channel-info-service" attributes="channelInfo">
   <template>
     <style>
     :host {
@@ -55,27 +55,25 @@
     }
     </style>
     <core-ajax id="ajax"
-      url="/api/users/{{gid}}.json"
-      on-core-response="{{userLoaded}}"
+      url="/api/channels/{{channel.name}}-{{channel.owner}}.json"
+      on-core-response="{{channelsLoaded}}"
       handleAs="json">
     </core-ajax>
   </template>
   <script>
-  Polymer('user-service', {
+  Polymer({
 
-    gid: null,
+    channel: null,
 
     created: function() {
-      this.user = null;
+      this.channels = [];
     },
-    userLoaded: function() {
+    channelsLoaded: function() {
       // Make a copy of the loaded data
-      this.user = this.$.ajax.response;
-      this.fire('user-loaded');
-    },
-
-    load: function(gid) {
-      this.gid = gid;
+      this.channels = this.$.ajax.response;
+    }
+    load: function(channel) {
+      this.channel = channel;
       this.$.ajax.go();
     }
   });
