@@ -25,7 +25,7 @@ CREATE TABLE posts_okenso_pothole (
 	);
 
 insert into posts_okenso_pothole 
-		(p_poster, p_time, p_field1, p_field2, p_field3)
+		(p_poster, p_time, p_field1, p_field2)
 	values (
-		"okenso", '2015-03-08 12:00:00', "", "", ""
-		);
+		"okenso", '2015-03-08 12:00:00', "", ""		
+	);
