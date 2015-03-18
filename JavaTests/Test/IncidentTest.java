@@ -109,7 +109,6 @@ public class IncidentTest
         catch(RuntimeException e){};//expected
     	
 
-        catch(RuntimeException e){};//expected
     }
     // The methods must be annotated with annotation @Test. For example:
     //
