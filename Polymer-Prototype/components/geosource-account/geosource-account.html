@@ -8,6 +8,7 @@
 <link rel="import" href="../geosource-services/user-service.html">
 <link rel="import" href="../geosource-account-creator/geosource-account-creator.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
 
 <polymer-element name="geosource-account" attributes="user posts">
 
@@ -43,11 +44,13 @@
       }
     </style>
 
-    <user-service id="user_service" user="{{user}}" on-core-error="{{openDialog}}"></user-service>
+    <user-service id="user_service" user="{{user}}" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
       <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}"></geosource-account-creator>
     </paper-dialog>
+
+    <paper-toast id="toast" text="An error occured attempting to retrieve user data"></paper-toast>
 
     <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
       <google-signin theme="light" 
@@ -98,6 +101,17 @@
         this.$.create_dialog.close();
       },
 
+      userError: function() {
+        console.log("opened toast");
+        this.$.toast.show();
+      },
+
+      userLoaded: function() {
+        if(!this.user) {
+          this.openDialog();
+        }
+      },
+
       userChanged: function() {
 
         console.log(this.posts);
@@ -105,7 +119,6 @@
         for(i=0; i<this.user.favorites.length; i++) {
           for(j=0; j<this.posts.length; j++) {
             if(this.user.favorites[i] == this.posts[j].pid) {
-              console.log('asdf');
               this.posts[j].favorite = true;
               break;
             }

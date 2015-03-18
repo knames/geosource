@@ -14,5 +14,6 @@
 			{"type": "Radio Button", "label": "Small", "value": false}
 		],
 	"time": "2015-02-25 12:00:00.000",
-    "location": {"latitude": 52.2333, "longitude": -106.6633}
+    "location": {"latitude": 52.2333, "longitude": -106.6633},
+    "question": false
 }

@@ -16,6 +16,7 @@
 <link rel="import" href="../geosource-services/post-summary-service.html">
 <link rel="import" href="../geosource-services/channel-service.html">
 <link rel="import" href="../geosource-post/geosource-post.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
 
 
 <polymer-element name="geosource-main">
@@ -125,8 +126,10 @@
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop>
-      <geosource-post pid="{{pid}}" on-post-loaded="{{openDialog}}"></geosource-post>
+      <geosource-post pid="{{pid}}" on-post-loaded="{{openDialog}}" on-core-error="{{errorPost}}"></geosource-post>
     </paper-dialog>
+
+    <paper-toast id="toast" text="Error loading post"></paper-toast>
 
     <core-header-panel id="core_header_panel">
 
@@ -137,7 +140,7 @@
         </core-toolbar>
 
         <section id="section">
-          <core-drawer-panel disableSwipe transition drawerwidth="300px" responsivewidth="800px" selected="main" disableEdgeSwipe id="settings_drawer">
+          <core-drawer-panel disableSwipe transition on-core-responsive-change="{{drawerChange}}" drawerwidth="300px" responsivewidth="800px" selected="main" disableEdgeSwipe id="settings_drawer">
             <section id="section1" drawer>
               <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
               <div class="container">
@@ -182,6 +185,9 @@
       posts: null,
       filteredPosts: null,
 
+      feedWidth: "400px",
+      settingsWidth: "300px",
+
       observe: {
         posts: 'filterPosts',
         channels: 'filterPosts'
@@ -198,6 +204,10 @@
         else {
           this.pid = e.detail.post.pid;
         }
+      },
+
+      errorPost: function() {
+        this.$.toast.show();
       },
 
       openDialog: function() {
@@ -220,20 +230,8 @@
        * the settings drawer if opened.
        */
       toggleFeedDrawer: function() {
-        var feed_drawer = this.$.feed_drawer;
-        var settings_drawer = this.$.settings_drawer;
-        var map = this.$.map;
-        
-        settings_drawer.closeDrawer();
-        if(feed_drawer.narrow) {
-          feed_drawer.forceNarrow = false;
-          feed_drawer.togglePanel();
-        }
-        else {
-          feed_drawer.forceNarrow = true;
-        }
-
-        this.async(function(){ map.resize() }, null, 300);
+        this.$.settings_drawer.closeDrawer();
+        this.toggleDrawer(this.$.feed_drawer);
       },
 
       /**
@@ -242,22 +240,25 @@
        * the feed drawer opened.
        */
       toggleSettingsDrawer: function() {
-        var settings_drawer = this.$.settings_drawer;
-        var feed_drawer = this.$.feed_drawer;
+        this.$.feed_drawer.closeDrawer();
+        this.toggleDrawer(this.$.settings_drawer);
+      },
+
+      /**
+       * Toggles the given drawer.
+       */
+      toggleDrawer: function(drawer) {
         var map = this.$.map;
-
-        console.log('forceNarrow', settings_drawer.forceNarrow);
-        console.log('narrow', settings_drawer.narrow);
-
-        feed_drawer.closeDrawer();
-        if(settings_drawer.narrow) {
-          settings_drawer.forceNarrow = false;
-          settings_drawer.togglePanel();
+        if(drawer.narrow) {
+          drawer.forceNarrow = false;
+          drawer.togglePanel();
         }
         else {
-          settings_drawer.forceNarrow = true;
+          drawer.forceNarrow = true;
         }
-
+        //waits 300ms before forcing the map to resize. this gives enough time 
+        //for the drawer to close before forcing the map to fill its expanded 
+        //space
         this.async(function(){ map.resize() }, null, 300);
       },
 
@@ -267,7 +268,20 @@
        */
       filterPosts: function() {
         this.filteredPosts = this.$.settings.filterPosts(this.posts);
+      },
+
+      drawerChange: function(event, detail, sender) {
+        if(!this.$.feed_drawer.forceNarrow && this.$.feed_drawer.narrow) {
+          this.$.feed_drawer.drawerWidth = "90%";
+          this.$.settings_drawer.drawerWidth = "90%";
+        }
+        else {
+          this.$.feed_drawer.drawerWidth = "400px";
+          this.$.settings_drawer.drawerWidth = "300px";
+        }
       }
+
+
 
     });
 

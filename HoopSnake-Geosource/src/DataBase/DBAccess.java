@@ -21,7 +21,7 @@ public class DBAccess {
     
     private Connection dbconnection;
     
-    public DBAccess()
+    public DBAccess() throws SQLException
     {
         try
         {
@@ -29,18 +29,10 @@ public class DBAccess {
         }
         catch (ClassNotFoundException e)
         {
-            System.err.println("fail: " + e.getLocalizedMessage());
+            System.err.println("fail: " + e.getMessage());
         }
         
-        try
-        {
-            dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
-        }
-        catch(SQLException sqle)
-        {
-            System.out.println("Error connecting to Database...");
-            System.out.println(sqle.getMessage());
-        }
+        dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
     }
 
     /**
