@@ -87,7 +87,7 @@ public class DBAccess {
     public void saveField(String channelName, String ownerName, int postNum, String fieldName, String filePath)
     {
         try (Statement statement = dbconnection.createStatement()) {
-            statement.execute(Queries.savePictureField(channelName, ownerName, postNum, fieldName, filePath));
+            statement.execute(Queries.saveField(channelName, ownerName, postNum, fieldName, filePath));
         }
         catch (SQLException SQLe)
         {
@@ -99,12 +99,14 @@ public class DBAccess {
      * make a new post in the specified channel and return its identifier
      * @param channelName the name of the channel to post to
      * @param ownerName the creator of the channel
+     * @param posterName the person posting to this channel
      * @return an integer value indexing the new post within the channel
      */
-    public int newPost(String channelName, String ownerName) {
+    public int newPost(String channelName, String ownerName, String posterName) {
         
         try (Statement statement = dbconnection.createStatement()) {
-            ResultSet results = statement.executeQuery(Queries.getPostNum(channelName, ownerName));
+            ResultSet results = statement.executeQuery(Queries.getNewPostNum(channelName, ownerName, posterName));
+            results.next();
             return results.getInt(1);
         }
         catch (SQLException SQLe)

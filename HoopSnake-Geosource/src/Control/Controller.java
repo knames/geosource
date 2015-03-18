@@ -107,7 +107,7 @@ public class Controller {
     private void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
-        int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName());
+        int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName(), incident.getPosterName());
         for (FieldWithContent field : incident.getFieldList())
         {
             String filePath = fileAccess.saveField(field.getContent());

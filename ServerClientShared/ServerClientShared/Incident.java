@@ -12,10 +12,11 @@ public class Incident implements Serializable {
     private ArrayList<FieldWithContent> fieldList;
     private String channelName;
     private String ownerName;
+    private String posterName;
 
     public Incident(){}
     
-    public Incident(ArrayList<FieldWithContent> fieldList, String channel, String owner)
+    public Incident(ArrayList<FieldWithContent> fieldList, String channel, String owner, String poster)
     {
         if(fieldList==null)
             throw new RuntimeException("fieldList cannot be null");
@@ -30,6 +31,10 @@ public class Incident implements Serializable {
         if(owner==null)
             throw new RuntimeException("owner cannot be null.");
         ownerName = owner;
+        
+        if(poster==null)
+            throw new RuntimeException("Poster cannot be null");
+        posterName = poster;
     }
 
     public void setFieldList(ArrayList<FieldWithContent> fieldList)
@@ -49,19 +54,16 @@ public class Incident implements Serializable {
     }
 
     /**
-     * @precond channelName cannot be null
-     * @param channelName the channelName to set
-     */
-    public void setChannelName(String channelName) {
-        if(channelName==null)
-            throw new RuntimeException("channel cannot be null.");
-        this.channelName = channelName;
-    }
-
-    /**
      * @return the ownerName
      */
     public String getOwnerName() {
         return ownerName;
+    }
+
+    /**
+     * @return the posterName
+     */
+    public String getPosterName() {
+        return posterName;
     }
 }
