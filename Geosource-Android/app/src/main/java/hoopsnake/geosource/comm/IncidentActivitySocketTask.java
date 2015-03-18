@@ -51,6 +51,7 @@ public abstract class IncidentActivitySocketTask<Params, Progress, Result> exten
             case SUCCESS:
                 Toast.makeText(context, onSuccess, Toast.LENGTH_LONG).show();
                 Log.i(logTag,onSuccess);
+                break;
             default:
                 throw new RuntimeException("invalid result.");
         }

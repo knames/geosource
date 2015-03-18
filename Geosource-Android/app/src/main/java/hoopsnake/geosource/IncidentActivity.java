@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,15 +82,6 @@ public class IncidentActivity extends ActionBarActivity {
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
         //TODO uncomment this for real app.
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
-
-        //TODO remove this mockedSpec eventually! It is just for testing.
-//        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-//        mockedSpec.add(new StringFieldWithoutContent("Title", true));
-//        mockedSpec.add(new ImageFieldWithoutContent("Image", true));
-//        mockedSpec.add(new StringFieldWithoutContent("Description", false));
-//
-//        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner, IncidentActivity.this);
-//        renderIncident();
     }
 
     /**
@@ -109,16 +99,16 @@ public class IncidentActivity extends ActionBarActivity {
         int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
-            //TODO change this from a test case to a regular case.
+            //TODO remove the commented out test code.
             assertNotNull(field);
-            TextView tv = new TextView(IncidentActivity.this);
-            tv.setText(field.getContentStringRepresentation());
-//            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-//            assertNotNull(v);
+//            TextView tv = new TextView(IncidentActivity.this);
+//            tv.setText(field.getContentStringRepresentation());
+            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+            assertNotNull(v);
 
-            incidentDisplay.addView(tv);
+            incidentDisplay.addView(v);
             //All views are given a tag that is equal to their position in the linear layout.
-            tv.setTag(i);
+            v.setTag(i);
             i++;
         }
     }
