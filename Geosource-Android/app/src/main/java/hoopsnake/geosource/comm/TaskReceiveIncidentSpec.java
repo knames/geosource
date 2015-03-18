@@ -108,7 +108,7 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
                 LOG_TAG);
 
         if (result.equals(SocketResult.SUCCESS)) {
-            activity.renderIncident();
+            activity.renderIncidentFromScratch();
         }
     }
 }

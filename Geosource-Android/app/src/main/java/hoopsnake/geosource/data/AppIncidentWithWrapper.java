@@ -70,6 +70,8 @@ public class AppIncidentWithWrapper implements AppIncident {
             //AbstractAppFieldWithContent is guaranteed to keep the fieldWithContent reference
             //passed to it in the constructor up to date.
             AbstractAppFieldWithContent newFieldWrapper;
+
+            assertNotNull(fieldWithoutContent);
             switch(fieldWithoutContent.getType())
             {
                 case ImageFieldWithoutContent.TYPE:

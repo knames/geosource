@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import hoopsnake.geosource.R;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -66,14 +69,17 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
         byte[] fileInByteFormat = bos.toByteArray();
         assertNotNull(fileInByteFormat);
         fieldToSet.setContent(fileInByteFormat);
-
+        //Alert the IncidentActivity that it is one step closer to being able to send this incident.
+        fieldToSet.getActivity().getContentCountDownLatch().countDown();
         return true;
     }
 
     @Override
     protected void onPostExecute(Boolean setContentSucceeded)
     {
-        if (!setContentSucceeded && fieldToSet != null)
-            Toast.makeText(fieldToSet.getActivity(), "failed to write file to byte array. Your file cannot be sent to the server.", Toast.LENGTH_LONG).show();
+        if (!setContentSucceeded && fieldToSet != null) {
+            Activity activity = fieldToSet.getActivity();
+            Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
+        }
     }
 }

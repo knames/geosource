@@ -27,6 +27,14 @@ public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void,
     }
 
     protected SocketResult doInBackground(Incident... params) {
+        try {
+            activity.getContentCountDownLatch().await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
+            return SocketResult.FAILED_PREFORMATTING;
+        }
+
         ObjectOutputStream outStream; //wrapped stream to client
 
         ObjectInputStream inStream; //stream from client

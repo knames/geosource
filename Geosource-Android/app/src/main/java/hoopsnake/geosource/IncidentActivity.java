@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
+import hoopsnake.geosource.comm.TaskSendIncident;
+import hoopsnake.geosource.data.AbstractAppFieldWithContentAndFile;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 
@@ -26,6 +29,12 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
+    public CountDownLatch getContentCountDownLatch() {
+        return contentCountDownLatch;
+    }
+
+    private CountDownLatch contentCountDownLatch;
+
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
@@ -34,10 +43,6 @@ public class IncidentActivity extends ActionBarActivity {
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
-
-    public void setIncident(AppIncident incident) {
-        this.incident = incident;
-    }
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -86,12 +91,25 @@ public class IncidentActivity extends ActionBarActivity {
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
     }
 
+    public void setIncident(AppIncident incident) {
+
+        this.incident = incident;
+        int countDownSize = 0;
+        for (AppFieldWithContent field : incident.getFieldList())
+        {
+            if (field instanceof AbstractAppFieldWithContentAndFile)
+                countDownSize++;
+        }
+
+        contentCountDownLatch = new CountDownLatch(countDownSize);
+    }
+
     /**
      * @precond the current incident, and all its fields, and the incidentDisplay, are not null.
      * @postcond each field's custom view is added to the linear layout, replacing all the old
      * views in the linear layout (if they existed).
      */
-    public void renderIncident()
+    public void renderIncidentFromScratch()
     {
         assertNotNull(incident);
         assertNotNull(incident.getFieldList());
@@ -149,8 +167,18 @@ public class IncidentActivity extends ActionBarActivity {
     {
         if (incident != null && incident.isCompletelyFilledIn()) {
             //TODO uncomment this when actually using it.
-            Toast.makeText(IncidentActivity.this, "success! Incident submitted.", Toast.LENGTH_LONG).show();
-//            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
+            Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
+
+            //TODO delete this stuff.
+//            ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<>();
+//            StringFieldWithContent s = new StringFieldWithContent(new StringFieldWithoutContent("title", true));
+//            s.setContent("this is a title");
+//            AppImageField i = new AppImageField(new ImageFieldWithContent(new ImageFieldWithoutContent("picture", true)), this);
+//            i.setContentFileUri("a uri");
+//            new TaskSetContentBasedOnFileUri(i).execute();
+//            fieldWithContentList.add(new StringFieldWithContent(new StringFieldWithoutContent("title", true)))
+//            Incident incident = new Incident()
+            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();

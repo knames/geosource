@@ -13,6 +13,7 @@
     <string name="prompt_enter_text">Click to enter text.</string>
 
     <!--socket communication strings for Toast.-->
+    <string name="failed_to_format_content">Content formatting failed.</string>
     <string name="downloaded_incident_spec_for_channel">incident spec downloaded successfully for channel</string>
     <string name="failed_to_download_incident_spec_for_channel">Could not download incident spec for channel</string>
     <string name="uploaded_incident">New incident uploaded successfully.</string>
