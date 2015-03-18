@@ -95,8 +95,8 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
 
     protected void onPostExecute(SocketResult result) {
         makeToastAndLogOnSocketResult(
-                activity.getString(R.string.downloaded_incident_spec_for_channel) + channelName + ".",
-                activity.getString(R.string.failed_to_download_incident_spec_for_channel) + channelName + ".",
+                activity.getString(R.string.downloaded_incident_spec_for_channel) + " " + channelName + ".",
+                activity.getString(R.string.failed_to_download_incident_spec_for_channel) + " " + channelName + ".",
                 result,
                 activity,
                 LOG_TAG);

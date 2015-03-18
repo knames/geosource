@@ -2,15 +2,24 @@ package hoopsnake.geosource.data;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
 
 import ServerClientShared.ImageFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
+
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -18,6 +27,8 @@ import hoopsnake.geosource.media.MediaManagement;
  * Implementation of an app field with type Image.
  */
 public class AppImageField extends AbstractAppFieldWithContentAndFile {
+    private ImageView iv = null;
+
     public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
     }
@@ -29,9 +40,10 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public View getContentViewRepresentation(final int requestCodeForIntent) {
-        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
-        iv.setImageDrawable(super.getDrawableIconFromSVGResource(R.raw.camera_alt));
+    public ImageView getContentViewRepresentation(final int requestCodeForIntent) {
+        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+//        iv.setImageDrawable(super.getDrawableIconFromSVGResource(R.raw.camera_alt));
+        iv.setImageResource(R.drawable.arrow_right); //TODO arrow_right is just a placeholder.
         iv.setClickable(true);
 
         iv.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +62,8 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
                             return;
                         }
 
+                        setContentFileUri(fileUriForNewImage);
+
                         MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
                     }
                 });
@@ -63,19 +77,62 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
     public void onResultFromSelection(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             // Image captured and saved to fileUri specified in the Intent
+            Uri contentFileUri = getContentFileUri();
+            assertNotNull(contentFileUri);
+            File imgFile = new  File(contentFileUri.getPath());
 
-            Toast.makeText(activity, "Image saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
+            if(imgFile.exists()){
+                String path = imgFile.getAbsolutePath();
+                String msg = "Image saved to:\n" + path;
+                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+                Log.i(LOG_TAG, msg);
 
-            //TODO display the image in its field! This means notifying the UI.
-            //TODO set the content of this field appropriately. Probably in a background task?
-            //setContent(new SerialBitmap(fileUri));
+                assertNotNull(iv);
+                new TaskDisplayImageFromBitmap(iv).execute(path);
+                new TaskSetContentBasedOnFileUri(this).execute();
+            }
+            else
+            {
+                Log.e(LOG_TAG, "new file was not created.");
+                Toast.makeText(activity, activity.getString(R.string.failed_to_capture_image) , Toast.LENGTH_LONG).show();
+            }
 
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            // User cancelled the image capture
+            setContentFileUri(null);
         } else {
             // Image capture failed, advise user
-            Toast.makeText(activity, "Failed to capture image.", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, activity.getString(R.string.failed_to_capture_image), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class TaskDisplayImageFromBitmap extends AsyncTask<String, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private int data = 0;
+
+        public TaskDisplayImageFromBitmap(ImageView imageView) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            assertNotNull(imageView);
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            String imgFilePath = params[0];
+            assertNotNull(imgFilePath);
+            return BitmapFactory.decodeFile(imgFilePath);
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
         }
     }
 }

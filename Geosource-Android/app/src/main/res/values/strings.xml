@@ -13,14 +13,16 @@
     <string name="prompt_enter_text">Click to enter text.</string>
 
     <!--socket communication strings for Toast.-->
-    <string name="downloaded_incident_spec_for_channel">incident spec downloaded successfully for channel </string>
-    <string name="failed_to_download_incident_spec_for_channel">Could not download incident spec for channel </string>
+    <string name="downloaded_incident_spec_for_channel">incident spec downloaded successfully for channel</string>
+    <string name="failed_to_download_incident_spec_for_channel">Could not download incident spec for channel</string>
     <string name="uploaded_incident">New incident uploaded successfully.</string>
     <string name="failed_to_upload_incident">Incident upload failed.</string>
 
     <string name="unknown_error">Unknown error.</string>
     <string name="connection_failed">Connection failed.</string>
     <string name="incomprehensible_server_response">Incomprehensible server response.</string>
+
+    <string name="failed_to_capture_image">Failed to capture image.</string>
 
     <!--&lt;!&ndash;Anam's stuff &ndash;&gt;-->
     <!--<string name="menu_settings">Settings</string>-->

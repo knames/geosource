@@ -9,7 +9,6 @@ import com.larvalabs.svgandroid.SVGParser;
 
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
-import hoopsnake.geosource.R;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -60,14 +59,12 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
      *
      * @param contentFileUri the Uri referring to a file on the device. This file should currently
      *                       store the content associated with this field.
-     * @precond the contentFileUri is not null.
+     * @precond none. contentFileUri can be null.
      * @postcond sets the fileUri of this field to be contentFileUri.
      */
     public void setContentFileUri(Uri contentFileUri)
     {
-        assertNotNull(contentFileUri);
-
-        if (usesFilesOfType(contentFileUri))
+        if (contentFileUri == null || usesFilesOfType(contentFileUri))
             this.contentFileUri = contentFileUri;
         else
             throw new RuntimeException(contentFileUri.toString() + "has incorrect file type.");
@@ -84,7 +81,7 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
     {
         Resources resources = activity.getResources();
         assertNotNull(resources);
-        SVG svg = SVGParser.getSVGFromResource(resources, R.raw.mic);
+        SVG svg = SVGParser.getSVGFromResource(resources, svgFileResourceCode);
         return svg.createPictureDrawable();
     }
 

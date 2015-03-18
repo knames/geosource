@@ -80,7 +80,7 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(channelOwner);
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
-        //TODO uncomment this for real app.
+
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
     }
 
