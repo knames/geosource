@@ -90,30 +90,30 @@ any apps you're building. See the Google Developers Console
       <paper-shadow id="shadow" fit animated></paper-shadow>
     </template>
 
-    <div id="button" class="height-{{height}} width-{{width}} theme-{{theme}} signedIn-{{signedIn}} additionalAuth-{{additionalAuth}}">
+    <div id="button" class="height-{{height}} width-{{width}} theme-{{theme}} signedIn-{{signedIn}} additionalAuth-{{additionalAuth}}" flex>
       <paper-ripple id="ripple" fit></paper-ripple>
 
       <!-- this div is needed to position the ripple behind text content -->
-      <div relative layout horizontal center-center>
+      <div layout horizontal flex>
         <template if="{{ !signedIn }}">
-          <div class="button-content signIn" tabindex="0"
+          <div class="button-content signIn" tabindex="0" flex
               on-click="{{signIn}}" on-keydown="{{signInKeyPress}}">
-            <span class="icon"><core-icon icon="google:google-plus"></core-icon></span>
-            <span class="buttonText">{{labelSignin}}</span>
+            <div class="icon"><core-icon icon="google:google"></core-icon></div>
+            <div class="buttonText" flex>{{labelSignin}}</div>
           </div>
         </template>
         <template if="{{ signedIn && !additionalAuth }}">
-          <div class="button-content signOut" tabindex="0"
+          <div class="button-content signOut" tabindex="0" flex
               on-click="{{signOut}}" on-keydown="{{signOutKeyPress}}">
-            <span class="icon"><core-icon icon="google:google-plus"></core-icon></span>
-            <span class="buttonText">{{labelSignout}}</span>
+            <div class="icon"><core-icon icon="google:google"></core-icon></div>
+            <div class="buttonText" flex>{{labelSignout}}</div>
           </div>
         </template>
         <template if="{{ signedIn && additionalAuth }}">
-          <div class="button-content signIn" tabindex="0"
+          <div class="button-content signIn" tabindex="0" flex
               on-click="{{signIn}}" on-keydown="{{signInKeyPress}}">
-            <span class="icon"><core-icon icon="google:google-plus"></core-icon></span>
-            <span class="buttonText">{{labelAdditional}}</span>
+            <div class="icon"><core-icon icon="google:google"></core-icon></div>
+            <div class="buttonText" flex>{{labelAdditional}}</div>
           </div>
         </template>
       </div>
