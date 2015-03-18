@@ -28,7 +28,7 @@ public class IncidentActivity extends ActionBarActivity {
 
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
-
+    public static final String PARAM_STRING_POSTER = "poster";
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
@@ -76,12 +76,14 @@ public class IncidentActivity extends ActionBarActivity {
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
+        String poster = extras.getString(PARAM_STRING_POSTER);
         assertNotNull(channelName);
         assertNotNull(channelOwner);
+        assertNotNull(poster);
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
     }
 
     /**

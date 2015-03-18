@@ -38,13 +38,6 @@ public interface AppIncident
     public String getChannelName();
 
     /**
-     * @precond newChannelName is a not null, and corresponds to an existing channel name.
-     * @param newChannelName a String representation of the name of the channel corresponding to this incident.
-     * @postcond the channel name of this incident is set to the new name.
-     */
-    public void setChannelName(String newChannelName);
-
-    /**
      * @precond none.
      * @postcond see return.
      * @return the field list underlying this incident. May be null.

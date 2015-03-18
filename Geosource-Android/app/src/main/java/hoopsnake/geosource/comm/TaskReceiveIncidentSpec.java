@@ -19,10 +19,12 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 19/02/15.
  * Task to receive a new incident spec from the server, detailing what the fields are that need to be filled out.
+ * @precond when calling execute(), must use precisely params as shown: execute(String channelName, String channelOwner, String poster). (No null args).
+ * @postcond when execute() is called, receive a new incident spec from the server, detailing what the fields are that need to be filled out.
  */
 public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, Void, SocketResult> {
 
-    String channelName, channelOwner;
+    String channelName, channelOwner, poster;
     public static final String LOG_TAG = "geosource comm";
 
     public TaskReceiveIncidentSpec(IncidentActivity activity)
@@ -38,8 +40,10 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
 
         channelName = params[0];
         channelOwner = params[1];
+        poster = params[2];
         assertNotNull(channelName);
         assertNotNull(channelOwner);
+        assertNotNull(poster);
 
         try //create socket
         {
@@ -66,6 +70,8 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
             outStream.flush();
             outStream.writeUTF(channelOwner);
             outStream.flush();
+            outStream.writeUTF(poster);
+            outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
@@ -88,7 +94,7 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
         }
 
         //TODO some of this code should maybe go on the ui thread.
-        activity.setIncident(new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner, activity));
+        activity.setIncident(new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner,poster, activity));
 
         return SocketResult.SUCCESS;
     }

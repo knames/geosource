@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     //TODO make these something other than a hard-coded string.
     private String curChannelName = "march13";
     private String curChannelOwner = "okenso";
+    private String userName = "Sum Ting Wong";
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
@@ -77,6 +78,7 @@ public class MainActivity extends Activity {
 
         intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
         intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
+        intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
         startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal());
     }
 
