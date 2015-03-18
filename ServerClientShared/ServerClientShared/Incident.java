@@ -39,6 +39,10 @@ public class Incident implements Serializable {
 
     public void setFieldList(ArrayList<FieldWithContent> fieldList)
     {
+        if(fieldList==null)
+            throw new RuntimeException("fieldList cannot be null");
+        else if(fieldList.isEmpty())
+            throw new RuntimeException("fieldList cannot be empty");
         this.fieldList = fieldList;
     }
 

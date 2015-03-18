@@ -50,16 +50,17 @@ public class IncidentTest
     	ArrayList<FieldWithContent> basicSpec = new ArrayList<FieldWithContent>(1);
         ArrayList<FieldWithContent> emptySpec = new ArrayList<FieldWithContent>(0);
     	basicSpec.add(new StringFieldWithContent(new StringFieldWithoutContent("Hello World", true)));
-    	Incident testIncident1 = new Incident(basicSpec,"daChannel","Randy");
+    	Incident testIncident1 = new Incident(basicSpec,"daChannel","Randy","Steven");
     	
     	//Test getFieldList returns proper content
     	assertEquals(testIncident1.getFieldList().get(0), basicSpec.get(0));
     	assertEquals(testIncident1.getFieldList(), basicSpec);
     	
+        //ArrayList tests
     	//Null ArrayList<FieldWithContent> test
         try
         {
-            Incident testIncident2 = new Incident(null,"testChannel5","Randy");
+            Incident testIncident2 = new Incident(null,"testChannel5","Randy","Steven");
             fail("Null fieldList not allowed.");
         }
         catch(RuntimeException e){};//Expected
@@ -67,15 +68,34 @@ public class IncidentTest
     	//Empty ArrayList
         try
         {
-            Incident testIncident2 = new Incident(emptySpec,"testChannel5","Randy");
-            fail("Null fieldList not allowed.");
+            Incident testIncident2 = new Incident(emptySpec,"testChannel5","Randy","Steven");
+            fail("empty fieldList not allowed.");
         }
         catch(RuntimeException e){};//expected
+         try
+        {
+            testIncident1.setFieldList(null);
+            fail("Null fieldList set not allowed.");
+        }
+        catch(RuntimeException e){};//Expected
+    	
+    	//Empty ArrayList
+        try
+        {
+            testIncident1.setFieldList(emptySpec);
+            fail("empty fieldList set not allowed.");
+        }
+        catch(RuntimeException e){};//expected
+        
+        
+        
+        
+        
         
         //Test for null channel names
         try
         {
-            Incident testIncident3 = new Incident(basicSpec,null,"Randy");
+            Incident testIncident3 = new Incident(basicSpec,null,"Randy","Steven");
             fail("Failed to throw exception on null channel name");
         }
         catch(RuntimeException e){};//expected
@@ -83,17 +103,12 @@ public class IncidentTest
         //Test for null owner names
         try
         {
-            Incident testIncident3 = new Incident(basicSpec,"anotherTestChannel",null);
+            Incident testIncident3 = new Incident(basicSpec,"anotherTestChannel",null,"Steven");
             fail("Failed to throw exception on null channel name");
         }
         catch(RuntimeException e){};//expected
     	
-        //try to set Null on owner name
-        try
-        {
-            testIncident1.setChannelName(null);
-            fail("Failed to throw exception on null owner name");
-        }
+
         catch(RuntimeException e){};//expected
     }
     // The methods must be annotated with annotation @Test. For example:
