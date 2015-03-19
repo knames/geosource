@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import hoopsnake.geosource.R;
+import hoopsnake.geosource.comm.TaskSendIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -22,23 +23,26 @@ import static junit.framework.Assert.assertNotNull;
  * That field must have a non-null file URI referring to an existent file.
  * @postcond the given field's content file is converted into a byte array, and its content is set to that byte array.
  */
-public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
+public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWithContentAndFile, Void, Boolean>
 {
+    private TaskSendIncident callingTask;
     private AbstractAppFieldWithContentAndFile fieldToSet;
+    private static final String LOG_TAG = "geosource";
 
-    private static final String LOG_TAG = "geosource data";
     /**
      *
-     * @param fieldToSet the field whose content needs to be set based upon its fileUri.
+     * @param callingTask The task that is counting down based upon this.
      */
-    public TaskSetContentBasedOnFileUri(AbstractAppFieldWithContentAndFile fieldToSet)
+    public TaskSetContentBasedOnFileUri(TaskSendIncident callingTask)
     {
-        this.fieldToSet = fieldToSet;
-        assertNotNull(fieldToSet);
+        this.callingTask = callingTask;
+        assertNotNull(callingTask);
     }
 
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected Boolean doInBackground(AbstractAppFieldWithContentAndFile... params) {
+        fieldToSet = params[0];
+        assertNotNull(fieldToSet);
         Uri contentFileUri = fieldToSet.getContentFileUri();
         assertNotNull(contentFileUri);
         File imageFile = new File(contentFileUri.getPath());
@@ -69,7 +73,8 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
         byte[] fileInByteFormat = bos.toByteArray();
         assertNotNull(fileInByteFormat);
         fieldToSet.setContent(fileInByteFormat);
-        //Alert the IncidentActivity that it is one step closer to being able to send this incident.
+        //Alert the calling task that it is one step closer to being able to send this incident.
+        callingTask.getContentCountDownLatch().countDown();
 
         return true;
     }

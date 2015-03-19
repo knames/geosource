@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import ServerClientShared.Commands;
 import hoopsnake.geosource.IncidentActivity;
@@ -27,6 +28,12 @@ import static junit.framework.Assert.assertNotNull;
 public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Void, SocketResult> {
     public static final String LOG_TAG = "geosource comm";
 
+    public CountDownLatch getContentCountDownLatch() {
+        return contentCountDownLatch;
+    }
+
+    private CountDownLatch contentCountDownLatch;
+
     public TaskSendIncident(IncidentActivity activity)
     {
         super(activity);
@@ -45,15 +52,15 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
             }
         }
 
-        CountDownLatch contentCountDownLatch = new CountDownLatch(l.size());
+        contentCountDownLatch = new CountDownLatch(l.size());
 
         for (AbstractAppFieldWithContentAndFile field : l)
         {
-            new TaskSetContentBasedOnFileUri(field).execute();
+            new TaskSetContentBasedOnFileUri(this).execute(field);
         }
 
         try {
-            contentCountDownLatch.await();
+            contentCountDownLatch.await(2, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
 
