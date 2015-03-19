@@ -6,19 +6,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 import ServerClientShared.Commands;
-import ServerClientShared.Incident;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
+import hoopsnake.geosource.data.AbstractAppFieldWithContentAndFile;
+import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppIncident;
+import hoopsnake.geosource.data.TaskSetContentBasedOnFileUri;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 19/02/15.
  * Task to send a new completed incident to the server.
  */
-public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void, SocketResult> {
+public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Void, SocketResult> {
     public static final String LOG_TAG = "geosource comm";
 
     public TaskSendIncident(IncidentActivity activity)
@@ -26,15 +32,41 @@ public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void,
         super(activity);
     }
 
-    protected SocketResult doInBackground(Incident... params) {
+    protected SocketResult doInBackground(AppIncident... params) {
         //TODO serialize everything before sending everything.
+        AppIncident appIncidentToSend = params[0];
+        LinkedList<AbstractAppFieldWithContentAndFile> l = new LinkedList<>();
+        for (AppFieldWithContent field : appIncidentToSend.getFieldList())
+        {
+            assertFalse(!field.contentIsFilled() && field.isRequired());
+            if (field instanceof AbstractAppFieldWithContentAndFile && field.contentIsFilled())
+            {
+                l.add((AbstractAppFieldWithContentAndFile) field);
+            }
+        }
+
+        CountDownLatch contentCountDownLatch = new CountDownLatch(l.size());
+
+        for (AbstractAppFieldWithContentAndFile field : l)
+        {
+            new TaskSetContentBasedOnFileUri(field).execute();
+        }
+
+        try {
+            contentCountDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
+            return SocketResult.FAILED_PREFORMATTING;
+        }
+
         ObjectOutputStream outStream; //wrapped stream to client
 
         ObjectInputStream inStream; //stream from client
         Socket outSocket;
 
-        Incident incidentToSend = params[0];
-        assertNotNull(incidentToSend);
+
+        assertNotNull(appIncidentToSend);
 
         try //create socket
         {
@@ -56,7 +88,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void,
             //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.SEND_INCIDENT);
-            outStream.writeObject(incidentToSend);
+            outStream.writeObject(appIncidentToSend.toIncident());
             outStream.flush();
             //TODO is a reply really not necessary?
 

@@ -85,16 +85,7 @@ public class IncidentActivity extends ActionBarActivity {
     }
 
     public void setIncident(AppIncident incident) {
-
         this.incident = incident;
-//        int countDownSize = 0;
-//        for (AppFieldWithContent field : incident.getFieldList())
-//        {
-//            if (field instanceof AbstractAppFieldWithContentAndFile)
-//                countDownSize++;
-//        }
-//
-//        contentCountDownLatch = new CountDownLatch(countDownSize);
     }
 
     /**
@@ -162,7 +153,7 @@ public class IncidentActivity extends ActionBarActivity {
             //TODO uncomment this when actually using it.
             Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
 
-            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
+            new TaskSendIncident(IncidentActivity.this).execute(incident);
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
