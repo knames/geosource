@@ -67,7 +67,7 @@ public class Queries {
      */
     public static String getNewPostNum(String channelName, String ownername)
     {
-        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
+        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 desc limit 1;";
         return sql;
     }
     
