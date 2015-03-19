@@ -35,24 +35,10 @@ public class AppIncidentWithWrapper implements AppIncident {
     private Incident wrappedIncident;
 
     /**
-     *
-     * @param channelName the name of the channel for which to create the new incident.
-     * @precond channelName corresponds to an existing channel.
-     * @postcond a new AppIncidentWithWrapper is created, and its
-     * wrappedIncident is assigned this channel name.
-     * fieldList remains null.
-     */
-    public AppIncidentWithWrapper(String channelName)
-    {
-        wrappedIncident = new Incident();
-        wrappedIncident.setChannelName(channelName);
-        fieldList = null;
-    }
-
-    /**
      * @param fieldWithoutContentList a list of FieldWithoutContent.
      * @param channelName the name of the channel corresponding to the new incident.
      * @param channelOwner then name of the channel owner corresponding to the new incident.
+     * @param poster the username of the poster who authored this incident.(i.e. the app user.)
      * @param activity the activity displaying this AppIncident.
      * @precond fieldWithoutContentList and channelName are not null. And each FieldWithoutContent is also
      *  fully constructed.
@@ -71,7 +57,7 @@ public class AppIncidentWithWrapper implements AppIncident {
      * Thus an Incident is fully constructed at the same time as this AppIncident, and will share all its
      * future modifications (and all the new content that is added).
      */
-    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner, IncidentActivity activity)
+    public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner, String poster, IncidentActivity activity)
     {
         int listSize = fieldWithoutContentList.size();
         fieldList = new ArrayList<AppFieldWithContent>(listSize);
@@ -84,6 +70,8 @@ public class AppIncidentWithWrapper implements AppIncident {
             //AbstractAppFieldWithContent is guaranteed to keep the fieldWithContent reference
             //passed to it in the constructor up to date.
             AbstractAppFieldWithContent newFieldWrapper;
+
+            assertNotNull(fieldWithoutContent);
             switch(fieldWithoutContent.getType())
             {
                 case ImageFieldWithoutContent.TYPE:
@@ -112,7 +100,7 @@ public class AppIncidentWithWrapper implements AppIncident {
         }
 
         //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
-        wrappedIncident = new Incident(fieldWithContentList, channelName, channelOwner);
+        wrappedIncident = new Incident(fieldWithContentList, channelName, channelOwner, poster);
     }
 
     @Override
@@ -152,11 +140,6 @@ public class AppIncidentWithWrapper implements AppIncident {
     @Override
     public String getChannelName() {
         return wrappedIncident.getChannelName();
-    }
-
-    @Override
-    public void setChannelName(String newChannelName) {
-        wrappedIncident.setChannelName(newChannelName);
     }
 
     @Override

@@ -28,10 +28,16 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
      */
     final FieldWithContent wrappedField;
 
+    public IncidentActivity getActivity() {
+        return activity;
+    }
+
     /**
      * The activity that will be displaying this field on the UI.
      */
     final IncidentActivity activity;
+
+    String LOG_TAG = "geosource ui";
 
     /**
      * Construct a new AppFieldWithContent, wrapping (not copying) a FieldWithContent.

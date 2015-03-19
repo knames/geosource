@@ -39,6 +39,11 @@ public abstract class IncidentActivitySocketTask<Params, Progress, Result> exten
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                 Log.e(logTag, message);
                 break;
+            case FAILED_PREFORMATTING:
+                message = onFailure + " " + context.getString(R.string.failed_to_format_content);
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                Log.e(logTag, message);
+                break;
             case FAILED_CONNECTION:
                 message = onFailure + " " + activity.getString(R.string.connection_failed);
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -51,6 +56,7 @@ public abstract class IncidentActivitySocketTask<Params, Progress, Result> exten
             case SUCCESS:
                 Toast.makeText(context, onSuccess, Toast.LENGTH_LONG).show();
                 Log.i(logTag,onSuccess);
+                break;
             default:
                 throw new RuntimeException("invalid result.");
         }

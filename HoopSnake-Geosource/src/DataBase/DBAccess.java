@@ -13,13 +13,13 @@ import java.sql.Statement;
 public class DBAccess {
 	   // JDBC driver name and database URL
 	   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	   static final String DB_URL = "jdbc:mysql://www.okenso.com:3306/dev";
+	   static final String DB_URL = "jdbc:mysql://www.okenso.com:3306/dev?allowMultiQueries=true";
 
 	   //  Database credentials
 	   static final String USER = "hdev";
 	   static final String PASS = "devsnake371";
     
-    private Connection dbconnection;
+    private final Connection dbconnection;
     
     public DBAccess() throws SQLException
     {
@@ -56,25 +56,6 @@ public class DBAccess {
         }
         return ownerName + "." + fileName;
     }
-//    
-//    /**
-//     * saves a string to it's field position on a channel's database table
-//     * @param channelName the channel who's table will be saved to
-//     * @param ownerName the creator of the channel, for uniqueness
-//     * @param postNum the number of the post we are populating
-//     * @param fieldName the name of the field we are saving
-//     * @param content the string to save
-//     */
-//    public void saveStringField(String channelName, String ownerName, int postNum, String fieldName, String content)
-//    {
-//        try (Statement statement = dbconnection.createStatement()) {
-//            statement.execute(Queries.saveStringField(channelName, ownerName, postNum, fieldName, content));
-//        }
-//        catch (SQLException SQLe)
-//        {
-//            System.err.println("Saving string field failed");
-//        }
-//    }
     
     /**
      * saves the filepath to the database for a Field's contents previously saved to the filesystem
@@ -105,13 +86,14 @@ public class DBAccess {
     public int newPost(String channelName, String ownerName, String posterName) {
         
         try (Statement statement = dbconnection.createStatement()) {
-            ResultSet results = statement.executeQuery(Queries.getNewPostNum(channelName, ownerName, posterName));
+            statement.execute(Queries.newRow(channelName, ownerName, posterName));
+            ResultSet results = statement.executeQuery(Queries.getNewPostNum(channelName, ownerName));
             results.next();
             return results.getInt(1);
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Creating new Post failed");
+            System.err.println("Creating new Post failed");
             return -1;
         }
     }

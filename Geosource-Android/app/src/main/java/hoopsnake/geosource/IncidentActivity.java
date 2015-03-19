@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
+import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 
@@ -27,18 +27,15 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
+    private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
-
+    public static final String PARAM_STRING_POSTER = "poster";
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
-
-    public void setIncident(AppIncident incident) {
-        this.incident = incident;
-    }
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -77,21 +74,27 @@ public class IncidentActivity extends ActionBarActivity {
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
+        String poster = extras.getString(PARAM_STRING_POSTER);
         assertNotNull(channelName);
         assertNotNull(channelOwner);
+        assertNotNull(poster);
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
-        //TODO uncomment this for real app.
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner);
 
-        //TODO remove this mockedSpec eventually! It is just for testing.
-//        ArrayList<FieldWithoutContent> mockedSpec = new ArrayList<FieldWithoutContent>(3);
-//        mockedSpec.add(new StringFieldWithoutContent("Title", true));
-//        mockedSpec.add(new ImageFieldWithoutContent("Image", true));
-//        mockedSpec.add(new StringFieldWithoutContent("Description", false));
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+    }
+
+    public void setIncident(AppIncident incident) {
+
+        this.incident = incident;
+//        int countDownSize = 0;
+//        for (AppFieldWithContent field : incident.getFieldList())
+//        {
+//            if (field instanceof AbstractAppFieldWithContentAndFile)
+//                countDownSize++;
+//        }
 //
-//        incident = new AppIncidentWithWrapper(mockedSpec, channelName, channelOwner, IncidentActivity.this);
-//        renderIncident();
+//        contentCountDownLatch = new CountDownLatch(countDownSize);
     }
 
     /**
@@ -99,7 +102,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @postcond each field's custom view is added to the linear layout, replacing all the old
      * views in the linear layout (if they existed).
      */
-    public void renderIncident()
+    public void renderIncidentFromScratch()
     {
         assertNotNull(incident);
         assertNotNull(incident.getFieldList());
@@ -109,16 +112,16 @@ public class IncidentActivity extends ActionBarActivity {
         int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
-            //TODO change this from a test case to a regular case.
+            //TODO remove the commented out test code.
             assertNotNull(field);
-            TextView tv = new TextView(IncidentActivity.this);
-            tv.setText(field.getContentStringRepresentation());
-//            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
-//            assertNotNull(v);
+//            TextView tv = new TextView(IncidentActivity.this);
+//            tv.setText(field.getContentStringRepresentation());
+            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+            assertNotNull(v);
 
-            incidentDisplay.addView(tv);
+            incidentDisplay.addView(v);
             //All views are given a tag that is equal to their position in the linear layout.
-            tv.setTag(i);
+            v.setTag(i);
             i++;
         }
     }
@@ -157,8 +160,9 @@ public class IncidentActivity extends ActionBarActivity {
     {
         if (incident != null && incident.isCompletelyFilledIn()) {
             //TODO uncomment this when actually using it.
-            Toast.makeText(IncidentActivity.this, "success! Incident submitted.", Toast.LENGTH_LONG).show();
-//            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
+            Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
+
+            new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();

@@ -30,3 +30,43 @@ insert into posts_okenso_pothole
 	values (
 		"okenso"		
 	);
+
+insert into admin (a_username) values ("okenso");
+
+insert into private_view_channels values 
+	("okenso", "franks red hot", "frank"),
+	("okenso", "frank and beans", "frank"),
+	("okenso", "pothole", "cindy")
+	;
+
+
+	CREATE TABLE posts_okenso_march13 (
+	 p_poster varchar(25) NOT NULL,
+	 p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	 p_TitleText varchar(100),
+	 p_time DATETIME,
+	 p_PictureField varchar(100),
+	 FOREIGN KEY (p_poster) REFERENCES users (u_username)
+	 );
+
+	CREATE TABLE private_view_channels (
+	prv_username varchar(25) NOT NULL,
+	prv_chname varchar(50) NOT NULL,
+	prv_chowner varchar(25) NOT NULL,
+	FOREIGN KEY (prv_username) REFERENCES users (u_username),
+	FOREIGN KEY (prv_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (prv_chowner) REFERENCES users (u_username)
+	);
+
+insert into channelmods values
+	("okenso", "pothole", "cindy"),
+	("okenso", "frank and beans", "frank")
+	;
+
+
+
+insert into users_fav_posts values 
+	("okenso", "pothole", "okenso", 1)
+	;
+
+

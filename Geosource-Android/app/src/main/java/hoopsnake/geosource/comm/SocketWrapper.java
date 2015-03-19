@@ -14,15 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-
-import ServerClientShared.CompressedBlockInputStream;
-import ServerClientShared.CompressedBlockOutputStream;
 
 /**
  *
@@ -36,14 +31,14 @@ public class SocketWrapper {
     private static final int COMPRESSION_BLOCK_SIZE = 1024;
     private int portNum = 9001;
     //TODO change the IP address to come from a config file, or some other option.
-    private String ipaddress = "104.236.112.44";
+    private String ipaddress = "www.okenso.com";
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
     private Socket outSocket;
 
-    private static final String logTag = "geosource comm";
+    private static final String LOG_TAG = "geosource comm";
     // Password must be at least 8 characters
     private static final String password = "hiedlbrand";
 
@@ -75,32 +70,33 @@ public class SocketWrapper {
 
             outSocket = new Socket(InetAddress.getByName(ipaddress), portNum);
             if (outSocket.isConnected())
-                Log.i(logTag,"Connection Established");
+                Log.i(LOG_TAG,"Connection Established");
+
             OutputStream outStream = outSocket.getOutputStream();
             InputStream inStream = outSocket.getInputStream();
+//            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
+//            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
+//            CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, COMPRESSION_BLOCK_SIZE);
+            out = new ObjectOutputStream(outStream);
+            out.flush();
 
-            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
-            CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, COMPRESSION_BLOCK_SIZE);
-            out = new ObjectOutputStream(zipOut);
+//            CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
+            in = new ObjectInputStream(inStream);
 
-            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
-            CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
-            in = new ObjectInputStream(zipIn);
-
-            Log.i(logTag, "Stream Created");
+            Log.i(LOG_TAG, "Stream Created");
         }
         catch (InvalidKeyException IKe)
         {
-            Log.e(logTag, "invalid encryption password");
+            Log.e(LOG_TAG, "invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            Log.e(logTag, "invalid key specification");
+            Log.e(LOG_TAG, "invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            Log.e(logTag, "invalid encryption algorithm");
+            Log.e(LOG_TAG, "invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            Log.e(logTag, "No Such Padding");
+            Log.e(LOG_TAG, "No Such Padding");
         }
     }
 }

@@ -27,6 +27,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void,
     }
 
     protected SocketResult doInBackground(Incident... params) {
+        //TODO serialize everything before sending everything.
         ObjectOutputStream outStream; //wrapped stream to client
 
         ObjectInputStream inStream; //stream from client
@@ -56,7 +57,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<Incident, Void,
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.SEND_INCIDENT);
             outStream.writeObject(incidentToSend);
-
+            outStream.flush();
             //TODO is a reply really not necessary?
 
             inStream.close();

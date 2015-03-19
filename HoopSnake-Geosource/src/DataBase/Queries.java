@@ -52,12 +52,23 @@ public class Queries {
      * @param posterName the person posting this new incident
      * @return the sql query that will give the highest number in the post
      */
-    public static String getNewPostNum(String channelName, String ownername, String posterName) {
-        String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values ("
-                + posterName + "); ";
-        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;"
-                + "";
-        return insertrow + sql;
+    public static String newRow(String channelName, String ownername, String posterName) {
+
+        String sql = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values (\""
+                + posterName + "\");";
+        return sql;
+    }
+    
+    /**
+     * returns the next post number for a channel
+     * @param channelName the name of the channel
+     * @param ownername the channel's creator
+     * @return 
+     */
+    public static String getNewPostNum(String channelName, String ownername)
+    {
+        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 desc limit 1;";
+        return sql;
     }
     
     /** returns a query that drops all tables and rebuilds the database
