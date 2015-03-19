@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
     //TODO make these something other than a hard-coded string.
     private String curChannelName = "march13";
     private String curChannelOwner = "okenso";
-    private String userName = "Sum Ting Wong";
+    private String userName = "frank";
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
