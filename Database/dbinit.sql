@@ -30,6 +30,7 @@ CREATE TABLE channelfavs (
 	FOREIGN KEY (ch_fav_chowner) REFERENCES users (u_username)
 	);
 
+<<<<<<< Updated upstream
 CREATE TABLE posts_okenso_march13 (
  p_poster varchar(25) NOT NULL,
  p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -38,6 +39,12 @@ CREATE TABLE posts_okenso_march13 (
  p_PictureField varchar(100),
  FOREIGN KEY (p_poster) REFERENCES users (u_username)
  );
+=======
+CREATE TABLE admin (
+	a_username varchar(25) PRIMARY KEY,
+	FOREIGN KEY (a_username) REFERENCES users (u_username)
+	);
+>>>>>>> Stashed changes
 
 
 
