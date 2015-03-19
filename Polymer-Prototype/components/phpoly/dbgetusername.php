@@ -7,7 +7,7 @@
 
 
 
-	$userid = '0002'; // make sure it's the hashed value
+	$userid = '0001'; // make sure it's the hashed value
 
 
 	// Create connection
@@ -26,8 +26,16 @@
 
 
  	if (!$uname == null){
+ 		$result = $mysqli->query("SELECT a_username FROM admin WHERE a_username = \"$uname\";");
+		$aname = $result->fetch_assoc();
+		$aname = $aname['a_username'];
+		if (!$aname == null){
+			$aname = TRUE;
+		} else {
+			$aname = FALSE;
+		}
 		//$arr = array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5);
-		$arr = array('username' => $uname, 'b' => 2);
+		$arr = array('username' => $uname, 'admin' => $aname);
 
 		
 		print "[".json_encode($arr)."]";

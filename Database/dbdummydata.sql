@@ -30,3 +30,5 @@ insert into posts_okenso_pothole
 	values (
 		"okenso"		
 	);
+
+insert into admin (a_username) values ("okenso");
