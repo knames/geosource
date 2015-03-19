@@ -39,6 +39,7 @@ public class Queries {
         //update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
         String sql = "update posts_" + ownerName + "_" + channelName
                 + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber;
+        System.out.println(sql);
         return sql;
     }
 
@@ -55,9 +56,8 @@ public class Queries {
     public static String getNewPostNum(String channelName, String ownername, String posterName) {
         String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values ("
                 + posterName + "); ";
-        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;"
-                + "";
-        return insertrow + sql;
+        String getNum = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
+        return insertrow + getNum;
     }
     
     /** returns a query that drops all tables and rebuilds the database

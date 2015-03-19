@@ -1,8 +1,6 @@
 package FileSystem;
 
-import Control.Controller;
 import ServerClientShared.FieldWithoutContent;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,8 +41,7 @@ public class FileAccess {
      * @throws Exception
      */
     private void FolderExists() {
-        String[] folderNames = { "media", "media/spec", "media/audio",
-                        "media/video", "media/image", "media/string" };
+        String[] folderNames = { "media", "media/spec", "media/fieldContent" };
 
         for (int i = 0; i < folderNames.length; i++) {
             Path folder = Paths.get(folderNames[i]);
@@ -78,7 +75,7 @@ public class FileAccess {
     public String saveField(Serializable fieldContent) {
         UUID fileUUID = UUID.randomUUID();
         String fileName = fileUUID.toString();
-        try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream("media/fieldContent/" + fileName))) {
             fileOut.writeObject(fieldContent);
         } catch (IOException IOe) {
             System.err.println("Error attempting to write field");

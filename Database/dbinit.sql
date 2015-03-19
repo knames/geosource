@@ -30,6 +30,15 @@ CREATE TABLE channelfavs (
 	FOREIGN KEY (ch_fav_chowner) REFERENCES users (u_username)
 	);
 
+CREATE TABLE posts_okenso_march13 (
+ p_poster varchar(25) NOT NULL,
+ p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ p_TitleText varchar(100),
+ p_time DATETIME,
+ p_PictureField varchar(100),
+ FOREIGN KEY (p_poster) REFERENCES users (u_username)
+ );
+
 
 
 source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
