@@ -55,8 +55,7 @@ public class Queries {
     public static String getNewPostNum(String channelName, String ownername, String posterName) {
 
         String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values (\""
-                + posterName + "\");\n";
-
+                + posterName + "\");";
         String getNum = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
         
         System.out.println(insertrow + getNum);
