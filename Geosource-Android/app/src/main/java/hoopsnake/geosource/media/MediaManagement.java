@@ -2,12 +2,14 @@ package hoopsnake.geosource.media;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +29,8 @@ public class MediaManagement {
      */
     private static final String LOG_TAG = "geosource media";
 
+    private static MediaRecorder mRecorder;
+
     /**
      * The name of the directory to which to save all media files created by this app.
      */
@@ -36,6 +40,35 @@ public class MediaManagement {
         IMAGE,
         VIDEO,
         AUDIO
+    }
+
+    /**
+     * start recording audio and save the resulting file
+     * @param recordingFilePath the path to which the recording will save
+     */
+    public static void getAudioRecording(Uri recordingFilePath)
+    {
+        String mFileName = recordingFilePath.getPath();
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        mRecorder.start();
+    }
+
+    public static void stopAudioRecording()
+    {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
     }
 
     /**
