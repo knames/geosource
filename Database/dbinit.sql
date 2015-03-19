@@ -21,7 +21,7 @@ CREATE TABLE channelmods (
 	FOREIGN KEY (cm_username) REFERENCES users (u_username),
 	FOREIGN KEY (cm_chname) REFERENCES channels (ch_name),
 	FOREIGN KEY (cm_chowner) REFERENCES users (u_username),
-	PRIMARY KEY (cm_username, cm_chname, ch_chowner)
+	PRIMARY KEY (cm_username, cm_chname, cm_chowner)
 	);
 
 CREATE TABLE channelfavs (
