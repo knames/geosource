@@ -86,6 +86,7 @@ public class DBAccess {
     public int newPost(String channelName, String ownerName, String posterName) {
         
         try (Statement statement = dbconnection.createStatement()) {
+            statement.execute(Queries.newRow(channelName, ownerName));
             ResultSet results = statement.executeQuery(Queries.getNewPostNum(channelName, ownerName, posterName));
             results.next();
             return results.getInt(1);

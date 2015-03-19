@@ -54,12 +54,21 @@ public class Queries {
      */
     public static String getNewPostNum(String channelName, String ownername, String posterName) {
 
-        String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values (\""
+        String sql = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values (\""
                 + posterName + "\");";
-        String getNum = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
-        
-        System.out.println(insertrow + getNum);
-        return insertrow + getNum;
+        return sql;
+    }
+    
+    /**
+     * returns the next post number for a channel
+     * @param channelName the name of the channel
+     * @param ownername the channel's creator
+     * @return 
+     */
+    public static String newRow(String channelName, String ownername)
+    {
+        String sql = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
+        return sql;
     }
     
     /** returns a query that drops all tables and rebuilds the database
