@@ -138,8 +138,6 @@
 
     postChanged: function() {
 
-      this.$.disqus.reset();
-
       this.time = moment(this.post.time).fromNow();
 
       content = "";
@@ -185,9 +183,9 @@
             }
             content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
-
-
         }
+
+        this.$.disqus.reset();
       }
 
       this.$.content.innerHTML = content;
