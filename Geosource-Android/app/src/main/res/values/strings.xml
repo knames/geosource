@@ -10,6 +10,8 @@
     <string name="title_activity_incident">IncidentActivity</string>
     <string name="submit_incident">Submit</string>
     <string name="create_incident">Create New Incident</string>
+
+    <string name="preference_file_key">geosource shared pref</string>
     <string name="prompt_enter_text">Click to enter text.</string>
 
     <!--socket communication strings for Toast.-->
