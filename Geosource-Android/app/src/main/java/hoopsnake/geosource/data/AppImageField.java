@@ -88,8 +88,10 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
                 Log.i(LOG_TAG, msg);
 
                 assertNotNull(iv);
+
                 new TaskDisplayImageFromBitmap(iv).execute(path);
-                new TaskSetContentBasedOnFileUri(this).execute();
+                //TODO call this in the sendIncident task instead.
+//                new TaskSetContentBasedOnFileUri(this).execute();
             }
             else
             {
@@ -121,16 +123,20 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
         protected Bitmap doInBackground(String... params) {
             String imgFilePath = params[0];
             assertNotNull(imgFilePath);
-            return BitmapFactory.decodeFile(imgFilePath);
+            Bitmap b = BitmapFactory.decodeFile(imgFilePath);
+            Log.d(LOG_TAG, "decoded bitmap for " + imgFilePath);
+            return b;
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+            Log.d(LOG_TAG, "onPostExecute");
             if (imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
                 if (imageView != null) {
                     imageView.setImageBitmap(bitmap);
+                    Log.d(LOG_TAG, "new image view should be set.");
                 }
             }
         }

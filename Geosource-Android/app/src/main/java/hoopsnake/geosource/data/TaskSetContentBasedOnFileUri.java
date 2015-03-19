@@ -48,7 +48,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
             fis = new FileInputStream(imageFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.e(LOG_TAG, "uri " + params[0] + " not found.");
+            Log.e(LOG_TAG, "uri " + contentFileUri + " not found.");
             return false;
         }
 
@@ -60,17 +60,17 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
                 //Writes len bytes from the specified byte array starting at offset off to this byte array output stream.
             }
         } catch (IOException ex) {
-            Log.e(LOG_TAG, "failed to write file " + params[0] + " to byte array.");
+            Log.e(LOG_TAG, "failed to write file " + contentFileUri + " to byte array.");
             return false;
         }
 
-        Log.i(LOG_TAG, "converted file " + params[0] + " to byte array.");
+        Log.i(LOG_TAG, "converted file " + contentFileUri + " to byte array.");
 
         byte[] fileInByteFormat = bos.toByteArray();
         assertNotNull(fileInByteFormat);
         fieldToSet.setContent(fileInByteFormat);
         //Alert the IncidentActivity that it is one step closer to being able to send this incident.
-        fieldToSet.getActivity().getContentCountDownLatch().countDown();
+
         return true;
     }
 
@@ -81,5 +81,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<Void, Void, Boolean>
             Activity activity = fieldToSet.getActivity();
             Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
         }
+
+
     }
 }

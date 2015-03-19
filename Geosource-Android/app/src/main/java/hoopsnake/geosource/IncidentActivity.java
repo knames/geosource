@@ -7,12 +7,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
-import hoopsnake.geosource.data.AbstractAppFieldWithContentAndFile;
 import hoopsnake.geosource.data.AppFieldWithContent;
 import hoopsnake.geosource.data.AppIncident;
 
@@ -29,12 +27,7 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
-    public CountDownLatch getContentCountDownLatch() {
-        return contentCountDownLatch;
-    }
-
-    private CountDownLatch contentCountDownLatch;
-
+    private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
@@ -94,14 +87,14 @@ public class IncidentActivity extends ActionBarActivity {
     public void setIncident(AppIncident incident) {
 
         this.incident = incident;
-        int countDownSize = 0;
-        for (AppFieldWithContent field : incident.getFieldList())
-        {
-            if (field instanceof AbstractAppFieldWithContentAndFile)
-                countDownSize++;
-        }
-
-        contentCountDownLatch = new CountDownLatch(countDownSize);
+//        int countDownSize = 0;
+//        for (AppFieldWithContent field : incident.getFieldList())
+//        {
+//            if (field instanceof AbstractAppFieldWithContentAndFile)
+//                countDownSize++;
+//        }
+//
+//        contentCountDownLatch = new CountDownLatch(countDownSize);
     }
 
     /**
@@ -169,15 +162,6 @@ public class IncidentActivity extends ActionBarActivity {
             //TODO uncomment this when actually using it.
             Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
 
-            //TODO delete this stuff.
-//            ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<>();
-//            StringFieldWithContent s = new StringFieldWithContent(new StringFieldWithoutContent("title", true));
-//            s.setContent("this is a title");
-//            AppImageField i = new AppImageField(new ImageFieldWithContent(new ImageFieldWithoutContent("picture", true)), this);
-//            i.setContentFileUri("a uri");
-//            new TaskSetContentBasedOnFileUri(i).execute();
-//            fieldWithContentList.add(new StringFieldWithContent(new StringFieldWithoutContent("title", true)))
-//            Incident incident = new Incident()
             new TaskSendIncident(IncidentActivity.this).execute(incident.toIncident());
         }
         else
