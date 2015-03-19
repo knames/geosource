@@ -39,6 +39,11 @@ CREATE TABLE posts_okenso_march13 (
  FOREIGN KEY (p_poster) REFERENCES users (u_username)
  );
 
+CREATE TABLE admin (
+	a_username varchar(25) PRIMARY KEY,
+	FOREIGN KEY (a_username) REFERENCES users (u_username)
+	);
+
 
 
 source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
