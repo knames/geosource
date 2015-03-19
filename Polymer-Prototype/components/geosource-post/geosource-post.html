@@ -185,7 +185,13 @@
             break;
         }
 
-        this.$.disqus.reset();
+        try{
+          this.$.disqus.reset();
+        }
+        catch(err) {
+          console.log("ERROR LOADING DISQUS");
+        }
+        
       }
 
       this.$.content.innerHTML = content;
