@@ -39,7 +39,6 @@ public class Queries {
         //update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
         String sql = "update posts_" + ownerName + "_" + channelName
                 + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber;
-        System.out.println(sql);
         return sql;
     }
 
@@ -54,9 +53,11 @@ public class Queries {
      * @return the sql query that will give the highest number in the post
      */
     public static String getNewPostNum(String channelName, String ownername, String posterName) {
-        String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values ("
-                + posterName + "); ";
+        String insertrow = "Insert into posts_" + ownername + "_" + channelName + " (p_poster) values (\""
+                + posterName + "\");\n";
         String getNum = "select p_number from posts_" + ownername + "_" + channelName + " order by 1 asc limit 1;";
+        
+        System.out.println(insertrow + getNum);
         return insertrow + getNum;
     }
     
