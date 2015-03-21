@@ -90,6 +90,7 @@
           height: 100%;
           box-sizing: border-box;
           background-color: rgb(221, 221, 221);
+          overflow-x: auto;
         }
         #toggle_label {
           margin: 15px;
@@ -108,25 +109,20 @@
         #feed {
           width: 100%;
         }
-
-        #settings {
-
-        }
-
-        html /deep/ paper-dialog {
-          max-width: 800px;
-        }
-
-        core-drawer-panel::shadow #settings_drawer {
-          width: 400px;
-        }      
   </style>
 
     <post-summary-service id="post_service" posts="{{posts}}"></post-summary-service>
     <channel-service id="channel_service" channels="{{channels}}"></channel-service>
 
     <paper-dialog id="dialog" role="dialog" backdrop>
-      <geosource-post pid="{{pid}}" on-post-loaded="{{openDialog}}" on-core-error="{{errorPost}}"></geosource-post>
+      <geosource-post 
+        id="post"
+        pid="{{pid}}" 
+        user="{{user}}"
+        on-post-loaded="{{openDialog}}" 
+        on-core-error="{{errorPost}}"
+        on-close="{{closeDialog}}">
+      </geosource-post>
     </paper-dialog>
 
     <paper-toast id="toast" text="Error loading post"></paper-toast>
@@ -159,16 +155,19 @@
                 <section id="section3" drawer>
                   <div class="container" layout vertical center>
                     <geosource-feed id='feed' 
-                        posts="{{filteredPosts}}" 
-                        user="{{user}}"
-                        on-open-dialog="{{loadPost}}"
-                        on-set-location="{{moveMap}}"
-                        on-favorite="{{filterPosts}}">
+                      posts="{{filteredPosts}}" 
+                      user="{{user}}"
+                      on-open-dialog="{{loadPost}}"
+                      on-set-location="{{moveMap}}"
+                      on-favorite="{{filterPosts}}">
                     </geosource-feed>
                   </div>
                 </section>
                 <section id="section4" main>
-                  <geosource-map id="map" posts="{{filteredPosts}}" on-open-dialog="{{loadPost}}"></geosource-map>
+                  <geosource-map id="map" 
+                    posts="{{filteredPosts}}" 
+                    on-open-dialog="{{loadPost}}">
+                  </geosource-map>
                 </section>
               </core-drawer-panel>
             </section>
@@ -204,6 +203,9 @@
         else {
           this.pid = e.detail.post.pid;
         }
+        if(this.$.feed_drawer.narrow) {
+          this.$.feed_drawer.closeDrawer();
+        }
       },
 
       errorPost: function() {
@@ -211,7 +213,11 @@
       },
 
       openDialog: function() {
-        this.$.dialog.toggle();
+        this.$.dialog.open();
+      },
+
+      closeDialog: function() {
+        this.$.dialog.close();
       },
 
       /**

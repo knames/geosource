@@ -17,7 +17,7 @@ before_script:
   - adb wait-for-device
   - adb shell input keyevent 82 &
 
-script: cd $TEST_DIRECTORY && ./gradlew $TEST
+script: cd $TEST_DIRECTORY && ./gradlew $TEST --info
 
 notifications:
   email:
