@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.concurrent.locks.ReentrantLock;
 
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
@@ -33,6 +35,8 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
+
+    public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
@@ -213,7 +217,13 @@ public class IncidentActivity extends ActionBarActivity {
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
-     
+        Gson gson = new Gson();
+        String json = gson.toJson(incident);
+        editor.putString(SHAREDPREF_INCIDENT, json);
+        if (incident != null) {
+            ;
+        }
+        editor.commit();
     }
 }
 

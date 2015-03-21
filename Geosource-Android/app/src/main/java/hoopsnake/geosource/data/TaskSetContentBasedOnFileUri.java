@@ -86,7 +86,5 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
             Activity activity = fieldToSet.getActivity();
             Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
         }
-
-
     }
 }
