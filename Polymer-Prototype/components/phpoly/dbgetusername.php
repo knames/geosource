@@ -76,13 +76,21 @@
  		$own = $rows;
 		//SAMPLE str_replace("world","Peter","Hello world!"); 
 
-		/** TODO: do favorites array of channel, chowner, p#, similar to the query method but 3 in the array */
+ 		/** check favorite posts */
+ 		$result = $mysqli->query("SELECT ufp_chname, ufp_chowner, ufp_number FROM users_fav_posts WHERE ufp_username = \"$uname\";");
+ 		$rows = array();
+		while($r = mysqli_fetch_assoc($result)){
+			$rows[] = array('channel'=>$r['ufp_chname'],'owner' => $r['ufp_chowner'],'number'=>$r['ufp_number']);
+		}
+		$favs = $rows;
+
 
 
 
 		//$arr = array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5);
+		/** creates the array of this information */
 		$arr = array('username' => $uname, 'admin' => $aname, 'subscriber' => $sub, 
-			'viewer' => $prv, 'moderator'=>$mod, 'owner'=>$own);
+			'viewer' => $prv, 'moderator'=>$mod, 'owner'=>$own, 'favorites'=>$favs);
 
 		
 		print "[".json_encode($arr)."]";
