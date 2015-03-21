@@ -2,8 +2,7 @@
 	"pid": 1,
 	"uid": 115161761450794914816,
 	"username": "Josh",
-	"channel": "Birds",
-    "favorite": false,
+	"channel": {"name": "Birds", "owner": "Josh"},
     "title": "Have you seen this sparrow?",
 	"fields": 
 		[
@@ -15,5 +14,10 @@
 		],
 	"time": "2015-02-26 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6853},
-    "question": true
+    "question": true,
+    "comments":
+    	[
+    		{"username": "Steve", "time": "2015-02-26 12:00:00.000", "text": "I have now!"},
+    		{"username": "Josh", "time": "2015-02-26 12:00:00.000", "text": "Hmph..."}
+    	]
 }

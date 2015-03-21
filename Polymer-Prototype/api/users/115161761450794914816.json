@@ -23,6 +23,6 @@
     	],
     "favorites":
     	[
-    		2
+    		{"channel": {"name": "Mushrooms", "owner": "Josh"}, "pid": 2}
     	]
 }

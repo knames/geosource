@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
+import org.xwalk.core.XWalkView;
+
 /**
  * @author wsv759
  *
@@ -19,10 +21,13 @@ import android.webkit.WebView;
 public class MainActivity extends Activity {
     public static final String APP_LOG_TAG = "geosource";
 
+    private XWalkView xWalkWebView;
+
     //TODO make these something other than a hard-coded string.
     private String curChannelName = "march13";
     private String curChannelOwner = "okenso";
     private String userName = "frank";
+
 
     /**
      * The set of all request codes that are used by this activity when starting new activities or fragments.
@@ -40,32 +45,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebView webview = (WebView) findViewById(R.id.webView);
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.loadUrl(getString(R.string.website_url));
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
+        xWalkWebView.load("http://okenso.com", null);
     }
 
     /**
@@ -94,6 +75,32 @@ public class MainActivity extends Activity {
             {
                 //TODO Potentially react to the unsuccessful result.
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (xWalkWebView != null) {
+            xWalkWebView.pauseTimers();
+            xWalkWebView.onHide();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (xWalkWebView != null) {
+            xWalkWebView.resumeTimers();
+            xWalkWebView.onShow();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (xWalkWebView != null) {
+            xWalkWebView.onDestroy();
         }
     }
 }

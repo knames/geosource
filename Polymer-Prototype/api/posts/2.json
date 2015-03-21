@@ -2,8 +2,7 @@
 	"pid": 2,
 	"uid": 115161761450794914816,
 	"username": "Rob",
-	"channel": "Mushrooms",
-    "favorite": false,
+	"channel": {"name": "Mushrooms", "owner": "Josh"},
     "title": "Loving this mushroom.",
 	"fields": 
 		[
@@ -15,5 +14,9 @@
 		],
 	"time": "2015-02-25 12:00:00.000",
     "location": {"latitude": 52.2333, "longitude": -106.6633},
-    "question": false
+    "question": false,
+    "comments":
+    	[
+    		{"username": "Josh", "time": "2015-02-26 12:00:00.000", "text": "Me too! What a great mushroom! Pretty amazing that it sounds like StarCraft music too."}
+    	]
 }

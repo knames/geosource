@@ -136,21 +136,52 @@
 
     time: null,
 
+    isFavorite: function() {
+      if(this.user) {
+        for(i=0; i<this.user.favorites.length; i++) {
+          if(this.post.pid == this.user.favorites[i].pid &&
+              this.post.channel.name == this.user.favorites[i].channel.name && 
+              this.post.channel.owner == this.user.favorites[i].channel.owner) {
+            this.favorite = true;
+            return;
+          }            
+        }
+      }
+    },
+
     favoriteTapped: function(event, detail, sender) {
-      this.post.favorite = !this.post.favorite;
-      this.favorite = this.post.favorite;
+      if(!this.favorite) {
+        this.user.favorites.push({"channel": this.post.channel, "pid": this.post.pid});
+      }
+      else {
+        for(i=0; i<this.user.favorites.length; i++) {
+          if(this.post.pid == this.user.favorites[i].pid &&
+              this.post.channel.name == this.user.favorites[i].channel.name && 
+              this.post.channel.owner == this.user.favorites[i].channel.owner) {
+            this.user.favorites.splice(i, 1);
+          }
+        }
+      }
+      this.favorite = !this.favorite; //avoids calling this.isFavorite()
       this.fire('favorite-click');
     },
+
     locationTapped: function(event, detail, sender) {
       this.fire('location-click');
     },
+
     moreTapped: function(event, detail, sender) {
       this.fire('more-click');
     },
 
     postChanged: function() {
       this.time = moment(this.post.time).fromNow();
+      this.isFavorite();
     },
+
+    userChanged: function() {
+      this.isFavorite();
+    }
 
   });
   </script>

@@ -1,7 +1,7 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../core-menu/core-submenu.html">
 
-<polymer-element name="geosource-flags" attributes="username">
+<polymer-element name="geosource-flags" attributes="user">
 
   <template>
     
@@ -33,11 +33,11 @@
             on-change="{{toggleAll}}">
           </paper-toggle-button>
         </div>
-        <div center horizontal layout class="toggle_label">
+        <div center horizontal layout class="toggle_label" hidden?="{{!user}}">
           <div flex>Mine</div>
           <paper-toggle-button id="mine" checked disabled></paper-toggle-button>
         </div>
-        <div center horizontal layout class="toggle_label">
+        <div center horizontal layout class="toggle_label" hidden?="{{!user}}">
           <div flex>Favorites</div>
           <paper-toggle-button id="favorites" checked disabled></paper-toggle-button>
         </div>
@@ -95,11 +95,9 @@
         var mine = this.$.mine.checked;
         var questions = this.$.questions.checked;
 
-        console.log(this.username);
-
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (favorites && posts[i].favorite) || (mine && posts[i].username == this.username) || (questions && posts[i].question)) {
+          if((all) || (questions && posts[i].question) || (this.user && favorites && posts[i].favorite) || (this.user && mine && posts[i].user.username == this.user.username)) {
             includedPosts.push(posts[i]);
           }
         }

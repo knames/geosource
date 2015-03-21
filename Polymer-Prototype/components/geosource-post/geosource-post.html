@@ -19,26 +19,23 @@
 <link rel="import" href="../paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../geosource-services/post-service.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-input/paper-input-decorator.html">
+<link rel="import" href="../paper-input/paper-autogrow-textarea.html">
 
-<link rel="import" href="../disqus-comments/disqus-comments.html">
+<!-- <link rel="import" href="../disqus-comments/disqus-comments.html"> -->
 
-<polymer-element name="geosource-post" attributes="pid">
+<polymer-element name="geosource-post" attributes="pid user">
 
   <template>
 
     <style>
 
-      #close {
-        position: fixed;
-        background-color: rgba(255, 113, 113, 0.89);
-        color: #fff;
-        border-radius: 100%;
-
-      }
-
       h2 {
+        color: #FFF;
         margin-top: 0;
         margin-bottom: 0;
+        font-weight: 300;
+        font-size: 1.3em;
       }
 
       h3 {
@@ -55,21 +52,37 @@
 
       .post {
         overflow-x: auto;
-        padding: 40px;
+        max-width: 600px;
+      }
+
+      .buttons {
+        padding: 10px;
+        color: #FFF;
       }
 
       .header {
         margin: 0;
         font-size: 1.8em;
         color: #000000;
+        background-color: #5CC0A2;
+        /*position: fixed;*/
       }
 
-      .footer {
+      .title {
+        padding: 20px;
+      }
+
+      .info {
         font-size: 14px;
-        color: #636363;
+        color: rgba(255, 255, 255, 0.75);
         text-transform: uppercase;
         padding-top: 10px;
-        padding-bottom: 10px;
+      }
+
+      .content {
+        margin: 20px;
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
       video {
@@ -97,8 +110,34 @@
         padding-left: 15px;
       }
 
-      disqus-comments {
+      .comments {
+        margin:20px;
+        margin-top: 0;
+      }
+
+      .comment {
+        background-color: #F0F0F0;
         margin-top: 20px;
+      }
+
+      .comment-header {
+        padding-right: 10px;
+      }
+
+      .comment-info {
+        padding:20px;
+        padding-right: 10px;
+      }
+
+      .comment-text {
+        margin: 20px;
+        margin-top: 0;
+      }
+
+      #comment-delete {
+        width: 24px;
+        height: 24px;
+        color: #636363;
       }
 
     </style>
@@ -107,19 +146,55 @@
 
     <div class="post" vertical layout>
       <div class="header" horizontal layout>
-        <h2 flex>{{post.title}}</h2>
-        <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
+        <div vertical layout flex class="title">
+          <h2>{{post.title}}</h2>
+          <div class="info">posted by {{post.username}} {{time}} to {{post.channel.name}}</div>
+        </div>
+        <div class="buttons" vertical layout>
+          <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
+          <paper-icon-button id="favorite" icon="favorite-outline" on-tap="{{favorite}}" hidden?="{{!user}}"></paper-icon-button>
+          <paper-icon-button id="delete" icon="delete" on-tap="{{delete}}" hidden?="{{!deletePermission}}"></paper-icon-button>
+        </div>
       </div>
-      <div class="footer">posted by {{post.username}} {{time}} to {{post.channel}}</div>
+      
       <div class="content" id="content" vertical layout></div>
       
-      <disqus-comments 
+<!--       <disqus-comments 
         id="disqus"
         shortname="hoopsnake-geosource" 
         identifier="{{post.pid + 'removethis'}}" 
         url="{{'http://www.okenso.com/#!/post/' + post.pid + 'removethis'}}"
         title="{{post.title}}">
-      </disqus-comments>
+      </disqus-comments> -->
+      <div class="comments" vertical layout>
+        
+        <h3>Comments ({{post.comments.length}})</h3>
+        <template repeat="{{comment in post.comments}}">
+          <div class="comment">
+            <div class="comment-header" horizontal layout center>
+              <div class="comment-info" horizontal layout flex>
+                <div class="comment-username" flex><b>{{comment.username}}</b></div>
+                <div class="comment-time">{{timeString(comment.time)}}</div>
+              </div>
+              <paper-icon-button id="comment-delete" icon="delete" hidden="{{!deletePermission}}"></paper-icon-button>
+            </div>
+            <div class="comment-text">{{comment.text}}</div>
+          </div>
+        </template>
+
+        <div hidden?="{{!user}}">
+          <h3>Add a Comment</h3>
+          <div class="add-creator" vertical end-justified layout>
+            <paper-input-decorator label="Enter a comment...">
+              <paper-autogrow-textarea>
+                <textarea></textarea>
+              </paper-autogrow-textarea>
+            </paper-input-decorator>
+            <paper-button>Submit</paper-button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </template>
@@ -131,6 +206,22 @@
     pid: null,
     time: null,
     post: null,
+    user: null,
+    favorite: false,
+    deletePermission: false,
+
+    postChanged: function() {
+      if(this.post.favorite) {
+        this.$.favorite.icon = "favorite";
+      }
+      else {
+        this.$.favorite.icon = "favorite-outline";
+      }
+    },
+
+    timeString: function(time) {
+      return moment(time).fromNow();
+    },
 
     pidChanged: function() {
       this.$.post_service.load(this.pid);
@@ -183,25 +274,92 @@
             }
             content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
-        }
-
-        try{
-          this.$.disqus.reset();
-        }
-        catch(err) {
-          console.log("ERROR LOADING DISQUS");
-        }
-        
+        }        
       }
 
       this.$.content.innerHTML = content;
+
+      this.isFavorite();
+      this.checkDeletePermission();
 
       this.fire('post-loaded');
     },
 
     close: function() {
       this.fire('close');
+    },
+
+    isFavorite: function() {
+      if(this.user && this.post) {
+        for(i=0; i<this.user.favorites.length; i++) {
+          if(this.post.pid == this.user.favorites[i].pid &&
+              this.post.channel.name == this.user.favorites[i].channel.name && 
+              this.post.channel.owner == this.user.favorites[i].channel.owner) {
+            this.$.favorite.icon = "favorite";
+            return;
+          }            
+        }
+      }
+      this.$.favorite.icon = "favorite-outline";
+    },
+
+    favorite: function() {
+      if(this.$.favorite.icon == "favorite-outline") {
+        this.user.favorites.push({"channel": this.post.channel, "pid": this.post.pid});
+      }
+      else {
+        for(i=0; i<this.user.favorites.length; i++) {
+          if(this.post.pid == this.user.favorites[i].pid &&
+              this.post.channel.name == this.user.favorites[i].channel.name && 
+              this.post.channel.owner == this.user.favorites[i].channel.owner) {
+            this.user.favorites.splice(i, 1);
+          }
+        }
+      }
+      this.isFavorite();
+      this.fire('favorite-click');
+    },
+
+    userChanged: function() {
+      this.isFavorite();
+      this.checkDeletePermission();
+    },
+
+    delete: function() {
+
+    },
+
+    checkDeletePermission: function() {
+      if(this.user && this.post) {
+        //admin
+        if(this.user.admin) {
+          this.deletePermission = true;
+          return;
+        }
+        //channel owner
+        else if(this.user.username == this.post.channel.owner) {
+          this.deletePermission = true;
+          return;
+        }
+        // //post/comment creator
+        // else if(this.user.username == creator) {
+        //   this.deletePermissions = true;
+        //   return;
+        // }
+        //moderator
+        else {
+          for(i=0; i<this.user.moderator.length; i++) {
+            if(this.user.moderator[i].name == this.post.channel.name &&
+                this.user.moderator[i].owner == this.post.channel.owner) {
+              this.deletePermissions = true;
+              return;
+            }
+          }
+        }
+      }
+      this.deletePermission = false;
     }
+
 
   });
   </script>
