@@ -75,6 +75,8 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
+            if (fieldsToBeFilled == null)
+                return SocketResult.FAILED_FORMATTING;
 
             inStream.close();
             outStream.close();

@@ -39,7 +39,7 @@ public abstract class IncidentActivitySocketTask<Params, Progress, Result> exten
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                 Log.e(logTag, message);
                 break;
-            case FAILED_PREFORMATTING:
+            case FAILED_FORMATTING:
                 message = onFailure + " " + context.getString(R.string.failed_to_format_content);
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                 Log.e(logTag, message);

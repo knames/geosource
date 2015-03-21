@@ -109,10 +109,8 @@ public class IncidentActivity extends ActionBarActivity {
         int i = 0;
         for (AppFieldWithContent field : incident.getFieldList())
         {
-            //TODO remove the commented out test code.
             assertNotNull(field);
-//            TextView tv = new TextView(IncidentActivity.this);
-//            tv.setText(field.getContentStringRepresentation());
+
             View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             assertNotNull(v);
 
@@ -213,15 +211,16 @@ public class IncidentActivity extends ActionBarActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        SharedPreferences sharedPref = getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(incident);
-        editor.putString(SHAREDPREF_INCIDENT, json);
-        if (incident != null) {
-            ;
+        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
+            editor.remove(SHAREDPREF_INCIDENT);
+        else
+        {
+            Gson gson = new Gson();
+            String json = gson.toJson(incident);
+            editor.putString(SHAREDPREF_INCIDENT, json);
         }
         editor.commit();
     }

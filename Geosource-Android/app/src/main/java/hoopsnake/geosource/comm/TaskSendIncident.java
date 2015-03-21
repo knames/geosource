@@ -64,7 +64,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
         } catch (InterruptedException e) {
             e.printStackTrace();
 
-            return SocketResult.FAILED_PREFORMATTING;
+            return SocketResult.FAILED_FORMATTING;
         }
 
         ObjectOutputStream outStream; //wrapped stream to client
