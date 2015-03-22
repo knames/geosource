@@ -85,12 +85,13 @@ public class Queries {
      @param ownername the name of the owner of the post
      @param tablename the name of the table.
      @param fields an array of column names for the fields. can take null of no fields.
+     * 
      @return the sql for the table creation*/
     public static String createPosts(String ownername, String tablename, String[] fields){
         String allfields = "";
         if (fields != null){
             for (String i : fields){
-                allfields = allfields + i + " varchar(100), ";
+                allfields = allfields + "p_" + i + " varchar(100), ";
             }
         }
         String sql ="CREATE TABLE posts_" + ownername + "_" + tablename + " ( "
@@ -108,7 +109,7 @@ public class Queries {
      * @param args.*/
     public static void main(String[] args)
     {
-    	String[] test = {"p_pic", "p_video", "p_audio"};
+    	String[] test = {"pic", "video", "audio"};
         System.out.println(createPosts("okenso", "toast", test));
         
     }
