@@ -13,13 +13,16 @@ import com.google.gson.Gson;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import ServerClientShared.Incident;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
-import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
+import hoopsnake.geosource.data.AppIncidentWithWrapper;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 /**
  * @author wsv759
@@ -31,12 +34,15 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
+    private final Geotag geotag = new Geotag();
+
     private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
 
-    public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
+    private static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
+
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
 
@@ -66,17 +72,48 @@ public class IncidentActivity extends ActionBarActivity {
     }
 
     /**
-     * Initialize the display and the adapted, and send off for the incident spec, based on the channel name
-     * provided by the MainActivity that called this.
-     * @param savedInstanceState
+     * Initialize the display, and its underlying incident. There are only two legitimate cases for initializing the incident:
+     *  1. There are no extras, but an incident is stored in the shared preferences.
+     *      In this case we are resuming filling out an incident from before.
+     *  2. There are extras, and no incident is stored in the shared preferences.
+     *      In this case we send off for the incident spec, based on the channel name and channel owner provided by the extras.
+     * @param savedInstanceState automatically handled by android.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incident);
+        assertNull(incident);
 
         Bundle extras = getIntent().getExtras();
-        assertNotNull(extras);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+        if ((extras == null || extrasAreEmpty(extras)) && sharedPref.contains(SHAREDPREF_INCIDENT))
+            initializeAppIncidentFromSharedPref(sharedPref);
+        else if (extras != null)
+            initializeAppIncidentFromServer(extras);
+        else
+            throw new RuntimeException("invalid onCreate scenario for IncidentActivity.");
+    }
+
+    private void initializeAppIncidentFromSharedPref(SharedPreferences sharedPref)
+    {
+        String jsonIncident = sharedPref.getString(SHAREDPREF_INCIDENT, null);
+        Gson gson = new Gson();
+        Incident curIncident = gson.fromJson(jsonIncident, Incident.class);
+        assertNotNull(curIncident.getChannelName());
+        assertNotNull(curIncident.getFieldList());
+        assertNotNull(curIncident.getOwnerName());
+        assertNotNull(curIncident.getPosterName());
+
+        setIncident(new AppIncidentWithWrapper(curIncident, IncidentActivity.this));
+
+        renderIncidentFromScratch();
+    }
+
+    private void initializeAppIncidentFromServer(Bundle extras)
+    {
+        geotag.update(IncidentActivity.this);
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
@@ -88,6 +125,12 @@ public class IncidentActivity extends ActionBarActivity {
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+    }
+
+    private boolean extrasAreEmpty(Bundle extras)
+    {
+        assertNotNull(extras);
+        return !extras.containsKey(PARAM_STRING_CHANNEL_NAME);
     }
 
     public void setIncident(AppIncident incident) {
@@ -105,9 +148,13 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(incident.getFieldList());
         assertNotNull(incidentDisplay);
 
+        //TODO grosssss...
+        if (!incident.getFieldList().get(2).contentIsFilled())
+            incident.setGeotag(geotag);
+
         incidentDisplay.removeAllViews();
         int i = 0;
-        for (AppFieldWithContent field : incident.getFieldList())
+        for (AppField field : incident.getFieldList())
         {
             assertNotNull(field);
 
@@ -137,7 +184,7 @@ public class IncidentActivity extends ActionBarActivity {
                  * Delegate the response to the field whose selection launched the returning activity in the first place.
                  */
                 assertFalse(curFieldIdx == NO_CUR_FIELD_SELECTED);
-                AppFieldWithContent curField = incident.getFieldList().get(curFieldIdx);
+                AppField curField = incident.getFieldList().get(curFieldIdx);
                 curField.onResultFromSelection(resultCode, data);
                 break;
             default:
@@ -158,6 +205,10 @@ public class IncidentActivity extends ActionBarActivity {
             Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
 
             new TaskSendIncident(IncidentActivity.this).execute(incident);
+
+            setIncident(null);
+            setResult(RESULT_OK);
+            finish();
         }
         else
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
@@ -169,7 +220,7 @@ public class IncidentActivity extends ActionBarActivity {
      * thread can click it.
      * @return true if the activity is not busy and can be clicked, false otherwise.
      */
-    private boolean canBeClicked() {
+    private boolean canLaunch() {
         clickableLock.lock();
         if (clickable) {
             clickable = false;
@@ -184,7 +235,7 @@ public class IncidentActivity extends ActionBarActivity {
     /**
      * When a thread is done using this activity, allow other threads to use it again.
      */
-    private void doneClicking() {
+    private void doneLaunching() {
         clickableLock.lock();
         assertFalse(clickable);
         clickable = true;
@@ -193,36 +244,62 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      *
-     * @param taskUsingActivity a task that needs to be run by some other class, using this activity's code.
-     * @precond taskUsingActivity is not null.
-     * @postcond taskUsingActivity is run if this activity is not busy; otherwise it does not run.
+     * @param taskThatLaunches a task that needs to be run by some other class, and uses this activity's code to launch an activity or fragment.
+     * @precond taskThatLaunches is not null.
+     * @postcond taskThatLaunches is run if this activity is not busy; otherwise it does not run.
      */
-    public void doIfClickable(Runnable taskUsingActivity)
+    private void doIfLaunchable(Runnable taskThatLaunches)
     {
-        if (canBeClicked())
+        if (canLaunch())
         {
-            taskUsingActivity.run();
+            taskThatLaunches.run();
 
-            doneClicking();
+            doneLaunching();
         }
+    }
+
+    /**
+     *
+     * @param v the view that needs to launch some activity or fragment on click.
+     * @param onClickLaunchable a piece of runnable code that could launch an activity or fragment from this IncidentActivity.
+     */
+    public void makeViewLaunchable(View v, final Runnable onClickLaunchable)
+    {
+        v.setClickable(true);
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                doIfLaunchable(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Make sure the activity knows which view was clicked.
+                        setCurFieldIdx((int) v.getTag());
+
+                        onClickLaunchable.run();
+                    }
+                });
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = sharedPref.edit();
-        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
-            editor.remove(SHAREDPREF_INCIDENT);
-        else
-        {
-            Gson gson = new Gson();
-            String json = gson.toJson(incident);
-            editor.putString(SHAREDPREF_INCIDENT, json);
-        }
-        editor.commit();
+        //TODO this code doesn't work, because gson tries to serialize the content of every field in the incident. Yikes!
+//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+//
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
+//            editor.remove(SHAREDPREF_INCIDENT);
+//        else
+//        {
+//            Gson gson = new Gson();
+//            String json = gson.toJson(incident.toIncident());
+//            editor.putString(SHAREDPREF_INCIDENT, json);
+//        }
+//        editor.commit();
     }
 }
 

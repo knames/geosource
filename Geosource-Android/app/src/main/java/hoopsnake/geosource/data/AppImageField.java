@@ -26,7 +26,7 @@ import static junit.framework.Assert.assertNotNull;
  *
  * Implementation of an app field with type Image.
  */
-public class AppImageField extends AbstractAppFieldWithContentAndFile {
+public class AppImageField extends AbstractAppFieldWithFile {
     private ImageView iv = null;
 
     public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
@@ -40,33 +40,31 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public ImageView getContentViewRepresentation(final int requestCodeForIntent) {
+    View getFilledContentViewRepresentation() {
         iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
-//        iv.setImageDrawable(super.getDrawableIconFromSVGResource(R.raw.camera_alt));
+        iv.setClickable(false);
+        new TaskDisplayImageFromBitmap(iv).execute(getContentFileUri().getPath());
+
+        return iv;
+    }
+
+    @Override
+    View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
+        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
         iv.setImageResource(R.drawable.arrow_right); //TODO arrow_right is just a placeholder.
-        iv.setClickable(true);
 
-        iv.setOnClickListener(new View.OnClickListener() {
+        activity.makeViewLaunchable(iv, new Runnable() {
             @Override
-            public void onClick(final View v) {
-                activity.doIfClickable(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Make sure the activity knows which view was clicked.
-                        activity.setCurFieldIdx((int) v.getTag());
+            public void run() {
+                Uri fileUriForNewImage = MediaManagement.getOutputImageFileUri();
+                if (fileUriForNewImage == null) {
+                    Toast.makeText(activity, "Cannot take picture; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-                        Uri fileUriForNewImage = MediaManagement.getOutputImageFileUri();
-                        if (fileUriForNewImage == null)
-                        {
-                            Toast.makeText(activity, "Cannot take picture; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                            return;
-                        }
+                setContentFileUri(fileUriForNewImage);
 
-                        setContentFileUri(fileUriForNewImage);
-
-                        MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
-                    }
-                });
+                MediaManagement.startCameraActivityForImage(activity, requestCodeForIntent, fileUriForNewImage);
             }
         });
 
@@ -79,7 +77,7 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
             // Image captured and saved to fileUri specified in the Intent
             Uri contentFileUri = getContentFileUri();
             assertNotNull(contentFileUri);
-            File imgFile = new  File(contentFileUri.getPath());
+            File imgFile = new File(contentFileUri.getPath());
 
             if(imgFile.exists()){
                 String path = imgFile.getAbsolutePath();
@@ -90,16 +88,13 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
                 assertNotNull(iv);
 
                 new TaskDisplayImageFromBitmap(iv).execute(path);
-                //TODO call this in the sendIncident task instead.
-//                new TaskSetContentBasedOnFileUri(this).execute();
             }
             else
             {
+                setContentFileUri(null);
                 Log.e(LOG_TAG, "new file was not created.");
                 Toast.makeText(activity, activity.getString(R.string.failed_to_capture_image) , Toast.LENGTH_LONG).show();
             }
-
-
         } else if (resultCode == Activity.RESULT_CANCELED) {
             setContentFileUri(null);
         } else {
@@ -108,17 +103,25 @@ public class AppImageField extends AbstractAppFieldWithContentAndFile {
         }
     }
 
+
     private class TaskDisplayImageFromBitmap extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         private int data = 0;
 
+        /**
+         *
+         * @param imageView the view that will display the resulting decoded bitmap.
+         */
         public TaskDisplayImageFromBitmap(ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             assertNotNull(imageView);
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
 
-        // Decode image in background.
+        /**
+         * Decode image in background.
+         * @param params a single String containing the img filepath to decode.
+         */
         @Override
         protected Bitmap doInBackground(String... params) {
             String imgFilePath = params[0];

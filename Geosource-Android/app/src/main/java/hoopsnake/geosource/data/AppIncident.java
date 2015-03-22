@@ -3,6 +3,7 @@ package hoopsnake.geosource.data;
 import java.util.ArrayList;
 
 import ServerClientShared.Incident;
+import hoopsnake.geosource.Geotag;
 
 /**
  * Created by wsv759 on 08/03/15.
@@ -42,5 +43,12 @@ public interface AppIncident
      * @postcond see return.
      * @return the field list underlying this incident. May be null.
      */
-    public ArrayList<AppFieldWithContent> getFieldList();
+    public ArrayList<AppField> getFieldList();
+
+    /**
+     * @precond geotag not null.
+     * @postcond this incident's geotag (location and timestamp) are updated to the given values.
+     * @param geotag
+     */
+    public void setGeotag(Geotag geotag);
 }

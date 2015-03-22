@@ -12,7 +12,7 @@ import java.io.Serializable;
  * Each implementation of field defines its own UI-level behaviour, as well as its basic
  * underlying Field behaviour.
  */
-public interface AppFieldWithContent {
+public interface AppField {
 
     /**
      *
@@ -61,7 +61,8 @@ public interface AppFieldWithContent {
      * @param requestCodeForIntent a request code by which the returned view will be able to launch new activities.
      * @precond context is not null.
      * @postcond see return.
-     * @return a View representing this field, to be displayed by the UI.
+     * @return a View representing this field, to be displayed by the UI. This view should be up-to-date
+     * with the field's content status: if content is not null, return a view showing the filled version.
      */
     public View getContentViewRepresentation(final int requestCodeForIntent);
 

@@ -11,16 +11,16 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by wsv759 on 07/03/15.
  *
- * Abstract implementation of AppFieldWithContent, wrapping an underlying vanilla Java FieldWithContent
+ * Abstract implementation of AppField, wrapping an underlying vanilla Java FieldWithContent
  * object. (the object that is actually sent to the server.)
  *
  * This class is constructed with a FieldWithContent reference as a parameter. That reference is
  * guaranteed to stay up to date with the modifications to this class's wrapped field. So other
  * objects can make use of that reference.
  *
- * All implementations of AppFieldWithContent should extend this.
+ * All implementations of AppField should extend this.
  */
-public abstract class AbstractAppFieldWithContent implements AppFieldWithContent {
+public abstract class AbstractAppField implements AppField {
 
     /**
      * Underlying field object that contains the attributes to be acted upon by
@@ -40,19 +40,28 @@ public abstract class AbstractAppFieldWithContent implements AppFieldWithContent
     String LOG_TAG = "geosource ui";
 
     /**
-     * Construct a new AppFieldWithContent, wrapping (not copying) a FieldWithContent.
+     * Construct a new AppField, wrapping (not copying) a FieldWithContent.
      * Thus the reference to that FieldWithContent is guaranteed to remain up to date.
      * @param fieldToWrap a FieldWithContent that will be wrapped (not copied).
      * @param activity
      * @precond fieldToWrap is not null, and is of the correct type.
-     * @postcond a new AppFieldWithContent is created with fieldToWrap as an underlying field.
+     * @postcond a new AppField is created with fieldToWrap as an underlying field.
      */
-    public AbstractAppFieldWithContent(FieldWithContent fieldToWrap, IncidentActivity activity)
+    public AbstractAppField(FieldWithContent fieldToWrap, IncidentActivity activity)
     {
         assertNotNull(fieldToWrap);
         assertNotNull(activity);
         this.wrappedField = fieldToWrap;
         this.activity = activity;
+    }
+
+    /**
+     * Naive implementation, to be overridden by most extensions of this class.
+     */
+    @Override
+    public boolean contentIsFilled()
+    {
+        return wrappedField.getContent() != null;
     }
 
     @Override

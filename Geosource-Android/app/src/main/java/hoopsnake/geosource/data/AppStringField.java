@@ -15,7 +15,7 @@ import hoopsnake.geosource.R;
  *
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
-public class AppStringField extends AbstractAppFieldWithContent {
+public class AppStringField extends AbstractAppField {
     public AppStringField(StringFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
     }
@@ -38,15 +38,10 @@ public class AppStringField extends AbstractAppFieldWithContent {
     }
 
     @Override
-    public boolean contentIsFilled() {
-        return wrappedField.getContent() != null;
-    }
-
-    @Override
     public View getContentViewRepresentation(final int requestCodeForIntent) {
         //TODO both these lines seem to work for the same purpose. Which is better?
         EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
-//        EditText contentEditor = (EditText) activity.findViewById(R.id.field_edit_text);
+
         String content = (String) wrappedField.getContent();
         //TODO check the length of the text.
         if (content != null)

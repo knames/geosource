@@ -13,7 +13,7 @@ import hoopsnake.geosource.IncidentActivity;
  *
  * Implementation of an app field with type Audio.
  */
-public class AppAudioField extends AbstractAppFieldWithContentAndFile{
+public class AppAudioField extends AbstractAppFieldWithFile {
 
     public AppAudioField(AudioFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
@@ -26,7 +26,14 @@ public class AppAudioField extends AbstractAppFieldWithContentAndFile{
     }
 
     @Override
-    public View getContentViewRepresentation(int requestCodeForIntent) {
+    View getFilledContentViewRepresentation() {
+        //TODO implement this.
+        return null;
+    }
+
+    @Override
+    View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
+        //TODO implement this.
         return null;
     }
 

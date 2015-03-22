@@ -16,7 +16,7 @@ public class MainActivityIT extends ActivityInstrumentationTestCase2<MainActivit
     }
 
     //Just a basic test I wrote to look at things.
-    /*public void testIfTextAppears() throws Exception
+   /*public void testIfTextAppears() throws Exception
     {
         //Check to see if we are in the right activity
         solo.assertCurrentActivity("wrong activity", MainActivity.class);
@@ -40,6 +40,8 @@ public class MainActivityIT extends ActivityInstrumentationTestCase2<MainActivit
     {
         //Check to see if we are in the right activity
         solo.assertCurrentActivity("wrong activity", MainActivity.class);
+        solo.clickOnButton(solo.getString(R.string.create_incident));
+        //solo.clickOnButton(solo.getString(R.string.))
         //this.testAudio();
 
 

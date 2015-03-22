@@ -7,24 +7,16 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
- * Created by wsv759 on 12/03/15.
+ * Created by wsv759 on 21/03/15.
  */
-public class VideoFieldWithContent extends FileFieldWithContent implements Serializable {
+public class GeotagFieldWithoutContent extends FieldWithoutContent implements Serializable {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public VideoFieldWithContent(VideoFieldWithoutContent fieldWithoutContent) {
-        super(fieldWithoutContent);
-    }
+    public static final String TYPE = "geotag";
 
-    @Override
-    public boolean contentMatchesType(Serializable content)
-    {
-        if (!super.contentMatchesType(content))
-            return false;
-
-        //TODO add extra tests?
-        return true;
+    public GeotagFieldWithoutContent(String title, boolean isRequired) {
+        super(title, TYPE, isRequired);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException

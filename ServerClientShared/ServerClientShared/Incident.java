@@ -7,6 +7,8 @@ import java.util.ArrayList;
  * Created by wsv759 on 19/02/15.
  */
 public class Incident implements Serializable {
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
 
     /** The fields for this incident, including their content. Their content may be null. */
     private ArrayList<FieldWithContent> fieldList;

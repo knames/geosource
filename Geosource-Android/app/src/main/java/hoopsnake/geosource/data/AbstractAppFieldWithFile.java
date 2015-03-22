@@ -3,6 +3,7 @@ package hoopsnake.geosource.data;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.view.View;
 
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
@@ -15,12 +16,12 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 07/03/15.
  *
- * Abstract implementation of AppFieldWithContent, intended to be extended by all content types
+ * Abstract implementation of AppField, intended to be extended by all content types
  * whose content is stored in a file on android (e.g. image, video, audio.)
  */
-public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFieldWithContent {
+public abstract class AbstractAppFieldWithFile extends AbstractAppField {
 
-    public AbstractAppFieldWithContentAndFile(FieldWithContent fieldToWrap, IncidentActivity activity)
+    public AbstractAppFieldWithFile(FieldWithContent fieldToWrap, IncidentActivity activity)
     {
         super(fieldToWrap, activity);
     }
@@ -54,6 +55,27 @@ public abstract class AbstractAppFieldWithContentAndFile extends AbstractAppFiel
 
         return contentFileUri.toString();
     }
+
+    @Override
+    public View getContentViewRepresentation(final int requestCodeForIntent)
+    {
+        if (contentIsFilled())
+            return getFilledContentViewRepresentation();
+        else
+            return getEmptyContentViewRepresentation(requestCodeForIntent);
+    }
+
+    /**
+     *
+     * @return a content view representation for if the content is filled.
+     */
+    abstract View getFilledContentViewRepresentation();
+
+    /**
+     *
+     * @return a content view representation for if the content is empty.
+     */
+    abstract View getEmptyContentViewRepresentation(final int requestCodeForIntent);
 
     /**
      *
