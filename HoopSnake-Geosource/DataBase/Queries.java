@@ -78,4 +78,39 @@ public class Queries {
                 " SOURCE /var/www/okenso.com/cmpt371group2/Database/dbinit.sql";
        return sql;
     }
+    
+    
+    
+    /** creates a default post table
+     @param ownername the name of the owner of the post
+     @param tablename the name of the table.
+     @param fields an array of column names for the fields. can take null of no fields.
+     @return the sql for the table creation*/
+    public static String createPosts(String ownername, String tablename, String[] fields){
+        String allfields = "";
+        if (fields != null){
+            for (String i : fields){
+                allfields = allfields + i + " varchar(100), ";
+            }
+        }
+        String sql ="CREATE TABLE posts_" + ownername + "_" + tablename + " ( "
+                + "p_poster varchar(25) NOT NULL, "
+                + "p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+                + "p_time DATETIME, "
+                + "p_lat DOUBLE, "
+                + "p_long DOUBLE, "
+                + allfields
+                + "FOREIGN KEY (p_poster) REFERENCES users (u_username));";
+        return sql;
+    }    
+    
+    /**  a main class to test some functions output
+     * @param args.*/
+    public static void main(String[] args)
+    {
+    	String[] test = {"p_pic", "p_video", "p_audio"};
+        System.out.println(createPosts("okenso", "toast", test));
+        
+    }
 }
+
