@@ -43,14 +43,13 @@ public class Geotag implements Serializable {
     public void update(Context context) {
         timestamp = System.currentTimeMillis();
 
-        LocationManager lm = null;
         boolean gps_enabled = false,network_enabled = false;
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         try{
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }catch(Exception ex){}
         try{
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         }catch(Exception ex){}
 
         if (gps_enabled || network_enabled) {
