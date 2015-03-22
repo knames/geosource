@@ -49,14 +49,6 @@ insert into private_view_channels values
 	 FOREIGN KEY (p_poster) REFERENCES users (u_username)
 	 );
 
-	CREATE TABLE private_view_channels (
-	prv_username varchar(25) NOT NULL,
-	prv_chname varchar(50) NOT NULL,
-	prv_chowner varchar(25) NOT NULL,
-	FOREIGN KEY (prv_username) REFERENCES users (u_username),
-	FOREIGN KEY (prv_chname) REFERENCES channels (ch_name),
-	FOREIGN KEY (prv_chowner) REFERENCES users (u_username)
-	);
 
 insert into channelmods values
 	("okenso", "pothole", "cindy"),
