@@ -45,6 +45,8 @@ insert into private_view_channels values
 	 p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	 p_TitleText varchar(100),
 	 p_time DATETIME,
+	 p_lat DOUBLE,
+	 p_long DOUBLE,
 	 p_PictureField varchar(100),
 	 FOREIGN KEY (p_poster) REFERENCES users (u_username)
 	 );
