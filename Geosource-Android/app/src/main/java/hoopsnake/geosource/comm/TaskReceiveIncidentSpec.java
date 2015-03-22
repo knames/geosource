@@ -96,7 +96,7 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
         }
 
         //TODO some of this code should maybe go on the ui thread.
-        activity.setIncident(new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner,poster, activity));
+        activity.setIncident(new AppIncidentWithWrapper(fieldsToBeFilled, channelName, channelOwner, poster, activity));
 
         return SocketResult.SUCCESS;
     }

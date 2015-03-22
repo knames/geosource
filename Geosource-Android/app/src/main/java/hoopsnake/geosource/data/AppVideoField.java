@@ -17,7 +17,7 @@ import hoopsnake.geosource.media.MediaManagement;
  *
  * Implementation of an app field with type Video.
  */
-public class AppVideoField extends AbstractAppFieldWithContentAndFile {
+public class AppVideoField extends AbstractAppFieldWithFile {
 
     public AppVideoField(VideoFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
@@ -30,29 +30,26 @@ public class AppVideoField extends AbstractAppFieldWithContentAndFile {
     }
 
     @Override
-    public View getContentViewRepresentation(final int requestCodeForIntent) {
+    View getFilledContentViewRepresentation() {
+        //TODO implement this.
+        return null;
+    }
+
+    @Override
+    View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
         ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+        //TODO give this a default image.
 
-
-        iv.setOnClickListener(new View.OnClickListener() {
+        activity.makeViewLaunchable(iv, new Runnable() {
             @Override
-            public void onClick(final View v) {
-                activity.doIfClickable(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Make sure the activity knows which view was clicked.
-                        activity.setCurFieldIdx((int) v.getTag());
+            public void run() {
+                Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
+                if (fileUriForNewVideo == null) {
+                    Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-                        Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
-                        if (fileUriForNewVideo == null)
-                        {
-                            Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
-                    }
-                });
+                MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
             }
         });
 

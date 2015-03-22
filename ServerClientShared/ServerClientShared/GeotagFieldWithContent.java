@@ -7,19 +7,24 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
- * Created by wsv759 on 12/03/15.
+ * Created by wsv759 on 21/03/15.
  */
-public class StringFieldWithContent extends FieldWithContent implements Serializable {
+public class GeotagFieldWithContent extends FieldWithContent implements Serializable {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public StringFieldWithContent(StringFieldWithoutContent fieldWithoutContent) {
+    public void updateContent(long timestamp, double longitude, double latitude)
+    {
+        setContent(new Number[]{timestamp, longitude, latitude});
+    }
+
+    public GeotagFieldWithContent(GeotagFieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }
 
     @Override
     public boolean contentMatchesType(Serializable content) {
-        return content instanceof String;
+        return false;
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -34,4 +39,6 @@ public class StringFieldWithContent extends FieldWithContent implements Serializ
     {
         super.readObjectNoDataHelper();
     }
+
+
 }

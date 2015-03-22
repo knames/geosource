@@ -13,6 +13,7 @@ import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
+import hoopsnake.geosource.Geotag;
 import hoopsnake.geosource.IncidentActivity;
 
 import static junit.framework.Assert.assertNotNull;
@@ -27,12 +28,52 @@ public class AppIncidentWithWrapper implements AppIncident {
     /**
      * the list of app-side fields contained within this incident.
      */
-    private final ArrayList<AppFieldWithContent> fieldList;
+    private final ArrayList<AppField> fieldList;
 
     /**
      * The basic server-side incident underlying this incident.
      */
     private Incident wrappedIncident;
+
+    /**
+     * @param incident a fully constructed incident, containing a list of fields that may have null or non-null content.
+     * @param activity the activity displaying this AppIncident.
+     * Create a new app incident by wrapping a given incident, and populating the app incident's fieldList by means of
+     * the wrapped incident's existing list. See the other constructor for more in-depth comments.
+     */
+    public AppIncidentWithWrapper(Incident incident, IncidentActivity activity)
+    {
+        wrappedIncident = incident;
+        ArrayList<FieldWithContent> fieldWithContentList = incident.getFieldList();
+        fieldList = new ArrayList<AppField>(fieldWithContentList.size());
+
+        for (FieldWithContent fwc : fieldWithContentList)
+        {
+            //AbstractAppField is guaranteed to keep the fieldWithContent reference
+            //passed to it in the constructor up to date.
+            AbstractAppField newFieldWrapper;
+
+            switch(fwc.getType())
+            {
+                case ImageFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppImageField((ImageFieldWithContent) fwc, activity);
+                    break;
+                case StringFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppStringField((StringFieldWithContent) fwc, activity);
+                    break;
+                case VideoFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) fwc, activity);
+                    break;
+                case AudioFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) fwc, activity);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid type " + fwc.getType() + ".");
+            }
+
+            fieldList.add(newFieldWrapper);
+        }
+    }
 
     /**
      * @param fieldWithoutContentList a list of FieldWithoutContent.
@@ -50,7 +91,7 @@ public class AppIncidentWithWrapper implements AppIncident {
      * The various app-side implementations of the different field types are instantiated here,
      * by means of a switch statement on each input field's type.
      *
-     * Since each AppFieldWithContent wraps a regular FieldWithContent, the underlying wrappedIncident's
+     * Since each AppField wraps a regular FieldWithContent, the underlying wrappedIncident's
      * list of FieldsWithContent can share the same FieldsWithContent as this AppIncident's list of AppFieldsWithContent.
      * Both lists end up containing references to the same underlying objects.
      *
@@ -60,16 +101,16 @@ public class AppIncidentWithWrapper implements AppIncident {
     public AppIncidentWithWrapper(ArrayList<FieldWithoutContent> fieldWithoutContentList, String channelName, String channelOwner, String poster, IncidentActivity activity)
     {
         int listSize = fieldWithoutContentList.size();
-        fieldList = new ArrayList<AppFieldWithContent>(listSize);
+        fieldList = new ArrayList<AppField>(listSize);
         ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<FieldWithContent>(listSize);
 
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
             FieldWithContent newField;
 
-            //AbstractAppFieldWithContent is guaranteed to keep the fieldWithContent reference
+            //AbstractAppField is guaranteed to keep the fieldWithContent reference
             //passed to it in the constructor up to date.
-            AbstractAppFieldWithContent newFieldWrapper;
+            AbstractAppField newFieldWrapper;
 
             assertNotNull(fieldWithoutContent);
             switch(fieldWithoutContent.getType())
@@ -108,7 +149,7 @@ public class AppIncidentWithWrapper implements AppIncident {
     {
         assertNotNull(fieldList);
 
-        for (AppFieldWithContent fieldWithContent : fieldList)
+        for (AppField fieldWithContent : fieldList)
         {
             assertNotNull(fieldWithContent);
 
@@ -126,7 +167,7 @@ public class AppIncidentWithWrapper implements AppIncident {
         //TODO delete this if the below todo works.
 //        ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<FieldWithContent>(fieldList.size());
 //
-//        for (AppFieldWithContent appField : fieldList)
+//        for (AppField appField : fieldList)
 //        {
 //            fieldWithContentList.add(appField.toFieldWithContent());
 //        }
@@ -143,7 +184,14 @@ public class AppIncidentWithWrapper implements AppIncident {
     }
 
     @Override
-    public ArrayList<AppFieldWithContent> getFieldList() {
+    public ArrayList<AppField> getFieldList() {
         return fieldList;
+    }
+
+    @Override
+    public void setGeotag(Geotag geotag) {
+        //TODO this is what connor promised... geotag in position 2. I suspect this may change.
+        AppGeotagField geotagField = (AppGeotagField) fieldList.get(2);
+        geotagField.setGeotag(geotag);
     }
 }

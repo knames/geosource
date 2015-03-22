@@ -19,14 +19,14 @@ import static junit.framework.Assert.assertNotNull;
 
 /**
  * The following @precond and @postcond apply to calling .execute() on this class.
- * @precond before executing this task, construct it with an AbstractAppFieldWithContentAndFile.
+ * @precond before executing this task, construct it with an AbstractAppFieldWithFile.
  * That field must have a non-null file URI referring to an existent file.
  * @postcond the given field's content file is converted into a byte array, and its content is set to that byte array.
  */
-public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWithContentAndFile, Void, Boolean>
+public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWithFile, Void, Boolean>
 {
     private TaskSendIncident callingTask;
-    private AbstractAppFieldWithContentAndFile fieldToSet;
+    private AbstractAppFieldWithFile fieldToSet;
     private static final String LOG_TAG = "geosource";
 
     /**
@@ -40,7 +40,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
     }
 
     @Override
-    protected Boolean doInBackground(AbstractAppFieldWithContentAndFile... params) {
+    protected Boolean doInBackground(AbstractAppFieldWithFile... params) {
         fieldToSet = params[0];
         assertNotNull(fieldToSet);
         Uri contentFileUri = fieldToSet.getContentFileUri();
@@ -84,6 +84,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
     {
         if (!setContentSucceeded && fieldToSet != null) {
             Activity activity = fieldToSet.getActivity();
+
             Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
         }
     }

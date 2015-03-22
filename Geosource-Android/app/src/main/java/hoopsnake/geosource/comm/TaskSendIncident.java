@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 import ServerClientShared.Commands;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
-import hoopsnake.geosource.data.AbstractAppFieldWithContentAndFile;
-import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AbstractAppFieldWithFile;
+import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.TaskSetContentBasedOnFileUri;
 
@@ -42,19 +42,19 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
     protected SocketResult doInBackground(AppIncident... params) {
         //TODO serialize everything before sending everything.
         AppIncident appIncidentToSend = params[0];
-        LinkedList<AbstractAppFieldWithContentAndFile> l = new LinkedList<>();
-        for (AppFieldWithContent field : appIncidentToSend.getFieldList())
+        LinkedList<AbstractAppFieldWithFile> l = new LinkedList<>();
+        for (AppField field : appIncidentToSend.getFieldList())
         {
             assertFalse(!field.contentIsFilled() && field.isRequired());
-            if (field instanceof AbstractAppFieldWithContentAndFile && field.contentIsFilled())
+            if (field instanceof AbstractAppFieldWithFile && field.contentIsFilled())
             {
-                l.add((AbstractAppFieldWithContentAndFile) field);
+                l.add((AbstractAppFieldWithFile) field);
             }
         }
 
         contentCountDownLatch = new CountDownLatch(l.size());
 
-        for (AbstractAppFieldWithContentAndFile field : l)
+        for (AbstractAppFieldWithFile field : l)
         {
             new TaskSetContentBasedOnFileUri(this).execute(field);
         }

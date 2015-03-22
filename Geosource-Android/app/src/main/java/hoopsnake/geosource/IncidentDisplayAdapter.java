@@ -17,15 +17,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import hoopsnake.geosource.data.AppFieldWithContent;
+import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
-class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
+class IncidentDisplayAdapter extends ArrayAdapter<AppField> {
 
     private String logTag = MainActivity.APP_LOG_TAG;
-    private final ArrayList<AppFieldWithContent> fieldList;
+    private final ArrayList<AppField> fieldList;
     private final Context context;
 
     public IncidentDisplayAdapter(AppIncident incident, Context ctx) {
@@ -38,7 +38,7 @@ class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
         return fieldList.size();
     }
 
-    public AppFieldWithContent getItem(int position) {
+    public AppField getItem(int position) {
         return fieldList.get(position);
     }
 
@@ -77,7 +77,7 @@ class IncidentDisplayAdapter extends ArrayAdapter<AppFieldWithContent> {
         else
             holder = (FieldHolder) v.getTag();
 
-        AppFieldWithContent f = fieldList.get(position);
+        AppField f = fieldList.get(position);
 
         String fieldTitle = f.getTitle();
         assertNotNull(fieldTitle);

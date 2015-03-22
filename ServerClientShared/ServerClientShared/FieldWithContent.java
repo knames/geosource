@@ -1,5 +1,8 @@
 package ServerClientShared;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -79,6 +82,20 @@ public abstract class FieldWithContent extends Field
 
     public Serializable getContent() {
         return content;
+    }
+
+    @Override
+    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        super.readObjectHelper(in);
+
+        setContent((Serializable) in.readObject());
+    }
+
+    @Override
+    void writeObjectHelper(ObjectOutputStream out) throws IOException {
+        super.writeObjectHelper(out);
+
+        out.writeObject(content);
     }
 
     /**
