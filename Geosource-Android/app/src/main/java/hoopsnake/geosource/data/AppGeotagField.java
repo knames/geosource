@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
 import ServerClientShared.GeotagFieldWithContent;
 import hoopsnake.geosource.Geotag;
 import hoopsnake.geosource.IncidentActivity;
@@ -32,13 +34,17 @@ public class AppGeotagField extends AbstractAppField {
     @Override
     public View getContentViewRepresentation(int requestCodeForIntent) {
         TextView tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
-        tv.setText(getContentStringRepresentation());
-
+        //This is for the faded out effect. (rather than setText().)
+        tv.setHint(getContentStringRepresentation());
         return tv;
     }
 
     @Override
-    public void onResultFromSelection(int resultCode, Intent data) {
-
+    public boolean contentIsSuitable(Serializable content)
+    {
+        return content instanceof Geotag;
     }
+
+    @Override
+    public void onResultFromSelection(int resultCode, Intent data) {}
 }

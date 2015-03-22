@@ -72,7 +72,7 @@ public class Geotag implements Serializable {
     @Override
     public String toString()
     {
-        return "time in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
+        return "Geotag:\ntime in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
     }
 
     public boolean exists()

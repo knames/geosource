@@ -3,9 +3,11 @@ package hoopsnake.geosource.data;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.widget.ImageView;
 
 import ServerClientShared.AudioFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
+import hoopsnake.geosource.R;
 
 
 /**
@@ -34,6 +36,8 @@ public class AppAudioField extends AbstractAppFieldWithFile {
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
         //TODO implement this.
+        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+
         return null;
     }
 

@@ -6,8 +6,6 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import hoopsnake.geosource.Geotag;
-
 /**
  * Created by wsv759 on 21/03/15.
  */
@@ -19,9 +17,10 @@ public class GeotagFieldWithContent extends FieldWithContent implements Serializ
         super(fieldWithoutContent);
     }
 
+    /** this will actually be a geotag but i can't import that in serverclientshared, so I can't verify against that type. */
     @Override
     public boolean contentMatchesType(Serializable content) {
-        return content instanceof Geotag;
+        return content != null;
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
