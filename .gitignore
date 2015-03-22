@@ -7,3 +7,6 @@ Geosource-Android/.idea/.name
 Geosource-Android/.idea/gradle.xml
 Geosource-Android/.idea/misc.xml
 Geosource-Android/app/app.iml
+/nbproject/private/
+/dist/
+/build/
