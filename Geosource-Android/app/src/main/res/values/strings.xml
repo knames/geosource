@@ -14,6 +14,7 @@
     <string name="preference_file_key">geosource shared pref</string>
     <string name="prompt_enter_text">Click to enter text.</string>
 
+    <string name="failed_to_get_location">Location service unavailable. Unable to produce geotag.</string>
     <!--socket communication strings for Toast.-->
     <string name="failed_to_format_content">Content formatting failed.</string>
     <string name="downloaded_incident_spec_for_channel">incident spec downloaded successfully for channel</string>

@@ -148,8 +148,8 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(incident.getFieldList());
         assertNotNull(incidentDisplay);
 
-        //TODO grosssss...
-        if (!incident.getFieldList().get(2).contentIsFilled())
+        //TODO grosssss... this accounts for refilling an incident from shared preferences, but man...
+        if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled())
             incident.setGeotag(geotag);
 
         incidentDisplay.removeAllViews();

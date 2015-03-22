@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import hoopsnake.geosource.Geotag;
+
 /**
  * Created by wsv759 on 21/03/15.
  */
@@ -13,18 +15,13 @@ public class GeotagFieldWithContent extends FieldWithContent implements Serializ
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public void updateContent(long timestamp, double longitude, double latitude)
-    {
-        setContent(new Number[]{timestamp, longitude, latitude});
-    }
-
     public GeotagFieldWithContent(GeotagFieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }
 
     @Override
     public boolean contentMatchesType(Serializable content) {
-        return false;
+        return content instanceof Geotag;
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -39,6 +36,5 @@ public class GeotagFieldWithContent extends FieldWithContent implements Serializ
     {
         super.readObjectNoDataHelper();
     }
-
 
 }

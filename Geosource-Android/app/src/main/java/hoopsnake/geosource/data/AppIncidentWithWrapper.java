@@ -190,8 +190,7 @@ public class AppIncidentWithWrapper implements AppIncident {
 
     @Override
     public void setGeotag(Geotag geotag) {
-        //TODO this is what connor promised... geotag in position 2. I suspect this may change.
-        AppGeotagField geotagField = (AppGeotagField) fieldList.get(2);
-        geotagField.setGeotag(geotag);
+        AppGeotagField geotagField = (AppGeotagField) fieldList.get(Incident.POSITION_GEOTAG_FIELD);
+        geotagField.setContent(geotag);
     }
 }

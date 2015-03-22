@@ -1,17 +1,22 @@
 package hoopsnake.geosource;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.Serializable;
 
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class Geotag {
+public class Geotag implements Serializable {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
+
+    private static final String LOG_TAG = "geosource";
 
     public Long getTimestamp() {
         return timestamp;
@@ -27,22 +32,51 @@ public class Geotag {
         return latitude;
     }
 
-    private Long timestamp;
-    private double longitude, latitude;
+    private static final int NONEXISTENT_VAL = -1;
+    private long timestamp = NONEXISTENT_VAL;
+    private double longitude = NONEXISTENT_VAL, latitude = NONEXISTENT_VAL;
 
     /**
-     * @precond activity is not null.
+     * @precond context is not null.
      * @postcond This geotag's location and timestamp are updated to their last known values.
      */
-    public void update(Activity activity) {
+    public void update(Context context) {
         timestamp = System.currentTimeMillis();
 
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
+        LocationManager lm = null;
+        boolean gps_enabled = false,network_enabled = false;
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        try{
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch(Exception ex){}
+        try{
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }catch(Exception ex){}
+
+        if (gps_enabled || network_enabled) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            String provider = locationManager.getBestProvider(criteria, true);
+            Location location = locationManager.getLastKnownLocation(provider);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
+        else
+        {
+            String msg = context.getString(R.string.failed_to_get_location);
+            Log.e(LOG_TAG, msg);
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "time in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
+    }
+
+    public boolean exists()
+    {
+        return timestamp != NONEXISTENT_VAL && longitude != NONEXISTENT_VAL && latitude != NONEXISTENT_VAL;
     }
 }
