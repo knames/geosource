@@ -39,7 +39,7 @@ insert into private_view_channels values
 	("okenso", "pothole", "cindy")
 	;
 
-
+/*
 	CREATE TABLE posts_okenso_march13 (
 	 p_poster varchar(25) NOT NULL,
 	 p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -53,6 +53,7 @@ insert into private_view_channels values
 	 p_picture varchar(100),
 	 FOREIGN KEY (p_poster) REFERENCES users (u_username)
 	 );
+*/
 
 
 insert into channelmods values

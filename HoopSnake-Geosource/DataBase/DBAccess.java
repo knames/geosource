@@ -97,4 +97,16 @@ public class DBAccess {
             return -1;
         }
     }
+    
+    /* executes a query  */
+    public void easyQuery(String Query){
+        try (Statement statement = dbconnection.createStatement()){
+            statement.execute(Query);
+            
+        } catch (SQLException SQLe) {
+            String error = "Error: " + SQLe.toString();
+            System.out.println(error);
+        }
+        
+    }
 }
