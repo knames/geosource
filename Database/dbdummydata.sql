@@ -43,11 +43,14 @@ insert into private_view_channels values
 	CREATE TABLE posts_okenso_march13 (
 	 p_poster varchar(25) NOT NULL,
 	 p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	 p_TitleText varchar(100),
 	 p_time DATETIME,
 	 p_lat DOUBLE,
 	 p_long DOUBLE,
-	 p_PictureField varchar(100),
+	 p_title varchar(100),
+	 p_audio varchar(100),
+	 p_string varchar(100),
+	 p_video varchar(100),
+	 p_picture varchar(100),
 	 FOREIGN KEY (p_poster) REFERENCES users (u_username)
 	 );
 
