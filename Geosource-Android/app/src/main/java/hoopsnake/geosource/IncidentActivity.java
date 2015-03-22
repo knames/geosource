@@ -263,7 +263,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @param v the view that needs to launch some activity or fragment on click.
      * @param onClickLaunchable a piece of runnable code that could launch an activity or fragment from this IncidentActivity.
      */
-    public void makeViewLaunchable(View v, final Runnable onClickLaunchable)
+    public void makeViewLaunchable(final View v, final Runnable onClickLaunchable)
     {
         v.setClickable(true);
 
