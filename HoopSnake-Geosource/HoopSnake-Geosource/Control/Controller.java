@@ -104,7 +104,7 @@ public class Controller {
      * delegates the parsing of an incident to te file and database systems
      * @param incident the incident to be handled
      */
-    private void dealWith(Incident incident)
+    protected void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
         int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName(), incident.getPosterName());
