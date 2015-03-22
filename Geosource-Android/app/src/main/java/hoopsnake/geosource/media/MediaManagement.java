@@ -2,6 +2,7 @@ package hoopsnake.geosource.media;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
@@ -30,6 +31,8 @@ public class MediaManagement {
     private static final String LOG_TAG = "geosource media";
 
     private static MediaRecorder mRecorder;
+    private static MediaPlayer mPlayer;
+
 
     /**
      * The name of the directory to which to save all media files created by this app.
@@ -40,6 +43,28 @@ public class MediaManagement {
         IMAGE,
         VIDEO,
         AUDIO
+    }
+
+    /**
+     * @precond playingFilePath != null.
+     * @postcond Start playing the audio stored at the given file.
+     * @param playingFilePath the file to play.
+     */
+    public static void startPlaying(Uri playingFilePath) {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(playingFilePath.getPath());
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+    }
+
+
+    public static void stopPlaying() {
+        mPlayer.release();
+        mPlayer = null;
     }
 
     /**
