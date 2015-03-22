@@ -17,7 +17,8 @@ dependencies {
 sourceSets {
     main {
         java {
-            srcDir '../ServerClientShared/ServerClientShared'
+            srcDir '../ServerClientShared/ServerClientShared' 
+            srcDir '../HoopSnake-Geosource'
         }
     }
     test {
