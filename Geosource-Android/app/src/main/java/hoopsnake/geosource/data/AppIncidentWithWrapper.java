@@ -6,6 +6,8 @@ import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
@@ -66,6 +68,9 @@ public class AppIncidentWithWrapper implements AppIncident {
                     break;
                 case AudioFieldWithoutContent.TYPE:
                     newFieldWrapper = new AppAudioField((AudioFieldWithContent) fwc, activity);
+                    break;
+                case GeotagFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) fwc, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fwc.getType() + ".");
@@ -131,6 +136,10 @@ public class AppIncidentWithWrapper implements AppIncident {
                     newField = new AudioFieldWithContent((AudioFieldWithoutContent) fieldWithoutContent);
                     newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField, activity);
                     break;
+                case GeotagFieldWithoutContent.TYPE:
+                    newField = new GeotagFieldWithContent((GeotagFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) newField, activity);
+                    break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
             }
@@ -157,8 +166,7 @@ public class AppIncidentWithWrapper implements AppIncident {
                 return false;
         }
 
-        String channelName = getChannelName();
-        return channelName != null && !channelName.isEmpty();
+        return !getChannelName().isEmpty() && !getChannelOwner().isEmpty() && !getPoster().isEmpty();
     }
 
     /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */
@@ -181,6 +189,21 @@ public class AppIncidentWithWrapper implements AppIncident {
     @Override
     public String getChannelName() {
         return wrappedIncident.getChannelName();
+    }
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the channel owner associated with this incident. Guaranteed to be non-null.
+     */
+    private String getChannelOwner()
+    {
+        return wrappedIncident.getOwnerName();
+    }
+
+    private String getPoster()
+    {
+        return wrappedIncident.getPosterName();
     }
 
     @Override

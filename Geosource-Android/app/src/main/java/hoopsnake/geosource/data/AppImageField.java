@@ -41,7 +41,7 @@ public class AppImageField extends AbstractAppFieldWithFile {
 
     @Override
     View getFilledContentViewRepresentation() {
-        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
+        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setClickable(false);
         new TaskDisplayImageFromBitmap(iv).execute(getContentFileUri().getPath());
 
@@ -50,8 +50,8 @@ public class AppImageField extends AbstractAppFieldWithFile {
 
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
-        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
-        iv.setImageResource(R.drawable.arrow_right); //TODO arrow_right is just a placeholder.
+        iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
+        iv.setImageResource(R.drawable.camera); //TODO arrow_right is just a placeholder.
 
         activity.makeViewLaunchable(iv, new Runnable() {
             @Override

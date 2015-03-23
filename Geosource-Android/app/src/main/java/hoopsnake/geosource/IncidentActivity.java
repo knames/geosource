@@ -263,7 +263,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @param v the view that needs to launch some activity or fragment on click.
      * @param onClickLaunchable a piece of runnable code that could launch an activity or fragment from this IncidentActivity.
      */
-    public void makeViewLaunchable(View v, final Runnable onClickLaunchable)
+    public void makeViewLaunchable(final View v, final Runnable onClickLaunchable)
     {
         v.setClickable(true);
 
@@ -283,23 +283,32 @@ public class IncidentActivity extends ActionBarActivity {
         });
     }
 
+    /**
+     * Save the current incident state, if the incident has not yet been submitted.
+     * This serializes the whole incident into a JSON object in shared preferences, so that it can
+     * be deserialized the next time the incident activity is launched.
+     * TODO ensure the precond actually holds.
+     * @precond as long as incident != null, no file content fields are filled. Thus there will be no
+     * attempt to serialize a massive file content object!
+     * @postcond the incident is serialized, so that it can be reopened later. Or if the incident is null,
+     * no serialization occurs and a new incident will be created next time.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        //TODO this code doesn't work, because gson tries to serialize the content of every field in the incident. Yikes!
-//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-//
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
-//            editor.remove(SHAREDPREF_INCIDENT);
-//        else
-//        {
-//            Gson gson = new Gson();
-//            String json = gson.toJson(incident.toIncident());
-//            editor.putString(SHAREDPREF_INCIDENT, json);
-//        }
-//        editor.commit();
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
+            editor.remove(SHAREDPREF_INCIDENT);
+        else
+        {
+            Gson gson = new Gson();
+            String json = gson.toJson(incident.toIncident());
+            editor.putString(SHAREDPREF_INCIDENT, json);
+        }
+        editor.apply();
     }
 }
 

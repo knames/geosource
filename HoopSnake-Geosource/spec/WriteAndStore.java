@@ -1,5 +1,7 @@
 package spec;
 
+import DataBase.DBAccess;
+import DataBase.Queries;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.StringFieldWithoutContent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 
@@ -28,7 +32,7 @@ public class WriteAndStore implements Serializable  {
      * @param username the owner of the channel
      * @param ispublic whether the channel is private or public */
     //public WriteAndStore(String fwc, String chName, String username, boolean ispublic){ //string version for testing
-    public WriteAndStore(ArrayList<FieldWithoutContent> fwc, String chName, String username, boolean ispublic){
+    public WriteAndStore(ArrayList<FieldWithoutContent> fwc, String chName, String username, boolean ispublic, String[] fields){
         try{
             dbInsertSpec spec = new dbInsertSpec(chName, username, ispublic);
             if (spec.getSpecNum() != -1){ // if it fails, dont write anything.
@@ -36,6 +40,7 @@ public class WriteAndStore implements Serializable  {
                 ObjectOutputStream oos = new ObjectOutputStream(fout);   
                 oos.writeObject(fwc);
                 oos.close();
+                this.createPosts(username, chName, fields);
                 System.out.println("Done");
             }
         }catch(Exception ex){
@@ -54,6 +59,16 @@ public class WriteAndStore implements Serializable  {
             return true;
         }
     }
+    
+    /*  */
+    public void createPosts(String ownername, String channelname, String[] fields) throws SQLException{
+        //dbAccess.execute(Queries.createPosts(ownername, channelname, fields));
+        //ResultSet results = DBAccess.(Queries.createPosts(ownername, channelname, fields));
+        DBAccess dba = new DBAccess();
+        String sql = Queries.createPosts(ownername, channelname, fields);
+        //System.out.println(sql);
+        dba.easyQuery(sql);
+    }
 
     /** Tests the functionality of this class */
     public static void main (String[] args) throws Exception{
@@ -63,7 +78,8 @@ public class WriteAndStore implements Serializable  {
         newSpec.add(new StringFieldWithoutContent("TitleText", true));
         newSpec.add(new ImageFieldWithoutContent("PictureField", false));
 
-        WriteAndStore test = new WriteAndStore(newSpec, "march13", "okenso", true); // this tests the string version.
+        String[] fields = {"pic", "video", "audio", "string"};
+        WriteAndStore test = new WriteAndStore(newSpec, "march13", "okenso", true, fields); // this tests the string version.
 
 
         /*
