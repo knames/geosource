@@ -3,6 +3,7 @@ package Test;
 import Control.Controller;
 import DataBase.DBAccess;
 import FileSystem.FileAccess;
+import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import java.net.URISyntaxException;
@@ -69,12 +70,13 @@ public class ControllerTest
     // message.
 
     
-    //Checks whether we can grab formSpecs properly, using a test channel currently on the server.
+    //Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.
     @Test
-    public void formSpecTest()
+    public void getFormSpecTest()
     {
         try
         {
+            //This channel is static and rebuilt automatically with the database, so it is always the same
             DBAccess dbTest = new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
             
@@ -84,6 +86,10 @@ public class ControllerTest
             System.out.println("Database connection failed");
         }
         
+        //TODO
+        //ArrayList<FieldWithoutContent> testSpec=SocketStuff.doStuff(testChannel, testOwner);
+        //int i=5;
+        
     }
     
     
@@ -91,7 +97,7 @@ public class ControllerTest
     @Test
     public void postThings()
     {
-        //Hit a dead-end with this, due to FileAccess not working on local computers.
+        //Hit a dead-end with this, due to various issues.
         //Will try again later.
         
         
@@ -100,14 +106,19 @@ public class ControllerTest
 
         
             
-        /*try
+       try
         {
-            DBAccess dbAccess= new DBAccess();
-            FileAccess fAccess= new FileAccess();
+            DBAccess dbTest= new DBAccess();
+            assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
+            //FileAccess fAccess= new FileAccess();
+            
             //Safety Test so we can send a valid post. If something changes in the testchannel, this should make 
             //the test fail before it can submit invalid posts.
-            String fileName = dbAccess.getFormSpecLocation(testChannel, testOwner); //get spec's file name in filesystem
-            ArrayList<FieldWithoutContent> specList= fAccess.getFormSpec(fileName); //retreive form spec
+            //String fileName = dbAccess.getFormSpecLocation(testChannel, testOwner); //get spec's file name in filesystem
+            //ArrayList<FieldWithoutContent> specList= fAccess.getFormSpec("okenso.4"); //retreive form spec
+            //int postNum = dbAccess.newPost(testChannel, testOwner, "xxLegolasxxYoloxx");
+            
+            
             int i=5;
         
         }
@@ -116,7 +127,7 @@ public class ControllerTest
             throw new RuntimeException("Database initialization failed");
             
         }
-        catch (URISyntaxException URISe)
+        /*catch (URISyntaxException URISe)
         {
             throw new RuntimeException("Filesystem not consistent, error initializing path");
         }*/

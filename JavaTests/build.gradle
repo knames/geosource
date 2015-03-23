@@ -12,6 +12,7 @@ apply plugin: 'java'
 
 dependencies {
     testCompile 'junit:junit:4.10'
+    testCompile 'mysql:mysql-connector-java:5.1.13'
 }
 
 sourceSets {
