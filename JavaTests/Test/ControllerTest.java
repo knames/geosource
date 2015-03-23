@@ -70,12 +70,13 @@ public class ControllerTest
     // message.
 
     
-    //Checks whether we can grab formSpecs properly, using a test channel currently on the server.
+    //Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.
     @Test
-    public void formSpecTest()
+    public void getFormSpecTest()
     {
         try
         {
+            //This channel is static and rebuilt automatically with the database, so it is always the same
             DBAccess dbTest = new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
             
@@ -85,8 +86,9 @@ public class ControllerTest
             System.out.println("Database connection failed");
         }
         
-        ArrayList<FieldWithoutContent> testSpec=SocketStuff.doStuff(testChannel, testOwner);
-        int i=5;
+        //TODO
+        //ArrayList<FieldWithoutContent> testSpec=SocketStuff.doStuff(testChannel, testOwner);
+        //int i=5;
         
     }
     
@@ -95,7 +97,7 @@ public class ControllerTest
     @Test
     public void postThings()
     {
-        //Hit a dead-end with this, due to FileAccess not working on local computers.
+        //Hit a dead-end with this, due to various issues.
         //Will try again later.
         
         
