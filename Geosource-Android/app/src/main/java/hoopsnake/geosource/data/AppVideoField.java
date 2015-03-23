@@ -37,8 +37,8 @@ public class AppVideoField extends AbstractAppFieldWithFile {
 
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
-        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_view, null);
-        //TODO give this a default image.
+        ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
+        iv.setImageResource(R.drawable.videocamera);
 
         activity.makeViewLaunchable(iv, new Runnable() {
             @Override

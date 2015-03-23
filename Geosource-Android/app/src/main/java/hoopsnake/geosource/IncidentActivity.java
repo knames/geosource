@@ -1,6 +1,8 @@
 package hoopsnake.geosource;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,9 +13,18 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
+import ServerClientShared.FieldWithContent;
+import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
+import ServerClientShared.ImageFieldWithContent;
+import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
+import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.StringFieldWithoutContent;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
@@ -41,7 +52,7 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
 
-    private static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
+    public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
 
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
@@ -86,7 +97,7 @@ public class IncidentActivity extends ActionBarActivity {
         assertNull(incident);
 
         Bundle extras = getIntent().getExtras();
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
         if ((extras == null || extrasAreEmpty(extras)) && sharedPref.contains(SHAREDPREF_INCIDENT))
             initializeAppIncidentFromSharedPref(sharedPref);
@@ -124,7 +135,16 @@ public class IncidentActivity extends ActionBarActivity {
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+        //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
+        ArrayList<FieldWithContent> l = new ArrayList<>();
+        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
+        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
+        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
+        // etc.
+
+        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
+        renderIncidentFromScratch();
     }
 
     private boolean extrasAreEmpty(Bundle extras)
@@ -195,7 +215,7 @@ public class IncidentActivity extends ActionBarActivity {
     /**
      * Try to submit the incident to the server.
      * @param v the submit button.
-     * @precond incident is not null.
+     * @precond none.
      * @postcond the new incident is submitted to the server. The new incident may not end up going through.
      */
     public void onSubmitButtonClicked(View v)
@@ -214,6 +234,32 @@ public class IncidentActivity extends ActionBarActivity {
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
     }
 
+    /**
+     *
+     * @param v the cancel button.
+     * @precond none.
+     * @postcond Cancel: stop creating the current incident, and discard it forever.
+     * (The media files created during the process will still be stored.)
+     */
+    public void onCancelButtonClicked(View v)
+    {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Cancelling Incident Creation")
+                .setMessage("Are you sure? This incident will be discarded forever. (Any media files you created will be preserved.)")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setIncident(null);
+                        setResult(RESULT_CANCELED);
+                        IncidentActivity.this.finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 
     /**
      * Test-and-set: atomically check if this activity can be clicked, and if it can, say that no other
@@ -263,7 +309,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @param v the view that needs to launch some activity or fragment on click.
      * @param onClickLaunchable a piece of runnable code that could launch an activity or fragment from this IncidentActivity.
      */
-    public void makeViewLaunchable(View v, final Runnable onClickLaunchable)
+    public void makeViewLaunchable(final View v, final Runnable onClickLaunchable)
     {
         v.setClickable(true);
 
@@ -283,23 +329,32 @@ public class IncidentActivity extends ActionBarActivity {
         });
     }
 
+    /**
+     * Save the current incident state, if the incident has not yet been submitted.
+     * This serializes the whole incident into a JSON object in shared preferences, so that it can
+     * be deserialized the next time the incident activity is launched.
+     * TODO ensure the precond actually holds.
+     * @precond as long as incident != null, no file content fields are filled. Thus there will be no
+     * attempt to serialize a massive file content object!
+     * @postcond the incident is serialized, so that it can be reopened later. Or if the incident is null,
+     * no serialization occurs and a new incident will be created next time.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        //TODO this code doesn't work, because gson tries to serialize the content of every field in the incident. Yikes!
-//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-//
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
-//            editor.remove(SHAREDPREF_INCIDENT);
-//        else
-//        {
-//            Gson gson = new Gson();
-//            String json = gson.toJson(incident.toIncident());
-//            editor.putString(SHAREDPREF_INCIDENT, json);
-//        }
-//        editor.commit();
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
+            editor.remove(SHAREDPREF_INCIDENT);
+        else
+        {
+            Gson gson = new Gson();
+            String json = gson.toJson(incident.toIncident());
+            editor.putString(SHAREDPREF_INCIDENT, json);
+        }
+        editor.commit();
     }
 }
 
