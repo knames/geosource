@@ -157,8 +157,7 @@ public class AppIncidentWithWrapper implements AppIncident {
                 return false;
         }
 
-        String channelName = getChannelName();
-        return channelName != null && !channelName.isEmpty();
+        return !getChannelName().isEmpty() && !getChannelOwner().isEmpty() && !getPoster().isEmpty();
     }
 
     /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */
@@ -181,6 +180,21 @@ public class AppIncidentWithWrapper implements AppIncident {
     @Override
     public String getChannelName() {
         return wrappedIncident.getChannelName();
+    }
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the channel owner associated with this incident. Guaranteed to be non-null.
+     */
+    private String getChannelOwner()
+    {
+        return wrappedIncident.getOwnerName();
+    }
+
+    private String getPoster()
+    {
+        return wrappedIncident.getPosterName();
     }
 
     @Override
