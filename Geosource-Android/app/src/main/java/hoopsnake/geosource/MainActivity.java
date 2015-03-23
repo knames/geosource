@@ -1,12 +1,11 @@
 package hoopsnake.geosource;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 
 import org.xwalk.core.XWalkView;
 
@@ -56,10 +55,15 @@ public class MainActivity extends Activity {
     {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
         //TODO determine the current channel.
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
-        intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
-        intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
-        intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
+        //If there isn't currently an incident being worked on, give the necessary parameters to ask for a new one.
+        if (!sharedPref.contains(IncidentActivity.SHAREDPREF_INCIDENT)) {
+            intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
+            intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
+            intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
+        }
+
         startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal());
     }
 
@@ -71,7 +75,7 @@ public class MainActivity extends Activity {
             {
                 //TODO Potentially react to the OK result.
             }
-            else
+            else //RESULT_CANCELLED
             {
                 //TODO Potentially react to the unsuccessful result.
             }

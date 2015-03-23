@@ -28,5 +28,13 @@
         android:onClick="onSubmitButtonClicked"
         android:text="@string/submit_incident" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="bottom"
+        android:onClick="onCancelButtonClicked"
+        android:text="@string/cancel_incident" />
+
 </LinearLayout>
 
