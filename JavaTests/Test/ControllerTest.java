@@ -74,7 +74,7 @@ public class ControllerTest
     @Test
     public void getFormSpecTest()
     {
-        /*try
+        try
         {
             //This channel is static and rebuilt automatically with the database, so it is always the same
             DBAccess dbTest = new DBAccess();
@@ -84,7 +84,7 @@ public class ControllerTest
         catch (SQLException SQLe)
         {
             System.out.println("Database connection failed");
-        }*/
+        }
         
         //TODO
         //ArrayList<FieldWithoutContent> testSpec=SocketStuff.doStuff(testChannel, testOwner);
@@ -106,7 +106,7 @@ public class ControllerTest
 
         
             
-       try
+       /*try
         {
             DBAccess dbTest= new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
@@ -126,7 +126,7 @@ public class ControllerTest
         {
             throw new RuntimeException("Database initialization failed");
             
-        }
+        }*/
         /*catch (URISyntaxException URISe)
         {
             throw new RuntimeException("Filesystem not consistent, error initializing path");
