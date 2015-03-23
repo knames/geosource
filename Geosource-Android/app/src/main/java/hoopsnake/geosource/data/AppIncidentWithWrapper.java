@@ -6,6 +6,8 @@ import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
@@ -66,6 +68,9 @@ public class AppIncidentWithWrapper implements AppIncident {
                     break;
                 case AudioFieldWithoutContent.TYPE:
                     newFieldWrapper = new AppAudioField((AudioFieldWithContent) fwc, activity);
+                    break;
+                case GeotagFieldWithoutContent.TYPE:
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) fwc, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fwc.getType() + ".");
@@ -130,6 +135,10 @@ public class AppIncidentWithWrapper implements AppIncident {
                 case AudioFieldWithoutContent.TYPE:
                     newField = new AudioFieldWithContent((AudioFieldWithoutContent) fieldWithoutContent);
                     newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField, activity);
+                    break;
+                case GeotagFieldWithoutContent.TYPE:
+                    newField = new GeotagFieldWithContent((GeotagFieldWithoutContent) fieldWithoutContent);
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) newField, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
