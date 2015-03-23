@@ -9,6 +9,7 @@
     <string name="add_audio">Record Audio</string>
     <string name="title_activity_incident">IncidentActivity</string>
     <string name="create_incident">Create New Incident</string>
+    <string name="resume_incident_creation">Resume Creating Incident</string>
     <string name="submit_incident">Submit</string>
     <string name="cancel_incident">Cancel</string>
 

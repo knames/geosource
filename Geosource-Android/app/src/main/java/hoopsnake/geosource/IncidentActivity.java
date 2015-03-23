@@ -322,8 +322,8 @@ public class IncidentActivity extends ActionBarActivity {
      * no serialization occurs and a new incident will be created next time.
      */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
