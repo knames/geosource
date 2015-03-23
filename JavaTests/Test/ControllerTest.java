@@ -106,7 +106,7 @@ public class ControllerTest
 
         
             
-       /*try
+       try
         {
             DBAccess dbTest= new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
@@ -126,7 +126,7 @@ public class ControllerTest
         {
             throw new RuntimeException("Database initialization failed");
             
-        }*/
+        }
         /*catch (URISyntaxException URISe)
         {
             throw new RuntimeException("Filesystem not consistent, error initializing path");
