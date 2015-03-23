@@ -1,6 +1,8 @@
 package hoopsnake.geosource;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -41,7 +43,7 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
 
-    private static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
+    public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
 
     /** This holds the incident, and passes it to the incidentDisplay for display. */
     IncidentDisplayAdapter incidentAdapter;
@@ -86,7 +88,7 @@ public class IncidentActivity extends ActionBarActivity {
         assertNull(incident);
 
         Bundle extras = getIntent().getExtras();
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
         if ((extras == null || extrasAreEmpty(extras)) && sharedPref.contains(SHAREDPREF_INCIDENT))
             initializeAppIncidentFromSharedPref(sharedPref);
@@ -195,7 +197,7 @@ public class IncidentActivity extends ActionBarActivity {
     /**
      * Try to submit the incident to the server.
      * @param v the submit button.
-     * @precond incident is not null.
+     * @precond none.
      * @postcond the new incident is submitted to the server. The new incident may not end up going through.
      */
     public void onSubmitButtonClicked(View v)
@@ -214,6 +216,32 @@ public class IncidentActivity extends ActionBarActivity {
             Toast.makeText(IncidentActivity.this, "incident has not been completely filled in!",Toast.LENGTH_LONG).show();
     }
 
+    /**
+     *
+     * @param v the cancel button.
+     * @precond none.
+     * @postcond Cancel: stop creating the current incident, and discard it forever.
+     * (The media files created during the process will still be stored.)
+     */
+    public void onCancelButtonClicked(View v)
+    {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Cancelling Incident Creation")
+                .setMessage("Are you sure? This incident will be discarded forever. (Any media files you created will be preserved.)")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setIncident(null);
+                        setResult(RESULT_CANCELED);
+                        IncidentActivity.this.finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 
     /**
      * Test-and-set: atomically check if this activity can be clicked, and if it can, say that no other
@@ -297,7 +325,7 @@ public class IncidentActivity extends ActionBarActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
@@ -308,7 +336,7 @@ public class IncidentActivity extends ActionBarActivity {
             String json = gson.toJson(incident.toIncident());
             editor.putString(SHAREDPREF_INCIDENT, json);
         }
-        editor.apply();
+        editor.commit();
     }
 }
 

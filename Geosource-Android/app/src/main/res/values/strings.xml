@@ -8,10 +8,11 @@
     <string name="add_video">Record Video</string>
     <string name="add_audio">Record Audio</string>
     <string name="title_activity_incident">IncidentActivity</string>
-    <string name="submit_incident">Submit</string>
     <string name="create_incident">Create New Incident</string>
+    <string name="submit_incident">Submit</string>
+    <string name="cancel_incident">Cancel</string>
 
-    <string name="preference_file_key">geosource shared pref</string>
+    <string name="app_sharedpref_file_key">geosource shared pref</string>
     <string name="prompt_enter_text">Click to enter text.</string>
 
     <string name="failed_to_get_location">Location service unavailable. Unable to produce geotag.</string>
