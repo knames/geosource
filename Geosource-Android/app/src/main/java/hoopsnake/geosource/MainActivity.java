@@ -45,8 +45,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
-//        xWalkWebView.load("http://okenso.com", null);
+        xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
+        xWalkWebView.load("http://okenso.com", null);
     }
 
     /**
@@ -78,29 +78,29 @@ public class MainActivity extends Activity {
         }
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (xWalkWebView != null) {
-//            xWalkWebView.pauseTimers();
-//            xWalkWebView.onHide();
-//        }
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (xWalkWebView != null) {
-//            xWalkWebView.resumeTimers();
-//            xWalkWebView.onShow();
-//        }
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        if (xWalkWebView != null) {
-//            xWalkWebView.onDestroy();
-//        }
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (xWalkWebView != null) {
+            xWalkWebView.pauseTimers();
+            xWalkWebView.onHide();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (xWalkWebView != null) {
+            xWalkWebView.resumeTimers();
+            xWalkWebView.onShow();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (xWalkWebView != null) {
+            xWalkWebView.onDestroy();
+        }
+    }
 }
