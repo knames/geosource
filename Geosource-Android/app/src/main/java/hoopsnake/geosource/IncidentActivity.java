@@ -11,9 +11,18 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
+import ServerClientShared.FieldWithContent;
+import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
+import ServerClientShared.ImageFieldWithContent;
+import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
+import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.StringFieldWithoutContent;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
@@ -124,7 +133,16 @@ public class IncidentActivity extends ActionBarActivity {
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+        //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
+        ArrayList<FieldWithContent> l = new ArrayList<>();
+        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
+        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
+        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
+        // etc.
+
+        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
+        renderIncidentFromScratch();
     }
 
     private boolean extrasAreEmpty(Bundle extras)
