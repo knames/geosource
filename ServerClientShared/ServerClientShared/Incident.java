@@ -16,7 +16,8 @@ public class Incident implements Serializable {
     private String ownerName;
     private String posterName;
 
-    public static final int POSITION_GEOTAG_FIELD = 2;
+    //this is the second position
+    public static final int POSITION_GEOTAG_FIELD = 1;
     public Incident(){}
     
     public Incident(ArrayList<FieldWithContent> fieldList, String channel, String owner, String poster)
