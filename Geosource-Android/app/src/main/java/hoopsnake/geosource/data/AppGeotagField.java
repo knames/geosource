@@ -28,7 +28,7 @@ public class AppGeotagField extends AbstractAppField {
     @Override
     public boolean contentIsFilled()
     {
-        return ((Geotag) wrappedField.getContent()).exists();
+        return (wrappedField.getContent() != null && ((Geotag) wrappedField.getContent()).exists());
     }
 
     @Override
