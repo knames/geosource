@@ -108,7 +108,8 @@ public class ControllerTest
             
        try
         {
-            DBAccess dbAccess= new DBAccess();
+            DBAccess dbTest= new DBAccess();
+            assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
             //FileAccess fAccess= new FileAccess();
             
             //Safety Test so we can send a valid post. If something changes in the testchannel, this should make 
