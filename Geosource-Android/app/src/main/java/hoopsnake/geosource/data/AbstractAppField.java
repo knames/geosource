@@ -1,9 +1,14 @@
 package hoopsnake.geosource.data;
 
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import java.io.Serializable;
 
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
+import hoopsnake.geosource.R;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -22,6 +27,10 @@ import static junit.framework.Assert.assertTrue;
  */
 public abstract class AbstractAppField implements AppField {
 
+    /**
+     * The weight of each content view, so that it takes up the appropriate amount of screen compared with the field title.
+     */
+    private static final float CONTENT_VIEW_WEIGHT = 0.8f;
     /**
      * Underlying field object that contains the attributes to be acted upon by
      * the app. Its type should match the AppField that wraps it.
@@ -90,10 +99,30 @@ public abstract class AbstractAppField implements AppField {
         wrappedField.setContent(content);
     }
 
-//    @Override
-//    public View getFieldViewRepresentation(final int requestCodeForIntent)
-//    {
-//        //TODO implement this.
-////        LinearLayout lView = activity.getLayoutInflater().inflate(R.layout.field_view_holder, null);
-//    }
+    @Override
+    public View getFieldViewRepresentation(final int requestCodeForIntent)
+    {
+        LinearLayout fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
+        TextView titleView = (TextView) activity.findViewById(R.id.field_title_view);
+        titleView.setText(getTitle() + ":");
+        View contentView = getContentViewRepresentation(requestCodeForIntent);
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) contentView.getLayoutParams();
+//
+//        if (params == null)
+//        {
+//
+//        }
+//        Log.d(LOG_TAG, contentView.getLayoutParams().toString());
+//        params.weight = CONTENT_VIEW_WEIGHT;
+
+        fieldView.addView(contentView);
+        return fieldView;
+    }
+
+    /**
+     * @param requestCodeForIntent a request code by which the returned view will be able to launch new activities.
+     * @return the view representing the field's content itself, to be placed to the left of the textview
+     * that represents the title for this field.
+     */
+    abstract View getContentViewRepresentation(final int requestCodeForIntent);
 }

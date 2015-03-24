@@ -30,6 +30,7 @@
 
     <string name="failed_to_capture_image">Failed to capture image.</string>
 
+    <string name="content_view_weight">0.8</string>
     <!--&lt;!&ndash;Anam's stuff &ndash;&gt;-->
     <!--<string name="menu_settings">Settings</string>-->
     <!--<string name="title_activity_main">MainActivity</string>-->

@@ -347,7 +347,7 @@ public class IncidentActivity extends ActionBarActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
             editor.remove(SHAREDPREF_INCIDENT);
-        else
+        else if (incident != null)
         {
             Gson gson = new Gson();
             String json = gson.toJson(incident.toIncident());

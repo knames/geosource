@@ -38,7 +38,7 @@ public class AppStringField extends AbstractAppField {
     }
 
     @Override
-    public View getFieldViewRepresentation(final int requestCodeForIntent) {
+    public View getContentViewRepresentation(final int requestCodeForIntent) {
         //TODO both these lines seem to work for the same purpose. Which is better?
         EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
 
@@ -72,7 +72,5 @@ public class AppStringField extends AbstractAppField {
     }
 
     @Override
-    public void onResultFromSelection(int resultCode, Intent data) {
-        //TODO implement this.
-    }
+    public void onResultFromSelection(int resultCode, Intent data) {}
 }
