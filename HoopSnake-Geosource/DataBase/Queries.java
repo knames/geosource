@@ -97,13 +97,45 @@ public class Queries {
         String sql ="CREATE TABLE posts_" + ownername + "_" + tablename + " ( "
                 + "p_poster varchar(25) NOT NULL, "
                 + "p_number INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-                + "p_time DATETIME, "
-                + "p_lat DOUBLE, "
-                + "p_long DOUBLE, "
+                + "p_title varchar(100), "
+                + "p_geotag varchar(100), "
                 + allfields
                 + "FOREIGN KEY (p_poster) REFERENCES users (u_username));";
         return sql;
-    }    
+    }
+    
+    /**
+     * @param owner the owner to check for specs from
+     * @return a string which will find the next number for this user's spec files
+     */
+    public static String nextSpecNum(String owner)
+    {
+        String sql = "select ch_spec from channels where ch_owner =\"" + owner + "\"order by 1 desc limit 1";
+        return sql;
+    }
+    
+    public static String channelExists(String title, String owner)
+    {
+        String sql = "select count(*) from channels where ch_name = \"" + title + "\" and ch_owner = \""
+		    		  + owner + "\";";
+        return sql;
+    }
+    
+    /**
+     * query to make a new channel on the database
+     * @param title the name of the channel
+     * @param owner the creator of the channel
+     * @param specNum the owners next spec number
+     * @param isPublic whether the channel should be publicly visible
+     * @param fieldNames the names of all non-standard fields
+     * @return a string to be run by an sql statement
+     */
+    public static String makeChannel(String title, String owner, int specNum, boolean isPublic, String[] fieldNames)
+    {
+        String sql = "insert into channels values (\"" + title + "\", \"" + owner + "\", " + specNum + ", " + isPublic +");";
+        sql += createPosts(owner, title, fieldNames);
+        return sql;
+    }
     
     /**  a main class to test some functions output
      * @param args.*/

@@ -119,6 +119,8 @@ public class CommSocket implements Callable<Incident>{
                     return newIncident;
                 }
             }
+            in.close();
+            out.close();
             clientSocket.close();
         }
         catch (IOException IOe)

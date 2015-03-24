@@ -3,9 +3,12 @@ package Control;
 import Communication.CommSocket;
 import DataBase.DBAccess;
 import FileSystem.FileAccess;
+import ServerClientShared.FieldType;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.Incident;
+import ServerClientShared.StringFieldWithoutContent;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class Controller {
         {
             dbAccess = new DBAccess();
             fileAccess = new FileAccess();
+            insertTestChannel();
             successful = true;
         }
         catch (SQLException SQLe)
@@ -97,6 +101,31 @@ public class Controller {
                     iter.add(exec.submit(new CommSocket(this))); //replace new socket
                 }
             }
+        }
+    }
+    
+    private void insertTestChannel()
+    {
+        String[] types = {"STRING", "IMAGE", "VIDEO", "AUDIO"};
+        String[] fieldNames = {"TextField", "PictureField", "VideoField", "AudioField"};
+        boolean[] required = {false, false, false, false};
+        newChannel("testing", "okenso", true, types, fieldNames, required);
+    }
+    
+    private void newChannel(String title, String owner, boolean isPublic, String[] types, String[] fieldNames, boolean[] required)
+    {
+        if (!dbAccess.channelExists(title, owner)) //don't re-make on normal server restart
+        {
+            ArrayList<FieldWithoutContent> newSpec = new ArrayList();
+            newSpec.add(new StringFieldWithoutContent("title", true));
+            newSpec.add(new GeotagFieldWithoutContent("geotag", true)); //always present
+            //make spec array
+            for (int i = 0; i < types.length; i ++)
+            {
+                newSpec.add(FieldType.valueOf(types[i]).getField(fieldNames[i], required[i]));
+            }
+            int newSpecNum = dbAccess.createNewChannel(title, owner, isPublic, fieldNames);
+            fileAccess.saveFormSpec(newSpec, owner, newSpecNum);
         }
     }
     
