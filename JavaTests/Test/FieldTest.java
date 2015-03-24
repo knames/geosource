@@ -109,6 +109,7 @@ public class FieldTest {
         
     }
     
+    //Tests constructors for StringFieldWithContent
     @Test
     public void stringFieldTest()
     {
@@ -139,6 +140,7 @@ public class FieldTest {
         
     }
     
+    //Tests constructors for ImageFieldWithContent
     @Test
     public void imageFieldTest()
     {
@@ -170,6 +172,7 @@ public class FieldTest {
         
     }
     
+    //Tests constructors for VideoFieldWithContent
     @Test
     public void videoFieldTest()
     {
@@ -201,6 +204,7 @@ public class FieldTest {
         
     }
     
+    //Tests constructors for AudioFieldWithContent
     @Test
     public void audioFieldTest()
     {

@@ -8,15 +8,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import static junit.framework.Assert.assertNotNull;
 
 
 /**
  * A modified version of sockets used for testing. Lifted partially from the android code.
- * @author Warren
+ * @author Warren, original by Connor
  */
 public class SocketStuff 
 {
+    /**
+     * Grabs the spec for the given channel.
+     * @param channelName the channel we wish to post to grab the spec from.
+     * @param channelOwner the owner of the channel "channelname"
+     * @return An ArrayList, holding fieldwithoutContents. This represents the specs for
+     * our system.
+     */
     public static ArrayList<FieldWithoutContent> getSpec(String channelName,String channelOwner)
     {
         ObjectOutputStream outStream; //wrapped stream to client
@@ -75,6 +81,12 @@ public class SocketStuff
        
     }
     
+    /**
+     * Sends an incident to be posted to the server.
+     * This is a function used for testing!!! Other then checking for socket errors,
+     * we need to personally check the incident for correctness!
+     * @param incidentToSend A filled incident we want to send.
+     */
     public static void makePost(Incident incidentToSend)
     {
         ObjectOutputStream outStream; //wrapped stream to client
