@@ -56,9 +56,9 @@
     </style>
     <core-ajax id="ajax"
       method="POST"
-      url="localhost:4567/components/phpoly/dbgetusername.php"
+      url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
-      params="{gid: {{gid}}}"
+      params='{"gid": {{gid}}}'
       handleAs="json">
     </core-ajax>
   </template>
@@ -72,7 +72,7 @@
     },
     userLoaded: function() {
       // Make a copy of the loaded data
-      this.user = this.$.ajax.response;
+      this.user = this.$.ajax.response.slice(0)[0];
       console.log(this.user);
       this.fire('user-loaded');
     },
