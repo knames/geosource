@@ -97,7 +97,7 @@
 
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (questions && posts[i].question) || (this.user && favorites && posts[i].favorite) || (this.user && mine && posts[i].user.username == this.user.username)) {
+          if((all) || (questions && posts[i].question) || (this.user && favorites && posts[i].favorite) || (this.user && mine && posts[i].username == this.user.username)) {
             includedPosts.push(posts[i]);
           }
         }
