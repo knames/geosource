@@ -24,7 +24,7 @@
 
 <!-- <link rel="import" href="../disqus-comments/disqus-comments.html"> -->
 
-<polymer-element name="geosource-post" attributes="pid user">
+<polymer-element name="geosource-post" attributes="user">
 
   <template>
 
@@ -142,13 +142,13 @@
 
     </style>
 
-    <post-service id="post_service" post="{{post}}" pid="{{pid}}"></post-service>
+    <post-service id="post_service" post="{{post}}"></post-service>
 
     <div class="post" vertical layout>
       <div class="header" horizontal layout>
         <div vertical layout flex class="title">
           <h2>{{post.title}}</h2>
-          <div class="info">posted by {{post.username}} {{time}} to {{post.channel.name}}</div>
+          <div class="info">posted by {{post.username}} {{timeString(post.time)}} to {{post.channel.name}}</div>
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
@@ -203,41 +203,33 @@
   <script>
   Polymer({
 
-    pid: null,
-    time: null,
+    postSummary: null,
     post: null,
     user: null,
-    favorite: false,
     deletePermission: false,
-
-    postChanged: function() {
-      if(this.post.favorite) {
-        this.$.favorite.icon = "favorite";
-      }
-      else {
-        this.$.favorite.icon = "favorite-outline";
-      }
-    },
 
     timeString: function(time) {
       return moment(time).fromNow();
     },
 
-    pidChanged: function() {
-      this.$.post_service.load(this.pid);
+    load: function(postSummary) {
+      this.postSummary = postSummary;
+      console.log(this.postSummary);
+      this.$.post_service.load(postSummary.pid);
     },
 
     postChanged: function() {
 
-      this.time = moment(this.post.time).fromNow();
+      this.isFavorite();
 
       content = "";
 
       for(i=0; i<this.post.fields.length; i++) {
 
+        content += '<h3>' + this.post.fields[i].label + '</h3>';
+
         switch(this.post.fields[i].type) {
           case "Video":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += 
               '<video width="auto" height="auto" controls>' +
                 '<source src="' + this.post.fields[i].value + '" type="video/mp4">' +
@@ -245,7 +237,6 @@
               '</video>';
             break;
           case "Audio":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += 
               '<audio controls>' +
                 '<source src="' + this.post.fields[i].value + '" type="audio/mpeg">' +
@@ -253,33 +244,34 @@
               '</audio>';
             break;
           case "Image":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += '<img src="' + this.post.fields[i].value + '">';
             break;
           case "Text":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += '<div>' + this.post.fields[i].value + '</div>';
             break;
           case "Checkbox":
-            content += '<div class="checkbox" horizontal layout><paper-checkbox' 
-            if(this.post.fields[i].value) {
-              content += ' checked'
+            for(j=0; j<this.post.fields[i].attributes.length; j++) {
+              content += '<div class="checkbox" horizontal layout><paper-checkbox' 
+              if(this.post.fields[i].attributes[j].value) {
+                content += ' checked'
+              }
+              content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
             }
-            content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
           case "Radio Button":
-            content += '<div class="checkbox" horizontal layout><paper-radio-button' 
-            if(this.post.fields[i].value) {
-              content += ' checked'
+            for(j=0; j<this.post.fields[i].attributes.length; j++) {
+              content += '<div class="checkbox" horizontal layout><paper-radio-button' 
+              if(this.post.fields[i].attributes[j].value) {
+                content += ' checked'
+              }
+              content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
             }
-            content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
         }        
       }
 
       this.$.content.innerHTML = content;
 
-      this.isFavorite();
       this.checkDeletePermission();
 
       this.fire('post-loaded');
@@ -290,32 +282,16 @@
     },
 
     isFavorite: function() {
-      if(this.user && this.post) {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.$.favorite.icon = "favorite";
-            return;
-          }            
-        }
+      if(this.user && this.postSummary && this.postSummary.favorite) {
+        this.$.favorite.icon = "favorite";
       }
-      this.$.favorite.icon = "favorite-outline";
+      else {
+        this.$.favorite.icon = "favorite-outline";
+      }
     },
 
     favorite: function() {
-      if(this.$.favorite.icon == "favorite-outline") {
-        this.user.favorites.push({"channel": this.post.channel, "pid": this.post.pid});
-      }
-      else {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.user.favorites.splice(i, 1);
-          }
-        }
-      }
+      this.postSummary.favorite = !this.postSummary.favorite;
       this.isFavorite();
       this.fire('favorite-click');
     },

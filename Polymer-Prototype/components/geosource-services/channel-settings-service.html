@@ -47,7 +47,7 @@
   @type Array
   @default []
 -->
-<polymer-element name="channel-info-service" attributes="channelInfo">
+<polymer-element name="channel-settings-service" attributes="channelSettings">
   <template>
     <style>
     :host {
@@ -55,8 +55,8 @@
     }
     </style>
     <core-ajax id="ajax"
-      url="/api/channels/{{channel.name}}-{{channel.owner}}.json"
-      on-core-response="{{channelsLoaded}}"
+      url="/api/channels/{{channel.name}}_{{channel.owner}}.json"
+      on-core-response="{{channelSettingsLoaded}}"
       handleAs="json">
     </core-ajax>
   </template>
@@ -64,17 +64,19 @@
   Polymer({
 
     channel: null,
+    channelSettings: null,
 
-    created: function() {
-      this.channels = [];
-    },
-    channelsLoaded: function() {
+    channelSettingsLoaded: function() {
       // Make a copy of the loaded data
-      this.channels = this.$.ajax.response;
-    }
+      this.channelSettings = this.$.ajax.response;
+      console.log(this.channelSettings);
+      this.fire('loaded');
+    },
+
     load: function(channel) {
       this.channel = channel;
       this.$.ajax.go();
+      console.log("loading channel settings...");
     }
   });
   </script>

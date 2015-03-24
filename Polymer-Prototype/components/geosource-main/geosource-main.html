@@ -117,7 +117,6 @@
     <paper-dialog id="dialog" role="dialog" backdrop>
       <geosource-post 
         id="post"
-        pid="{{pid}}" 
         user="{{user}}"
         on-post-loaded="{{openDialog}}" 
         on-core-error="{{errorPost}}"
@@ -196,16 +195,17 @@
        * Opens a dialog, given an event containing detail 'post', which contains
        * information 
        */
-      loadPost: function(e) {
-        if(this.pid == e.detail.post.pid) {
-          this.openDialog();
-        }
-        else {
-          this.pid = e.detail.post.pid;
-        }
-        if(this.$.feed_drawer.narrow) {
-          this.$.feed_drawer.closeDrawer();
-        }
+      loadPost: function(event) {
+        // if(this.pid == e.detail.post.pid) {
+        //   this.openDialog();
+        // }
+        // else {
+        //   this.pid = e.detail.post.pid;
+        // }
+        // if(this.$.feed_drawer.narrow) {
+        //   this.$.feed_drawer.closeDrawer();
+        // }
+        this.$.post.load(event.detail.post);
       },
 
       errorPost: function() {
