@@ -5,7 +5,11 @@ import DataBase.DBAccess;
 import FileSystem.FileAccess;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.ImageFieldWithContent;
+import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
+import ServerClientShared.StringFieldWithContent;
+import ServerClientShared.StringFieldWithoutContent;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -86,9 +90,11 @@ public class ControllerTest
             System.out.println("Database connection failed");
         }
         
-        //TODO
-        //ArrayList<FieldWithoutContent> testSpec=SocketStuff.doStuff(testChannel, testOwner);
-        //int i=5;
+        //Using Sockets, actually grab the spec for march13 and check if it is right.
+        ArrayList<FieldWithoutContent> testSpec=SocketStuff.getSpec(testChannel, testOwner);
+        assertTrue(testSpec.get(0) instanceof StringFieldWithoutContent);
+        assertTrue(testSpec.get(1) instanceof ImageFieldWithoutContent);
+        int i=5;
         
     }
     
@@ -109,35 +115,35 @@ public class ControllerTest
        try
         {
             DBAccess dbTest= new DBAccess();
-            assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
-            //FileAccess fAccess= new FileAccess();
-            
-            //Safety Test so we can send a valid post. If something changes in the testchannel, this should make 
-            //the test fail before it can submit invalid posts.
-            //String fileName = dbAccess.getFormSpecLocation(testChannel, testOwner); //get spec's file name in filesystem
-            //ArrayList<FieldWithoutContent> specList= fAccess.getFormSpec("okenso.4"); //retreive form spec
-            //int postNum = dbAccess.newPost(testChannel, testOwner, "xxLegolasxxYoloxx");
-            
-            
-            int i=5;
-        
+            assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));     
         }
         catch(SQLException SQLe)
         {
-            throw new RuntimeException("Database initialization failed");
-            
+            throw new RuntimeException("Database initialization failed");   
         }
-        /*catch (URISyntaxException URISe)
-        {
-            throw new RuntimeException("Filesystem not consistent, error initializing path");
-        }*/
+        //Using Sockets, actually grab the spec for march13 and check if it is right.
+        ArrayList<FieldWithoutContent> testSpec=SocketStuff.getSpec(testChannel, testOwner);
+        assertTrue(testSpec.get(0) instanceof StringFieldWithoutContent);
+        assertTrue(testSpec.get(1) instanceof ImageFieldWithoutContent);
+   
         
+        //IN PROGRESS
+        //Then, create an Incident, then send it to the server.
         
-
-        //ArrayList<FieldWithoutContent> spec=controller.getForm(testChannel, testOwner);
+        /*StringFieldWithoutContent t1 = new StringFieldWithoutContent("Test Description", true);     
+        StringFieldWithContent stringCon = new StringFieldWithContent(t1);
+        stringCon.setContent("THIS IS A TEST. DO NOT PANIC");
         
-            
-
+        byte[] image = new byte[]{1,2,4};
+        ImageFieldWithoutContent t2 = new ImageFieldWithoutContent("Description", true);      
+        ImageFieldWithContent imageCon = new ImageFieldWithContent(t2);
+        
+        ArrayList<FieldWithContent> filledIncident=new ArrayList();
+        filledIncident.add(stringCon);
+        filledIncident.add(imageCon);
+        Incident testIncident = new Incident(filledIncident,testChannel,testOwner,"xxLegolasxxYoloxx");
+        
+        SocketStuff.makePost(testIncident);*/
     }
     
     

@@ -2,11 +2,13 @@ package Test;
 
 import ServerClientShared.Commands;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Incident;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import static junit.framework.Assert.assertNotNull;
 
 
 /**
@@ -15,7 +17,7 @@ import java.util.ArrayList;
  */
 public class SocketStuff 
 {
-    public static ArrayList<FieldWithoutContent> doStuff(String channelName,String channelOwner)
+    public static ArrayList<FieldWithoutContent> getSpec(String channelName,String channelOwner)
     {
         ObjectOutputStream outStream; //wrapped stream to client
         ObjectInputStream inStream; //stream from client
@@ -71,5 +73,44 @@ public class SocketStuff
         
         return fieldsToBeFilled;
        
+    }
+    
+    public static void makePost(Incident incidentToSend)
+    {
+        ObjectOutputStream outStream; //wrapped stream to client
+        ObjectInputStream inStream; //stream from client
+        Socket outSocket;
+
+        try //create socket
+        {
+            SocketWrapper socketWrapper = new SocketWrapper();
+            outSocket = socketWrapper.getOutSocket();
+            outStream = socketWrapper.getOut();
+            inStream = socketWrapper.getIn();
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException("Creating socket error(mP)");
+        }
+
+
+        try
+        {
+            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
+            System.out.println("Attempting to send incident.");
+            outStream.writeObject(Commands.IOCommand.SEND_INCIDENT);
+            outStream.writeObject(incidentToSend);
+            outStream.flush();
+            //TODO is a reply really not necessary?
+
+            inStream.close();
+            outStream.close();
+            outSocket.close();
+            System.out.println("Connection Closed");
+        }
+        catch (IOException e)
+        {
+             throw new RuntimeException("Connection failed.(mP)");
+        }
     }
 }
