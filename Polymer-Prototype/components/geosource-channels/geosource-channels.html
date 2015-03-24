@@ -89,11 +89,15 @@
     </style>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop>
-      <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
+      <geosource-channel-creator on-finished="{{closeChannelCreate}}" user="{{user}}"></geosource-channel-creator>
     </paper-dialog>
 
     <paper-dialog id="settings_dialog" role="dialog" backdrop>
-      <geosource-channel-settings on-finished="{{closeChannelSettings}}"></geosource-channel-settings>
+      <geosource-channel-settings id="channel_settings" 
+        on-loaded="{{openChannelSettings}}" 
+        on-finished="{{closeChannelSettings}}" 
+        user="{{user}}">
+      </geosource-channel-settings>
     </paper-dialog>
 
     <core-submenu opened active id="core_submenu" icon="settings-remote" label="Channels">
@@ -124,7 +128,7 @@
             <div class="channel-unsubscribe" horizontal center layout>
               <paper-icon-button icon="settings" 
                 class="settings_button" 
-                on-tap="{{openChannelSettings}}" 
+                on-tap="{{loadChannelSettings}}"
                 hidden?="{{!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscribed && subscribedSelected)}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
@@ -154,7 +158,7 @@
             <div class="channel-unsubscribe" horizontal center layout>
               <paper-icon-button icon="settings" 
                 class="settings_button" 
-                on-tap="{{openChannelSettings}}" 
+                on-tap="{{loadChannelSettings}}" 
                 hidden?="{{!user || (!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)}}">
               </paper-icon-button>
               <paper-icon-button icon="add" 
@@ -395,6 +399,10 @@
 
     closeChannelCreate: function() {
       this.$.create_dialog.close();
+    },
+
+    loadChannelSettings: function(event, detail, sender) {
+      this.$.channel_settings.load(sender.templateInstance.model.channel);
     },
 
     openChannelSettings: function(event, detail, sender) {
