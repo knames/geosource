@@ -12,11 +12,6 @@ insert into channelfavs values ("josh", "poly", "josh");
 
 insert into admin (a_username) values ("josh");
 
-insert into posts_okenso_pothole 
-		(p_poster)
-	values (
-		"okenso"		
-	);
 
 insert into admin (a_username) values ("okenso");
 
