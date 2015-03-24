@@ -1,8 +1,6 @@
 package Test;
 
-import Control.Controller;
 import DataBase.DBAccess;
-import FileSystem.FileAccess;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
@@ -10,7 +8,6 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.After;
@@ -74,12 +71,15 @@ public class ControllerTest
     // message.
 
     
-    //Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.
+    /**
+     * Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.        
+     * */
     @Test
     public void getFormSpecTest()
     {
         try
         {
+            //Check if the file spec exists on the server.
             //This channel is static and rebuilt automatically with the database, so it is always the same
             DBAccess dbTest = new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
@@ -87,7 +87,7 @@ public class ControllerTest
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Database connection failed");
+            throw new RuntimeException("Database connection failed");
         }
         
         //Using Sockets, actually grab the spec for march13 and check if it is right.
