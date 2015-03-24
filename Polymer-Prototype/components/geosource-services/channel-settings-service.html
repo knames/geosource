@@ -1,0 +1,83 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!-- 
+  `<channel-service>` provides an API for a fake service -- 
+  _unquote_, the read-only social networking service!
+
+  Provides a very simple API: `channels` returns the list of channels.
+  `setFavorite` pretends to persist a user's favorite choice.
+
+  @element channel-service
+  @demo 
+  @homepage http://www.polymer-project.org/docs/start/tutorial.html
+-->
+`
+<!--
+  An array of channel objects, with the following format:
+
+  <table border="0">
+    <tr>
+      <td><code>uid</code></td>
+      <td>Number</td>
+      <td>Unique ID for this channel.</td>
+    </tr>
+     <tr>
+      <td><code>username</code></td>
+      <td>String</td>
+      <td>Poster's username.</td>
+    </tr>
+    <tr>
+      <td><code>avatar</code></td>
+      <td>String</td>
+      <td>URL for the user's avatar.</td>
+    </tr>  
+    <tr>
+      <td><code>text</code></td>
+      <td>String</td>
+      <td>Post text.</td>
+    </tr>  
+    <tr>
+      <td><code>favorite</code></td>
+      <td>Boolean</td>
+      <td>True if the current user favorited this channel.</td>
+    </tr>
+  </table>
+  
+  @attribute channels 
+  @type Array
+  @default []
+-->
+<polymer-element name="channel-settings-service" attributes="channelSettings">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <core-ajax id="ajax"
+      url="/api/channels/{{channel.name}}_{{channel.owner}}.json"
+      on-core-response="{{channelSettingsLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer({
+
+    channel: null,
+    channelSettings: null,
+
+    channelSettingsLoaded: function() {
+      // Make a copy of the loaded data
+      this.channelSettings = this.$.ajax.response;
+      console.log(this.channelSettings);
+      this.fire('loaded');
+    },
+
+    load: function(channel) {
+      this.channel = channel;
+      this.$.ajax.go();
+      console.log("loading channel settings...");
+    }
+  });
+  </script>
+</polymer-element>

@@ -1,0 +1,17 @@
+{
+	"name": "Birds",
+	"owner": "Josh",
+	"access": "public",
+	"moderators": 
+		[
+			"Hello"
+		],
+	"viewers":
+		[
+			"World"
+		],
+	"banned":
+		[
+			"Chump"
+		]
+}
