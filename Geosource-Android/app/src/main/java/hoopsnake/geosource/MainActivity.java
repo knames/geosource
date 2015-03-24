@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
@@ -46,6 +47,8 @@ public class MainActivity extends Activity {
 
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.load("http://okenso.com", null);
+
+        setIncidentButtonTextBasedOnSharedPref();
     }
 
     /**
@@ -73,11 +76,12 @@ public class MainActivity extends Activity {
         {
             if (resultCode == RESULT_OK)
             {
-                //TODO Potentially react to the OK result.
+                Button incidentButton = (Button) findViewById(R.id.create_incident_button);
+                incidentButton.setText(getString(R.string.create_incident));
             }
             else //RESULT_CANCELLED
             {
-                //TODO Potentially react to the unsuccessful result.
+                setIncidentButtonTextBasedOnSharedPref();
             }
         }
     }
@@ -106,5 +110,16 @@ public class MainActivity extends Activity {
         if (xWalkWebView != null) {
             xWalkWebView.onDestroy();
         }
+    }
+
+    private void setIncidentButtonTextBasedOnSharedPref()
+    {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
+        Button incidentButton = (Button) findViewById(R.id.create_incident_button);
+
+        if (sharedPref.contains(IncidentActivity.SHAREDPREF_INCIDENT))
+            incidentButton.setText(getString(R.string.resume_incident_creation));
+        else
+            incidentButton.setText(getString(R.string.create_incident));
     }
 }

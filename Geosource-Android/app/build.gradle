@@ -89,6 +89,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.xwalk:xwalk_core_library:10.39.235.15'
+    compile 'io.nlopez.smartlocation:library:3.0.5'
 
 }
 

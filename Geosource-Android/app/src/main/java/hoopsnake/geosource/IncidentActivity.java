@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import ServerClientShared.FieldWithContent;
-import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.GeotagFieldWithContent;
 import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
@@ -25,7 +24,6 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
-import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -124,6 +122,7 @@ public class IncidentActivity extends ActionBarActivity {
 
     private void initializeAppIncidentFromServer(Bundle extras)
     {
+        //get a geotag as fast as possible.
         geotag.update(IncidentActivity.this);
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
@@ -178,7 +177,7 @@ public class IncidentActivity extends ActionBarActivity {
         {
             assertNotNull(field);
 
-            View v = field.getContentViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
+            View v = field.getFieldViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             assertNotNull(v);
 
             incidentDisplay.addView(v);
@@ -340,8 +339,8 @@ public class IncidentActivity extends ActionBarActivity {
      * no serialization occurs and a new incident will be created next time.
      */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 

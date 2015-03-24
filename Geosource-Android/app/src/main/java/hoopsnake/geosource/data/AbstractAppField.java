@@ -89,4 +89,11 @@ public abstract class AbstractAppField implements AppField {
 
         wrappedField.setContent(content);
     }
+
+//    @Override
+//    public View getFieldViewRepresentation(final int requestCodeForIntent)
+//    {
+//        //TODO implement this.
+////        LinearLayout lView = activity.getLayoutInflater().inflate(R.layout.field_view_holder, null);
+//    }
 }

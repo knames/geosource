@@ -47,7 +47,7 @@ public interface AppIncident
 
     /**
      * @precond geotag not null.
-     * @postcond this incident's geotag (location and timestamp) are updated to the given values.
+     * @postcond this incident's geotag is updated to the new one.
      * @param geotag
      */
     public void setGeotag(Geotag geotag);

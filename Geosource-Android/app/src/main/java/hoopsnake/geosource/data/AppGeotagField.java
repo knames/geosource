@@ -16,6 +16,8 @@ import hoopsnake.geosource.R;
  */
 public class AppGeotagField extends AbstractAppField {
 
+    private TextView tv;
+
     public AppGeotagField(GeotagFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
     }
@@ -32,8 +34,8 @@ public class AppGeotagField extends AbstractAppField {
     }
 
     @Override
-    public View getContentViewRepresentation(int requestCodeForIntent) {
-        TextView tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
+    public View getFieldViewRepresentation(int requestCodeForIntent) {
+        tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
         //This is for the faded out effect. (rather than setText().)
         tv.setHint(getContentStringRepresentation());
         return tv;
@@ -47,4 +49,18 @@ public class AppGeotagField extends AbstractAppField {
 
     @Override
     public void onResultFromSelection(int resultCode, Intent data) {}
+
+    public void onContentUpdated()
+    {
+        if (tv != null)
+            tv.setHint(getContentStringRepresentation());
+    }
+
+    @Override
+    public void setContent(Serializable content)
+    {
+        super.setContent(content);
+
+        ((Geotag) content).setRegisteredField(this);
+    }
 }

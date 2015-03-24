@@ -9,6 +9,4 @@ for dir in "${DIRS[@]}"; do
 	cd ../..;
 done
 
-cd ../..
-
 exit
