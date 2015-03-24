@@ -2,6 +2,7 @@ insert into users values ("0001", "okenso");
 insert into users values ("0002", "frank");
 insert into users values ("0003", "cindy");
 insert into users values ("0004", "xxLegolasxxYoloxx");
+insert into users values ("$2y$11$JFZ1T21zU0R4dWl3SmlxdOsK1MxpgOy0mtkbXeyHJVkLYo90i9DZW", "josh")
 
 insert into channels values ("okenso's channel", "okenso", 1, true);	
 insert into channels values ("okenso's other channel", "okenso", 2, true);
@@ -10,10 +11,16 @@ insert into channels values ("franks red hot", "frank", 1, true);
 insert into channels values ("frank and beans", "frank", 2, true);
 insert into channels values ("you only yolo once", "xxLegolasxxYoloxx", 1, true);
 insert into channels values ("pothole", "cindy", 1, true);
+insert into channels values ("poly", "josh", 1, true);
 
 insert into channelfavs values ("okenso", "pothole", "cindy");
 insert into channelfavs values ("okenso", "pothole", "okenso");
 insert into channelfavs values ("okenso", "okenso's channel", "okenso");
+insert into channelfavs values ("josh", "pothole", "cindy");
+insert into channelfavs values ("josh", "poly", "josh");
+
+insert into admin (a_username) values ("josh");
+
 
 CREATE TABLE posts_okenso_pothole (
 	p_poster varchar(25) NOT NULL,
@@ -39,6 +46,12 @@ insert into private_view_channels values
 	("okenso", "pothole", "cindy")
 	;
 
+insert into private_view_channels values
+	("josh", "franks red hot", "frank"),
+	("josh", "frank and beans", "frank"),
+	("josh", "pothole", "cindy")
+	;
+
 /*
 	CREATE TABLE posts_okenso_march13 (
 	 p_poster varchar(25) NOT NULL,
@@ -61,10 +74,14 @@ insert into channelmods values
 	("okenso", "frank and beans", "frank")
 	;
 
-
+insert into channelmods values
+	("josh", "pothole", "cindy"),
+	("josh", "frank and beans", "frank")
+	;
 
 insert into users_fav_posts values 
-	("okenso", "pothole", "okenso", 1)
+	("okenso", "pothole", "okenso", 1),
+	("josh", "pothole", "okenso", 1)
 	;
 
 
