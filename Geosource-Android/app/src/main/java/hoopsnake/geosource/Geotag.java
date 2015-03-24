@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import hoopsnake.geosource.data.AppGeotagField;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
@@ -44,6 +45,12 @@ public class Geotag implements Serializable {
 //    private LocationManager locationManager;
 //    private static final int TWO_MINUTES_IN_MILLIS = 120000;
 
+    public void setRegisteredField(AppGeotagField registeredField) {
+        this.registeredField = registeredField;
+    }
+
+    private AppGeotagField registeredField = null;
+
     /**
      * @precond context is not null.
      * @postcond This geotag's location and timestamp are updated to their last known values.
@@ -59,7 +66,8 @@ public class Geotag implements Serializable {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
-                        SmartLocation.with(context).location().stop();
+                        if (registeredField != null)
+                            registeredField.onContentUpdated();
                     }
                 });
     }
@@ -67,7 +75,10 @@ public class Geotag implements Serializable {
     @Override
     public String toString()
     {
-        return "Geotag:\ntime in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
+        if (exists())
+            return "Geotag:\ntime in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
+        else
+            return "Geotag not yet determined.";
     }
 
     public boolean exists()

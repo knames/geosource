@@ -57,7 +57,7 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
     }
 
     @Override
-    public View getContentViewRepresentation(final int requestCodeForIntent)
+    public View getFieldViewRepresentation(final int requestCodeForIntent)
     {
         if (contentIsFilled())
             return getFilledContentViewRepresentation();
