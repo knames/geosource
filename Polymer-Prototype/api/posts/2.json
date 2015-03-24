@@ -9,8 +9,7 @@
 			{"type": "Text", "label": "Description", "value": "Oops, I guess I recorded some audio. Not that useful for a mushroom..."},
 			{"type": "Audio", "label": "Audio", "value": "/audio/terran.mp3"},
 			{"type": "Image", "label": "Picture", "value": "/images/mushroom-01.jpg"},
-			{"type": "Radio Button", "label": "Big", "value": true},
-			{"type": "Radio Button", "label": "Small", "value": false}
+			{"type": "Radio Button", "label": "Big", "value": null, "attributes": [{"label": "Big", "value": true}, {"label": "Small", "value": false}]}
 		],
 	"time": "2015-02-25 12:00:00.000",
     "location": {"latitude": 52.2333, "longitude": -106.6633},

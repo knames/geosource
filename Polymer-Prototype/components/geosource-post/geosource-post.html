@@ -235,9 +235,10 @@
 
       for(i=0; i<this.post.fields.length; i++) {
 
+        content += '<h3>' + this.post.fields[i].label + '</h3>';
+
         switch(this.post.fields[i].type) {
           case "Video":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += 
               '<video width="auto" height="auto" controls>' +
                 '<source src="' + this.post.fields[i].value + '" type="video/mp4">' +
@@ -245,7 +246,6 @@
               '</video>';
             break;
           case "Audio":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += 
               '<audio controls>' +
                 '<source src="' + this.post.fields[i].value + '" type="audio/mpeg">' +
@@ -253,26 +253,28 @@
               '</audio>';
             break;
           case "Image":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += '<img src="' + this.post.fields[i].value + '">';
             break;
           case "Text":
-            content += '<h3>' + this.post.fields[i].label + '</h3>';
             content += '<div>' + this.post.fields[i].value + '</div>';
             break;
           case "Checkbox":
-            content += '<div class="checkbox" horizontal layout><paper-checkbox' 
-            if(this.post.fields[i].value) {
-              content += ' checked'
+            for(j=0; j<this.post.fields[i].attributes.length; j++) {
+              content += '<div class="checkbox" horizontal layout><paper-checkbox' 
+              if(this.post.fields[i].attributes[j].value) {
+                content += ' checked'
+              }
+              content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
             }
-            content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
           case "Radio Button":
-            content += '<div class="checkbox" horizontal layout><paper-radio-button' 
-            if(this.post.fields[i].value) {
-              content += ' checked'
+            for(j=0; j<this.post.fields[i].attributes.length; j++) {
+              content += '<div class="checkbox" horizontal layout><paper-radio-button' 
+              if(this.post.fields[i].attributes[j].value) {
+                content += ' checked'
+              }
+              content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
             }
-            content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].label + '</div></div>'
             break;
         }        
       }
