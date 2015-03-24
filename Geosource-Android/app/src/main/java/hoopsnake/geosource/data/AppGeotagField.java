@@ -34,7 +34,7 @@ public class AppGeotagField extends AbstractAppField {
     }
 
     @Override
-    public View getFieldViewRepresentation(int requestCodeForIntent) {
+    public View getContentViewRepresentation(int requestCodeForIntent) {
         tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
         //This is for the faded out effect. (rather than setText().)
         tv.setHint(getContentStringRepresentation());
