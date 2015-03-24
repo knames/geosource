@@ -223,8 +223,9 @@
       return moment(time).fromNow();
     },
 
-    pidChanged: function() {
-      this.$.post_service.load(this.pid);
+    load: function(pid) {
+      this.pid = pid;
+      this.$.post_service.load(pid);
     },
 
     postChanged: function() {

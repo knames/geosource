@@ -196,16 +196,17 @@
        * Opens a dialog, given an event containing detail 'post', which contains
        * information 
        */
-      loadPost: function(e) {
-        if(this.pid == e.detail.post.pid) {
-          this.openDialog();
-        }
-        else {
-          this.pid = e.detail.post.pid;
-        }
-        if(this.$.feed_drawer.narrow) {
-          this.$.feed_drawer.closeDrawer();
-        }
+      loadPost: function(event) {
+        // if(this.pid == e.detail.post.pid) {
+        //   this.openDialog();
+        // }
+        // else {
+        //   this.pid = e.detail.post.pid;
+        // }
+        // if(this.$.feed_drawer.narrow) {
+        //   this.$.feed_drawer.closeDrawer();
+        // }
+        this.$.post.load(event.detail.post.pid);
       },
 
       errorPost: function() {
