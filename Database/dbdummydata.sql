@@ -4,7 +4,6 @@ insert into users values ("$2y$11$JFZ1T21zU0R4dWl3SmlxdOsK1MxpgOy0mtkbXeyHJVkLYo
 insert into channels values ("okenso's channel", "okenso", 1, true);	
 insert into channels values ("okenso's other channel", "okenso", 2, true);
 insert into channels values ("pothole", "okenso", 3, true);
-insert into channels values ("you only yolo once", "xxLegolasxxYoloxx", 1, true);
 insert into channels values ("poly", "josh", 1, true);
 
 insert into channelfavs values ("okenso", "pothole", "okenso");
