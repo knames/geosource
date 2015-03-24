@@ -103,9 +103,11 @@ public abstract class AbstractAppField implements AppField {
     public View getFieldViewRepresentation(final int requestCodeForIntent)
     {
         LinearLayout fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
-        TextView titleView = (TextView) activity.findViewById(R.id.field_title_view);
+        TextView titleView = (TextView) fieldView.getChildAt(0);
+//        titleView = (TextView) activity.findViewById(R.id.field_title_view);
         titleView.setText(getTitle() + ":");
         View contentView = getContentViewRepresentation(requestCodeForIntent);
+
 //        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) contentView.getLayoutParams();
 //
 //        if (params == null)

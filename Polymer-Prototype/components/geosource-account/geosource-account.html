@@ -42,6 +42,9 @@
         right: 3px;
         color: #636363;
       }
+      #greeting {
+        margin: 8px;
+      }
     </style>
 
     <user-service id="user_service" user="{{user}}" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
@@ -60,7 +63,7 @@
         on-google-signin-success="{{signIn}}"
         on-google-signed-out="{{signOut}}">
       </google-signin>
-      <div hidden?="{{!user}}">Hello, {{user.username}}</div>
+      <div id="greeting" hidden?="{{!user}}">Hello, {{user.username}}</div>
     </core-submenu>
 
   </template>
