@@ -46,11 +46,16 @@
       core-icon {
         margin-right: 0.5em;
       }
+
+      core-icon.attribute {
+        margin-left: 10px;
+      }
+
       .form {
         background-color: #EDEDED;
       }
       paper-menu-button {
-        margin: 15px;
+        margin: 12px;
         margin-top: 0px;
         margin-bottom: 10px;
       }
@@ -61,7 +66,7 @@
 
       .field-type {
         margin-left: 10px;
-        width: 140px;
+        width: 150px;
       }
       .field-remove {
         width: 40px;
@@ -99,14 +104,33 @@
         margin-top: 10px;
       }
 
+      table {
+        border-spacing:0; /* Removes the cell spacing via CSS */
+      }
+
+      tr.attribute { 
+        background-color: #DDDDDD;
+      }
+
+      paper-icon-button {
+        width: 24px;
+        height: 24px;
+      }
 
     </style>
 
     <div vertical layout>
-      <h2 class="header">Create a Channel</h2>
+      <div class="header" horizontal layout>
+        <div vertical layout flex class="title">
+          <h2>Create a Channel</h2>
+        </div>
+        <div class="buttons" vertical layout>
+          <paper-icon-button id="close" icon="close" on-tap="{{cancel}}"></paper-icon-button>
+        </div>
+      </div>
       <div class="content" vertical layout>
-        <paper-input floating label="Enter a channel name..."></paper-input>
-        <paper-radio-group selected="public">
+        <paper-input id="channel_name" floating label="Enter a channel name..."></paper-input>
+        <paper-radio-group id="channel_access" selected="public">
           <paper-radio-button name="public" label="Public"></paper-radio-button>
           <paper-radio-button name="private" label="Private"></paper-radio-button>
         </paper-radio-group>
@@ -126,12 +150,28 @@
               <td horizontal center-justified layout><paper-checkbox checked disabled></paper-checkbox></td>
               <td></td>
             </tr>
-            <template repeat="{{field in fields}}">
+            <template repeat="{{field, fieldIndex in fields}}">
               <tr>
-                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.name}}</td>
-                <td><paper-input label="Enter a label..." value="{{field.input}}"></td> 
+                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.type}}</td>
+                <td><paper-input label="Enter a title..." value="{{field.value}}"></td> 
                 <td horizontal center-justified layout><paper-checkbox checked="{{field.required}}"></paper-checkbox></td>
                 <td><paper-icon-button class="remove" icon="close" on-tap="{{removeField}}"></paper-icon-button></td>
+              </tr>
+
+              <template repeat="{{attribute, attributeIndex in field.attributes}}">
+                <tr class="attribute">
+                  <td><core-icon class="attribute" icon="{{field.icon}}"></core-icon>{{field.attributeType}}</td>
+                  <td><paper-input label="Enter a label..." value="{{attribute.value}}"></td> 
+                  <td horizontal center-justified layout><paper-checkbox disabled checked="{{field.required}}"></paper-checkbox></td>
+                  <td><paper-icon-button class="remove" icon="close" on-tap="{{removeFieldAttribute}}"></paper-icon-button></td>
+                </tr>
+              </template>
+
+              <tr class="attribute" hidden?="{{!field.attributes}}">
+                <td><paper-icon-button class="add" icon="add" on-tap="{{addFieldAttribute}}"></paper-icon-button></td>
+                <td></td> 
+                <td></td>
+                <td></td>
               </tr>
             </template>
           </table>
@@ -143,8 +183,8 @@
                 <paper-item on-tap="{{addImage}}"><core-icon icon="image:photo-camera"></core-icon>Image</paper-item>
                 <paper-item on-tap="{{addAudio}}"><core-icon icon="av:mic"></core-icon>Audio</paper-item>
                 <paper-item on-tap="{{addVideo}}"><core-icon icon="av:videocam"></core-icon>Video</paper-item>
-                <paper-item on-tap="{{addCheckbox}}"><core-icon icon="check-box"></core-icon>Checkbox</paper-item>
-                <paper-item on-tap="{{addRadioButton}}"><core-icon icon="radio-button-on"></core-icon>Radio Button</paper-item>
+                <paper-item on-tap="{{addCheckboxes}}"><core-icon icon="check-box"></core-icon>Checkboxes</paper-item>
+                <paper-item on-tap="{{addRadioButtons}}"><core-icon icon="radio-button-on"></core-icon>Radio Buttons</paper-item>
               </div>
             </paper-dropdown>
           </paper-menu-button>
@@ -165,41 +205,53 @@
     fields: [],
 
     addText: function() {
-      this.fields.push({name:"Text", icon:"text-format", input:"", required:false});
+      this.fields.push({type:"Text", icon:"text-format", value:"", required:false});
     },
 
     addImage: function() {
-      this.fields.push({name:"Image", icon:"image:photo-camera", input:"", required:false});
+      this.fields.push({type:"Image", icon:"image:photo-camera", value:"", required:false});
     },
 
     addAudio: function() {
-      this.fields.push({name:"Audio", icon:"av:mic", input:"", required:false});
+      this.fields.push({type:"Audio", icon:"av:mic", value:"", required:false});
     },
 
     addVideo: function() {
-      this.fields.push({name:"Video", icon:"av:videocam", input:"", required:false});
+      this.fields.push({type:"Video", icon:"av:videocam", value:"", required:false});
     },
 
-    addCheckbox: function() {
-      this.fields.push({name:"Checkbox", icon:"check-box", input:"", required:false});
+    addCheckboxes: function() {
+      this.fields.push({type:"Checkboxes", icon:"check-box", value:"", attributes: [{value:""}], attributeType:"Checkbox", required:false});
     },
 
-    addRadioButton: function() {
-      this.fields.push({name:"Radio Button", icon:"radio-button-on", input:"", required:false});
+    addRadioButtons: function() {
+      this.fields.push({type:"Radio Buttons", icon:"radio-button-on", value:"", attributes: [{value:""}], attributeType:"Radio Button", required:false});
     },
 
     removeField: function(event, detail, sender) {
-      console.log(event);
-      console.log(detail);
-      console.log(sender);
-      var field = sender.templateInstance.model.field;
-      console.log(field);
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      this.fields.splice(fieldIndex, 1);
+    },
 
-      var index = this.fields.indexOf(field);
+    addFieldAttribute: function(event, detail, sender) {
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      var attributeIndex = sender.templateInstance.model.attributeIndex;
+      this.fields[fieldIndex].attributes.push({value: ""});
+    },
 
-      if(index > -1) {
-        this.fields.splice(index, 1);
-      }
+    removeFieldAttribute: function(event, detail, sender) {
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      var attributeIndex = sender.templateInstance.model.attributeIndex;
+      this.fields[fieldIndex].attributes.splice(attributeIndex, 1);
     },
 
     cancel: function() {
@@ -207,6 +259,25 @@
     },
 
     submit: function() {
+
+      var channel = {
+        name: this.$.channel_name.value, 
+        owner: this.user.username, 
+        fields: [],
+        access: this.$.channel_access.selected
+      };
+
+      for(i=0; i<fields.length; i++) {
+        channel.fields.push({
+          type: this.fields[i].type,
+          value: this.fields[i].value,
+          attributes: this.fields[i].attributes,
+          required: this.fields[i].required
+        });
+      }
+
+      console.log(channel);
+
       this.fire('finished');
     }
 
