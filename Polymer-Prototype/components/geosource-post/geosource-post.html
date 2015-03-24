@@ -24,7 +24,7 @@
 
 <!-- <link rel="import" href="../disqus-comments/disqus-comments.html"> -->
 
-<polymer-element name="geosource-post" attributes="pid user">
+<polymer-element name="geosource-post" attributes="user">
 
   <template>
 
@@ -142,13 +142,13 @@
 
     </style>
 
-    <post-service id="post_service" post="{{post}}" pid="{{pid}}"></post-service>
+    <post-service id="post_service" post="{{post}}"></post-service>
 
     <div class="post" vertical layout>
       <div class="header" horizontal layout>
         <div vertical layout flex class="title">
           <h2>{{post.title}}</h2>
-          <div class="info">posted by {{post.username}} {{time}} to {{post.channel.name}}</div>
+          <div class="info">posted by {{post.username}} {{timeString(post.time)}} to {{post.channel.name}}</div>
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
@@ -203,34 +203,24 @@
   <script>
   Polymer({
 
-    pid: null,
-    time: null,
+    postSummary: null,
     post: null,
     user: null,
-    favorite: false,
     deletePermission: false,
-
-    postChanged: function() {
-      if(this.post.favorite) {
-        this.$.favorite.icon = "favorite";
-      }
-      else {
-        this.$.favorite.icon = "favorite-outline";
-      }
-    },
 
     timeString: function(time) {
       return moment(time).fromNow();
     },
 
-    load: function(pid) {
-      this.pid = pid;
-      this.$.post_service.load(pid);
+    load: function(postSummary) {
+      this.postSummary = postSummary;
+      console.log(this.postSummary);
+      this.$.post_service.load(postSummary.pid);
     },
 
     postChanged: function() {
 
-      this.time = moment(this.post.time).fromNow();
+      this.isFavorite();
 
       content = "";
 
@@ -282,7 +272,6 @@
 
       this.$.content.innerHTML = content;
 
-      this.isFavorite();
       this.checkDeletePermission();
 
       this.fire('post-loaded');
@@ -293,32 +282,16 @@
     },
 
     isFavorite: function() {
-      if(this.user && this.post) {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.$.favorite.icon = "favorite";
-            return;
-          }            
-        }
+      if(this.user && this.postSummary && this.postSummary.favorite) {
+        this.$.favorite.icon = "favorite";
       }
-      this.$.favorite.icon = "favorite-outline";
+      else {
+        this.$.favorite.icon = "favorite-outline";
+      }
     },
 
     favorite: function() {
-      if(this.$.favorite.icon == "favorite-outline") {
-        this.user.favorites.push({"channel": this.post.channel, "pid": this.post.pid});
-      }
-      else {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.user.favorites.splice(i, 1);
-          }
-        }
-      }
+      this.postSummary.favorite = !this.postSummary.favorite;
       this.isFavorite();
       this.fire('favorite-click');
     },

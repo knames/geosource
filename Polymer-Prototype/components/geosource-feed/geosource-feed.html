@@ -61,7 +61,7 @@
      */
     handleMore: function(event, detail, sender) {
       var post = sender.templateInstance.model.post;
-
+      console.log(post);
       this.fire('open-dialog', {
         post: post
       });

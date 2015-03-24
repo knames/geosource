@@ -117,7 +117,6 @@
     <paper-dialog id="dialog" role="dialog" backdrop>
       <geosource-post 
         id="post"
-        pid="{{pid}}" 
         user="{{user}}"
         on-post-loaded="{{openDialog}}" 
         on-core-error="{{errorPost}}"
@@ -206,7 +205,7 @@
         // if(this.$.feed_drawer.narrow) {
         //   this.$.feed_drawer.closeDrawer();
         // }
-        this.$.post.load(event.detail.post.pid);
+        this.$.post.load(event.detail.post);
       },
 
       errorPost: function() {

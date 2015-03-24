@@ -34,7 +34,7 @@
 
     }
     img {
-            border-radius: 100%;
+      border-radius: 100%;
       -webkit-border-radius: 100%;
     }
     #more-button {
@@ -47,9 +47,11 @@
       min-width: 40px;
     }
 
-    :host([favorite]) #favicon {
+    #unfavorite {
       color: #FF6666;
     }
+
+
     .card-footer {
       font-size: 14px;
       padding: 3px;
@@ -87,10 +89,17 @@
       </div>
       <div class="buttons" vertical layout>
         <paper-icon-button
-          id="favicon"
+          id="favorite"
           icon="favorite"
           on-tap="{{favoriteTapped}}"
-          hidden?="{{!user}}">
+          hidden?="{{!user || post.favorite}}">
+        </paper-icon-button>
+
+        <paper-icon-button
+          id="unfavorite"
+          icon="favorite"
+          on-tap="{{favoriteTapped}}"
+          hidden?="{{!user || !post.favorite}}">
         </paper-icon-button>
 
         <paper-icon-button
@@ -120,49 +129,18 @@
   <script>
   Polymer({
     publish: {
-      post: {
-        value: null,
-        reflect: true
-      },
-      favorite: { //temporary hack, 
-        value: false,
-        reflect: true
-      },
       mapInfo: {
         value: false,
         reflect: true
       }
     },
 
+    post: null,
+    favorite: false,
     time: null,
 
-    isFavorite: function() {
-      if(this.user) {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.favorite = true;
-            return;
-          }            
-        }
-      }
-    },
-
     favoriteTapped: function(event, detail, sender) {
-      if(!this.favorite) {
-        this.user.favorites.push({"channel": this.post.channel, "pid": this.post.pid});
-      }
-      else {
-        for(i=0; i<this.user.favorites.length; i++) {
-          if(this.post.pid == this.user.favorites[i].pid &&
-              this.post.channel.name == this.user.favorites[i].channel.name && 
-              this.post.channel.owner == this.user.favorites[i].channel.owner) {
-            this.user.favorites.splice(i, 1);
-          }
-        }
-      }
-      this.favorite = !this.favorite; //avoids calling this.isFavorite()
+      this.post.favorite = !this.post.favorite;
       this.fire('favorite-click');
     },
 

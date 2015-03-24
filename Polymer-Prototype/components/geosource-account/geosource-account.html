@@ -110,21 +110,21 @@
         if(!this.user) {
           this.openDialog();
         }
-      },
-
-      userChanged: function() {
-
-        console.log(this.posts);
-
-        for(i=0; i<this.user.favorites.length; i++) {
-          for(j=0; j<this.posts.length; j++) {
-            if(this.user.favorites[i] == this.posts[j].pid) {
-              this.posts[j].favorite = true;
-              break;
+        else {
+          console.log(this.posts);
+          console.log(this.user.favorites);
+          for(i=0; i<this.user.favorites.length; i++) {
+            for(j=0; j<this.posts.length; j++) {
+              if(this.user.favorites[i].pid == this.posts[j].pid
+                  && this.user.favorites[i].channel.name == this.posts[j].channel.name
+                  && this.user.favorites[i].channel.owner == this.posts[j].channel.owner) {
+                this.posts[j].favorite = true;
+                break;
+              }
             }
           }
         }
-      }
+      },
 
     });
   </script>
