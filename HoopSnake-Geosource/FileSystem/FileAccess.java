@@ -71,6 +71,18 @@ public class FileAccess {
             return null;
         }
     }
+    
+    public void saveFormSpec(ArrayList<FieldWithoutContent> fields, String owner, int identifier)
+    {
+        try (FileOutputStream fout = new FileOutputStream("media/spec/" + owner + "." + identifier); ObjectOutputStream oos = new ObjectOutputStream(fout))
+        {
+            oos.writeObject(fields); //save spec file
+        }
+        catch (IOException IOe)
+        {
+            System.err.println("Error writing form specification file");
+        }
+    }
 
     public String saveField(Serializable fieldContent) {
         UUID fileUUID = UUID.randomUUID();

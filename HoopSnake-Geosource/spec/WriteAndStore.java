@@ -2,6 +2,7 @@ package spec;
 
 import DataBase.DBAccess;
 import DataBase.Queries;
+import ServerClientShared.AudioFieldWithoutContent;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -11,9 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.StringFieldWithoutContent;
-import java.sql.ResultSet;
+import ServerClientShared.VideoFieldWithoutContent;
 import java.sql.SQLException;
 
 
@@ -75,10 +77,14 @@ public class WriteAndStore implements Serializable  {
         System.out.println("oy");
         FolderExists();
         ArrayList<FieldWithoutContent> newSpec = new ArrayList();
-        newSpec.add(new StringFieldWithoutContent("TitleText", true));
+        newSpec.add(new StringFieldWithoutContent("title", true));
+        newSpec.add(new GeotagFieldWithoutContent("geotag", true));
+        newSpec.add(new StringFieldWithoutContent("TextField", false));
         newSpec.add(new ImageFieldWithoutContent("PictureField", false));
+        newSpec.add(new VideoFieldWithoutContent("VideoField", false));
+        newSpec.add(new AudioFieldWithoutContent("AudioField", false));
 
-        String[] fields = {"pic", "video", "audio", "string"};
+        String[] fields = {"TextField", "PictureField", "ViedoField", "AudioField"};
         WriteAndStore test = new WriteAndStore(newSpec, "march13", "okenso", true, fields); // this tests the string version.
 
 

@@ -75,6 +75,44 @@ public class DBAccess {
             System.err.println("Saving picture field failed");
         }
     }
+    
+    public boolean channelExists(String title, String owner)
+    {
+        try (Statement statement = dbconnection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(Queries.channelExists(title, owner));
+            return results.isAfterLast();
+        }
+        catch (SQLException SQLe)
+        {
+            throw new RuntimeException("Error finding previous channel");
+        }
+    }
+    
+    /**
+     * creates a new channel and gives back the number the new spec should have
+     * @param title the name of the new channel
+     * @param owner the owner of the new channel
+     * @param isPublic whether the channel should be publicly visible
+     * @param fieldNames a list of the names of any non-standard fields
+     * @return the number to be appended to the new spec
+     */
+    public int createNewChannel(String title, String owner, boolean isPublic, String[] fieldNames)
+    {
+        try (Statement statement = dbconnection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(Queries.nextSpecNum(owner)); //TODO add query
+            results.next();
+            int specNum = results.getInt("ch_spec") + 1;
+            statement.execute(Queries.makeChannel(title, owner, specNum, isPublic, fieldNames)); //no batching, because the number retrieve does nothing
+            return specNum;
+        }
+        catch (SQLException SQLe)
+        {
+            System.err.println("Creating new channel failed!");
+            return -1;
+        }
+    }
 
     /**
      * make a new post in the specified channel and return its identifier

@@ -5,9 +5,9 @@
 	$dbname = "dev";
 	$password = "devsnake371";
 
+	$data = json_decode(file_get_contents('php://input'), true);
 
-
-	$userid = '0001'; // make sure it's the hashed value
+	$userid = $data["gid"]; // make sure it's the hashed value
 
 	// Create connection
 	$mysqli = new mysqli($servername, $username, $password, $dbname);
