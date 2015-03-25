@@ -2,14 +2,8 @@ package hoopsnake.geosource;
 
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
-
+import ServerClientShared.Geotag;
 import hoopsnake.geosource.data.AppGeotagField;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -18,29 +12,13 @@ import io.nlopez.smartlocation.SmartLocation;
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class Geotag implements Serializable {
+public class AppGeotagWrapper {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
     private static final String LOG_TAG = "geosource";
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public double getLongitude()
-    {
-        return longitude;
-    }
-
-    public double getLatitude()
-    {
-        return latitude;
-    }
-
-    private static final int NONEXISTENT_VAL = -1;
-    private long timestamp = NONEXISTENT_VAL;
-    private double longitude = NONEXISTENT_VAL, latitude = NONEXISTENT_VAL;
+    private Geotag wrappedGeotag;
 
 //    private LocationManager locationManager;
 //    private static final int TWO_MINUTES_IN_MILLIS = 120000;
@@ -51,20 +29,24 @@ public class Geotag implements Serializable {
 
     private AppGeotagField registeredField = null;
 
+    public AppGeotagWrapper()
+    {
+        wrappedGeotag =  new Geotag();
+    }
     /**
      * @precond context is not null.
      * @postcond This geotag's location and timestamp are updated to their last known values.
      */
     public void update(final Context context) {
-        timestamp = System.currentTimeMillis();
+        wrappedGeotag.setTimestamp(System.currentTimeMillis());
         SmartLocation.with(context).location()
                 .oneFix()
                 .start(new OnLocationUpdatedListener() {
 
                     @Override
                     public void onLocationUpdated(Location location) {
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
+                        wrappedGeotag.setLatitude(location.getLatitude());
+                        wrappedGeotag.setLongitude(location.getLongitude());
 
                         if (registeredField != null)
                             registeredField.onContentUpdated();
@@ -75,34 +57,17 @@ public class Geotag implements Serializable {
     @Override
     public String toString()
     {
-        if (exists())
-            return "Geotag:\ntime in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
-        else
-            return "Geotag not yet determined.";
+        return wrappedGeotag.toString();
     }
 
     public boolean exists()
     {
-        return timestamp != NONEXISTENT_VAL && longitude != NONEXISTENT_VAL && latitude != NONEXISTENT_VAL;
+        return wrappedGeotag.exists();
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException
+    public Geotag toGeotag()
     {
-        out.writeLong(timestamp);
-        out.writeDouble(longitude);
-        out.writeDouble(latitude);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
-    {
-        timestamp = in.readLong();
-        longitude = in.readDouble();
-        latitude = in.readDouble();
-    }
-
-    private void readObjectNoData() throws ObjectStreamException
-    {
-        Log.e(LOG_TAG, "no data received on deserialize.");
+        return wrappedGeotag;
     }
 
 //    private class TaskUpdateLocation extends AsyncTask<Void, Void, Void> implements LocationListener

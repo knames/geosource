@@ -12,6 +12,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
 import ServerClientShared.ImageFieldWithContent;
@@ -26,7 +31,7 @@ import static junit.framework.Assert.assertNotNull;
  *
  * Implementation of an app field with type Image.
  */
-public class AppImageField extends AbstractAppFieldWithFile {
+public class AppImageField extends AbstractAppFieldWithFile implements Serializable {
     private ImageView iv = null;
 
     public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
@@ -53,6 +58,7 @@ public class AppImageField extends AbstractAppFieldWithFile {
         iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setImageResource(R.drawable.camera); //TODO arrow_right is just a placeholder.
 
+        assertNotNull(iv);
         activity.makeViewLaunchable(iv, new Runnable() {
             @Override
             public void run() {
@@ -143,5 +149,23 @@ public class AppImageField extends AbstractAppFieldWithFile {
                 }
             }
         }
+    }
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        super.writeObjectHelper(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        super.readObjectHelper(in);
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+        super.readObjectNoDataHelper();
     }
 }

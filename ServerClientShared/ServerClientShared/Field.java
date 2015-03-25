@@ -54,7 +54,7 @@ public abstract class Field implements Serializable {
     }
 
     /** Serializable implementation. */
-    void readObjectNoDataHelper() throws InvalidObjectException {
+    public void readObjectNoDataHelper() throws InvalidObjectException {
         throw new InvalidObjectException("Stream data required");
     }
 }

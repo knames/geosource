@@ -15,7 +15,7 @@ import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
-import hoopsnake.geosource.Geotag;
+import hoopsnake.geosource.AppGeotagWrapper;
 import hoopsnake.geosource.IncidentActivity;
 
 import static junit.framework.Assert.assertNotNull;
@@ -212,8 +212,8 @@ public class AppIncidentWithWrapper implements AppIncident {
     }
 
     @Override
-    public void setGeotag(Geotag geotag) {
+    public void setGeotag(AppGeotagWrapper geotag) {
         AppGeotagField geotagField = (AppGeotagField) fieldList.get(Incident.POSITION_GEOTAG_FIELD);
-        geotagField.setContent(geotag);
+        geotagField.registerForGeotag(geotag);
     }
 }

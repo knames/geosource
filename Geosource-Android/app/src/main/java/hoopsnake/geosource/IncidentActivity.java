@@ -43,7 +43,7 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
-    private final Geotag geotag = new Geotag();
+    private final AppGeotagWrapper appGeotagWrapper = new AppGeotagWrapper();
 
     private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
@@ -51,9 +51,6 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_POSTER = "poster";
 
     public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
-
-    /** This holds the incident, and passes it to the incidentDisplay for display. */
-    IncidentDisplayAdapter incidentAdapter;
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
@@ -123,7 +120,7 @@ public class IncidentActivity extends ActionBarActivity {
     private void initializeAppIncidentFromServer(Bundle extras)
     {
         //get a geotag as fast as possible.
-        geotag.update(IncidentActivity.this);
+        appGeotagWrapper.update(IncidentActivity.this);
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
@@ -169,7 +166,7 @@ public class IncidentActivity extends ActionBarActivity {
 
         //TODO grosssss... this accounts for refilling an incident from shared preferences, but man...
         if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled())
-            incident.setGeotag(geotag);
+            incident.setGeotag(appGeotagWrapper);
 
         incidentDisplay.removeAllViews();
         int i = 0;

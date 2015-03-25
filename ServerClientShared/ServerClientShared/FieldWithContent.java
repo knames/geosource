@@ -85,14 +85,14 @@ public abstract class FieldWithContent extends Field
     }
 
     @Override
-    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    public void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
         super.readObjectHelper(in);
 
         setContent((Serializable) in.readObject());
     }
 
     @Override
-    void writeObjectHelper(ObjectOutputStream out) throws IOException {
+    public void writeObjectHelper(ObjectOutputStream out) throws IOException {
         super.writeObjectHelper(out);
 
         out.writeObject(content);
