@@ -16,6 +16,7 @@ public class WebAppInterface {
     @JavascriptInterface
     public void login(String gid) {
         mContext.login(gid);
+        Toast.makeText(mContext, "android logged in", Toast.LENGTH_SHORT).show();
     }
 
     @JavascriptInterface
