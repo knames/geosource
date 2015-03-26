@@ -30,9 +30,12 @@ public class Controller {
     
     private static int numConnections = 5; //maximum simultaneous socket inputs
     
+    private static ArrayList<CommSocket> socketList;
+    
     public Controller()
     {
         boolean successful = false;
+        socketList = new ArrayList(numConnections);
         try
         {
             dbAccess = new DBAccess();
@@ -70,40 +73,25 @@ public class Controller {
     {
     	CommSocket.portNum = portNum;
         ExecutorService exec = Executors.newCachedThreadPool();
-        LinkedList<Future<Incident>> list = new LinkedList();
         for (int x = 0; x < numConnections; x ++)
         {
-            list.add(exec.submit(new CommSocket(this))); //fill list of future results
-        }
-        
-        while (true)
-        {
-            ListIterator<Future<Incident>> iter = list.listIterator();
-            while (iter.hasNext())
-            {
-                Future<Incident> incident = iter.next();
-                if (incident.isDone()) //filter out completed socket tasks
-                {
-                    try
-                    {
-                        dealWith(incident.get()); //deal with demands
-                    }
-                    catch (InterruptedException Ie)
-                    {
-                        //swallowing interrupt, should never happen because of isDone check
-                        throw new RuntimeException("Should never receive an Interrupt Exception");
-                    }
-                    catch (ExecutionException Ee)
-                    {
-                        throw new RuntimeException("Socket Crashed:" + Ee.getCause().getMessage());
-                    }
-                    iter.remove();
-                    iter.add(exec.submit(new CommSocket(this))); //replace new socket
-                }
-            }
+            socketList.add(new CommSocket(this, x)); //store running sockets
         }
     }
     
+    /**
+     * called by a socket upon complete to signal its own replacement
+     * @param SocketNum the sockets stored identification number
+     */
+    public void socketComplete(int SocketNum)
+    {
+        socketList.remove(SocketNum);
+        socketList.add(SocketNum, new CommSocket(this, SocketNum));
+    }
+    
+    /**
+     * inserts the test channel to the system on startup
+     */
     private void insertTestChannel()
     {
         String[] types = {"STRING", "IMAGE", "VIDEO", "AUDIO"};
@@ -112,6 +100,15 @@ public class Controller {
         newChannel("testing", "okenso", true, types, fieldNames, required);
     }
     
+    /**
+     * make a new channel in the system
+     * @param title the name of the new channel
+     * @param owner the creator of the new channel
+     * @param isPublic whether the channel should be publicly visible
+     * @param types the types of the channel's non-default fields, in order
+     * @param fieldNames the names of the channel's non-default fields
+     * @param required whether or not each non-default field is a required field
+     */
     private void newChannel(String title, String owner, boolean isPublic, String[] types, String[] fieldNames, boolean[] required)
     {
         if (!dbAccess.channelExists(title, owner)) //don't re-make on normal server restart
@@ -125,7 +122,8 @@ public class Controller {
                 newSpec.add(FieldType.valueOf(types[i]).getField(fieldNames[i], required[i]));
             }
             int newSpecNum = dbAccess.createNewChannel(title, owner, isPublic, fieldNames);
-            fileAccess.saveFormSpec(newSpec, owner, newSpecNum);
+            if (newSpecNum >=0) //only if new spec should be made
+                fileAccess.saveFormSpec(newSpec, owner, newSpecNum);
         }
     }
     
@@ -133,7 +131,7 @@ public class Controller {
      * delegates the parsing of an incident to te file and database systems
      * @param incident the incident to be handled
      */
-    protected void dealWith(Incident incident)
+    public void dealWith(Incident incident)
     {
         if (null == incident) return; //wasn't a real request
         int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName(), incident.getPosterName());

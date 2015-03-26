@@ -19,19 +19,19 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import javax.crypto.NoSuchPaddingException;
 
 /**
  * 
  * @author Connor
  */
-public class CommSocket implements Callable<Incident>{
+public class CommSocket {
     
     public static int portNum = 0;
-    private final static int compressionBlockSize = 1024; //indicates the size in bytes of the blocks that are sent over the stream
-    
     private static Controller controller = null;
+    private final int SocketNum; //identification number
+    
+    private final static int compressionBlockSize = 1024; //indicates the size in bytes of the blocks that are sent over the stream
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -42,7 +42,7 @@ public class CommSocket implements Callable<Incident>{
     // Password must be at least 8 characters
     private static final String password = "hiedlbrand";
     
-    public CommSocket(Controller parentControl)
+    public CommSocket(Controller parentControl, int SocketNumber)
     {
         if (serverSocket == null)
         {
@@ -60,6 +60,8 @@ public class CommSocket implements Callable<Incident>{
         {
             controller = parentControl; //controller to query for data/files
         }
+        
+        SocketNum = SocketNumber;
     }
     
     /**
@@ -67,8 +69,7 @@ public class CommSocket implements Callable<Incident>{
      * filled future, allowing later checking for data once the task completes
      * @return any Incident submission returned by a connection to an android app
      */
-    @Override
-    public Incident call()
+    public void run()
     {
         try
         {
@@ -111,12 +112,11 @@ public class CommSocket implements Callable<Incident>{
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
                     out.writeObject(formList);
                     out.flush();
-                    return null;
                 }
                 case SEND_INCIDENT:
                 {
                     Incident newIncident = (Incident)in.readObject();
-                    return newIncident;
+                    controller.dealWith(newIncident);
                 }
             }
             in.close();
@@ -145,7 +145,7 @@ public class CommSocket implements Callable<Incident>{
             e.printStackTrace();
         }
         
-        return null;
+        controller.socketComplete(SocketNum);
 
     }
 }
