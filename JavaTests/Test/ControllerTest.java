@@ -24,7 +24,7 @@ public class ControllerTest
    private static int testCount=0;
    
    //The channel we will be testing on
-   private static String testChannel="march13";
+   private static String testChannel="testing";
    
    //The test channel's owner.
    private static String testOwner="okenso";
