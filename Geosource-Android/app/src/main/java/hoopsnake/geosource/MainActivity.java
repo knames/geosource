@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
     private String curChannelName = "march13";
     private String curChannelOwner = "okenso";
     private String userName = "frank";
+    private String gid = null;
 
 
     /**
@@ -46,7 +47,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
-        xWalkWebView.load("http://okenso.com", null);
+        xWalkWebView.load("http://okenso.com/android.html", null);
+        xWalkWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         setIncidentButtonTextBasedOnSharedPref();
     }
@@ -110,6 +112,14 @@ public class MainActivity extends Activity {
         if (xWalkWebView != null) {
             xWalkWebView.onDestroy();
         }
+    }
+
+    public void login(String gid) {
+        this.gid = gid;
+    }
+
+    public void logout() {
+        this.gid = null;
     }
 
     private void setIncidentButtonTextBasedOnSharedPref()
