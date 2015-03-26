@@ -5,4 +5,4 @@ use dev;
 SOURCE /var/www/okenso.com/cmpt371group2/Database/dbdrop.sql;
 SOURCE /var/www/okenso.com/cmpt371group2/Database/dbinit.sql;
 EOF
-java -jar HoopSnake-GeoSource.jar 9001 5
+./startserver.sh
