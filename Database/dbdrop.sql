@@ -1,4 +1,3 @@
-DROP TABLE posts_okenso_testing;
 DROP TABLE private_view_channels;
 DROP TABLE admin CASCADE;
 drop table users_fav_posts;
