@@ -1,7 +1,7 @@
 
 
 CREATE TABLE users (
-	u_identity text NOT NULL,
+	u_identity varchar(64) NOT NULL UNIQUE,
 	u_username varchar(25) PRIMARY KEY
 	);
 

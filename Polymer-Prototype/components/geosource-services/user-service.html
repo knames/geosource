@@ -65,7 +65,7 @@
       method="POST"
       url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
-      body='{"gid": {{gid}}}'
+      body='{"gid": "{{gid}}"}'
       handleAs="json">
     </core-ajax>
 
@@ -83,12 +83,13 @@
     },
 
     googleLoaded: function() {
-      this.google_info = ;
-      if(this.$.ajax.response.error) {
+      console.log(this.$.google_ajax.response);
+      if(this.$.google_ajax.response.error) {
         //display google_info.error_description
       }
       else {
-        this.gid = this.$.ajax.response.id
+        this.gid = this.$.google_ajax.response.user_id;
+	console.log(this.gid);
       }
     },
 
@@ -98,7 +99,7 @@
 
     userLoaded: function() {
       // Make a copy of the loaded data
-      this.user = this.$.ajax.response.slice(0)[0];
+      this.user = this.$.geosource_ajax.response.slice(0)[0];
       console.log(this.user);
       this.fire('user-loaded');
     }
