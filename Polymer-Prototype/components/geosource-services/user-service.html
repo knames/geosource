@@ -58,7 +58,7 @@
       method="POST"
       url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
-      params='{"gid": {{gid}}}'
+      body='{"gid": {{gid}}}'
       handleAs="json">
     </core-ajax>
   </template>

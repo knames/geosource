@@ -17,6 +17,8 @@
 <link rel="import" href="../paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 
+<link rel="import" href="../geosource-services/user-creation-service.html">
+
 <polymer-element name="geosource-account-creator" attributes="user">
 
 
@@ -62,6 +64,11 @@
 
     </style>
 
+    <user-creation-service id="service" 
+      response="{{response}}" 
+      on-user-creation-response="{{handleResponse}}">
+    </user-creation-service>
+
     <div vertical layout>
       <h2 class="header">Create an Account</h2>
       <div class="content" vertical layout>
@@ -86,19 +93,29 @@
   Polymer({
 
     submit: function() {
-      this.user = { 
-        "username": this.$.input.value,
-        "admin": false,
-        "subscriber": [],
-        "viewer": [],
-        "moderator": [],
-        "owner": [],
-        "favorites": [] 
-      };
-      this.fire('finished');
+      this.$.service.submit(112345, this.$.input.value);
+    },
+
+    handleResponse: function() {
+      console.log(this.response);
+      if(this.response.error) {
+        console.log(this.response.message);
+      } else {
+        this.user = { 
+          "username": this.$.input.value,
+          "admin": false,
+          "subscriber": [],
+          "viewer": [],
+          "moderator": [],
+          "owner": [],
+          "favorites": [] 
+        };
+        this.fire('finished');
+      }
     }
 
   });
   </script>
   
 </polymer-element>
+
