@@ -24,6 +24,7 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
+import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -43,7 +44,7 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
-    private final Geotag geotag = new Geotag();
+    private final AppGeotagWrapper appGeotagWrapper = new AppGeotagWrapper();
 
     private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
@@ -51,9 +52,6 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_POSTER = "poster";
 
     public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
-
-    /** This holds the incident, and passes it to the incidentDisplay for display. */
-    IncidentDisplayAdapter incidentAdapter;
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
@@ -123,7 +121,7 @@ public class IncidentActivity extends ActionBarActivity {
     private void initializeAppIncidentFromServer(Bundle extras)
     {
         //get a geotag as fast as possible.
-        geotag.update(IncidentActivity.this);
+        appGeotagWrapper.update(IncidentActivity.this);
 
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
@@ -134,16 +132,16 @@ public class IncidentActivity extends ActionBarActivity {
 
         incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
 
-//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
-        ArrayList<FieldWithContent> l = new ArrayList<>();
-        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
-        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
-        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
-        // etc.
-
-        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
-        renderIncidentFromScratch();
+//        ArrayList<FieldWithContent> l = new ArrayList<>();
+//        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
+//        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
+//        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
+//        // etc.
+//
+//        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
+//        renderIncidentFromScratch();
     }
 
     private boolean extrasAreEmpty(Bundle extras)
@@ -169,7 +167,7 @@ public class IncidentActivity extends ActionBarActivity {
 
         //TODO grosssss... this accounts for refilling an incident from shared preferences, but man...
         if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled())
-            incident.setGeotag(geotag);
+            incident.setGeotag(appGeotagWrapper);
 
         incidentDisplay.removeAllViews();
         int i = 0;

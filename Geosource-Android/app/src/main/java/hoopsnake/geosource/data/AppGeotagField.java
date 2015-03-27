@@ -4,17 +4,22 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import ServerClientShared.Geotag;
 import ServerClientShared.GeotagFieldWithContent;
-import hoopsnake.geosource.Geotag;
+import hoopsnake.geosource.AppGeotagWrapper;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class AppGeotagField extends AbstractAppField {
+public class AppGeotagField extends AbstractAppField implements Serializable {
 
     private TextView tv;
 
@@ -42,12 +47,6 @@ public class AppGeotagField extends AbstractAppField {
     }
 
     @Override
-    public boolean contentIsSuitable(Serializable content)
-    {
-        return content instanceof Geotag;
-    }
-
-    @Override
     public void onResultFromSelection(int resultCode, Intent data) {}
 
     public void onContentUpdated()
@@ -56,11 +55,27 @@ public class AppGeotagField extends AbstractAppField {
             tv.setHint(getContentStringRepresentation());
     }
 
-    @Override
-    public void setContent(Serializable content)
+    public void registerForGeotag(AppGeotagWrapper geotagWrapper)
     {
-        super.setContent(content);
+        geotagWrapper.setRegisteredField(this);
+        setContent(geotagWrapper.toGeotag());
+    }
 
-        ((Geotag) content).setRegisteredField(this);
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        super.writeObjectHelper(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        super.readObjectHelper(in);
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+        super.readObjectNoDataHelper();
     }
 }

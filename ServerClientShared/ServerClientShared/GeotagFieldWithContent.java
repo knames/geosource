@@ -17,10 +17,9 @@ public class GeotagFieldWithContent extends FieldWithContent implements Serializ
         super(fieldWithoutContent);
     }
 
-    /** TODO this will actually be a geotag but i can't import that in serverclientshared, so I can't verify against that type. */
     @Override
     public boolean contentMatchesType(Serializable content) {
-        return true;
+        return content instanceof Geotag;
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {

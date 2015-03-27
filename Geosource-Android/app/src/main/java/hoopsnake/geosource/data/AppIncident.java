@@ -3,7 +3,7 @@ package hoopsnake.geosource.data;
 import java.util.ArrayList;
 
 import ServerClientShared.Incident;
-import hoopsnake.geosource.Geotag;
+import hoopsnake.geosource.AppGeotagWrapper;
 
 /**
  * Created by wsv759 on 08/03/15.
@@ -50,5 +50,5 @@ public interface AppIncident
      * @postcond this incident's geotag is updated to the new one.
      * @param geotag
      */
-    public void setGeotag(Geotag geotag);
+    public void setGeotag(AppGeotagWrapper geotag);
 }

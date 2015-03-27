@@ -8,6 +8,10 @@ import android.view.View;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 
@@ -115,4 +119,18 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
      * @return return true if this field uses this type of file for its content, or false otherwise.
      */
     abstract boolean usesFilesOfType(Uri contentFileUri);
+
+    @Override
+    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        super.readObjectHelper(in);
+
+        contentFileUri = (Uri) in.readObject();
+    }
+
+    @Override
+    void writeObjectHelper(ObjectOutputStream out) throws IOException {
+        super.writeObjectHelper(out);
+
+        out.writeObject(contentFileUri);
+    }
 }

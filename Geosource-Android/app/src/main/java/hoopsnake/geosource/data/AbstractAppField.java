@@ -4,6 +4,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import ServerClientShared.FieldWithContent;
@@ -127,4 +131,18 @@ public abstract class AbstractAppField implements AppField {
      * that represents the title for this field.
      */
     abstract View getContentViewRepresentation(final int requestCodeForIntent);
+
+
+    /** Serializable implementation. */
+    void readObjectNoDataHelper() throws InvalidObjectException {
+        wrappedField.readObjectNoDataHelper();
+    }
+
+    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        wrappedField.readObjectHelper(in);
+    }
+
+    void writeObjectHelper(ObjectOutputStream out) throws IOException {
+        wrappedField.writeObjectHelper(out);
+    }
 }

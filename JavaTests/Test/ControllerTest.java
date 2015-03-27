@@ -1,13 +1,16 @@
 package Test;
 
 import DataBase.DBAccess;
+import ServerClientShared.AudioFieldWithoutContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
+import ServerClientShared.VideoFieldWithoutContent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.After;
@@ -24,7 +27,7 @@ public class ControllerTest
    private static int testCount=0;
    
    //The channel we will be testing on
-   private static String testChannel="march13";
+   private static String testChannel="testing";
    
    //The test channel's owner.
    private static String testOwner="okenso";
@@ -93,7 +96,11 @@ public class ControllerTest
         //Using Sockets, actually grab the spec for march13 and check if it is right.
         ArrayList<FieldWithoutContent> testSpec=SocketStuff.getSpec(testChannel, testOwner);
         assertTrue(testSpec.get(0) instanceof StringFieldWithoutContent);
-        assertTrue(testSpec.get(1) instanceof ImageFieldWithoutContent);
+        assertTrue(testSpec.get(1) instanceof GeotagFieldWithoutContent);
+        assertTrue(testSpec.get(2) instanceof StringFieldWithoutContent);
+        assertTrue(testSpec.get(3) instanceof ImageFieldWithoutContent);
+        assertTrue(testSpec.get(4) instanceof VideoFieldWithoutContent);
+        assertTrue(testSpec.get(5) instanceof AudioFieldWithoutContent);
         int i=5;
         
     }
@@ -124,7 +131,11 @@ public class ControllerTest
         //Using Sockets, actually grab the spec for march13 and check if it is right.
         ArrayList<FieldWithoutContent> testSpec=SocketStuff.getSpec(testChannel, testOwner);
         assertTrue(testSpec.get(0) instanceof StringFieldWithoutContent);
-        assertTrue(testSpec.get(1) instanceof ImageFieldWithoutContent);
+        assertTrue(testSpec.get(1) instanceof GeotagFieldWithoutContent);
+        assertTrue(testSpec.get(2) instanceof StringFieldWithoutContent);
+        assertTrue(testSpec.get(3) instanceof ImageFieldWithoutContent);
+        assertTrue(testSpec.get(4) instanceof VideoFieldWithoutContent);
+        assertTrue(testSpec.get(5) instanceof AudioFieldWithoutContent);
    
         
         //IN PROGRESS
