@@ -25,7 +25,7 @@
 		insertHash($newUname);
 	}
 
-	$resp = array('error' => $err, 'message' => $errMsg, 'username' => $newUname);
+	$resp = array('error' => $err, 'message' => $errMsg, 'username' => $newUname, 'userid' => $userid);
 
 	echo json_encode($resp);
 

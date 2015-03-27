@@ -12,7 +12,7 @@
       method="POST"
       url="../phpoly/dbsetusername.php"
       on-core-response="{{handleResponse}}"
-      body='{"gid": {{gid}}, "username": "{{username}}"}'
+      body='{"gid": "{{gid}}", "username": "{{username}}"}'
       handleAs="json">
     </core-ajax>
   </template>
@@ -35,7 +35,7 @@
       this.gid = gid;
       this.username = username;
       console.log(this.username);
-      console.log("set submition values");
+      console.log(this.gid);
       this.$.ajax.go();
       console.log("submitted");
     }
