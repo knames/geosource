@@ -1,21 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-item/core-item.html">
 <link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../core-menu/core-submenu.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../paper-dropdown/paper-dropdown.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../core-icon/core-icon.html" >
-<link rel="import" href="../core-icons/core-icons.html" >
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-checkbox/paper-checkbox.html">
-
-<link rel="import" href="../core-icons/image-icons.html">
-<link rel="import" href="../core-icons/av-icons.html">
-
-<link rel="import" href="../paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-input/paper-input-decorator.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../geosource-services/user-creation-service.html">
 
@@ -77,7 +63,9 @@
         In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
       </div>
 
-        <paper-input id="input" floating label="Enter a username..."></paper-input>
+        <paper-input-decorator label="Enter a username..." floatingLabel error="{{response.message}}" isInvalid="{{response.error}}">
+          <input id="input" value="{{input}}" is="core-input">
+        </paper-input-decorator>
 
       </div>
     </div>
@@ -92,8 +80,14 @@
   <script>
   Polymer({
 
+    input: "",
+
     submit: function() {
       this.$.service.submit(112345, this.$.input.value);
+    },
+
+    inputChanged: function() {
+      this.response.error = false;
     },
 
     handleResponse: function() {
