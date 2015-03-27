@@ -47,40 +47,62 @@
   @type Array
   @default []
 -->
-<polymer-element name="user-service" attributes="user">
+<polymer-element name="user-service" attributes="user gid">
   <template>
     <style>
     :host {
       display: none;
     }
     </style>
-    <core-ajax id="ajax"
+
+    <core-ajax id="google_ajax"
+      url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + id_token}}'
+      on-core-response="{{googleLoaded}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="geosource_ajax"
       method="POST"
       url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
       body='{"gid": {{gid}}}'
       handleAs="json">
     </core-ajax>
+
   </template>
   <script>
   Polymer('user-service', {
 
+    id_token: null,
     gid: null,
-
-    created: function() {
-      this.user = null;
+    user: null,
+    
+    load: function(id_token) {
+      this.id_token = id_token;
+      this.$.google_ajax.go();
     },
+
+    googleLoaded: function() {
+      this.google_info = ;
+      if(this.$.ajax.response.error) {
+        //display google_info.error_description
+      }
+      else {
+        this.gid = this.$.ajax.response.id
+      }
+    },
+
+    gidChanged: function() {
+      this.$.geosource_ajax.go();
+    },
+
     userLoaded: function() {
       // Make a copy of the loaded data
       this.user = this.$.ajax.response.slice(0)[0];
       console.log(this.user);
       this.fire('user-loaded');
-    },
-
-    load: function(gid) {
-      this.gid = gid;
-      this.$.ajax.go();
     }
+
   });
   </script>
 </polymer-element>
