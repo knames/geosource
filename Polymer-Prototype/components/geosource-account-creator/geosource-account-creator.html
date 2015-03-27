@@ -5,7 +5,7 @@
 
 <link rel="import" href="../geosource-services/user-creation-service.html">
 
-<polymer-element name="geosource-account-creator" attributes="user">
+<polymer-element name="geosource-account-creator" attributes="user id_token">
 
 
   <template>
@@ -83,7 +83,7 @@
     input: "",
 
     submit: function() {
-      this.$.service.submit(112345, this.$.input.value);
+      this.$.service.submit(this.$.id_token, this.$.input.value);
     },
 
     inputChanged: function() {

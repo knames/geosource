@@ -50,7 +50,7 @@
     <user-service id="user_service" user="{{user}}" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
-      <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}"></geosource-account-creator>
+      <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}" id_token="{{id_token}}"></geosource-account-creator>
     </paper-dialog>
 
     <paper-toast id="toast" text="An error occured attempting to retrieve user data"></paper-toast>
@@ -72,24 +72,32 @@
     Polymer({
 
       user: null,
-      gid: null,
+      
+      id_token: null,
+      access_token: null,
 
       signIn: function(event, details, sender) {
         console.log('signed in');
+        console.log(details);
 
-        var geosource_account = this;
-        var user_service = this.$.user_service;
+        // var geosource_account = this;
+        // var user_service = this.$.user_service;
 
-        details.gapi.client.load('plus', 'v1', function() {
-          var request = gapi.client.plus.people.get({userId: 'me'});
+        this.id_token = this.details.result.id_token;
+        this.access_token = this.details.result.access_token;
 
-          request.execute(function(resp) {
-            console.log(resp);
-            console.log(user_service);
-            user_service.load(resp.id);
-            geosource_account.fire('filter-change');
-          });
-        });
+        this.$.user_service.load(this.id_token);
+
+        // details.gapi.client.load('plus', 'v1', function() {
+        //   var request = gapi.client.plus.people.get({userId: 'me'});
+
+        //   request.execute(function(resp) {
+        //     console.log(resp);
+        //     console.log(user_service);
+        //     user_service.load(resp.id);
+        //     geosource_account.fire('filter-change');
+        //   });
+        // });
       },
 
       signOut: function() {
