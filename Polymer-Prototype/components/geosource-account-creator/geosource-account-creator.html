@@ -87,7 +87,9 @@
     },
 
     inputChanged: function() {
-      this.response.error = false;
+      if(this.response) {
+        this.response.error = false;
+      }
     },
 
     handleResponse: function() {

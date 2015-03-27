@@ -83,8 +83,8 @@
         // var geosource_account = this;
         // var user_service = this.$.user_service;
 
-        this.id_token = this.details.result.id_token;
-        this.access_token = this.details.result.access_token;
+        this.id_token = details.result.id_token;
+        this.access_token = details.result.access_token;
 
         this.$.user_service.load(this.id_token);
 
