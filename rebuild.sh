@@ -16,5 +16,3 @@ mysql -pdevsnake371 << EOF
 use dev;
 SOURCE /var/www/okenso.com/cmpt371group2/Database/dbinit.sql;
 EOF
-rm -f nohup.out
-nohup java -jar HoopSnake-GeoSource.jar 9001 5 &
