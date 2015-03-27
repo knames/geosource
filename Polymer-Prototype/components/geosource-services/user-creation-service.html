@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 
-<polymer-element name="user-creation-service" attributes="response">
+<polymer-element name="user-creation-service" attributes="response gid">
   <template>
     <style>
     :host {
@@ -30,7 +30,7 @@
       this.fire('user-creation-response');
     },
 
-    submit: function(gid, username) {
+    submit: function(username) {
       console.log("submitting name");
       this.gid = gid;
       this.username = username;

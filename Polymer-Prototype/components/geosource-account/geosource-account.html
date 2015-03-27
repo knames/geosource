@@ -47,10 +47,10 @@
       }
     </style>
 
-    <user-service id="user_service" user="{{user}}" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
+    <user-service id="user_service" user="{{user}}" gid="{{gid}}" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
-      <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}" id_token="{{id_token}}"></geosource-account-creator>
+      <geosource-account-creator on-finished="{{closeDialog}}" user="{{user}}" gid="{{gid}}"></geosource-account-creator>
     </paper-dialog>
 
     <paper-toast id="toast" text="An error occured attempting to retrieve user data"></paper-toast>
