@@ -28,14 +28,18 @@ public class Controller {
     private DBAccess dbAccess; //database abstraction
     private FileAccess fileAccess; //file system abstraction
     
-    private static int numConnections = 5; //maximum simultaneous socket inputs
+    private static int numConnections = -1; //maximum simultaneous socket inputs
+    ExecutorService exec; //thread pool for socket connections
     
-    private static ArrayList<CommSocket> socketList;
+    private static ArrayList<CommSocket> socketList; //list of sockets (anti-garbage)
     
-    public Controller()
+    public Controller(int connections)
     {
-        boolean successful = false;
+        numConnections = connections;
         socketList = new ArrayList(numConnections);
+        exec = Executors.newFixedThreadPool(numConnections);
+        
+        boolean successful = false;
         try
         {
             dbAccess = new DBAccess();
@@ -63,20 +67,24 @@ public class Controller {
      */
     public static void main(String[] args)
     {
-    	numConnections = Integer.parseInt(args[1]);
-        Controller Server = new Controller();
+        Controller Server = new Controller(Integer.parseInt(args[1]));
         Server.run(Integer.parseInt(args[0]));
-        
     }
     
     public void run(int portNum)
     {
     	CommSocket.portNum = portNum;
-        ExecutorService exec = Executors.newCachedThreadPool();
         for (int x = 0; x < numConnections; x ++)
         {
-            socketList.add(new CommSocket(this, x)); //store running sockets
+            newSocket(x);
         }
+    }
+    
+    private void newSocket(int SocketNum)
+    {
+        CommSocket newSocket = new CommSocket(this, SocketNum);
+        socketList.add(SocketNum, newSocket); //store running sockets
+        exec.execute(newSocket);
     }
     
     /**
@@ -86,7 +94,7 @@ public class Controller {
     public void socketComplete(int SocketNum)
     {
         socketList.remove(SocketNum);
-        socketList.add(SocketNum, new CommSocket(this, SocketNum));
+        newSocket(SocketNum);
     }
     
     /**

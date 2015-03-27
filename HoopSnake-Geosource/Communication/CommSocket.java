@@ -25,7 +25,7 @@ import javax.crypto.NoSuchPaddingException;
  * 
  * @author Connor
  */
-public class CommSocket {
+public class CommSocket implements Runnable{
     
     public static int portNum = 0;
     private static Controller controller = null;
@@ -65,10 +65,9 @@ public class CommSocket {
     }
     
     /**
-     * a function often called by an executor that leaves behind a possibly
-     * filled future, allowing later checking for data once the task completes
-     * @return any Incident submission returned by a connection to an android app
+     * run the socket, which wait for incoming connections and deals with them
      */
+    @Override
     public void run()
     {
         try
