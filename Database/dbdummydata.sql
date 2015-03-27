@@ -17,7 +17,7 @@ insert into admin (a_username) values ("okenso");
 
 insert into private_view_channels values 
 	("okenso", "poly", "josh"),
-	("josh", "pothole", "okenso"),
+	("josh", "pothole", "okenso")
 	;
 
 

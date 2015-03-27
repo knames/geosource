@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
     private XWalkView xWalkWebView;
 
     //TODO make these something other than a hard-coded string.
-    private String curChannelName = "march13";
+    private String curChannelName = "testing";
     private String curChannelOwner = "okenso";
     private String userName = "frank";
 
