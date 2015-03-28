@@ -22,6 +22,8 @@
 <link rel="import" href="../paper-input/paper-input-decorator.html">
 <link rel="import" href="../paper-input/paper-autogrow-textarea.html">
 
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
 <!-- <link rel="import" href="../disqus-comments/disqus-comments.html"> -->
 
 <polymer-element name="geosource-post">
@@ -141,6 +143,8 @@
       }
 
     </style>
+
+    <geosource-globals id="globals"></geosource-globals>
 
     <post-service id="post_service" post="{{post}}"></post-service>
 

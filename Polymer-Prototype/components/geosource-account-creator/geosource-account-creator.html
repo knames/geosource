@@ -53,8 +53,7 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <user-creation-service id="service" 
-      response="{{response}}" 
+    <user-creation-service id="service"  
       on-user-creation-response="{{handleResponse}}">
     </user-creation-service>
 
@@ -90,15 +89,14 @@
     },
 
     inputChanged: function() {
-      if(this.response) {
-        this.response.error = false;
-      }
+      this.$.input_decorator.isInvalid = false;
     },
 
-    handleResponse: function() {
+    handleResponse: function(event, detail, sender) {
       console.log(this.response);
-      if(this.response.error) {
-        console.log(this.response.message);
+      if(details.response.error) {
+        this.$.input_decorator.isInvalid = detail.response.error;
+        this.$.input_decorator.error = detail.response.message;
       } else {
         this.$.globals.data.user = { 
           "username": this.$.input.value,

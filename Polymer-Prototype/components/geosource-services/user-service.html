@@ -92,11 +92,12 @@
       }
       else {
         this.$.globals.data.gid = this.$.google_ajax.response.user_id;
-	      console.log(this.$.globals.data.gid);
+	console.log(this.$.globals.data.gid);
+        this.loadUser();
       }
     },
 
-    gidChanged: function() {
+    loadUser: function() {
       this.$.geosource_ajax.go();
     },
 

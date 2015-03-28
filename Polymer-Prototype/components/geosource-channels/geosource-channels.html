@@ -118,7 +118,7 @@
           </paper-button>
       </div> 
 
-      <template repeat="{{channel in subscribedChannels}}">
+      <template repeat="{{channel in $.globals.data.user.subscriber}}">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
               <div layout vertical flex class="channel-info">
