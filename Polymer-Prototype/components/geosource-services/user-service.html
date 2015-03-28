@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 <!-- 
   `<post-service>` provides an API for a fake service -- 
   _unquote_, the read-only social networking service!
@@ -47,13 +49,15 @@
   @type Array
   @default []
 -->
-<polymer-element name="user-service" attributes="user gid">
+<polymer-element name="user-service">
   <template>
     <style>
     :host {
       display: none;
     }
     </style>
+
+    <geosource-globals id="globals"></geosource-globals>
 
     <core-ajax id="google_ajax"
       url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + $.globals.data.id_token}}'
@@ -74,10 +78,10 @@
   Polymer('user-service', {
 
     id_token: null,
-    gid: null,
-    user: null,
     
     load: function() {
+      console.log("test-123");
+      console.log(this.$.globals.data.id_token);
       this.$.google_ajax.go();
     },
 
