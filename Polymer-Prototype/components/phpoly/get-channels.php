@@ -14,7 +14,7 @@
 	} 
 	//echo "Connected successfully <br>";
 
- 	$result = mysqli_query("SELECT * FROM channels WHERE ch_public;");
+ 	$result = $mysqli->query("SELECT ch_name AS name, ch_owner AS owner FROM channels WHERE ch_public = 1;");
 	$rows = array();
 	while($r = mysqli_fetch_assoc($result)) {
 	    $rows[] = $r;
