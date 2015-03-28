@@ -1,13 +1,13 @@
 
 
 CREATE TABLE users (
-	u_identity varchar(256) NOT NULL,
+	u_identity varchar(64) NOT NULL UNIQUE,
 	u_username varchar(25) PRIMARY KEY
 	);
 
 CREATE TABLE channels (
 	ch_name varchar(50) NOT NULL,
-	ch_owner varchar(256) NOT NULL,
+	ch_owner varchar(25) NOT NULL,
 	ch_spec INT UNSIGNED  NOT NULL,
 	ch_public BOOL NOT NULL,
 	FOREIGN KEY (ch_owner) REFERENCES users (u_username),

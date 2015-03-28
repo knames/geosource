@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 <!-- 
   `<post-service>` provides an API for a fake service -- 
   _unquote_, the read-only social networking service!
@@ -47,40 +49,65 @@
   @type Array
   @default []
 -->
-<polymer-element name="user-service" attributes="user">
+<polymer-element name="user-service">
   <template>
     <style>
     :host {
       display: none;
     }
     </style>
-    <core-ajax id="ajax"
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <core-ajax id="google_ajax"
+      url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + $.globals.data.id_token}}'
+      on-core-response="{{googleLoaded}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="geosource_ajax"
       method="POST"
       url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
-      params='{"gid": {{gid}}}'
+      body='{"gid": "{{$.globals.data.gid}}"}'
       handleAs="json">
     </core-ajax>
+
   </template>
   <script>
   Polymer('user-service', {
 
-    gid: null,
-
-    created: function() {
-      this.user = null;
+    id_token: null,
+    
+    load: function() {
+      console.log("test-123");
+      console.log(this.$.globals.data.id_token);
+      this.$.google_ajax.go();
     },
+
+    googleLoaded: function() {
+      console.log(this.$.google_ajax.response);
+      if(this.$.google_ajax.response.error) {
+        //display google_info.error_description
+      }
+      else {
+        this.$.globals.data.gid = this.$.google_ajax.response.user_id;
+	console.log(this.$.globals.data.gid);
+        this.loadUser();
+      }
+    },
+
+    loadUser: function() {
+      this.$.geosource_ajax.go();
+    },
+
     userLoaded: function() {
       // Make a copy of the loaded data
-      this.user = this.$.ajax.response.slice(0)[0];
-      console.log(this.user);
+      this.$.globals.data.user = this.$.geosource_ajax.response.slice(0)[0];
+      console.log(this.$.globals.data.user);
       this.fire('user-loaded');
-    },
-
-    load: function(gid) {
-      this.gid = gid;
-      this.$.ajax.go();
     }
+
   });
   </script>
 </polymer-element>

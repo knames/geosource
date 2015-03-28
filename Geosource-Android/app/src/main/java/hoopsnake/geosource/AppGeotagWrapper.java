@@ -8,6 +8,8 @@ import hoopsnake.geosource.data.AppGeotagField;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
+import static junit.framework.Assert.assertNotNull;
+
 //TODO delete the various commented out custom implementations in this class, if the SmartLocation works.
 /**
  * Created by wsv759 on 21/03/15.
@@ -38,6 +40,7 @@ public class AppGeotagWrapper {
      * @postcond This geotag's location and timestamp are updated to their last known values.
      */
     public void update(final Context context) {
+        assertNotNull(context);
         wrappedGeotag.setTimestamp(System.currentTimeMillis());
         SmartLocation.with(context).location()
                 .oneFix()

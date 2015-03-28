@@ -10,7 +10,7 @@
 <link rel="import" href="../geosource-channel-settings/geosource-channel-settings.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 
-<polymer-element name="geosource-channels" attributes="channelSummaries user">
+<polymer-element name="geosource-channels" attributes="channelSummaries">
 
   <template>
 
@@ -88,15 +88,16 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <paper-dialog id="create_dialog" role="dialog" backdrop>
-      <geosource-channel-creator on-finished="{{closeChannelCreate}}" user="{{user}}"></geosource-channel-creator>
+      <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
     </paper-dialog>
 
     <paper-dialog id="settings_dialog" role="dialog" backdrop>
       <geosource-channel-settings id="channel_settings" 
         on-loaded="{{openChannelSettings}}" 
-        on-finished="{{closeChannelSettings}}" 
-        user="{{user}}">
+        on-finished="{{closeChannelSettings}}">
       </geosource-channel-settings>
     </paper-dialog>
 
@@ -109,7 +110,7 @@
             </div>
           </paper-button>
       </div> 
-      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!user}}">
+      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!$.globals.data.user}}">
           <paper-button flex toggle class="channel-button">
             <div layout vertical flex class="channel-info">
               <div class="channel-name">Subscribed</div>
@@ -117,7 +118,7 @@
           </paper-button>
       </div> 
 
-      <template repeat="{{channel in subscribedChannels}}">
+      <template repeat="{{channel in $.globals.data.user.subscriber}}">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
               <div layout vertical flex class="channel-info">
@@ -129,7 +130,7 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{loadChannelSettings}}"
-                hidden?="{{!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscribed && subscribedSelected)}}">
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscribed && subscribedSelected)}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
@@ -159,24 +160,24 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{loadChannelSettings}}" 
-                hidden?="{{!user || (!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)}}">
+                hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)}}">
               </paper-icon-button>
               <paper-icon-button icon="add" 
                 class="subscribe_button" 
                 on-tap="{{subscribe}}"
-                hidden?="{{!user || channel.isSubscriber}}">
+                hidden?="{{!$.globals.data.user || channel.isSubscriber}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
                 on-tap="{{unsubscribe}}"
-                hidden?="{{!user || !channel.isSubscriber}}">
+                hidden?="{{!$.globals.data.user || !channel.isSubscriber}}">
               </paper-icon-button>
             </div>
           </div>
       </template>
 
       <div horizontal layout center-justified>
-       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!user}}">Create a channel</paper-button>
+       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!$.globals.data.user}}">Create a channel</paper-button>
       </div>
 
     </core-submenu>
@@ -187,7 +188,6 @@
   <script>
   Polymer({
 
-    user: null,
     channelSummaries: null,
 
     channels: [],
@@ -219,41 +219,42 @@
       }
 
       //in case user information is loaded before channel summaries
-      if(this.user) {
+      if(this.$.globals.data.user) {
         this.userChanged();
       }
     },
 
     userChanged: function() {
 
+      var user = this.$.globals.data.user;
 
-      if(this.user) {
+      if(user) {
         console.log(this.channels.length);
-        console.log(this.user.owner.length);
+        console.log(user.owner.length);
 
         for(i=0; i<this.channels.length; i++) {
-          for(j=0; j<this.user.owner.length; j++) {
-            if(this.user.owner[j].name == this.channels[i].name 
-              && this.user.owner[j].owner == this.channels[i].owner) {
+          for(j=0; j<user.owner.length; j++) {
+            if(user.owner[j].name == this.channels[i].name 
+              && user.owner[j].owner == this.channels[i].owner) {
               console.log("TEST");
               this.channels[i].isOwner = true;
             }
           }
-          for(j=0; j<this.user.moderator.length; j++) {
-            if(this.user.moderator[j].name == this.channels[i].name 
-              && this.user.moderator[j].owner == this.channels[i].owner) {
+          for(j=0; j<user.moderator.length; j++) {
+            if(user.moderator[j].name == this.channels[i].name 
+              && user.moderator[j].owner == this.channels[i].owner) {
               this.channels[i].isModerator = true;
             }
           }
-          for(j=0; j<this.user.viewer.length; j++) {
-            if(this.user.viewer[j].name == this.channels[i].name 
-              && this.user.viewer[j].owner == this.channels[i].owner) {
+          for(j=0; j<user.viewer.length; j++) {
+            if(user.viewer[j].name == this.channels[i].name 
+              && user.viewer[j].owner == this.channels[i].owner) {
               this.channels[i].isViewer = true;
             }
           }
-          for(j=0; j<this.user.subscriber.length; j++) {
-            if(this.user.subscriber[j].name == this.channels[i].name 
-              && this.user.subscriber[j].owner == this.channels[i].owner) {
+          for(j=0; j<user.subscriber.length; j++) {
+            if(user.subscriber[j].name == this.channels[i].name 
+              && user.subscriber[j].owner == this.channels[i].owner) {
               this.channels[i].isSubscriber = true;
             }
           }

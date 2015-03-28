@@ -41,6 +41,7 @@ public class SocketStuff
         }
         catch(IOException e)
         {
+            e.printStackTrace();
             throw new RuntimeException("Creating socket error");
         }
 
