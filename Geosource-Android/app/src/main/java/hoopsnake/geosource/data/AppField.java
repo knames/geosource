@@ -11,6 +11,8 @@ import java.io.Serializable;
  * Interface for Fields, to be accessed by the UI and control level of the android app.
  * Each implementation of field defines its own UI-level behaviour, as well as its basic
  * underlying Field behaviour.
+ *
+ * All implementations must implement Serializable.
  */
 public interface AppField {
 

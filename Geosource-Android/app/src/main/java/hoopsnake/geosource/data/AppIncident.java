@@ -12,6 +12,8 @@ import hoopsnake.geosource.AppGeotagWrapper;
  * This is as opposed to the vanilla java Incidents that are passed between the client and server.
  * Implementations of this will probably be constructed out of and deconstructed into regular Incidents,
  * when it's time to send over the network.
+ *
+ * Any implementation of this must implement Serializable.
  */
 public interface AppIncident
 {
@@ -34,9 +36,24 @@ public interface AppIncident
     /**
      * @precond none.
      * @postcond see return.
-     * @return the channel name associated with this incident.This is not guaranteed to be non-null.
+     * @return the channel name associated with this incident.This is guaranteed to be non-null.
      */
     public String getChannelName();
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the channel owner associated with this incident.This is guaranteed to be non-null.
+     */
+    public String getChannelOwner();
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the author associated with this incident. (i.e. the current user logged into the app.)
+     * This is guaranteed to be non-null.
+     */
+    public String getIncidentAuthor();
 
     /**
      * @precond none.

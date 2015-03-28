@@ -35,6 +35,8 @@ public abstract class AbstractAppField implements AppField {
      * The weight of each content view, so that it takes up the appropriate amount of screen compared with the field title.
      */
     private static final float CONTENT_VIEW_WEIGHT = 0.8f;
+
+    private static final int POSITION_VIEW_FIELD_TITLE = 0;
     /**
      * Underlying field object that contains the attributes to be acted upon by
      * the app. Its type should match the AppField that wraps it.
@@ -107,19 +109,16 @@ public abstract class AbstractAppField implements AppField {
     public View getFieldViewRepresentation(final int requestCodeForIntent)
     {
         LinearLayout fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
-        TextView titleView = (TextView) fieldView.getChildAt(0);
-//        titleView = (TextView) activity.findViewById(R.id.field_title_view);
-        titleView.setText(getTitle() + ":");
-        View contentView = getContentViewRepresentation(requestCodeForIntent);
+        TextView titleView = (TextView) fieldView.getChildAt(POSITION_VIEW_FIELD_TITLE);
 
-//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) contentView.getLayoutParams();
-//
-//        if (params == null)
-//        {
-//
-//        }
-//        Log.d(LOG_TAG, contentView.getLayoutParams().toString());
-//        params.weight = CONTENT_VIEW_WEIGHT;
+        String fieldLabel = getTitle() + ":";
+        if (isRequired())
+            fieldLabel += "*";
+
+        titleView.setText(fieldLabel);
+        View contentView = getContentViewRepresentation(requestCodeForIntent);
+        //Make sure the content view knows which field in the list it corresponds to as well.
+        contentView.setTag(fieldView.getTag());
 
         fieldView.addView(contentView);
         return fieldView;

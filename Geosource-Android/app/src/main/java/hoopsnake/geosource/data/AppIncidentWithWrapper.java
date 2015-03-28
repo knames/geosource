@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ServerClientShared.AudioFieldWithContent;
@@ -25,7 +26,7 @@ import static junit.framework.Assert.assertNotNull;
  *
  * Implementation of AppIncident, using a wrapper around a regular Incident to access its basic functionality.
  */
-public class AppIncidentWithWrapper implements AppIncident {
+public class AppIncidentWithWrapper implements AppIncident, Serializable {
 
     /**
      * the list of app-side fields contained within this incident.
@@ -166,7 +167,7 @@ public class AppIncidentWithWrapper implements AppIncident {
                 return false;
         }
 
-        return !getChannelName().isEmpty() && !getChannelOwner().isEmpty() && !getPoster().isEmpty();
+        return !getChannelName().isEmpty() && !getChannelOwner().isEmpty() && !getIncidentAuthor().isEmpty();
     }
 
     /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */
@@ -196,13 +197,14 @@ public class AppIncidentWithWrapper implements AppIncident {
      * @postcond see return.
      * @return the channel owner associated with this incident. Guaranteed to be non-null.
      */
-    private String getChannelOwner()
+    @Override
+    public String getChannelOwner()
     {
         return wrappedIncident.getOwnerName();
     }
 
-    private String getPoster()
-    {
+    @Override
+    public String getIncidentAuthor() {
         return wrappedIncident.getPosterName();
     }
 

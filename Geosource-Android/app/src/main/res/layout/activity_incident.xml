@@ -13,8 +13,36 @@
         <LinearLayout
             android:id="@+id/incident_holder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/abc_text_size_headline_material"
+                android:text="@string/create_incident"/>
+
+            <TextView
+                android:id="@+id/poster_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_subhead_material"
+                android:text="@string/poster_label"/>
+
+            <TextView
+                android:id="@+id/channel_name_view"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/abc_text_size_subhead_material"
+                android:text="@string/channel_name_label"/>
+
+            <TextView
+                android:id="@+id/channel_owner_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_subhead_material"
+                android:text="@string/owner_label"/>
 
         </LinearLayout>
 

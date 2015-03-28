@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -50,7 +50,8 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
 
-    public static final String SHAREDPREF_INCIDENT = "sharedpref_incident";
+    public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident";
+    public static final String FILENAME_CUR_INCIDENT = "cur_incident_object";
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
@@ -92,27 +93,25 @@ public class IncidentActivity extends ActionBarActivity {
         assertNull(incident);
 
         Bundle extras = getIntent().getExtras();
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
-        if ((extras == null || extrasAreEmpty(extras)) && sharedPref.contains(SHAREDPREF_INCIDENT))
-            initializeAppIncidentFromSharedPref(sharedPref);
+        if ((extras == null || extrasAreEmpty(extras)) && curIncidentExistsInFileSystem())
+            initializeAppIncidentFromPreexistingState();
         else if (extras != null)
             initializeAppIncidentFromServer(extras);
         else
             throw new RuntimeException("invalid onCreate scenario for IncidentActivity.");
     }
 
-    private void initializeAppIncidentFromSharedPref(SharedPreferences sharedPref)
+    private void initializeAppIncidentFromPreexistingState()
     {
-        String jsonIncident = sharedPref.getString(SHAREDPREF_INCIDENT, null);
-        Gson gson = new Gson();
-        Incident curIncident = gson.fromJson(jsonIncident, Incident.class);
-        assertNotNull(curIncident.getChannelName());
-        assertNotNull(curIncident.getFieldList());
-        assertNotNull(curIncident.getOwnerName());
-        assertNotNull(curIncident.getPosterName());
+        retrieveIncidentState();
 
-        setIncident(new AppIncidentWithWrapper(curIncident, IncidentActivity.this));
+        assertNotNull(incident);
+        assertNotNull(incident.toIncident());
+        assertNotNull(incident.getFieldList());
+        assertNotNull(incident.getChannelName());
+        assertNotNull(incident.getChannelOwner());
+        assertNotNull(incident.getIncidentAuthor());
 
         renderIncidentFromScratch();
     }
@@ -157,6 +156,9 @@ public class IncidentActivity extends ActionBarActivity {
      * @precond the current incident, and all its fields, and the incidentDisplay, are not null.
      * @postcond each field's custom view is added to the linear layout, replacing all the old
      * views in the linear layout (if they existed).
+     *
+     * IMPORTANT: All views are given a tag that is equal to their position in the linear layout.
+     * They must preserve this tag, as IncidentActivity relies upon it.
      */
     public void renderIncidentFromScratch()
     {
@@ -168,7 +170,17 @@ public class IncidentActivity extends ActionBarActivity {
         if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled())
             incident.setGeotag(appGeotagWrapper);
 
-        incidentDisplay.removeAllViews();
+        //TODO this causes problems by removing the views defined in XML, and I don't think the incident ever needs to be re-rendered anyway.
+//        incidentDisplay.removeAllViews();
+
+        //Fill in the author, channel, and channel owner on the UI.
+        TextView authorView = (TextView) incidentDisplay.getChildAt(1);
+        authorView.setText(authorView.getText() + " " + incident.getIncidentAuthor());
+        TextView channelNameView = (TextView) incidentDisplay.getChildAt(2);
+        channelNameView.setText(channelNameView.getText() + " " + incident.getChannelName());
+        TextView channelOwnerView = (TextView) incidentDisplay.getChildAt(3);
+        channelOwnerView.setText(channelOwnerView.getText() + " " + incident.getChannelOwner());
+
         int i = 0;
         for (AppField field : incident.getFieldList())
         {
@@ -325,32 +337,78 @@ public class IncidentActivity extends ActionBarActivity {
         });
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        saveIncidentState();
+    }
+
+    @Override
+    protected void onResume() {
+        if (incident == null)
+            retrieveIncidentState();
+    }
+
     /**
      * Save the current incident state, if the incident has not yet been submitted.
-     * This serializes the whole incident into a JSON object in shared preferences, so that it can
+     * This serializes the whole incident into a file, so that it can
      * be deserialized the next time the incident activity is launched.
      * TODO ensure the precond actually holds.
      * @precond as long as incident != null, no file content fields are filled. Thus there will be no
      * attempt to serialize a massive file content object!
      * @postcond the incident is serialized, so that it can be reopened later. Or if the incident is null,
      * no serialization occurs and a new incident will be created next time.
+     *
+     * NOTE: the sharedPreferences key SHAREDPREF_CUR_INCIDENT_EXISTS is updated accordingly. Other activities
+     * should ask for that key to see whether a cur incident exists.
      */
-    @Override
-    protected void onPause() {
-        super.onPause();
-
+    private void saveIncidentState()
+    {
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
-
         SharedPreferences.Editor editor = sharedPref.edit();
-        if (incident == null && sharedPref.contains(SHAREDPREF_INCIDENT))
-            editor.remove(SHAREDPREF_INCIDENT);
-        else if (incident != null)
-        {
-            Gson gson = new Gson();
-            String json = gson.toJson(incident.toIncident());
-            editor.putString(SHAREDPREF_INCIDENT, json);
+        if (incident == null) {
+            deleteFile(FILENAME_CUR_INCIDENT);
+            editor.putBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
+            return;
         }
+
+        boolean fileWasWritten = FileIO.writeObjectToFile(IncidentActivity.this, (AppIncidentWithWrapper) incident, FILENAME_CUR_INCIDENT);
+        if (fileWasWritten)
+            editor.putBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, true);
+        else
+        {
+            editor.putBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
+            String msg = "Current incident was lost.";
+            Log.e(LOG_TAG, msg);
+            Toast.makeText(this, msg + " Any created media files were saved.", Toast.LENGTH_LONG).show();
+        }
+
         editor.commit();
+    }
+
+    /**
+     * @precond incident == null. Otherwise this method should not be called as you already have an incident!
+     * Retrieve the current incident state, by deserializing it from the file saved to by {@link #saveIncidentState()}.
+     * If there is no current incident to restore, this method does nothing.
+     */
+    private void retrieveIncidentState()
+    {
+        assertNull(incident);
+
+        if (curIncidentExistsInFileSystem())
+            incident = (AppIncident) FileIO.readObjectFromFile(this, FILENAME_CUR_INCIDENT);
+    }
+
+    /**
+     * @precond none.
+     * @return there is a current incident serialized in the file system. False otherwise.
+     */
+    private boolean curIncidentExistsInFileSystem()
+    {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
+        return sharedPref.contains(SHAREDPREF_CUR_INCIDENT_EXISTS) && sharedPref.getBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
     }
 }
 

@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
         //If there isn't currently an incident being worked on, give the necessary parameters to ask for a new one.
-        if (!sharedPref.contains(IncidentActivity.SHAREDPREF_INCIDENT)) {
+        if (!sharedPref.contains(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS)) {
             intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
             intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
             intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
         Button incidentButton = (Button) findViewById(R.id.create_incident_button);
 
-        if (sharedPref.contains(IncidentActivity.SHAREDPREF_INCIDENT))
+        if (sharedPref.contains(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS) && sharedPref.getBoolean(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS, false))
             incidentButton.setText(getString(R.string.resume_incident_creation));
         else
             incidentButton.setText(getString(R.string.create_incident));
