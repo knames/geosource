@@ -2,8 +2,9 @@
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../core-icons/communication-icons.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 
-<polymer-element name="geosource-post-summary" attributes="user post favorite mapInfo">
+<polymer-element name="geosource-post-summary" attributes="post mapInfo">
   <template>
     <style>
     :host {
@@ -82,6 +83,8 @@
     }
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <div class="content" horizontal layout>
       <div class="card-header" horizontal layout center flex>
         <div class="thumbnail"><img src="{{post.thumbnail}}" width="70" height="70"></div>
@@ -92,14 +95,14 @@
           id="favorite"
           icon="favorite"
           on-tap="{{favoriteTapped}}"
-          hidden?="{{!user || post.favorite}}">
+          hidden?="{{!$.globals.data.user || post.favorite}}">
         </paper-icon-button>
 
         <paper-icon-button
           id="unfavorite"
           icon="favorite"
           on-tap="{{favoriteTapped}}"
-          hidden?="{{!user || !post.favorite}}">
+          hidden?="{{!$.globals.data.user || !post.favorite}}">
         </paper-icon-button>
 
         <paper-icon-button

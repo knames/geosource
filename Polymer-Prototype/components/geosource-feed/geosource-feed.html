@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../geosource-post-summary/geosource-post-summary.html">
 
-<polymer-element name="geosource-feed" attributes="posts user">
+<polymer-element name="geosource-feed" attributes="posts">
   <template>
     <style>
     :host {
@@ -16,7 +16,6 @@
       <template repeat="{{post in posts}}">
         <geosource-post-summary 
           post="{{post}}"
-          user="{{user}}"
           on-location-click="{{handleLocation}}"
           on-favorite-click="{{handleFavorite}}"
           on-more-click="{{handleMore}}">

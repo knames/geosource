@@ -4,8 +4,9 @@
 <link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../geosource-services/user-creation-service.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 
-<polymer-element name="geosource-account-creator" attributes="user gid">
+<polymer-element name="geosource-account-creator">
 
 
   <template>
@@ -50,9 +51,10 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <user-creation-service id="service" 
       response="{{response}}" 
-      gid="{{gid}}"
       on-user-creation-response="{{handleResponse}}">
     </user-creation-service>
 
@@ -98,7 +100,7 @@
       if(this.response.error) {
         console.log(this.response.message);
       } else {
-        this.user = { 
+        this.$.globals.data.user = { 
           "username": this.$.input.value,
           "admin": false,
           "subscriber": [],

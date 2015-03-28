@@ -56,7 +56,7 @@
     </style>
 
     <core-ajax id="google_ajax"
-      url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + id_token}}'
+      url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + $.globals.data.id_token}}'
       on-core-response="{{googleLoaded}}"
       handleAs="json">
     </core-ajax>
@@ -65,7 +65,7 @@
       method="POST"
       url="../phpoly/dbgetusername.php"
       on-core-response="{{userLoaded}}"
-      body='{"gid": "{{gid}}"}'
+      body='{"gid": "{{$.globals.data.gid}}"}'
       handleAs="json">
     </core-ajax>
 
@@ -77,8 +77,7 @@
     gid: null,
     user: null,
     
-    load: function(id_token) {
-      this.id_token = id_token;
+    load: function() {
       this.$.google_ajax.go();
     },
 
@@ -88,8 +87,8 @@
         //display google_info.error_description
       }
       else {
-        this.gid = this.$.google_ajax.response.user_id;
-	console.log(this.gid);
+        this.$.globals.data.gid = this.$.google_ajax.response.user_id;
+	      console.log(this.$.globals.data.gid);
       }
     },
 
@@ -99,8 +98,8 @@
 
     userLoaded: function() {
       // Make a copy of the loaded data
-      this.user = this.$.geosource_ajax.response.slice(0)[0];
-      console.log(this.user);
+      this.$.globals.data.user = this.$.geosource_ajax.response.slice(0)[0];
+      console.log(this.$.globals.data.user);
       this.fire('user-loaded');
     }
 

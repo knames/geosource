@@ -1,25 +1,28 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 
-<polymer-element name="user-creation-service" attributes="response gid">
+<polymer-element name="user-creation-service" attributes="response">
   <template>
     <style>
     :host {
       display: none;
     }
     </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
     <core-ajax id="ajax"
       method="POST"
       url="../phpoly/dbsetusername.php"
       on-core-response="{{handleResponse}}"
-      body='{"gid": "{{gid}}", "username": "{{username}}"}'
+      body='{"gid": "{{$.globals.data.gid}}", "username": "{{username}}"}'
       handleAs="json">
     </core-ajax>
   </template>
   <script>
   Polymer('user-creation-service', {
 
-    gid: null,
     username: null,
 
     handleResponse: function() {
@@ -34,7 +37,7 @@
       console.log("submitting name");
       this.username = username;
       console.log(this.username);
-      console.log(this.gid);
+      console.log(this.$.globals.data.gid);
       this.$.ajax.go();
       console.log("submitted");
     }

@@ -19,7 +19,9 @@
 
 <link rel="import" href="../geosource-services/channel-settings-service.html">
 
-<polymer-element name="geosource-channel-settings" attributes="user channel">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-channel-settings" attributes="channel">
 
 
   <template>
@@ -140,6 +142,8 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <channel-settings-service id="service" channelSettings="{{channelSettings}}"></channel-settings-service>
 
     <div class="settings" vertical layout>
@@ -154,8 +158,8 @@
       </div>
       <div class="content" vertical layout>
         <paper-radio-group selected="{{channelSettings.access}}">
-          <paper-radio-button name="public" id="public" label="Public" disabled?="{{!user || (!user.admin && channel.owner != user.username)}}"></paper-radio-button>
-          <paper-radio-button name="private" label="Private" disabled?="{{!user || (!user.admin && channel.owner != user.username)}}"></paper-radio-button>
+          <paper-radio-button name="public" id="public" label="Public" disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}"></paper-radio-button>
+          <paper-radio-button name="private" label="Private" disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}"></paper-radio-button>
         </paper-radio-group>
 
         <h3>Moderators</h3>
@@ -166,7 +170,7 @@
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeModerator}}"></paper-icon-button></td>
             </div>
           </template>
-          <div horizontal layout center class="add-user" hidden?="{{!user || (!user.admin && channel.owner != user.username)}}">
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
             <paper-input label="Enter a username..." flex id="moderator_input"></paper-input>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addModerator}}"></paper-icon-button>
           </div>
@@ -180,7 +184,7 @@
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeViewer}}"></paper-icon-button></td>
             </div>
           </template>
-          <div horizontal layout center class="add-user" hidden?="{{!user || (!user.admin && !isModerator)}}">
+          <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
             <paper-input label="Enter a username..." flex id="viewer_input"></paper-input>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addViewer}}"></paper-icon-button>
           </div>
@@ -194,7 +198,7 @@
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBan}}"></paper-icon-button></td>
             </div>
           </template>
-          <div horizontal layout center class="add-user" hidden?="{{!user || (!user.admin && !isModerator)}}">
+          <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
             <paper-input label="Enter a username..." flex id="ban_input"></paper-input>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addBan}}"></paper-icon-button>
           </div>
