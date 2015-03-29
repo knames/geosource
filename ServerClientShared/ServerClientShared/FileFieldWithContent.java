@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by wsv759 on 12/03/15.
  */
-public abstract class FileFieldWithContent extends FieldWithContent {
+public abstract class FileFieldWithContent extends FieldWithContent{
     FileFieldWithContent(FieldWithoutContent fieldWithoutContent) {
         super(fieldWithoutContent);
     }

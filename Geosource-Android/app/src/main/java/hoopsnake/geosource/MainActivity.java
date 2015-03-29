@@ -1,9 +1,7 @@
 package hoopsnake.geosource;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -60,10 +58,9 @@ public class MainActivity extends Activity {
     {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
         //TODO determine the current channel.
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
 
         //If there isn't currently an incident being worked on, give the necessary parameters to ask for a new one.
-        if (!sharedPref.contains(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS)) {
+        if (!IncidentActivity.curIncidentExistsInFileSystem(this)) {
             intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
             intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
             intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
@@ -83,6 +80,14 @@ public class MainActivity extends Activity {
             }
             else //RESULT_CANCELLED
             {
+//                Button incidentButton = (Button) findViewById(R.id.create_incident_button);
+//                boolean incidentDiscarded = data.getBooleanExtra("SOMETHING", true);
+//                if (!incidentDiscarded)
+//                    incidentButton.setText(getString(R.string.resume_incident_creation));
+//                else
+//                    incidentButton.setText(getString(R.string.create_incident));
+
+                //TODO uncomment this when it works.
                 setIncidentButtonTextBasedOnSharedPref();
             }
         }
@@ -124,10 +129,9 @@ public class MainActivity extends Activity {
 
     private void setIncidentButtonTextBasedOnSharedPref()
     {
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
         Button incidentButton = (Button) findViewById(R.id.create_incident_button);
 
-        if (sharedPref.contains(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS) && sharedPref.getBoolean(IncidentActivity.SHAREDPREF_CUR_INCIDENT_EXISTS, false))
+        if (IncidentActivity.curIncidentExistsInFileSystem(this))
             incidentButton.setText(getString(R.string.resume_incident_creation));
         else
             incidentButton.setText(getString(R.string.create_incident));

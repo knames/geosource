@@ -24,7 +24,6 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
-import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -52,7 +51,9 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String PARAM_STRING_POSTER = "poster";
 
     public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident";
-    public static final String FILENAME_CUR_INCIDENT = "cur_incident_object";
+    private static final String FILENAME_CUR_INCIDENT = "cur_incident_object";
+    private static final String DIRNAME_INCIDENTS_YET_TO_SEND = "incidents_yet_to_send";
+    private static final String FILE_PREFIX_INCIDENT_YET_TO_SEND = "incident_yet_to_send_";
 
     /** The LinearLayout that displays all the fields of the incident. */
     private LinearLayout incidentDisplay;
@@ -93,14 +94,29 @@ public class IncidentActivity extends ActionBarActivity {
         setContentView(R.layout.activity_incident);
         assertNull(incident);
 
+        incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
+
         Bundle extras = getIntent().getExtras();
 
-        if ((extras == null || extrasAreEmpty(extras)) && curIncidentExistsInFileSystem())
+        if ((extras == null || extrasAreEmpty(extras)) && curIncidentExistsInFileSystem(this))
             initializeAppIncidentFromPreexistingState();
         else if (extras != null)
             initializeAppIncidentFromServer(extras);
         else
             throw new RuntimeException("invalid onCreate scenario for IncidentActivity.");
+
+//        // TODO If folder is not empty, and we are connected to the internet, send those files!
+//        File savedIncidentsDir = getDir(DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE);
+//        File[] savedIncidentFiles = savedIncidentsDir.listFiles();
+//
+//        assertNotNull(savedIncidentFiles);
+//        if (savedIncidentFiles.length > 0) {
+//            File activityBaseFilesDir = getFilesDir();
+//            activityBaseFilesDir.getAbsolutePath();
+//            for (File incidentFileToSend : savedIncidentFiles) {
+//                AppIncident incidentToSend = (AppIncident) FileIO.readObjectFromFile(this, incidentFileToSend.getAbsolutePath());
+//            }
+//        }
     }
 
     private void initializeAppIncidentFromPreexistingState()
@@ -129,18 +145,16 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(channelOwner);
         assertNotNull(poster);
 
-        incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
-
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
-//        ArrayList<FieldWithContent> l = new ArrayList<>();
-//        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
-//        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
-//        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
-//        // etc.
-//
-//        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
-//        renderIncidentFromScratch();
+        ArrayList<FieldWithContent> l = new ArrayList<>();
+        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
+        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
+        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
+        // etc.
+
+        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
+        renderIncidentFromScratch();
     }
 
     private boolean extrasAreEmpty(Bundle extras)
@@ -236,6 +250,7 @@ public class IncidentActivity extends ActionBarActivity {
             new TaskSendIncident(IncidentActivity.this).execute(incident);
 
             setIncident(null);
+//            saveIncidentState();
             setResult(RESULT_OK);
             finish();
         }
@@ -261,7 +276,10 @@ public class IncidentActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setIncident(null);
-                        setResult(RESULT_CANCELED);
+//                        saveIncidentState();
+//                        Intent intent = IncidentActivity.this.getIntent();
+//                        intent.putExtra("SOMETHING", false);
+//                        IncidentActivity.this.setResult(RESULT_CANCELED, intent);
                         IncidentActivity.this.finish();
                     }
 
@@ -348,6 +366,8 @@ public class IncidentActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         if (incident == null)
             retrieveIncidentState();
     }
@@ -372,6 +392,7 @@ public class IncidentActivity extends ActionBarActivity {
         if (incident == null) {
             deleteFile(FILENAME_CUR_INCIDENT);
             editor.putBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
+            editor.commit();
             return;
         }
 
@@ -398,18 +419,21 @@ public class IncidentActivity extends ActionBarActivity {
     {
         assertNull(incident);
 
-        if (curIncidentExistsInFileSystem())
+        if (curIncidentExistsInFileSystem(this)) {
             incident = (AppIncident) FileIO.readObjectFromFile(this, FILENAME_CUR_INCIDENT);
+            for (AppField field : incident.getFieldList())
+                field.setActivity(this);
+        }
     }
 
     /**
      * @precond none.
-     * @return there is a current incident serialized in the file system. False otherwise.
+     * @return true if there is a current incident serialized in the file system. False otherwise.
      */
-    private boolean curIncidentExistsInFileSystem()
+    public static boolean curIncidentExistsInFileSystem(Context context)
     {
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
-        return sharedPref.contains(SHAREDPREF_CUR_INCIDENT_EXISTS) && sharedPref.getBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
+        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
     }
 }
 

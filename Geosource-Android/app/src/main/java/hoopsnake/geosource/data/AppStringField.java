@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 
 import ServerClientShared.StringFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
@@ -21,7 +20,7 @@ import hoopsnake.geosource.R;
  *
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
-public class AppStringField extends AbstractAppField implements Serializable {
+public class AppStringField extends AbstractAppField{
     public AppStringField(StringFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
     }
@@ -85,16 +84,16 @@ public class AppStringField extends AbstractAppField implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        super.writeObjectHelper(out);
+
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        super.readObjectHelper(in);
+
     }
 
     private void readObjectNoData() throws ObjectStreamException
     {
-        super.readObjectNoDataHelper();
+
     }
 }

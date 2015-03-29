@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 
 import ServerClientShared.VideoFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
@@ -23,7 +22,7 @@ import hoopsnake.geosource.media.MediaManagement;
  *
  * Implementation of an app field with type Video.
  */
-public class AppVideoField extends AbstractAppFieldWithFile implements Serializable {
+public class AppVideoField extends AbstractAppFieldWithFile{
 
     public AppVideoField(VideoFieldWithContent fieldToWrap, IncidentActivity activity) {
         super(fieldToWrap, activity);
@@ -85,16 +84,16 @@ public class AppVideoField extends AbstractAppFieldWithFile implements Serializa
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        super.writeObjectHelper(out);
+
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        super.readObjectHelper(in);
+
     }
 
     private void readObjectNoData() throws ObjectStreamException
     {
-        super.readObjectNoDataHelper();
+
     }
 }

@@ -1,21 +1,10 @@
 package hoopsnake.geosource.data;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGParser;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -24,6 +13,9 @@ import static junit.framework.Assert.assertNotNull;
  * whose content is stored in a file on android (e.g. image, video, audio.)
  */
 public abstract class AbstractAppFieldWithFile extends AbstractAppField {
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
 
     public AbstractAppFieldWithFile(FieldWithContent fieldToWrap, IncidentActivity activity)
     {
@@ -97,21 +89,6 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
     }
 
     /**
-     * //TODO This doesn't work yet, at least not on emulator?
-     * //TODO move this somewhere more suitable.
-     * Draw an icon from a svg file.
-     * @param svgFileResourceCode the R.raw.* resource code defining the svg file to draw.
-     * @return the icon to draw, in Drawable format.
-     */
-    Drawable getDrawableIconFromSVGResource(int svgFileResourceCode)
-    {
-        Resources resources = activity.getResources();
-        assertNotNull(resources);
-        SVG svg = SVGParser.getSVGFromResource(resources, svgFileResourceCode);
-        return svg.createPictureDrawable();
-    }
-
-    /**
      * @param contentFileUri the Uri representing the content file to check. Does it contain the correct
      *                       filetype for this field?
      * @precond contentFileUri is not null.
@@ -119,18 +96,4 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
      * @return return true if this field uses this type of file for its content, or false otherwise.
      */
     abstract boolean usesFilesOfType(Uri contentFileUri);
-
-    @Override
-    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
-        super.readObjectHelper(in);
-
-        contentFileUri = (Uri) in.readObject();
-    }
-
-    @Override
-    void writeObjectHelper(ObjectOutputStream out) throws IOException {
-        super.writeObjectHelper(out);
-
-        out.writeObject(contentFileUri);
-    }
 }

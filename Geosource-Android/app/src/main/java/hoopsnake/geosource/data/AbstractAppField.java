@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,7 +30,10 @@ import static junit.framework.Assert.assertTrue;
  *
  * All implementations of AppField should extend this.
  */
-public abstract class AbstractAppField implements AppField {
+public abstract class AbstractAppField implements AppField, Serializable {
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
 
     /**
      * The weight of each content view, so that it takes up the appropriate amount of screen compared with the field title.
@@ -37,20 +41,24 @@ public abstract class AbstractAppField implements AppField {
     private static final float CONTENT_VIEW_WEIGHT = 0.8f;
 
     private static final int POSITION_VIEW_FIELD_TITLE = 0;
+
     /**
      * Underlying field object that contains the attributes to be acted upon by
      * the app. Its type should match the AppField that wraps it.
      */
-    final FieldWithContent wrappedField;
+    FieldWithContent wrappedField;
 
     public IncidentActivity getActivity() {
         return activity;
     }
 
+    @Override
+    public void setActivity(IncidentActivity activity){ this.activity = activity; }
+
     /**
      * The activity that will be displaying this field on the UI.
      */
-    final IncidentActivity activity;
+    IncidentActivity activity;
 
     String LOG_TAG = "geosource ui";
 
@@ -133,15 +141,15 @@ public abstract class AbstractAppField implements AppField {
 
 
     /** Serializable implementation. */
-    void readObjectNoDataHelper() throws InvalidObjectException {
-        wrappedField.readObjectNoDataHelper();
+    private void readObjectNoData() throws InvalidObjectException {
+        Log.e(LOG_TAG, "no data received from file system for reserialization of AppField.");
     }
 
-    void readObjectHelper(ObjectInputStream in) throws ClassNotFoundException, IOException {
-        wrappedField.readObjectHelper(in);
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        wrappedField = (FieldWithContent) in.readObject();
     }
 
-    void writeObjectHelper(ObjectOutputStream out) throws IOException {
-        wrappedField.writeObjectHelper(out);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+       out.writeObject(wrappedField);
     }
 }

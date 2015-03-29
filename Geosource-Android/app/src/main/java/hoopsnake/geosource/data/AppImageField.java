@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
 import ServerClientShared.ImageFieldWithContent;
@@ -31,7 +30,7 @@ import static junit.framework.Assert.assertNotNull;
  *
  * Implementation of an app field with type Image.
  */
-public class AppImageField extends AbstractAppFieldWithFile implements Serializable {
+public class AppImageField extends AbstractAppFieldWithFile{
     private ImageView iv = null;
 
     public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
@@ -156,16 +155,16 @@ public class AppImageField extends AbstractAppFieldWithFile implements Serializa
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        super.writeObjectHelper(out);
+
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        super.readObjectHelper(in);
+
     }
 
     private void readObjectNoData() throws ObjectStreamException
     {
-        super.readObjectNoDataHelper();
+
     }
 }

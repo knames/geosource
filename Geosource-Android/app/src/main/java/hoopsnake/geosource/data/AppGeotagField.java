@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 
 import ServerClientShared.Geotag;
 import ServerClientShared.GeotagFieldWithContent;
@@ -19,7 +18,7 @@ import hoopsnake.geosource.R;
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class AppGeotagField extends AbstractAppField implements Serializable {
+public class AppGeotagField extends AbstractAppField{
 
     private TextView tv;
 
@@ -66,16 +65,16 @@ public class AppGeotagField extends AbstractAppField implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        super.writeObjectHelper(out);
+
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        super.readObjectHelper(in);
+
     }
 
     private void readObjectNoData() throws ObjectStreamException
     {
-        super.readObjectNoDataHelper();
+
     }
 }

@@ -5,6 +5,8 @@ import android.view.View;
 
 import java.io.Serializable;
 
+import hoopsnake.geosource.IncidentActivity;
+
 /**
  * Created by wsv759 on 07/03/15.
  *
@@ -15,6 +17,12 @@ import java.io.Serializable;
  * All implementations must implement Serializable.
  */
 public interface AppField {
+
+    /**
+     * Set the activity pointer to which this AppField is bound. (So that it can render on the UI properly).
+     * @param activity the activity which will be displaying this AppField.
+     */
+    public void setActivity(IncidentActivity activity);
 
     /**
      *
