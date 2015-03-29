@@ -61,6 +61,19 @@ CREATE TABLE users_fav_posts (
 	PRIMARY KEY (ufp_username, ufp_chname, ufp_chowner, ufp_number)
 	);
 
+CREATE TABLE post_comments (
+	pc_username varchar(25) NOT NULL,
+	pc_comment varchar(256) NOT NULL,
+	pc_time timestamp NOT NULL,
+	pc_chname varchar(50) NOT NULL,
+	pc_chowner varchar(25) NOT NULL,
+	pc_number int UNSIGNED NOT NULL,
+	FOREIGN KEY (pc_username) REFERENCES users (u_username),
+	FOREIGN KEY (pc_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (pc_chowner) REFERENCES users (u_username),
+	PRIMARY KEY (pc_username, pc_chname, pc_chowner, pc_number)
+	);
+
 
 -- comment this out when done with dummydata
 source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
