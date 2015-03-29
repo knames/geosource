@@ -161,7 +161,45 @@
         </div>
       </div>
       
-      <div class="content" id="content" vertical layout></div>
+      <div class="content" id="content" vertical layout>
+        <template repeat="{{field in post.fields}}">
+          <h3>{{field.label}}</h3>
+          <template if="{{field.type == 'Video'}}">
+            <video width="auto" height="auto" controls>
+              <source src="{{field.value}}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </template>
+          <template if="{{field.type == 'Audio'}}">
+            <audio controls>
+              <source src="{{field.value}}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </template>
+          <template if="{{field.type == 'Image'}}">
+            <img src="{{field.value}}">
+          </template>
+          <template if="{{field.type == 'Text'}}">
+            <div>{{field.value}}</div>
+          </template>
+          <template if="{{field.type == 'Checkbox'}}">
+            <template repeat="{{attribute in field.attributes}}">
+              <div class="checkbox" horizontal layout>
+                <paper-checkbox checked?="{{attribute.value}}" disabled></paper-checkbox>
+                <div class="checkbox-label">{{attribute.label}}</div>
+              </div>
+            </template>
+          </template>
+          <template if="{{field.type == 'Radio Button'}}">
+            <template repeat="{{attribute in field.attributes}}">
+              <div class="checkbox" horizontal layout>
+                <paper-radio-button checked?="{{attribute.value}}" disabled></paper-radio-button>
+                <div class="checkbox-label">{{attribute.label}}</div>
+              </div>
+            </template>
+          </template>
+        </template>
+      </div>
       
 <!--       <disqus-comments 
         id="disqus"
@@ -222,61 +260,8 @@
     },
 
     postChanged: function() {
-
       this.isFavorite();
-
-      content = "";
-
-      for(i=0; i<this.post.fields.length; i++) {
-
-        content += '<h3>' + this.post.fields[i].label + '</h3>';
-
-        switch(this.post.fields[i].type) {
-          case "Video":
-            content += 
-              '<video width="auto" height="auto" controls>' +
-                '<source src="' + this.post.fields[i].value + '" type="video/mp4">' +
-                'Your browser does not support the video tag.' +
-              '</video>';
-            break;
-          case "Audio":
-            content += 
-              '<audio controls>' +
-                '<source src="' + this.post.fields[i].value + '" type="audio/mpeg">' +
-                'Your browser does not support the audio element.' +
-              '</audio>';
-            break;
-          case "Image":
-            content += '<img src="' + this.post.fields[i].value + '">';
-            break;
-          case "Text":
-            content += '<div>' + this.post.fields[i].value + '</div>';
-            break;
-          case "Checkbox":
-            for(j=0; j<this.post.fields[i].attributes.length; j++) {
-              content += '<div class="checkbox" horizontal layout><paper-checkbox' 
-              if(this.post.fields[i].attributes[j].value) {
-                content += ' checked'
-              }
-              content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
-            }
-            break;
-          case "Radio Button":
-            for(j=0; j<this.post.fields[i].attributes.length; j++) {
-              content += '<div class="checkbox" horizontal layout><paper-radio-button' 
-              if(this.post.fields[i].attributes[j].value) {
-                content += ' checked'
-              }
-              content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
-            }
-            break;
-        }        
-      }
-
-      this.$.content.innerHTML = content;
-
       this.checkDeletePermission();
-
       this.fire('post-loaded');
     },
 
