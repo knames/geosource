@@ -141,7 +141,7 @@
         for(i=0; i<channels.length; i++) {
           for(j=0; j<viewer.length; j++) {
             if(channels[i].name == viewer[j].name && channels[i].owner == viewer[j].owner) {
-              this.channels[i].isViewer = true;
+              channels[i].isViewer = true;
               break;
             }
           }
@@ -154,7 +154,7 @@
         for(i=0; i<channels.length; i++) {
           for(j=0; j<subscriber.length; j++) {
             if(channels[i].name == subscriber[j].name && channels[i].owner == subscriber[j].owner) {
-              this.channels[i].isSubscriber = true;
+              channels[i].isSubscriber = true;
               break;
             }
           }
@@ -167,7 +167,7 @@
         for(i=0; i<channels.length; i++) {
           for(j=0; j<moderator.length; j++) {
             if(channels[i].name == moderator[j].name && channels[i].owner == moderator[j].owner) {
-              this.channels[i].isModerator = true;
+              channels[i].isModerator = true;
               break;
             }
           }
@@ -180,7 +180,7 @@
         for(i=0; i<channels.length; i++) {
           for(j=0; j<owner.length; j++) {
             if(channels[i].name == owner[j].name && channels[i].owner == owner[j].owner) {
-              this.channels[i].isOwner = true;
+              channels[i].isOwner = true;
               break;
             }
           }
@@ -188,7 +188,7 @@
       },
 
       markFavorites: function() {
-        var favorites = this.$.globals.data.user;
+        var favorites = this.$.globals.data.user.favorites;
         for(i=0; i<this.posts.length; i++) {
           for(j=0; j<favorites.length; j++) {
             if(favorites[j].pid == this.posts[i].pid

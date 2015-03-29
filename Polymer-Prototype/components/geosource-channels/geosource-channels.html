@@ -232,7 +232,7 @@
     },
 
     toggleChannel: function(event, detail, sender) {
-      var channel = sender.templateInstance.model.channel;
+      var channel = this.getChannel(sender.templateInstance.model.channel);
       channel.isSelected = !channel.isSelected;
       this.fire('filter-change');
     },
@@ -344,8 +344,8 @@
         includedPosts = posts.slice(0);
       }
       else {
-        for(i=0; i<posts.length; i++) {
-          var channel = this.getChannel(post.channel);
+        for(var i=0; i<posts.length; i++) {
+          var channel = this.getChannel(posts[i].channel);
           if((this.subscribedSelected && channel.isSubscriber) || (channel.isSelected)) {
             includedPosts.push(posts[i]);
           }
@@ -356,7 +356,7 @@
     },
 
     getChannel: function(channel) {
-      for(i=0; i<this.$.globals.data.channels.length; i++) {
+      for(var i=0; i<this.$.globals.data.channels.length; i++) {
         if(this.$.globals.data.channels[i].name == channel.name 
             && this.$.globals.data.channels[i].owner == channel.owner) {
           return this.$.globals.data.channels[i];

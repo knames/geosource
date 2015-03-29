@@ -6,7 +6,7 @@
     "thumbnail" : "/images/bird-01.jpg",
     "time": "2015-02-26 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6853},
-    "channel": {"name": "Birds", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": true
   },
   {
@@ -16,7 +16,7 @@
     "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-25 12:00:00.000",
     "location": {"latitude": 52.2333, "longitude": -106.6633},
-    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   },
   {
@@ -26,7 +26,7 @@
     "thumbnail" : "/images/bird-02.jpg",
     "time": "2015-02-24 12:00:00.000",
     "location": {"latitude": 52.1833, "longitude": -106.6333},
-    "channel": {"name": "Birds", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   },
   {
@@ -36,7 +36,7 @@
     "thumbnail" : "/images/mushroom-01.jpg",
     "time": "2015-02-20 12:00:00.000",
     "location": {"latitude": 52.0833, "longitude": -106.6833},
-    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   },
   {
@@ -46,7 +46,7 @@
     "thumbnail" : "/images/mushroom-02.jpg",
     "time": "2015-02-16 12:00:00.000",
     "location": {"latitude": 52.0633, "longitude": -106.6933},
-    "channel": {"name": "Mushrooms", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   },
   {
@@ -56,7 +56,7 @@
     "thumbnail" : "/images/pothole-01.jpg",
     "time": "2015-02-01 12:00:00.000",
     "location": {"latitude": 52.1033, "longitude": -106.6533},
-    "channel": {"name": "Potholes", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   },
   {
@@ -66,7 +66,7 @@
     "thumbnail" : "/images/cat-01.jpg",
     "time": "2015-01-20 12:00:00.000",
     "location": {"latitude": 52.1533, "longitude": -106.7333},
-    "channel": {"name": "Birds", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": true
   },
   {
@@ -76,7 +76,7 @@
     "thumbnail" : "/images/snow-01.jpg",
     "time": "2015-01-01 12:00:00.000",
     "location": {"latitude": 52.1333, "longitude": -106.6333},
-    "channel": {"name": "Snow", "owner": "Josh"},
+    "channel": {"name": "poly", "owner": "josh"},
     "question": false
   }
 ]
