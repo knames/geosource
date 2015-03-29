@@ -295,7 +295,8 @@
       else {
         var channel = this.getChannel(detail.response.channel);
         channel.isSubscriber = true;
-        this.updateSubscribedChannels(); 
+        this.$.globals.data.channels.push(channel);
+        this.updateSubscribedChannels();
         this.fire('filter-change');
       }
     },

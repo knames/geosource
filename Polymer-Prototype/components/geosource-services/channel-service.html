@@ -67,12 +67,14 @@
     </core-ajax>
 
     <core-ajax id="subscribe_ajax"
+      method="POST"
       url="../phpoly/subscribe.php"
       on-core-response="{{subscribeResponse}}"
       handleAs="json">
     </core-ajax>
 
     <core-ajax id="unsubscribe_ajax"
+      method="POST"
       url="../phpoly/unsubscribe.php"
       on-core-response="{{unsubscribeResponse}}"
       handleAs="json">
@@ -93,7 +95,7 @@
     },
 
     subscribe: function(channel) {
-      this.$.subscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
+      this.$.subscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
       this.$.subscribe_ajax.go();
     },
 
@@ -103,7 +105,7 @@
     },
 
     unsubscribe: function(channel) {
-      this.$.unsubscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
+      this.$.unsubscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
       this.$.unsubscribe_ajax.go();
     },
 
