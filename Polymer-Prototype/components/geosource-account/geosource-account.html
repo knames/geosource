@@ -126,18 +126,80 @@
         else {
           console.log(this.posts);
           console.log(user.favorites);
-          for(i=0; i<user.favorites.length; i++) {
-            for(j=0; j<this.posts.length; j++) {
-              if(user.favorites[i].pid == this.posts[j].pid
-                  && user.favorites[i].channel.name == this.posts[j].channel.name
-                  && user.favorites[i].channel.owner == this.posts[j].channel.owner) {
-                this.posts[j].favorite = true;
-                break;
-              }
+          
+          this.markViewer();
+          this.markSubscriber();
+          this.markModerator();
+          this.markOwner();
+          this.markFavorites();
+        }
+      },
+
+      markViewer: function() {
+        var channels = this.$.globals.data.channels;
+        var viewer = this.$.globals.data.user.viewer;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<viewer.length; j++) {
+            if(channels[i].name == viewer[j].name && channels[i].owner == viewer[j].owner) {
+              this.channels[i].isViewer = true;
+              break;
             }
           }
         }
       },
+
+      markSubscriber: function() {
+        var channels = this.$.globals.data.channels;
+        var subscriber = this.$.globals.data.user.subscriber;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<subscriber.length; j++) {
+            if(channels[i].name == subscriber[j].name && channels[i].owner == subscriber[j].owner) {
+              this.channels[i].isSubscriber = true;
+              break;
+            }
+          }
+        }  
+      },
+
+      markModerator: function() {
+        var channels = this.$.globals.data.channels;
+        var moderator = this.$.globals.data.user.moderator;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<moderator.length; j++) {
+            if(channels[i].name == moderator[j].name && channels[i].owner == moderator[j].owner) {
+              this.channels[i].isModerator = true;
+              break;
+            }
+          }
+        }
+      },
+
+      markOwner: function() {
+        var channels = this.$.globals.data.channels;
+        var owner = this.$.globals.data.user.owner;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<owner.length; j++) {
+            if(channels[i].name == owner[j].name && channels[i].owner == owner[j].owner) {
+              this.channels[i].isOwner = true;
+              break;
+            }
+          }
+        }
+      },
+
+      markFavorites: function() {
+        var favorites = this.$.globals.data.user;
+        for(i=0; i<this.posts.length; i++) {
+          for(j=0; j<favorites.length; j++) {
+            if(favorites[j].pid == this.posts[i].pid
+                && favorites[j].channel.name == this.posts[i].channel.name
+                && favorites[j].channel.owner == this.posts[i].channel.owner) {
+              this.posts[i].favorite = true;
+              break;
+            }
+          }
+        }
+      }
 
     });
   </script>

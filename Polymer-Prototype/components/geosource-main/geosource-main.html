@@ -139,7 +139,6 @@
               <!-- <google-signin clientId="301689362567-1df5lo4vk81q9glt09k8vb0v8mk7n0kq.apps.googleusercontent.com"></google-signin> -->
               <div class="container">
               <geosource-settings id="settings"
-                channels="{{channels}}"
                 posts="{{posts}}"
                 user="{{user}}"
                 on-filter-change="{{filterPosts}}">
@@ -178,7 +177,6 @@
     Polymer({
 
       user: null,
-      channels: null,
       posts: null,
       filteredPosts: null,
 
@@ -187,7 +185,6 @@
 
       observe: {
         posts: 'filterPosts',
-        channels: 'filterPosts'
       },
 
       /**

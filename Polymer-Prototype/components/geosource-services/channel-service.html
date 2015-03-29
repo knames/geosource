@@ -49,13 +49,16 @@
   @type Array
   @default []
 -->
-<polymer-element name="channel-service" attributes="channels">
+<polymer-element name="channel-service">
   <template>
     <style>
     :host {
       display: none;
     }
     </style>
+
+    <geosource-globals id="{{globals}}"></geosource-globals>
+
     <core-ajax id="ajax"
       auto
       url="../phpoly/get-channels.php"
@@ -79,12 +82,10 @@
   <script>
   Polymer('channel-service', {
     
-    channels: null,
-
     channelsLoaded: function() {
       // Make a copy of the loaded data
       console.log("loaded channels", this.$.ajax.response);
-      this.channels = this.$.ajax.response.slice(0).sort(function(a,b) {
+      this.$.globals.channels = this.$.ajax.response.slice(0).sort(function(a,b) {
         if(a.name > b.name) { return 1; }
         else if(a.name < b.name) { return -1; }
         else { return 0; }
