@@ -93,7 +93,7 @@
     },
 
     subscribe: function(channel) {
-      this.$.subscribe_ajax.body = {user: this.$.globals.data.user, channel: channel};
+      this.$.subscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
       this.$.subscribe_ajax.go();
     },
 
@@ -103,7 +103,7 @@
     },
 
     unsubscribe: function(channel) {
-      this.$.unsubscribe_ajax.body = {user: this.$.globals.data.user, channel: channel};
+      this.$.unsubscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
       this.$.unsubscribe_ajax.go();
     },
 
