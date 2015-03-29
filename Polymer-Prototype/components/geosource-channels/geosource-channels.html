@@ -10,7 +10,9 @@
 <link rel="import" href="../geosource-channel-settings/geosource-channel-settings.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 
-<polymer-element name="geosource-channels" attributes="channelSummaries">
+<link rel="import" href="../geosource-services/channel-service.html">
+
+<polymer-element name="geosource-channels" attributes="channels">
 
   <template>
 
@@ -90,6 +92,8 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
+    <channel-service id="channel_service" channels="{{channels}}"></channel-service>
+
     <paper-dialog id="create_dialog" role="dialog" backdrop>
       <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
     </paper-dialog>
@@ -118,7 +122,7 @@
           </paper-button>
       </div> 
 
-      <template repeat="{{channel in $.globals.data.user.subscriber}}">
+      <template repeat="{{channel in subscribedChannels}}">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
               <div layout vertical flex class="channel-info">
@@ -130,7 +134,7 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{loadChannelSettings}}"
-                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscribed && subscribedSelected)}}">
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscriber && subscribedSelected)}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
@@ -188,41 +192,35 @@
   <script>
   Polymer({
 
-    channelSummaries: null,
-
-    channels: [],
-
-    subscribedChannels: [],
-    searchedChannels: [],
-    selectedChannels: [],
-
-    selected: {"name": "All", "owner": null},
-
     allSelected: true,
     subscribedSelected: false,
+
+    subscribedChannels: null,
+    searchedChannels: null,
     
-    channelSummariesChanged: function() {
+    // channelSummariesChanged: function() {
 
-      console.log("test");
+    //   console.log("test");
 
-      for(i=0; i<this.channelSummaries.length; i++) {
-        this.channels.push({
-          "name": this.channelSummaries[i].name,
-          "owner": this.channelSummaries[i].owner,
-          "isOwner": false,
-          "isModerator": false,
-          "isViewer": false,
-          "isSubscriber": false,
-          "isSelected": false
-        });
+    //   for(i=0; i<this.channelSummaries.length; i++) {
+    //     this.channels.push({
+    //       "name": this.channelSummaries[i].name,
+    //       "owner": this.channelSummaries[i].owner,
+    //       "isOwner": false,
+    //       "isModerator": false,
+    //       "isViewer": false,
+    //       "isSubscriber": false,
+    //       "isSelected": false,
+    //       "isSearched": false
+    //     });
 
-      }
+    //   }
 
-      //in case user information is loaded before channel summaries
-      if(this.$.globals.data.user) {
-        this.userChanged();
-      }
-    },
+    //   //in case user information is loaded before channel summaries
+    //   if(this.$.globals.data.user) {
+    //     this.userChanged();
+    //   }
+    // },
 
     userChanged: function() {
 
@@ -259,106 +257,6 @@
             }
           }
         }
-
-        for(i=0; i<this.channels.length; i++) {
-          var channel = this.channels[i];
-          if(channel.isSubscriber) {
-            this.subscribedChannels.push(channel);
-          }
-        }
-      }
-      else {
-        this.subscribedChannels = [];
-      }
-    },
-
-    /**
-     * Given a set of posts, this returns the subset of those posts which are 
-     * applicable whichever channel(s) are selected.
-     */
-    filterPosts: function(posts) {
-
-      console.log('filtered');
-      console.log(this.selectedChannels);
-
-      var includedPosts = [];
-
-      if(this.allSelected) {
-        includedPosts = posts.slice(0);
-      }
-      else {
-        for(i=0; i<posts.length; i++) {
-          
-          var matched = false;
-
-          for(j=0; j<this.subscribedChannels.length && this.subscribedSelected && !matched; j++) {
-            if(posts[i].channel.name == this.subscribedChannels[j].name
-              && posts[i].channel.owner == this.subscribedChannels[j].owner) {
-              includedPosts.push(posts[i]);
-              matched = true;
-            }
-          }
-          for(j=0; j<this.selectedChannels.length && !matched; j++) {
-            if(posts[i].channel.name == this.selectedChannels[j].name
-              && posts[i].channel.owner == this.selectedChannels[j].owner) {
-              includedPosts.push(posts[i]);
-              matched = true;
-            }
-          }
-
-        }
-      }
-
-      return includedPosts;
-    },
-
-    toggleChannel: function(event, detail, sender) {
-      var channel = sender.templateInstance.model.channel;
-      var index = this.selectedChannels.indexOf(channel);
-
-      if(sender.active) {
-        channel.isSelected = true;
-        this.selectedChannels.push(channel);
-      }
-      else {
-        channel.isSelected = false;
-        var channel = sender.templateInstance.model.channel;
-        var index = this.selectedChannels.indexOf(channel);
-        this.selectedChannels.splice(index, 1);
-      }
-
-      this.fire('filter-change');
-    },
-
-    /**
-     * Displays all channels which apply to the current text within
-     * 'search_input'. A regex is constructed with .* between each character,
-     * so in the case where 'birds' is entered, the regex would appear as
-     * '^b.*i.*r.*d.*s.*'.
-     */
-    searchChannels: function() {
-
-      var search = this.$.search_input.value;
-
-      if(search == '') {
-        this.searchedChannels = [];
-        return;
-      }
-
-      var regexString = "^";
-      for(i=0; i<search.length; i++) {
-        regexString += search[i] + '.*';
-      }
-
-      var regex = new RegExp(regexString, 'i');
-
-      console.log(regexString);
-
-      this.searchedChannels = [];
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].name.match(regex)) {
-          this.searchedChannels.push(this.channels[i]);
-        }
       }
     },
 
@@ -372,14 +270,52 @@
       this.fire('filter-change');
     },
 
-    /**
-     * Unsubscribes from the selected channel.
-     */
-    unsubscribe: function(event, detail, sender) {
+    toggleChannel: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
-      var index = this.subscribedChannels.indexOf(channel);
-      this.subscribedChannels.splice(index, 1);
-      channel.isSubscriber = false;
+      channel.isSelected = !channel.isSelected;
+      this.fire('filter-change');
+    },
+
+    /**
+     * Displays all channels which apply to the current text within
+     * 'search_input'. A regex is constructed with .* between each character,
+     * so in the case where 'birds' is entered, the regex would appear as
+     * '^b.*i.*r.*d.*s.*'.
+     */
+    searchChannels: function() {
+
+      var search = this.$.search_input.value;
+
+      var regexString = "^";
+      for(i=0; i<search.length; i++) {
+        regexString += search[i] + '.*';
+      }
+      regexString += "$";
+
+      var regex = new RegExp(regexString, 'i');
+
+      console.log('searched with string: ' + regexString);
+
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].name.match(regex)) {
+          this.channels[i].isSearched = true;
+        }
+        else {
+          this.channels[i].isSearched = false;
+        }
+        //console.log(this.channels[i].name.match(regex));
+      }
+
+      this.updateSearchedChannels();
+    },
+
+    updateSearchedChannels: function() {
+      this.searchedChannels = [];
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].isSearched) {
+          this.searchedChannels.push(this.channels[i]);
+        }
+      }
     },
 
     /**
@@ -387,11 +323,85 @@
      */
     subscribe: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
-      var index = this.subscribedChannels.indexOf(channel);
-      if(index == -1) {
-        this.subscribedChannels.push(channel);
-        channel.isSubscriber = true;
+      this.$.channel_service.subscribe(channel);
+    },
+
+    subscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
       }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        channel.isSubscriber = true;
+        this.fire('filter-change');
+        this.updateSubscribedChannels(); 
+      }
+    },
+
+    /**
+     * Unsubscribes from the selected channel.
+     */
+    unsubscribe: function(event, detail, sender) {
+      var channel = sender.templateInstance.model.channel;
+      this.$.channel_service.unsubscribe(channel);
+    },
+
+    unsubscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
+      }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        channel.isSubscriber = false;
+        this.fire('filter-change');
+        this.updateSubscribedChannels();   
+      }
+    },
+
+    updateSubscribedChannels: function() {
+      this.subscribedChannels = [];
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].isSubscriber) {
+          this.subscribedChannels.push(this.channels[i]);
+        }
+      }
+    },
+
+    /**
+     * Given a set of posts, this returns the subset of those posts which are 
+     * applicable whichever channel(s) are selected.
+     */
+    filterPosts: function(posts) {
+
+      console.log('filtered');
+
+      var includedPosts = [];
+
+      if(this.allSelected) {
+        includedPosts = posts.slice(0);
+      }
+      else {
+        for(i=0; i<posts.length; i++) {
+          var channel = this.getChannel(post.channel);
+          if((this.subscribedSelected && channel.isSubscriber) || (channel.isSelected)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+      }
+
+      return includedPosts;
+    },
+
+    getChannel: function(channel) {
+      for(i=0; i<this.channels.length; i++) {
+        if(this.channels[i].name == channel.name 
+            && this.channels[i].owner == channel.owner) {
+          return this.channels[i];
+        }
+      }
+      return null;
     },
 
     openChannelCreate: function() {
@@ -407,8 +417,7 @@
     },
 
     openChannelSettings: function(event, detail, sender) {
-      var settings_dialog = this.$.settings_dialog;
-      settings_dialog.toggle();
+      this.$.settings_dialog.toggle();
     },
 
     closeChannelSettings: function() {
