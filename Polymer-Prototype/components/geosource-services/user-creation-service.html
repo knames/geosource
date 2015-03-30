@@ -14,7 +14,7 @@
 
     <core-ajax id="ajax"
       method="POST"
-      url="../phpoly/dbsetusername.php"
+      url="/php/account/create-user.php"
       on-core-response="{{handleResponse}}"
       body='{"gid": "{{$.globals.data.gid}}", "username": "{{username}}"}'
       handleAs="json">

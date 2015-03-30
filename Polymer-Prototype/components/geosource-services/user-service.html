@@ -67,7 +67,7 @@
 
     <core-ajax id="geosource_ajax"
       method="POST"
-      url="../phpoly/dbgetusername.php"
+      url="/php/account/get-user.php"
       on-core-response="{{userLoaded}}"
       body='{"gid": "{{$.globals.data.gid}}"}'
       handleAs="json">

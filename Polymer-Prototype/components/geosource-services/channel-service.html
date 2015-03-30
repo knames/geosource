@@ -61,19 +61,19 @@
 
     <core-ajax id="ajax"
       auto
-      url="../phpoly/get-channels.php"
+      url="/php/get-channels.php"
       on-core-response="{{channelsLoaded}}"
       handleAs="json">
     </core-ajax>
 
     <core-ajax id="subscribe_ajax"
-      url="../phpoly/subscribe.php"
+      url="/php/channel/subscribe.php"
       on-core-response="{{subscribeResponse}}"
       handleAs="json">
     </core-ajax>
 
     <core-ajax id="unsubscribe_ajax"
-      url="../phpoly/unsubscribe.php"
+      url="/php/channel/unsubscribe.php"
       on-core-response="{{unsubscribeResponse}}"
       handleAs="json">
     </core-ajax>
