@@ -75,7 +75,7 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
                 outStream.flush();
 
                 Commands.IOCommand reply = (Commands.IOCommand) inStream.readObject();
-                if (!reply.equals(Commands.IOCommand.PING))
+                if (!Commands.IOCommand.PING.equals(reply))
                     return SocketResult.FAILED_CONNECTION;
 
                 Log.v(LOG_TAG, "ping succeeded.");

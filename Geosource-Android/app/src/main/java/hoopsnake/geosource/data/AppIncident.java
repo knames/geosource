@@ -78,6 +78,8 @@ public interface AppIncident
      *
      * If this incident had no file prior to this call, a new file is returned. Otherwise the associated file is returned.
      *
+     * If this Incident is not completely filled in, null is returned.
+     *
      * @param activity needed to resolve the absolute path name.
      */
     public File getFile(IncidentActivity activity);
