@@ -198,6 +198,7 @@ public class IncidentActivity extends ActionBarActivity {
         {
             assertNotNull(field);
 
+            Log.d(LOG_TAG, "content: " + field.getContentStringRepresentation());
             View v = field.getFieldViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             assertNotNull(v);
 

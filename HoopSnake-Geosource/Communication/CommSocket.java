@@ -117,6 +117,11 @@ public class CommSocket implements Runnable{
                     Incident newIncident = (Incident)in.readObject();
                     controller.dealWith(newIncident);
                 }
+                case PING:
+                {
+                    out.writeObject(IOCommand.PING);
+                    out.flush();
+                }
             }
             in.close();
             out.close();

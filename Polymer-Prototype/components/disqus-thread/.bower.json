@@ -1,0 +1,32 @@
+{
+  "name": "disqus-thread",
+  "version": "0.0.1",
+  "authors": [
+    "Revath S Kumar <rsk@revathskumar.com>"
+  ],
+  "description": "Custom element for Disqus",
+  "main": "disqus-thread.html",
+  "keywords": [
+    "web-components",
+    "disqus"
+  ],
+  "license": "MIT",
+  "homepage": "http://revathskumar.github.io/disqus-thread",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "9b03cd80413dfb44c6bdf8531517b9c6dbc5d867"
+  },
+  "_source": "git://github.com/revathskumar/disqus-thread.git",
+  "_target": "~0.0.1",
+  "_originalSource": "disqus-thread",
+  "_direct": true
+}

@@ -43,7 +43,6 @@ public class TaskSendAnyStoredIncidents extends IncidentActivityCommTask<Void, V
 
         //Send each of the individual files.
         for (File incidentFileToSend : savedIncidentFiles) {
-            //TODO pass the relative path instead of the absolute path. Only way to get this to work.
             String incidentFilePath = incidentFileToSend.getAbsolutePath();
 //            try {
 //                incidentFilePath = incidentFileToSend.getCanonicalPath();

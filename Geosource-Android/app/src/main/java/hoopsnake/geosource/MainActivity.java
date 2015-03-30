@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
-        xWalkWebView.load("http://okenso.com/android.html", null);
+        xWalkWebView.load("http://okenso.com/", null);
         xWalkWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         setIncidentButtonTextBasedOnSharedPref();

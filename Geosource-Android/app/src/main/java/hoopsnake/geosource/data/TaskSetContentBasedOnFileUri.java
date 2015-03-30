@@ -47,7 +47,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
         assertNotNull(contentFileUri);
         File imageFile = new File(contentFileUri.getPath());
 
-        FileInputStream fis = null;
+        FileInputStream fis;
         try {
             fis = new FileInputStream(imageFile);
         } catch (FileNotFoundException e) {
@@ -74,7 +74,7 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
         assertNotNull(fileInByteFormat);
         fieldToSet.setContent(fileInByteFormat);
         //Alert the calling task that it is one step closer to being able to send this incident.
-        callingTask.getContentCountDownLatch().countDown();
+        callingTask.getContentSerializationCountDownLatch().countDown();
 
         return true;
     }

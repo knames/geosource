@@ -34,6 +34,15 @@ CREATE TABLE channelfavs (
 	PRIMARY KEY (ch_fav_username, ch_fav_chname, ch_fav_chowner)
 	);
 
+CREATE TABLE channel_banned ( 
+	cb_username varchar(25) NOT NULL,
+	cb_chname varchar(50) NOT NULL,
+	cb_chowner varchar(25) NOT NULL,
+	FOREIGN KEY (cb_username) REFERENCES users (u_username),
+	FOREIGN KEY (cb_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (cb_chowner) REFERENCES users (u_username),
+	PRIMARY KEY (cb_username, cb_chname, cb_chowner)	
+	);
 
 CREATE TABLE admin (
 	a_username varchar(25) PRIMARY KEY,
