@@ -7,8 +7,8 @@
 	"fields": 
 		[
 			{"type": "Text", "label": "Description", "value": "Oops, I guess I recorded some audio. Not that useful for a mushroom..."},
-			{"type": "Audio", "label": "Audio", "value": "/audio/terran.mp3"},
-			{"type": "Image", "label": "Picture", "value": "/images/mushroom-01.jpg"},
+			{"type": "Audio", "label": "Audio", "value": "/media/audio/terran.mp3"},
+			{"type": "Image", "label": "Picture", "value": "/media/images/mushroom-01.jpg"},
 			{"type": "Radio Button", "label": "Size", "value": null, "attributes": [{"label": "Big", "value": true}, {"label": "Small", "value": false}]}
 		],
 	"time": "2015-02-25 12:00:00.000",
