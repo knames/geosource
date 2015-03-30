@@ -24,8 +24,8 @@ import hoopsnake.geosource.media.MediaManagement;
  */
 public class AppVideoField extends AbstractAppFieldWithFile{
 
-    public AppVideoField(VideoFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppVideoField(VideoFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override

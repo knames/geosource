@@ -1,6 +1,7 @@
 package hoopsnake.geosource.data;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,18 +23,31 @@ public class AppGeotagField extends AbstractAppField{
 
     private TextView tv;
 
-    public AppGeotagField(GeotagFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppGeotagField(GeotagFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
     public String getContentStringRepresentation() {
-        return wrappedField.getContent().toString();
+        Geotag g = (Geotag) wrappedField.getContent();
+        if (g.exists())
+            return "Geotag:\ntime in millis: " + g.getTimestamp() + "\nlongitude: " + g.getLongitude() + "\nlatitude: " + g.getLatitude();
+        else
+            return "Geotag not yet determined.";
     }
 
+    public String getTimestampStringRepresentation(){
+        Geotag g = (Geotag) wrappedField.getContent();
+        return Long.toString(g.getTimestamp());
+    }
     @Override
     public boolean contentIsFilled()
     {
+        if (wrappedField.getContent() == null)
+            Log.d(LOG_TAG, "geotagfield content is null.");
+        else if (!((Geotag) wrappedField.getContent()).exists())
+            Log.d(LOG_TAG, "geotagfield content does not exist.");
+
         return (wrappedField.getContent() != null && ((Geotag) wrappedField.getContent()).exists());
     }
 

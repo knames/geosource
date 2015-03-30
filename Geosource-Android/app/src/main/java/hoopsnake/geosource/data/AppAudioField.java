@@ -29,8 +29,8 @@ public class AppAudioField extends AbstractAppFieldWithFile{
      */
     private ToggleButton recordButton;
 
-    public AppAudioField(AudioFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppAudioField(AudioFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override

@@ -41,15 +41,6 @@ public class Geotag implements Serializable {
     private long timestamp = NONEXISTENT_VAL;
     private double longitude = NONEXISTENT_VAL, latitude = NONEXISTENT_VAL;
 
-    @Override
-    public String toString()
-    {
-        if (exists())
-            return "Geotag:\ntime in millis: " + timestamp + "\nlongitude: " + longitude + "\nlatitude: " + latitude;
-        else
-            return "Geotag not yet determined.";
-    }
-
     public boolean exists()
     {
         return timestamp != NONEXISTENT_VAL && longitude != NONEXISTENT_VAL && latitude != NONEXISTENT_VAL;

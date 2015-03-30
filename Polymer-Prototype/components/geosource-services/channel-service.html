@@ -68,12 +68,14 @@
 
     <core-ajax id="subscribe_ajax"
       url="/php/channel/subscribe.php"
+      method="POST"
       on-core-response="{{subscribeResponse}}"
       handleAs="json">
     </core-ajax>
 
     <core-ajax id="unsubscribe_ajax"
       url="/php/channel/unsubscribe.php"
+      method="POST"
       on-core-response="{{unsubscribeResponse}}"
       handleAs="json">
     </core-ajax>
@@ -93,7 +95,7 @@
     },
 
     subscribe: function(channel) {
-      this.$.subscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
+      this.$.subscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
       this.$.subscribe_ajax.go();
     },
 
@@ -103,7 +105,7 @@
     },
 
     unsubscribe: function(channel) {
-      this.$.unsubscribe_ajax.body = {user: this.$.globals.data.user, channelname: channel.name, owner: channel.owner};
+      this.$.unsubscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
       this.$.unsubscribe_ajax.go();
     },
 

@@ -36,7 +36,7 @@
 	$conn->close();
 
 	$channel = array('name' => $channelname, 'owner' => $owner);
-	$resp = array('error' => $err, 'message' => $errMsg, 'channel' => $channel);
+	$resp = array('error' => $err, 'message' => $errMsg, 'channel' => $channel, 'user' => $user);
 
 	echo json_encode($resp);
 ?>

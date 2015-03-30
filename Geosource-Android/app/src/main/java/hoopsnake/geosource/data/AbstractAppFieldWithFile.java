@@ -3,6 +3,10 @@ package hoopsnake.geosource.data;
 import android.net.Uri;
 import android.view.View;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 
@@ -17,9 +21,9 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public AbstractAppFieldWithFile(FieldWithContent fieldToWrap, IncidentActivity activity)
+    public AbstractAppFieldWithFile(FieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity)
     {
-        super(fieldToWrap, activity);
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     /**
@@ -96,4 +100,18 @@ public abstract class AbstractAppFieldWithFile extends AbstractAppField {
      * @return return true if this field uses this type of file for its content, or false otherwise.
      */
     abstract boolean usesFilesOfType(Uri contentFileUri);
+
+
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        String uriString = in.readUTF();
+        if (!uriString.isEmpty())
+            contentFileUri = Uri.parse(uriString);
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (contentFileUri != null)
+            out.writeUTF(contentFileUri.toString());
+        else
+            out.writeUTF("");
+    }
 }

@@ -92,7 +92,10 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <channel-service id="channel_service"></channel-service>
+    <channel-service id="channel_service"
+      on-subscribe-response="{{subscribeResponse}}"
+      on-unsubscribe-response="{{unsubscribeResponse}}">
+    </channel-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop>
       <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
@@ -294,8 +297,10 @@
       }
       else {
         var channel = this.getChannel(detail.response.channel);
-        channel.isSubscriber = true;
-        this.updateSubscribedChannels(); 
+        console.log(channel);
+	channel.isSubscriber = true;
+        this.$.globals.data.user.subscriber.push(channel);
+        //this.updateSubscribedChannels();
         this.fire('filter-change');
       }
     },
@@ -316,7 +321,13 @@
       else {
         var channel = this.getChannel(detail.response.channel);
         channel.isSubscriber = false;
-        this.updateSubscribedChannels();   
+        for(var i=0; i<this.$.globals.data.user.subscriber.length; i++) {
+	  if(this.$.globals.data.user.subscriber[i].name == channel.name 
+	      && this.$.globals.data.user.subscriber[i].owner == channel.owner) {
+            this.$.globals.data.user.subscriber.splice(i, 1);
+	  }
+	}
+        //this.updateSubscribedChannels();   
         this.fire('filter-change');
       }
     },
