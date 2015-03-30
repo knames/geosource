@@ -5,7 +5,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 
 import ServerClientShared.Commands;
@@ -31,10 +30,6 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
     }
 
     protected SocketResult doInBackground(String... params) {
-        ObjectOutputStream outStream; //wrapped stream to client
-
-        ObjectInputStream inStream; //stream from client
-        Socket outSocket;
 
         channelName = params[0];
         channelOwner = params[1];
@@ -43,10 +38,12 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
         assertNotNull(channelOwner);
         assertNotNull(poster);
 
+        SocketWrapper socketWrapper;
+        ObjectOutputStream outStream; //wrapped stream to client
+        ObjectInputStream inStream; //stream from client
         try //create socket
         {
-            SocketWrapper socketWrapper = new SocketWrapper();
-            outSocket = socketWrapper.getOutSocket();
+            socketWrapper = new SocketWrapper();
             outStream = socketWrapper.getOut();
             inStream = socketWrapper.getIn();
         }
@@ -61,7 +58,6 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
@@ -73,13 +69,9 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
+
             if (fieldsToBeFilled == null)
                 return SocketResult.FAILED_FORMATTING;
-
-            inStream.close();
-            outStream.close();
-            outSocket.close();
-            Log.i(LOG_TAG, "Connection Closed");
         }
         catch (IOException e)
         {
@@ -90,7 +82,8 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
             e.printStackTrace();
 
             return SocketResult.CLASS_NOT_FOUND;
-
+        } finally {
+            socketWrapper.closeAll();
         }
 
         //TODO some of this code should maybe go on the ui thread.

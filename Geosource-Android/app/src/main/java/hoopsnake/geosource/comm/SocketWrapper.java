@@ -99,4 +99,23 @@ public class SocketWrapper {
             Log.e(LOG_TAG, "No Such Padding");
         }
     }
+
+    public void closeAll()
+    {
+        try {
+
+            if (out != null)
+                out.close();
+            if (in != null)
+                in.close();
+            if (outSocket != null)
+                outSocket.close();
+
+            Log.i(LOG_TAG, "connection closed.");
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            Log.e(LOG_TAG, "socket closing failed.");
+        }
+    }
 }

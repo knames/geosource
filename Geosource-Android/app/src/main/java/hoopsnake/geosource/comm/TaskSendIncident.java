@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +31,16 @@ import static junit.framework.Assert.assertTrue;
 public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void, SocketResult> {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
 
-    public CountDownLatch getContentCountDownLatch() {
-        return contentCountDownLatch;
-    }
+    SocketWrapper socketWrapper;
+    ObjectOutputStream outStream; //stream to client
+    ObjectInputStream inStream; //stream from client
+    AppIncident appIncidentToSend;
 
-    private CountDownLatch contentCountDownLatch;
+    private CountDownLatch contentSerializationCountDownLatch;
+
+    public CountDownLatch getContentSerializationCountDownLatch() {
+        return contentSerializationCountDownLatch;
+    }
 
     public TaskSendIncident(IncidentActivity activity)
     {
@@ -44,69 +48,79 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
     }
 
     protected SocketResult doInBackground(AppIncident... params) {
-        //TODO ping the server before serializing everything.
-        AppIncident appIncidentToSend = params[0];
-        LinkedList<AbstractAppFieldWithFile> l = new LinkedList<>();
+        appIncidentToSend = params[0];
+        LinkedList<AbstractAppFieldWithFile> listFileFieldsToSerialize = new LinkedList<>();
+
+        //Check if there are any fields to serialize.
         for (AppField field : appIncidentToSend.getFieldList())
         {
             assertFalse(!field.contentIsFilled() && field.isRequired());
+
             if (field instanceof AbstractAppFieldWithFile && field.contentIsFilled())
-            {
-                l.add((AbstractAppFieldWithFile) field);
+                listFileFieldsToSerialize.add((AbstractAppFieldWithFile) field);
+        }
+
+        //If there are any files to serialize, ping the server to make sure serializing isn't a waste of time.
+        //If the ping succeeds, go through with serialization.
+        if (!listFileFieldsToSerialize.isEmpty()) {
+            SocketResult initializeResult = initializeSocketConnection();
+            if (!initializeResult.equals(SocketResult.SUCCESS))
+                return initializeResult;
+
+            //Ping the server.
+            try {
+                Log.v(LOG_TAG, "pinging server.");
+
+                outStream.writeObject(Commands.IOCommand.PING);
+                outStream.flush();
+
+                Commands.IOCommand reply = (Commands.IOCommand) inStream.readObject();
+                if (!reply.equals(Commands.IOCommand.PING))
+                    return SocketResult.FAILED_CONNECTION;
+
+                Log.v(LOG_TAG, "ping succeeded.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return SocketResult.UNKNOWN_ERROR;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return SocketResult.CLASS_NOT_FOUND;
+            }
+            finally{
+                socketWrapper.closeAll();
+            }
+
+            //Serialize all the necessary files.
+            contentSerializationCountDownLatch = new CountDownLatch(listFileFieldsToSerialize.size());
+            for (AbstractAppFieldWithFile field : listFileFieldsToSerialize)
+                new TaskSetContentBasedOnFileUri(this).execute(field);
+
+            try {
+                contentSerializationCountDownLatch.await(MINUTES_TO_WAIT_FOR_FORMATTING, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+
+                saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
+                return SocketResult.FAILED_FORMATTING;
             }
         }
 
-        contentCountDownLatch = new CountDownLatch(l.size());
-
-        for (AbstractAppFieldWithFile field : l)
-            new TaskSetContentBasedOnFileUri(this).execute(field);
-
-        try {
-            contentCountDownLatch.await(MINUTES_TO_WAIT_FOR_FORMATTING, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-
-            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
-            return SocketResult.FAILED_FORMATTING;
-        }
-
-        ObjectOutputStream outStream; //wrapped stream to client
-
-        ObjectInputStream inStream; //stream from client
-        Socket outSocket;
+        //TODO ping the server before serializing everything.
 
 
         assertNotNull(appIncidentToSend);
 
-        try //create socket
-        {
-            SocketWrapper socketWrapper = new SocketWrapper();
-            outSocket = socketWrapper.getOutSocket();
-            outStream = socketWrapper.getOut();
-            inStream = socketWrapper.getIn();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-
-            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
-            return SocketResult.FAILED_CONNECTION;
-        }
-
+        SocketResult initializeResult = initializeSocketConnection();
+        if (!initializeResult.equals(SocketResult.SUCCESS))
+            return initializeResult;
 
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.SEND_INCIDENT);
             outStream.writeObject(appIncidentToSend.toIncident());
             outStream.flush();
             //TODO is a reply really not necessary?
-
-            inStream.close();
-            outStream.close();
-            outSocket.close();
-            Log.i(LOG_TAG, "Connection Closed");
         }
         catch (IOException e)
         {
@@ -114,6 +128,10 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
             saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.UNKNOWN_ERROR;
         }
+        finally {
+            socketWrapper.closeAll();
+        }
+
         //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
 //            catch (ClassNotFoundException e) {
 //                Log.e(LOG_TAG, "incoming class not found.");
@@ -147,7 +165,25 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
 
         File unsentIncidentFile = unsentIncident.getFile(activity);
 
+        //If the file is empty or does not exist, create it. (Otherwise it already exists, with the correct serialized incident inside.)
         if (unsentIncidentFile.length() == 0)
             FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, unsentIncidentFile.getAbsolutePath());
+    }
+
+    private SocketResult initializeSocketConnection()
+    {
+        try //create socket
+        {
+            socketWrapper = new SocketWrapper();
+            outStream = socketWrapper.getOut();
+            inStream = socketWrapper.getIn();
+
+            return SocketResult.SUCCESS;
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
+            return SocketResult.FAILED_CONNECTION;
+        }
     }
 }
