@@ -48,7 +48,7 @@
       min-width: 40px;
     }
 
-    #unfavorite {
+    .unfavorite {
       color: #FF6666;
     }
 
@@ -92,17 +92,10 @@
       </div>
       <div class="buttons" vertical layout>
         <paper-icon-button
-          id="favorite"
           icon="favorite"
           on-tap="{{favoriteTapped}}"
-          hidden?="{{!$.globals.data.user || post.favorite}}">
-        </paper-icon-button>
-
-        <paper-icon-button
-          id="unfavorite"
-          icon="favorite"
-          on-tap="{{favoriteTapped}}"
-          hidden?="{{!$.globals.data.user || !post.favorite}}">
+	  class="{{ {unfavorite: post.favorite} | tokenList}}"
+          hidden?="{{!$.globals.data.user}}">
         </paper-icon-button>
 
         <paper-icon-button
