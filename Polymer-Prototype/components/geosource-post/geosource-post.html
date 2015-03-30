@@ -260,7 +260,6 @@
     },
 
     postChanged: function() {
-      this.isFavorite();
       this.checkDeletePermission();
       this.fire('post-loaded');
     },
@@ -271,12 +270,10 @@
 
     favorite: function() {
       this.postSummary.favorite = !this.postSummary.favorite;
-      this.isFavorite();
       this.fire('favorite-click');
     },
 
     userChanged: function() {
-      this.isFavorite();
       this.checkDeletePermission();
     },
 
