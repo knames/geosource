@@ -156,7 +156,7 @@
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
-          <paper-icon-button id="favorite" icon="favorite-outline" on-tap="{{favorite}}" hidden?="{{!$.globals.data.user}}"></paper-icon-button>
+          <paper-icon-button id="favorite" icon="{{ {'favorite-outline': !postSummary.favorite, 'favorite': postSummary.favorite} | tokenList}}" on-tap="{{favorite}}" hidden?="{{!$.globals.data.user}}"></paper-icon-button>
           <paper-icon-button id="delete" icon="delete" on-tap="{{delete}}" hidden?="{{!deletePermission}}"></paper-icon-button>
         </div>
       </div>
@@ -267,18 +267,6 @@
 
     close: function() {
       this.fire('close');
-    },
-
-    isFavorite: function() {
-
-      var user = this.$.globals.data.user;
-
-      if(user && this.postSummary && this.postSummary.favorite) {
-        this.$.favorite.icon = "favorite";
-      }
-      else {
-        this.$.favorite.icon = "favorite-outline";
-      }
     },
 
     favorite: function() {
