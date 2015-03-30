@@ -22,10 +22,8 @@ import static junit.framework.Assert.assertNotNull;
  * @precond when calling execute(), must use precisely params as shown: execute(String channelName, String channelOwner, String poster). (No null args).
  * @postcond when execute() is called, receive a new incident spec from the server, detailing what the fields are that need to be filled out.
  */
-public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, Void, SocketResult> {
-
+public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Void, SocketResult> {
     String channelName, channelOwner, poster;
-    public static final String LOG_TAG = "geosource comm";
 
     public TaskReceiveIncidentSpec(IncidentActivity activity)
     {
@@ -110,7 +108,7 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
                 LOG_TAG);
 
         if (result.equals(SocketResult.SUCCESS)) {
-            activity.renderIncidentFromScratch();
+            activity.renderIncidentFromScratch(true);
         }
     }
 }

@@ -87,4 +87,70 @@ public class FileIO {
 
         return object;
     }
+
+    /**
+     * @precond none of the params are null.
+     * @param fileName the absolute fileName
+     * @return the object from the given file, or null if no such object exists.
+     */
+    public static Serializable readObjectFromFileNoContext(String fileName) {
+
+        ObjectInputStream objectIn = null;
+        Serializable object = null;
+        try {
+
+            FileInputStream fileIn = new FileInputStream(fileName);
+            objectIn = new ObjectInputStream(fileIn);
+            object = (Serializable) objectIn.readObject();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "file " + fileName + " not found.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (objectIn != null) {
+                try {
+                    objectIn.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return object;
+    }
+
+    /**
+     * @precond none of the params are null.
+     * @param fileName the relative fileName (absolute path will be provided by context.)
+     * @param object a serializable object.
+     * @return true if the object was written successfully, false otherwise.
+     */
+    public static boolean writeObjectToFileNoContext(Serializable object, String fileName) {
+
+        assertNotNull(object);
+        ObjectOutputStream objectOut = null;
+        try {
+
+            FileOutputStream fileOut = new FileOutputStream(fileName);
+            objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(object);
+            fileOut.flush();
+            fileOut.getFD().sync();
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (objectOut != null) {
+                try {
+                    objectOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

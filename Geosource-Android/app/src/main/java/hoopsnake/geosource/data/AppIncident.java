@@ -1,9 +1,11 @@
 package hoopsnake.geosource.data;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ServerClientShared.Incident;
 import hoopsnake.geosource.AppGeotagWrapper;
+import hoopsnake.geosource.IncidentActivity;
 
 /**
  * Created by wsv759 on 08/03/15.
@@ -68,4 +70,15 @@ public interface AppIncident
      * @param geotag
      */
     public void setGeotag(AppGeotagWrapper geotag);
+
+    /**
+     *
+     * @return the file associated with this incident, for storage purposes. Not to be confused with IncidentActivity.FILENAME_CUR_INCIDENT,
+     * which contains a rotating copy of the current unfinished incident.
+     *
+     * If this incident had no file prior to this call, a new file is returned. Otherwise the associated file is returned.
+     *
+     * @param activity needed to resolve the absolute path name.
+     */
+    public File getFile(IncidentActivity activity);
 }

@@ -1,5 +1,8 @@
 package hoopsnake.geosource.data;
 
+import android.content.Context;
+
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -28,6 +31,8 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class AppIncidentWithWrapper implements AppIncident, Serializable {
 
+    private static final String PREFIX_RELATIVE_FILEPATH = "incident_";
+
     /**
      * the list of app-side fields contained within this incident.
      */
@@ -50,6 +55,7 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
         ArrayList<FieldWithContent> fieldWithContentList = incident.getFieldList();
         fieldList = new ArrayList<AppField>(fieldWithContentList.size());
 
+        int fieldPos = 0;
         for (FieldWithContent fwc : fieldWithContentList)
         {
             //AbstractAppField is guaranteed to keep the fieldWithContent reference
@@ -59,25 +65,26 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
             switch(fwc.getType())
             {
                 case ImageFieldWithoutContent.TYPE:
-                    newFieldWrapper = new AppImageField((ImageFieldWithContent) fwc, activity);
+                    newFieldWrapper = new AppImageField((ImageFieldWithContent) fwc, fieldPos, activity);
                     break;
                 case StringFieldWithoutContent.TYPE:
-                    newFieldWrapper = new AppStringField((StringFieldWithContent) fwc, activity);
+                    newFieldWrapper = new AppStringField((StringFieldWithContent) fwc, fieldPos, activity);
                     break;
                 case VideoFieldWithoutContent.TYPE:
-                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) fwc, activity);
+                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) fwc, fieldPos, activity);
                     break;
                 case AudioFieldWithoutContent.TYPE:
-                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) fwc, activity);
+                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) fwc, fieldPos, activity);
                     break;
                 case GeotagFieldWithoutContent.TYPE:
-                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) fwc, activity);
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) fwc, fieldPos, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fwc.getType() + ".");
             }
 
             fieldList.add(newFieldWrapper);
+            fieldPos++;
         }
     }
 
@@ -110,6 +117,7 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
         fieldList = new ArrayList<AppField>(listSize);
         ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<FieldWithContent>(listSize);
 
+        int fieldPos = 0;
         for (FieldWithoutContent fieldWithoutContent : fieldWithoutContentList)
         {
             FieldWithContent newField;
@@ -123,23 +131,23 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
             {
                 case ImageFieldWithoutContent.TYPE:
                     newField = new ImageFieldWithContent((ImageFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppImageField((ImageFieldWithContent) newField, activity);
+                    newFieldWrapper = new AppImageField((ImageFieldWithContent) newField, fieldPos, activity);
                     break;
                 case StringFieldWithoutContent.TYPE:
                     newField = new StringFieldWithContent((StringFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppStringField((StringFieldWithContent) newField, activity);
+                    newFieldWrapper = new AppStringField((StringFieldWithContent) newField, fieldPos, activity);
                     break;
                 case VideoFieldWithoutContent.TYPE:
                     newField = new VideoFieldWithContent((VideoFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) newField, activity);
+                    newFieldWrapper = new AppVideoField((VideoFieldWithContent) newField, fieldPos, activity);
                     break;
                 case AudioFieldWithoutContent.TYPE:
                     newField = new AudioFieldWithContent((AudioFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField, activity);
+                    newFieldWrapper = new AppAudioField((AudioFieldWithContent) newField, fieldPos, activity);
                     break;
                 case GeotagFieldWithoutContent.TYPE:
                     newField = new GeotagFieldWithContent((GeotagFieldWithoutContent) fieldWithoutContent);
-                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) newField, activity);
+                    newFieldWrapper = new AppGeotagField((GeotagFieldWithContent) newField, fieldPos, activity);
                     break;
                 default:
                     throw new RuntimeException("Invalid type " + fieldWithoutContent.getType() + ".");
@@ -148,9 +156,9 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
             //These now refer to the same underlying fields in each item. They are parallel lists.
             fieldWithContentList.add(newField);
             fieldList.add(newFieldWrapper);
+            fieldPos++;
         }
 
-        //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
         wrappedIncident = new Incident(fieldWithContentList, channelName, channelOwner, poster);
     }
 
@@ -173,17 +181,6 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
     /* Because of the way this AppIncident implementation is constructed, the underlying wrappedIncident can just be returned directly. */
     @Override
     public Incident toIncident() {
-        //TODO delete this if the below todo works.
-//        ArrayList<FieldWithContent> fieldWithContentList = new ArrayList<FieldWithContent>(fieldList.size());
-//
-//        for (AppField appField : fieldList)
-//        {
-//            fieldWithContentList.add(appField.toFieldWithContent());
-//        }
-//
-//        return new Incident(fieldWithContentList);
-
-        //TODO test to see if this works. Do the references in the fieldWithContentList refer to the same fields as the references in fieldList?
         return wrappedIncident;
     }
 
@@ -215,7 +212,23 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
 
     @Override
     public void setGeotag(AppGeotagWrapper geotag) {
-        AppGeotagField geotagField = (AppGeotagField) fieldList.get(Incident.POSITION_GEOTAG_FIELD);
+        AppGeotagField geotagField = getGeotagField();
         geotagField.registerForGeotag(geotag);
+    }
+
+    @Override
+    public File getFile(IncidentActivity activity) {
+        if (!isCompletelyFilledIn())
+            return null;
+
+        AppGeotagField geotagField = getGeotagField();
+        String relativeFilePath = PREFIX_RELATIVE_FILEPATH + geotagField.getTimestampStringRepresentation();
+
+        return new File(activity.getDir(IncidentActivity.DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE), relativeFilePath);
+    }
+
+    private AppGeotagField getGeotagField()
+    {
+        return (AppGeotagField) fieldList.get(Incident.POSITION_GEOTAG_FIELD);
     }
 }

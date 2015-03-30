@@ -21,8 +21,8 @@ import hoopsnake.geosource.R;
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
 public class AppStringField extends AbstractAppField{
-    public AppStringField(StringFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppStringField(StringFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override

@@ -12,6 +12,7 @@
     <string name="resume_incident_creation">Resume Creating Incident</string>
     <string name="submit_incident">Submit</string>
     <string name="cancel_incident">Cancel</string>
+    <string name="incident_lost_media_saved">Unable to retrieve current incident. Any created media files were saved.</string>
 
     <string name="app_sharedpref_file_key">geosource shared pref</string>
     <string name="prompt_enter_text">Click to enter text.</string>
@@ -30,10 +31,11 @@
 
     <string name="failed_to_capture_image">Failed to capture image.</string>
 
-    <string name="content_view_weight">0.8</string>
+    <string name="content_view_weight">4</string>
     <string name="poster_label">incident author:</string>
     <string name="owner_label">channel owner:</string>
     <string name="channel_name_label">channel name:</string>
+    <string name="star_means_required">(* = required)</string>
     <!--&lt;!&ndash;Anam's stuff &ndash;&gt;-->
     <!--<string name="menu_settings">Settings</string>-->
     <!--<string name="title_activity_main">MainActivity</string>-->

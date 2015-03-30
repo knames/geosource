@@ -33,8 +33,8 @@ import static junit.framework.Assert.assertNotNull;
 public class AppImageField extends AbstractAppFieldWithFile{
     private ImageView iv = null;
 
-    public AppImageField(ImageFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppImageField(ImageFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
@@ -113,6 +113,8 @@ public class AppImageField extends AbstractAppFieldWithFile{
         private final WeakReference<ImageView> imageViewReference;
         private int data = 0;
 
+        private static final int IMAGE_SCALED_HEIGHT = 384;
+        private static final int IMAGE_MAX_SCALED_WIDTH = 512;
         /**
          *
          * @param imageView the view that will display the resulting decoded bitmap.
@@ -132,8 +134,37 @@ public class AppImageField extends AbstractAppFieldWithFile{
             String imgFilePath = params[0];
             assertNotNull(imgFilePath);
             Bitmap b = BitmapFactory.decodeFile(imgFilePath);
-            Log.d(LOG_TAG, "decoded bitmap for " + imgFilePath);
-            return b;
+            Log.v(LOG_TAG, "decoded bitmap for " + imgFilePath);
+
+            //Scaling.
+            //TODO this could probably be replaced with the built-in thumbnail functionality, but I think it just works.
+
+            int unscaledHeight = b.getHeight();
+            int unscaledWidth = b.getWidth();
+
+            Log.d(LOG_TAG, "unscaledHeight: " + unscaledHeight);
+            Log.d(LOG_TAG, "unscaledWidth: " + unscaledWidth);
+
+            //if the image is already smaller than the scaled dimensions, just return it.
+            if (unscaledHeight <= IMAGE_SCALED_HEIGHT && unscaledWidth <= IMAGE_MAX_SCALED_WIDTH)
+                return b;
+
+            //Default to the given scaled height. If the scaled width is then too wide,
+            //set the scaling to match the maximum scaled width instead (height will be less than originally desired.)
+            int scaledHeight = IMAGE_SCALED_HEIGHT;
+            double scalingFactor = scaledHeight / (double) unscaledHeight;
+            int scaledWidth = (int) (0.5 + unscaledWidth * scalingFactor); //+0.5 rounds to nearest int rather than down.
+
+            if (scaledWidth > IMAGE_MAX_SCALED_WIDTH)
+            {
+                scaledWidth = IMAGE_MAX_SCALED_WIDTH;
+                scalingFactor = scaledWidth / (double) unscaledWidth;
+                scaledHeight = (int) (0.5 + unscaledHeight * scalingFactor); //+0.5 rounds to nearest int rather than down.
+            }
+
+            Log.d(LOG_TAG, "scaledHeight: " + scaledHeight);
+            Log.d(LOG_TAG, "scaledWidth: " + scaledWidth);
+            return Bitmap.createScaledBitmap(b, scaledWidth, scaledHeight, true);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.

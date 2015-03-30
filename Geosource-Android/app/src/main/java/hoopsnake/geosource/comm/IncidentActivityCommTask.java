@@ -13,10 +13,12 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 15/03/15.
  */
-public abstract class IncidentActivitySocketTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public abstract class IncidentActivityCommTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+    public static final String LOG_TAG = "geosource comm";
+
     IncidentActivity activity;
 
-    public IncidentActivitySocketTask(IncidentActivity activity)
+    public IncidentActivityCommTask(IncidentActivity activity)
     {
         this.activity = activity;
         assertNotNull(activity);

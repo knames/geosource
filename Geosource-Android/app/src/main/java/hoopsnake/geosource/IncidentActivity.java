@@ -24,6 +24,7 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
+import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -43,20 +44,14 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean clickable = true;
     private final ReentrantLock clickableLock = new ReentrantLock();
 
-    private final AppGeotagWrapper appGeotagWrapper = new AppGeotagWrapper();
-
     private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
     public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
     public static final String PARAM_STRING_POSTER = "poster";
 
-    public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident";
+    public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident_exists";
     private static final String FILENAME_CUR_INCIDENT = "cur_incident_object";
-    private static final String DIRNAME_INCIDENTS_YET_TO_SEND = "incidents_yet_to_send";
-    private static final String FILE_PREFIX_INCIDENT_YET_TO_SEND = "incident_yet_to_send_";
-
-    /** The LinearLayout that displays all the fields of the incident. */
-    private LinearLayout incidentDisplay;
+    public static final String DIRNAME_INCIDENTS_YET_TO_SEND = "incidents_yet_to_send";
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -66,7 +61,7 @@ public class IncidentActivity extends ActionBarActivity {
     }
 
     /**
-     * The position of the currently-selected field in the incidentDisplay.
+     * The position of the currently-selected field in the incidentFieldsDisplay.
      * This is recorded so that different activities/fragments can be called whenever a field is clicked,
      * and the corresponding field can be remembered upon their return.
      */
@@ -94,34 +89,28 @@ public class IncidentActivity extends ActionBarActivity {
         setContentView(R.layout.activity_incident);
         assertNull(incident);
 
-        incidentDisplay = (LinearLayout) findViewById(R.id.incident_holder);
-
         Bundle extras = getIntent().getExtras();
 
-        if ((extras == null || extrasAreEmpty(extras)) && curIncidentExistsInFileSystem(this))
-            initializeAppIncidentFromPreexistingState();
-        else if (extras != null)
-            initializeAppIncidentFromServer(extras);
+        if (extras == null || extrasAreEmpty(extras)) {
+            //If we are expecting to retrieve the incident from a pre-existing state, but we can't, finish the activity.
+            if (!initializeAppIncidentFromPreexistingState()) {
+                saveIncidentState();
+                leaveDueToLostIncident();
+                return;
+            }
+        }
         else
-            throw new RuntimeException("invalid onCreate scenario for IncidentActivity.");
+            initializeAppIncidentFromServer(extras);
 
-//        // TODO If folder is not empty, and we are connected to the internet, send those files!
-//        File savedIncidentsDir = getDir(DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE);
-//        File[] savedIncidentFiles = savedIncidentsDir.listFiles();
-//
-//        assertNotNull(savedIncidentFiles);
-//        if (savedIncidentFiles.length > 0) {
-//            File activityBaseFilesDir = getFilesDir();
-//            activityBaseFilesDir.getAbsolutePath();
-//            for (File incidentFileToSend : savedIncidentFiles) {
-//                AppIncident incidentToSend = (AppIncident) FileIO.readObjectFromFile(this, incidentFileToSend.getAbsolutePath());
-//            }
-//        }
+
+        //If folder is not empty, and we are connected to the internet, send those files!
+        new TaskSendAnyStoredIncidents(this).execute();
     }
 
-    private void initializeAppIncidentFromPreexistingState()
+    private boolean initializeAppIncidentFromPreexistingState()
     {
-        retrieveIncidentState();
+        if (!retrieveIncidentState())
+            return false;
 
         assertNotNull(incident);
         assertNotNull(incident.toIncident());
@@ -130,14 +119,13 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(incident.getChannelOwner());
         assertNotNull(incident.getIncidentAuthor());
 
-        renderIncidentFromScratch();
+        renderIncidentFromScratch(true);
+
+        return true;
     }
 
     private void initializeAppIncidentFromServer(Bundle extras)
     {
-        //get a geotag as fast as possible.
-        appGeotagWrapper.update(IncidentActivity.this);
-
         String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
         String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
         String poster = extras.getString(PARAM_STRING_POSTER);
@@ -154,7 +142,7 @@ public class IncidentActivity extends ActionBarActivity {
         // etc.
 
         incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
-        renderIncidentFromScratch();
+        renderIncidentFromScratch(true);
     }
 
     private boolean extrasAreEmpty(Bundle extras)
@@ -168,35 +156,44 @@ public class IncidentActivity extends ActionBarActivity {
     }
 
     /**
-     * @precond the current incident, and all its fields, and the incidentDisplay, are not null.
+     * @precond the current incident, and all its fields, and the incidentFieldsDisplay, are not null.
      * @postcond each field's custom view is added to the linear layout, replacing all the old
      * views in the linear layout (if they existed).
      *
      * IMPORTANT: All views are given a tag that is equal to their position in the linear layout.
      * They must preserve this tag, as IncidentActivity relies upon it.
      */
-    public void renderIncidentFromScratch()
+    public void renderIncidentFromScratch(boolean isFirstTime)
     {
         assertNotNull(incident);
         assertNotNull(incident.getFieldList());
-        assertNotNull(incidentDisplay);
 
-        //TODO grosssss... this accounts for refilling an incident from shared preferences, but man...
-        if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled())
-            incident.setGeotag(appGeotagWrapper);
+        if (isFirstTime) {
+            LinearLayout incidentMetadataDisplay = (LinearLayout) findViewById(R.id.incident_metadata_holder);
+            assertNotNull(incidentMetadataDisplay);
+            //Fill in the author, channel, and channel owner on the UI.
+            TextView authorView = (TextView) incidentMetadataDisplay.getChildAt(1);
+            authorView.setText(authorView.getText() + " " + incident.getIncidentAuthor());
+            TextView channelNameView = (TextView) incidentMetadataDisplay.getChildAt(2);
+            channelNameView.setText(channelNameView.getText() + " " + incident.getChannelName());
+            TextView channelOwnerView = (TextView) incidentMetadataDisplay.getChildAt(3);
+            channelOwnerView.setText(channelOwnerView.getText() + " " + incident.getChannelOwner());
+        }
 
-        //TODO this causes problems by removing the views defined in XML, and I don't think the incident ever needs to be re-rendered anyway.
-//        incidentDisplay.removeAllViews();
+        LinearLayout incidentFieldsDisplay = (LinearLayout) findViewById(R.id.incident_fields_holder);
+        assertNotNull(incidentFieldsDisplay);
 
-        //Fill in the author, channel, and channel owner on the UI.
-        TextView authorView = (TextView) incidentDisplay.getChildAt(1);
-        authorView.setText(authorView.getText() + " " + incident.getIncidentAuthor());
-        TextView channelNameView = (TextView) incidentDisplay.getChildAt(2);
-        channelNameView.setText(channelNameView.getText() + " " + incident.getChannelName());
-        TextView channelOwnerView = (TextView) incidentDisplay.getChildAt(3);
-        channelOwnerView.setText(channelOwnerView.getText() + " " + incident.getChannelOwner());
+        //TODO grosssss... this accounts for refilling an incident from shared preferences, but man... at least it could be put in a separate function.
+        if (!incident.getFieldList().get(Incident.POSITION_GEOTAG_FIELD).contentIsFilled()) {
+            AppGeotagWrapper geotagWrapper = new AppGeotagWrapper();
+            incident.setGeotag(geotagWrapper);
+            geotagWrapper.update(this);
+        }
 
-        int i = 0;
+        if (!isFirstTime)
+            incidentFieldsDisplay.removeAllViews();
+
+        //Add the views for each field.
         for (AppField field : incident.getFieldList())
         {
             assertNotNull(field);
@@ -204,10 +201,7 @@ public class IncidentActivity extends ActionBarActivity {
             View v = field.getFieldViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             assertNotNull(v);
 
-            incidentDisplay.addView(v);
-            //All views are given a tag that is equal to their position in the linear layout.
-            v.setTag(i);
-            i++;
+            incidentFieldsDisplay.addView(v);
         }
     }
 
@@ -250,7 +244,6 @@ public class IncidentActivity extends ActionBarActivity {
             new TaskSendIncident(IncidentActivity.this).execute(incident);
 
             setIncident(null);
-//            saveIncidentState();
             setResult(RESULT_OK);
             finish();
         }
@@ -276,10 +269,6 @@ public class IncidentActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setIncident(null);
-//                        saveIncidentState();
-//                        Intent intent = IncidentActivity.this.getIntent();
-//                        intent.putExtra("SOMETHING", false);
-//                        IncidentActivity.this.setResult(RESULT_CANCELED, intent);
                         IncidentActivity.this.finish();
                     }
 
@@ -368,8 +357,26 @@ public class IncidentActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
-        if (incident == null)
-            retrieveIncidentState();
+        //TODO save things like image bitmaps that have been created so they don't have to be regenerated each time. Basically, save incident state properly.
+        if (incident == null && !retrieveIncidentState()) {
+            leaveDueToLostIncident();
+        }
+
+        renderIncidentFromScratch(false);
+    }
+
+    /**
+     * Incident state not guaranteed to be saved during execution of this function. Calling method is response for that.
+     * (It is done automatically onPause() so there is no need to double-tap.)
+     */
+    private void leaveDueToLostIncident()
+    {
+        String msg = getString(R.string.incident_lost_media_saved);
+        Log.e(LOG_TAG, msg);
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     /**
@@ -402,9 +409,9 @@ public class IncidentActivity extends ActionBarActivity {
         else
         {
             editor.putBoolean(SHAREDPREF_CUR_INCIDENT_EXISTS, false);
-            String msg = "Current incident was lost.";
+            String msg = getString(R.string.incident_lost_media_saved);
             Log.e(LOG_TAG, msg);
-            Toast.makeText(this, msg + " Any created media files were saved.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
 
         editor.commit();
@@ -412,18 +419,29 @@ public class IncidentActivity extends ActionBarActivity {
 
     /**
      * @precond incident == null. Otherwise this method should not be called as you already have an incident!
+     * @postcond
      * Retrieve the current incident state, by deserializing it from the file saved to by {@link #saveIncidentState()}.
-     * If there is no current incident to restore, this method does nothing.
+     * The incident field is populated with the pre-existing one.
+     * If there is no current incident to restore, this method returns false, and incident remains null.
      */
-    private void retrieveIncidentState()
+    private boolean retrieveIncidentState()
     {
         assertNull(incident);
 
         if (curIncidentExistsInFileSystem(this)) {
             incident = (AppIncident) FileIO.readObjectFromFile(this, FILENAME_CUR_INCIDENT);
+
+            //If we couldn't retrieve the incident, we have to return to the main screen. :(
+            if (incident == null)
+                return false;
+
             for (AppField field : incident.getFieldList())
                 field.setActivity(this);
+
+            return true;
         }
+
+        return false;
     }
 
     /**

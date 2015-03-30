@@ -15,6 +15,9 @@ import hoopsnake.geosource.IncidentActivity;
  * underlying Field behaviour.
  *
  * All implementations must implement Serializable.
+ *
+ * GUARANTEE: Any View produced by an appField that may launch a new activity or fragment has its tag (view.getTag())
+ * set to equal the view's position in the field list.
  */
 public interface AppField {
 
@@ -35,6 +38,14 @@ public interface AppField {
      * @return true if this is a required field, false otherwise.
      */
     public boolean isRequired();
+
+//    /**
+//     *
+//     * @precond this field's view has already been initialized in the UI, so whatever view it uses is not null.
+//     * @postcond Set the position of this field in the fieldList, so that it knows its own position.
+//     * @param position the numbered position in the fieldList for this Field.
+//     */
+//    public void setPositionInFieldList(int position);
 
     /**
      *

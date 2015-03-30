@@ -2,11 +2,13 @@ package hoopsnake.geosource;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import ServerClientShared.Geotag;
 import hoopsnake.geosource.data.AppGeotagField;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
+import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesWithFallbackProvider;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -42,8 +44,18 @@ public class AppGeotagWrapper {
     public void update(final Context context) {
         assertNotNull(context);
         wrappedGeotag.setTimestamp(System.currentTimeMillis());
+
+        //TODO delete this stuff.
+//        LocationProvider provider;
+//        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+//        if(status == ConnectionResult.SUCCESS) {
+//            provider = new Go
+//        }
+        Log.v(LOG_TAG, "attempting to determine device's location.");
         SmartLocation.with(context).location()
                 .oneFix()
+                //reverts to locationManager if no google play services available.
+                .provider(new LocationGooglePlayServicesWithFallbackProvider(context))
                 .start(new OnLocationUpdatedListener() {
 
                     @Override
@@ -51,8 +63,13 @@ public class AppGeotagWrapper {
                         wrappedGeotag.setLatitude(location.getLatitude());
                         wrappedGeotag.setLongitude(location.getLongitude());
 
-                        if (registeredField != null)
+                        String logMsg = "Geotag has been set";
+                        if (registeredField != null) {
                             registeredField.onContentUpdated();
+                            logMsg += " for registered field.";
+                        }
+
+                        Log.v(LOG_TAG, logMsg);
                     }
                 });
     }

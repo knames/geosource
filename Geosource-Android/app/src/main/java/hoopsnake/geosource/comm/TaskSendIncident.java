@@ -2,6 +2,7 @@ package hoopsnake.geosource.comm;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,22 +12,25 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import ServerClientShared.Commands;
+import hoopsnake.geosource.FileIO;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.data.AbstractAppFieldWithFile;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
+import hoopsnake.geosource.data.AppIncidentWithWrapper;
 import hoopsnake.geosource.data.TaskSetContentBasedOnFileUri;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by wsv759 on 19/02/15.
  * Task to send a new completed incident to the server.
  */
-public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Void, SocketResult> {
-    public static final String LOG_TAG = "geosource comm";
+public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void, SocketResult> {
+    private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
 
     public CountDownLatch getContentCountDownLatch() {
         return contentCountDownLatch;
@@ -40,7 +44,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
     }
 
     protected SocketResult doInBackground(AppIncident... params) {
-        //TODO serialize everything before sending everything.
+        //TODO ping the server before serializing everything.
         AppIncident appIncidentToSend = params[0];
         LinkedList<AbstractAppFieldWithFile> l = new LinkedList<>();
         for (AppField field : appIncidentToSend.getFieldList())
@@ -55,15 +59,14 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
         contentCountDownLatch = new CountDownLatch(l.size());
 
         for (AbstractAppFieldWithFile field : l)
-        {
             new TaskSetContentBasedOnFileUri(this).execute(field);
-        }
 
         try {
-            contentCountDownLatch.await(2, TimeUnit.MINUTES);
+            contentCountDownLatch.await(MINUTES_TO_WAIT_FOR_FORMATTING, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
 
+            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.FAILED_FORMATTING;
         }
 
@@ -86,6 +89,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
         {
             e.printStackTrace();
 
+            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.FAILED_CONNECTION;
         }
 
@@ -107,7 +111,7 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
         catch (IOException e)
         {
             e.printStackTrace();
-
+            saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.UNKNOWN_ERROR;
         }
         //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
@@ -128,8 +132,22 @@ public class TaskSendIncident extends IncidentActivitySocketTask<AppIncident, Vo
                 result,
                 activity,
                 LOG_TAG);
+    }
 
-        if (result.equals(SocketResult.SUCCESS))
-            activity.finish();
+    private void saveUnsentIncidentToFileSystemIfNecessary(AppIncident unsentIncident)
+    {
+        assertTrue(unsentIncident.isCompletelyFilledIn());
+
+        //Don't serialize the big file content byte arrays!
+        for (AppField field : unsentIncident.getFieldList())
+        {
+            if (field instanceof AbstractAppFieldWithFile)
+                field.setContent(null);
+        }
+
+        File unsentIncidentFile = unsentIncident.getFile(activity);
+
+        if (unsentIncidentFile.length() == 0)
+            FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, unsentIncidentFile.getAbsolutePath());
     }
 }
