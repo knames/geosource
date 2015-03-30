@@ -65,7 +65,11 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
         if (!listFileFieldsToSerialize.isEmpty()) {
             SocketResult initializeResult = initializeSocketConnection();
             if (!initializeResult.equals(SocketResult.SUCCESS))
+            {
+                saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
                 return initializeResult;
+            }
+
 
             //Ping the server.
             try {
@@ -75,15 +79,18 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
                 outStream.flush();
 
                 Commands.IOCommand reply = (Commands.IOCommand) inStream.readObject();
-                if (!Commands.IOCommand.PING.equals(reply))
+                if (!Commands.IOCommand.PING.equals(reply)) {
+                    saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
                     return SocketResult.FAILED_CONNECTION;
-
+                }
                 Log.v(LOG_TAG, "ping succeeded.");
             } catch (IOException e) {
                 e.printStackTrace();
+                saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
                 return SocketResult.UNKNOWN_ERROR;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
                 return SocketResult.CLASS_NOT_FOUND;
             }
             finally{
@@ -128,10 +135,6 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
             saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.UNKNOWN_ERROR;
         }
-        finally {
-            socketWrapper.closeAll();
-        }
-
         //TODO confirm this is not necessary (it is associated with receiving a reply, that currently isn't happening).
 //            catch (ClassNotFoundException e) {
 //                Log.e(LOG_TAG, "incoming class not found.");
@@ -140,6 +143,10 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
 //                return SocketResult.CLASS_NOT_FOUND;
 //
 //            }
+        finally {
+            socketWrapper.closeAll();
+        }
+
 
         return SocketResult.SUCCESS;
     }
@@ -166,8 +173,13 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
         File unsentIncidentFile = unsentIncident.getFile(activity);
 
         //If the file is empty or does not exist, create it. (Otherwise it already exists, with the correct serialized incident inside.)
-        if (unsentIncidentFile.length() == 0)
-            FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, unsentIncidentFile.getAbsolutePath());
+        if (unsentIncidentFile.length() == 0) {
+            boolean fileWasWritten = FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, unsentIncidentFile.getAbsolutePath());
+            if (fileWasWritten)
+                Log.i(LOG_TAG, "unsent incident saved to " + unsentIncidentFile.getAbsolutePath());
+            else
+                Log.e(LOG_TAG, activity.getString(R.string.incident_lost_media_saved));
+        }
     }
 
     private SocketResult initializeSocketConnection()

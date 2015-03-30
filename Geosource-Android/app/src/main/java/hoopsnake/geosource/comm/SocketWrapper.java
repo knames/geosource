@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -33,6 +33,7 @@ public class SocketWrapper {
     //TODO change the IP address to come from a config file, or some other option.
     private String ipaddress = "www.okenso.com";
 
+    private static final int TIMEOUT_TIME_MILLIS = 10000;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
@@ -68,7 +69,8 @@ public class SocketWrapper {
             Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
             desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            outSocket = new Socket(InetAddress.getByName(ipaddress), portNum);
+            outSocket = new Socket();
+            outSocket.connect(new InetSocketAddress(ipaddress, portNum), TIMEOUT_TIME_MILLIS);
             if (outSocket.isConnected())
                 Log.i(LOG_TAG,"Connection Established");
 

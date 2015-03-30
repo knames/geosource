@@ -45,12 +45,6 @@ public class AppGeotagWrapper {
         assertNotNull(context);
         wrappedGeotag.setTimestamp(System.currentTimeMillis());
 
-        //TODO delete this stuff.
-//        LocationProvider provider;
-//        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-//        if(status == ConnectionResult.SUCCESS) {
-//            provider = new Go
-//        }
         Log.v(LOG_TAG, "attempting to determine device's location.");
         SmartLocation.with(context).location()
                 .oneFix()
