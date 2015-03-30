@@ -60,6 +60,10 @@
         text-align: left;
         margin-right: 30px;
       }
+      .channel-info-settings {
+        margin-right: 70px;
+      }
+
       .channel-owner {
         color: #636363;
         text-transform: uppercase;
@@ -158,7 +162,7 @@
       <template repeat="{{channel in searchedChannels}}" id="searched_channels">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
-              <div layout vertical flex class="channel-info">
+              <div layout vertical flex class="channel-info {{ {channel-info-settings: (!$.globals.data.user || (!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)} | tokenList}}">
                 <div class="channel-name">{{channel.name}}</div>
                 <div class="channel-owner">Created by {{channel.owner}}</div>
               </div>
