@@ -82,7 +82,9 @@
           //remain constant between viewers and sessions.
           var num = (this.posts[i].pid * 43 % 200);
           this.posts[i].thumbnail = "/media/thumbnails/default/" + num + ".png";
-        }
+        } else {
+	  this.posts[i].thumbnail = "/media/thumb.php?src=." + this.posts[i].thumbnail.replace("/media", "") + "&size=70x70";
+	}
       }
 
     },
