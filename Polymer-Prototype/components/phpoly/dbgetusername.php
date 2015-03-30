@@ -80,7 +80,8 @@
  		$result = $mysqli->query("SELECT ufp_chname, ufp_chowner, ufp_number FROM users_fav_posts WHERE ufp_username = \"$uname\";");
  		$rows = array();
 		while($r = mysqli_fetch_assoc($result)){
-			$rows[] = array('channel'=>$r['ufp_chname'],'owner' => $r['ufp_chowner'],'number'=>$r['ufp_number']);
+			$channel[] = array('name'=>$r['ufp_chname'], 'owner'=>$r['ufp_chowner']);
+			$rows[] = array('channel'=>$channel[0], 'pid'=>$r['ufp_number']);
 		}
 		$favs = $rows;
 

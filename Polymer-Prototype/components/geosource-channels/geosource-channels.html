@@ -12,7 +12,7 @@
 
 <link rel="import" href="../geosource-services/channel-service.html">
 
-<polymer-element name="geosource-channels" attributes="channels">
+<polymer-element name="geosource-channels">
 
   <template>
 
@@ -92,7 +92,10 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <channel-service id="channel_service" channels="{{channels}}"></channel-service>
+    <channel-service id="channel_service"
+      on-subscribe-response="{{subscribeResponse}}"
+      on-unsubscribe-response="{{unsubscribeResponse}}">
+    </channel-service>
 
     <paper-dialog id="create_dialog" role="dialog" backdrop>
       <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
@@ -122,7 +125,7 @@
           </paper-button>
       </div> 
 
-      <template repeat="{{channel in subscribedChannels}}">
+      <template repeat="{{channel in $.globals.data.user.subscriber}}">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
               <div layout vertical flex class="channel-info">
@@ -195,7 +198,6 @@
     allSelected: true,
     subscribedSelected: false,
 
-    subscribedChannels: null,
     searchedChannels: null,
     
     // channelSummariesChanged: function() {
@@ -203,7 +205,7 @@
     //   console.log("test");
 
     //   for(i=0; i<this.channelSummaries.length; i++) {
-    //     this.channels.push({
+    //     this.$.globals.data.channels.push({
     //       "name": this.channelSummaries[i].name,
     //       "owner": this.channelSummaries[i].owner,
     //       "isOwner": false,
@@ -222,44 +224,6 @@
     //   }
     // },
 
-    userChanged: function() {
-
-      var user = this.$.globals.data.user;
-
-      if(user) {
-        console.log(this.channels.length);
-        console.log(user.owner.length);
-
-        for(i=0; i<this.channels.length; i++) {
-          for(j=0; j<user.owner.length; j++) {
-            if(user.owner[j].name == this.channels[i].name 
-              && user.owner[j].owner == this.channels[i].owner) {
-              console.log("TEST");
-              this.channels[i].isOwner = true;
-            }
-          }
-          for(j=0; j<user.moderator.length; j++) {
-            if(user.moderator[j].name == this.channels[i].name 
-              && user.moderator[j].owner == this.channels[i].owner) {
-              this.channels[i].isModerator = true;
-            }
-          }
-          for(j=0; j<user.viewer.length; j++) {
-            if(user.viewer[j].name == this.channels[i].name 
-              && user.viewer[j].owner == this.channels[i].owner) {
-              this.channels[i].isViewer = true;
-            }
-          }
-          for(j=0; j<user.subscriber.length; j++) {
-            if(user.subscriber[j].name == this.channels[i].name 
-              && user.subscriber[j].owner == this.channels[i].owner) {
-              this.channels[i].isSubscriber = true;
-            }
-          }
-        }
-      }
-    },
-
     toggleAll: function() {
       this.allSelected = !this.allSelected;
       this.fire('filter-change');
@@ -271,7 +235,7 @@
     },
 
     toggleChannel: function(event, detail, sender) {
-      var channel = sender.templateInstance.model.channel;
+      var channel = this.getChannel(sender.templateInstance.model.channel);
       channel.isSelected = !channel.isSelected;
       this.fire('filter-change');
     },
@@ -296,14 +260,14 @@
 
       console.log('searched with string: ' + regexString);
 
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].name.match(regex)) {
-          this.channels[i].isSearched = true;
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name.match(regex)) {
+          this.$.globals.data.channels[i].isSearched = true;
         }
         else {
-          this.channels[i].isSearched = false;
+          this.$.globals.data.channels[i].isSearched = false;
         }
-        //console.log(this.channels[i].name.match(regex));
+        //console.log(this.$.globals.data.channels[i].name.match(regex));
       }
 
       this.updateSearchedChannels();
@@ -311,9 +275,9 @@
 
     updateSearchedChannels: function() {
       this.searchedChannels = [];
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].isSearched) {
-          this.searchedChannels.push(this.channels[i]);
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSearched) {
+          this.searchedChannels.push(this.$.globals.data.channels[i]);
         }
       }
     },
@@ -333,9 +297,11 @@
       }
       else {
         var channel = this.getChannel(detail.response.channel);
-        channel.isSubscriber = true;
+        console.log(channel);
+	channel.isSubscriber = true;
+        this.$.globals.data.user.subscriber.push(channel);
+        //this.updateSubscribedChannels();
         this.fire('filter-change');
-        this.updateSubscribedChannels(); 
       }
     },
 
@@ -355,16 +321,22 @@
       else {
         var channel = this.getChannel(detail.response.channel);
         channel.isSubscriber = false;
+        for(var i=0; i<this.$.globals.data.user.subscriber.length; i++) {
+	  if(this.$.globals.data.user.subscriber[i].name == channel.name 
+	      && this.$.globals.data.user.subscriber[i].owner == channel.owner) {
+            this.$.globals.data.user.subscriber.splice(i, 1);
+	  }
+	}
+        //this.updateSubscribedChannels();   
         this.fire('filter-change');
-        this.updateSubscribedChannels();   
       }
     },
 
     updateSubscribedChannels: function() {
-      this.subscribedChannels = [];
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].isSubscriber) {
-          this.subscribedChannels.push(this.channels[i]);
+      this.$.global.data.user.subscriber = [];
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSubscriber) {
+          this.$.global.data.user.subscriber.push(this.$.globals.data.channels[i]);
         }
       }
     },
@@ -383,8 +355,8 @@
         includedPosts = posts.slice(0);
       }
       else {
-        for(i=0; i<posts.length; i++) {
-          var channel = this.getChannel(post.channel);
+        for(var i=0; i<posts.length; i++) {
+          var channel = this.getChannel(posts[i].channel);
           if((this.subscribedSelected && channel.isSubscriber) || (channel.isSelected)) {
             includedPosts.push(posts[i]);
           }
@@ -395,10 +367,10 @@
     },
 
     getChannel: function(channel) {
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].name == channel.name 
-            && this.channels[i].owner == channel.owner) {
-          return this.channels[i];
+      for(var i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name == channel.name 
+            && this.$.globals.data.channels[i].owner == channel.owner) {
+          return this.$.globals.data.channels[i];
         }
       }
       return null;
