@@ -6,7 +6,7 @@
 <link rel="import" href="../paper-dropdown/paper-dropdown.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icon/core-icon.html">
 <link rel="import" href="../core-icons/core-icons.html" >
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-checkbox/paper-checkbox.html">
@@ -46,13 +46,11 @@
         padding-top: 25px;
       }
       paper-icon-button {
-        
         margin-top: 0px;
-        
       }
 
       paper-button {
-        color: #4285f4;
+        color: #FF6666;
       }
 
       .field-type {
@@ -153,7 +151,7 @@
           <div class="info">Owned by {{channelSettings.owner}}</div>
         </div>
         <div class="buttons" vertical layout>
-          <paper-icon-button id="close" icon="close" on-tap="{{cancel}}"></paper-icon-button>
+          <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
         </div>
       </div>
       <div class="content" vertical layout>
@@ -207,8 +205,7 @@
       </div>
 
       <div class="footer" horizontal around-justifed layout>
-        <paper-button flex on-tap="{{cancel}}">Cancel</paper-button>
-        <paper-button flex on-tap="{{apply}}">Apply</paper-button>
+        <paper-button flex on-tap="{{deleteChannel}}">Delete Channel</paper-button>
       </div>
 
     </div>
@@ -277,11 +274,11 @@
       }
     },
 
-    cancel: function() {
+    deleteChannel: function() {
       this.fire('finished');
     },
 
-    apply: function() {
+    close: function() {
       this.fire('finished');
     }
 
