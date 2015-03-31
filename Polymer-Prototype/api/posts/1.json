@@ -7,8 +7,8 @@
 	"fields": 
 		[
 			{"type": "Text", "label": "Description", "value": "On second though, this might not be a sparrow... Check out my KNEX though!"},
-			{"type": "Video", "label": "Video", "value": "/videos/small.mp4"},
-			{"type": "Image", "label": "Picture", "value": "/images/bird-01.jpg"},
+			{"type": "Video", "label": "Video", "value": "/media/videos/small.mp4"},
+			{"type": "Image", "label": "Picture", "value": "/media/images/bird-01.jpg"},
 			{"type": "Checkbox", "label": "Attributes", "value": null, "attributes": [{"label": "Sparrow", "value": true}, {"label": "Pink", "value": true}]}
 		],
 	"time": "2015-02-26 12:00:00.000",

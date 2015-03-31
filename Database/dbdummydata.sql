@@ -1,5 +1,6 @@
 insert into users values ("0001", "okenso");
-insert into users values ("$2y$11$JFZ1T21zU0R4dWl3SmlxdOsK1MxpgOy0mtkbXeyHJVkLYo90i9DZW", "josh");
+insert into users values ("115161761450794914816", "Josh");
+insert into users values ("171717171717", "frank");
 
 insert into channels values ("okenso's channel", "okenso", 1, true);	
 insert into channels values ("okenso's other channel", "okenso", 2, true);
@@ -17,7 +18,7 @@ insert into admin (a_username) values ("okenso");
 
 insert into private_view_channels values 
 	("okenso", "poly", "josh"),
-	("josh", "pothole", "okenso"),
+	("josh", "pothole", "okenso")
 	;
 
 

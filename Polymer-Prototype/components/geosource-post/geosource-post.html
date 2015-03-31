@@ -22,9 +22,11 @@
 <link rel="import" href="../paper-input/paper-input-decorator.html">
 <link rel="import" href="../paper-input/paper-autogrow-textarea.html">
 
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
 <!-- <link rel="import" href="../disqus-comments/disqus-comments.html"> -->
 
-<polymer-element name="geosource-post" attributes="user">
+<polymer-element name="geosource-post">
 
   <template>
 
@@ -142,6 +144,8 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <post-service id="post_service" post="{{post}}"></post-service>
 
     <div class="post" vertical layout>
@@ -152,12 +156,50 @@
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
-          <paper-icon-button id="favorite" icon="favorite-outline" on-tap="{{favorite}}" hidden?="{{!user}}"></paper-icon-button>
+          <paper-icon-button id="favorite" icon="{{ {'favorite-outline': !postSummary.favorite, 'favorite': postSummary.favorite} | tokenList}}" on-tap="{{favorite}}" hidden?="{{!$.globals.data.user}}"></paper-icon-button>
           <paper-icon-button id="delete" icon="delete" on-tap="{{delete}}" hidden?="{{!deletePermission}}"></paper-icon-button>
         </div>
       </div>
       
-      <div class="content" id="content" vertical layout></div>
+      <div class="content" id="content" vertical layout>
+        <template repeat="{{field in post.fields}}">
+          <h3>{{field.label}}</h3>
+          <template if="{{field.type == 'Video'}}">
+            <video width="auto" height="auto" controls>
+              <source src="{{field.value}}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </template>
+          <template if="{{field.type == 'Audio'}}">
+            <audio controls>
+              <source src="{{field.value}}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </template>
+          <template if="{{field.type == 'Image'}}">
+            <img src="{{field.value}}">
+          </template>
+          <template if="{{field.type == 'Text'}}">
+            <div>{{field.value}}</div>
+          </template>
+          <template if="{{field.type == 'Checkbox'}}">
+            <template repeat="{{attribute in field.attributes}}">
+              <div class="checkbox" horizontal layout>
+                <paper-checkbox checked?="{{attribute.value}}" disabled></paper-checkbox>
+                <div class="checkbox-label">{{attribute.label}}</div>
+              </div>
+            </template>
+          </template>
+          <template if="{{field.type == 'Radio Button'}}">
+            <template repeat="{{attribute in field.attributes}}">
+              <div class="checkbox" horizontal layout>
+                <paper-radio-button checked?="{{attribute.value}}" disabled></paper-radio-button>
+                <div class="checkbox-label">{{attribute.label}}</div>
+              </div>
+            </template>
+          </template>
+        </template>
+      </div>
       
 <!--       <disqus-comments 
         id="disqus"
@@ -182,7 +224,7 @@
           </div>
         </template>
 
-        <div hidden?="{{!user}}">
+        <div hidden?="{{!$.globals.data.user}}">
           <h3>Add a Comment</h3>
           <div class="add-creator" vertical end-justified layout>
             <paper-input-decorator label="Enter a comment...">
@@ -205,7 +247,6 @@
 
     postSummary: null,
     post: null,
-    user: null,
     deletePermission: false,
 
     timeString: function(time) {
@@ -219,61 +260,7 @@
     },
 
     postChanged: function() {
-
-      this.isFavorite();
-
-      content = "";
-
-      for(i=0; i<this.post.fields.length; i++) {
-
-        content += '<h3>' + this.post.fields[i].label + '</h3>';
-
-        switch(this.post.fields[i].type) {
-          case "Video":
-            content += 
-              '<video width="auto" height="auto" controls>' +
-                '<source src="' + this.post.fields[i].value + '" type="video/mp4">' +
-                'Your browser does not support the video tag.' +
-              '</video>';
-            break;
-          case "Audio":
-            content += 
-              '<audio controls>' +
-                '<source src="' + this.post.fields[i].value + '" type="audio/mpeg">' +
-                'Your browser does not support the audio element.' +
-              '</audio>';
-            break;
-          case "Image":
-            content += '<img src="' + this.post.fields[i].value + '">';
-            break;
-          case "Text":
-            content += '<div>' + this.post.fields[i].value + '</div>';
-            break;
-          case "Checkbox":
-            for(j=0; j<this.post.fields[i].attributes.length; j++) {
-              content += '<div class="checkbox" horizontal layout><paper-checkbox' 
-              if(this.post.fields[i].attributes[j].value) {
-                content += ' checked'
-              }
-              content += ' disabled></paper-checkbox><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
-            }
-            break;
-          case "Radio Button":
-            for(j=0; j<this.post.fields[i].attributes.length; j++) {
-              content += '<div class="checkbox" horizontal layout><paper-radio-button' 
-              if(this.post.fields[i].attributes[j].value) {
-                content += ' checked'
-              }
-              content += ' disabled></paper-radio-button><div class="checkbox-label">' + this.post.fields[i].attributes[j].label + '</div></div>'
-            }
-            break;
-        }        
-      }
-
-      this.$.content.innerHTML = content;
-
       this.checkDeletePermission();
-
       this.fire('post-loaded');
     },
 
@@ -281,23 +268,12 @@
       this.fire('close');
     },
 
-    isFavorite: function() {
-      if(this.user && this.postSummary && this.postSummary.favorite) {
-        this.$.favorite.icon = "favorite";
-      }
-      else {
-        this.$.favorite.icon = "favorite-outline";
-      }
-    },
-
     favorite: function() {
       this.postSummary.favorite = !this.postSummary.favorite;
-      this.isFavorite();
       this.fire('favorite-click');
     },
 
     userChanged: function() {
-      this.isFavorite();
       this.checkDeletePermission();
     },
 
@@ -306,14 +282,17 @@
     },
 
     checkDeletePermission: function() {
-      if(this.user && this.post) {
+
+      var user = this.$.globals.data.user;
+
+      if(user && this.post) {
         //admin
-        if(this.user.admin) {
+        if(user.admin) {
           this.deletePermission = true;
           return;
         }
         //channel owner
-        else if(this.user.username == this.post.channel.owner) {
+        else if(user.username == this.post.channel.owner) {
           this.deletePermission = true;
           return;
         }
@@ -324,9 +303,9 @@
         // }
         //moderator
         else {
-          for(i=0; i<this.user.moderator.length; i++) {
-            if(this.user.moderator[i].name == this.post.channel.name &&
-                this.user.moderator[i].owner == this.post.channel.owner) {
+          for(i=0; i<user.moderator.length; i++) {
+            if(user.moderator[i].name == this.post.channel.name &&
+                user.moderator[i].owner == this.post.channel.owner) {
               this.deletePermissions = true;
               return;
             }

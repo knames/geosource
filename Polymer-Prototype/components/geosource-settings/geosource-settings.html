@@ -4,7 +4,7 @@
 <link rel="import" href="../geosource-account/geosource-account.html">
 <link rel="import" href="../geosource-time/geosource-time.html">
 
-<polymer-element name="geosource-settings" attributes="channels posts user filteredPosts">
+<polymer-element name="geosource-settings" attributes="posts user filteredPosts">
 
   <template>
     
@@ -32,8 +32,7 @@
           </geosource-time>
 
           <geosource-channels id="channels_panel" class="panel"
-            user="{{user}}"
-            channelSummaries="{{channels}}">
+            user="{{user}}">
           </geosource-channels>
       </div>
   </template>
@@ -41,7 +40,6 @@
   <script>
     Polymer({
 
-      channels: null,
       user: null,
 
       /**

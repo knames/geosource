@@ -1,0 +1,22 @@
+{
+  "name": "disqus-thread",
+  "version": "0.0.1",
+  "authors": [
+    "Revath S Kumar <rsk@revathskumar.com>"
+  ],
+  "description": "Custom element for Disqus",
+  "main": "disqus-thread.html",
+  "keywords": [
+    "web-components",
+    "disqus"
+  ],
+  "license": "MIT",
+  "homepage": "http://revathskumar.github.io/disqus-thread",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

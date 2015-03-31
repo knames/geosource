@@ -1,23 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-item/core-item.html">
 <link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../core-menu/core-submenu.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../paper-dropdown/paper-dropdown.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../core-icon/core-icon.html" >
-<link rel="import" href="../core-icons/core-icons.html" >
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-input/paper-input-decorator.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
-<link rel="import" href="../core-icons/image-icons.html">
-<link rel="import" href="../core-icons/av-icons.html">
+<link rel="import" href="../geosource-services/user-creation-service.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
 
-<link rel="import" href="../paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../paper-radio-group/paper-radio-group.html">
-
-<polymer-element name="geosource-account-creator" attributes="user">
+<polymer-element name="geosource-account-creator">
 
 
   <template>
@@ -62,6 +51,12 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
+    <user-creation-service id="service"  
+      on-user-creation-response="{{handleResponse}}">
+    </user-creation-service>
+
     <div vertical layout>
       <h2 class="header">Create an Account</h2>
       <div class="content" vertical layout>
@@ -70,7 +65,9 @@
         In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
       </div>
 
-        <paper-input id="input" floating label="Enter a username..."></paper-input>
+        <paper-input-decorator label="Enter a username..." floatingLabel error="{{response.message}}" isInvalid="{{response.error}}">
+          <input id="input" value="{{input}}" is="core-input">
+        </paper-input-decorator>
 
       </div>
     </div>
@@ -85,20 +82,37 @@
   <script>
   Polymer({
 
+    input: "",
+
     submit: function() {
-      this.user = { 
-        "username": this.$.input.value,
-        "admin": false,
-        "subscriber": [],
-        "viewer": [],
-        "moderator": [],
-        "owner": [],
-        "favorites": [] 
-      };
-      this.fire('finished');
+      this.$.service.submit(this.$.input.value);
+    },
+
+    inputChanged: function() {
+      this.$.input_decorator.isInvalid = false;
+    },
+
+    handleResponse: function(event, detail, sender) {
+      console.log(this.response);
+      if(details.response.error) {
+        this.$.input_decorator.isInvalid = detail.response.error;
+        this.$.input_decorator.error = detail.response.message;
+      } else {
+        this.$.globals.data.user = { 
+          "username": this.$.input.value,
+          "admin": false,
+          "subscriber": [],
+          "viewer": [],
+          "moderator": [],
+          "owner": [],
+          "favorites": [] 
+        };
+        this.fire('finished');
+      }
     }
 
   });
   </script>
   
 </polymer-element>
+

@@ -6,6 +6,11 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+
 import ServerClientShared.AudioFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
@@ -17,14 +22,15 @@ import hoopsnake.geosource.media.MediaManagement;
  *
  * Implementation of an app field with type Audio.
  */
-public class AppAudioField extends AbstractAppFieldWithFile {
+public class AppAudioField extends AbstractAppFieldWithFile{
+
     /**
      * The button used to start/stop audio recording.
      */
     private ToggleButton recordButton;
 
-    public AppAudioField(AudioFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppAudioField(AudioFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
@@ -84,4 +90,22 @@ public class AppAudioField extends AbstractAppFieldWithFile {
 
     @Override
     public void onResultFromSelection(int resultCode, Intent data) {}
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+
+    }
 }

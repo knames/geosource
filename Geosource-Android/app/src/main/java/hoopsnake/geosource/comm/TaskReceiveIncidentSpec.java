@@ -5,7 +5,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 
 import ServerClientShared.Commands;
@@ -22,10 +21,8 @@ import static junit.framework.Assert.assertNotNull;
  * @precond when calling execute(), must use precisely params as shown: execute(String channelName, String channelOwner, String poster). (No null args).
  * @postcond when execute() is called, receive a new incident spec from the server, detailing what the fields are that need to be filled out.
  */
-public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, Void, SocketResult> {
-
+public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Void, SocketResult> {
     String channelName, channelOwner, poster;
-    public static final String LOG_TAG = "geosource comm";
 
     public TaskReceiveIncidentSpec(IncidentActivity activity)
     {
@@ -33,10 +30,6 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
     }
 
     protected SocketResult doInBackground(String... params) {
-        ObjectOutputStream outStream; //wrapped stream to client
-
-        ObjectInputStream inStream; //stream from client
-        Socket outSocket;
 
         channelName = params[0];
         channelOwner = params[1];
@@ -45,10 +38,12 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
         assertNotNull(channelOwner);
         assertNotNull(poster);
 
+        SocketWrapper socketWrapper;
+        ObjectOutputStream outStream; //wrapped stream to client
+        ObjectInputStream inStream; //stream from client
         try //create socket
         {
-            SocketWrapper socketWrapper = new SocketWrapper();
-            outSocket = socketWrapper.getOutSocket();
+            socketWrapper = new SocketWrapper();
             outStream = socketWrapper.getOut();
             inStream = socketWrapper.getIn();
         }
@@ -63,7 +58,6 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             Log.i(LOG_TAG, "Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
@@ -75,13 +69,9 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
+
             if (fieldsToBeFilled == null)
                 return SocketResult.FAILED_FORMATTING;
-
-            inStream.close();
-            outStream.close();
-            outSocket.close();
-            Log.i(LOG_TAG, "Connection Closed");
         }
         catch (IOException e)
         {
@@ -92,7 +82,8 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
             e.printStackTrace();
 
             return SocketResult.CLASS_NOT_FOUND;
-
+        } finally {
+            socketWrapper.closeAll();
         }
 
         //TODO some of this code should maybe go on the ui thread.
@@ -110,7 +101,7 @@ public class TaskReceiveIncidentSpec extends IncidentActivitySocketTask<String, 
                 LOG_TAG);
 
         if (result.equals(SocketResult.SUCCESS)) {
-            activity.renderIncidentFromScratch();
+            activity.renderIncidentFromScratch(true);
         }
     }
 }

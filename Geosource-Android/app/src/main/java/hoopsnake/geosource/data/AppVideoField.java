@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+
 import ServerClientShared.VideoFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
@@ -17,10 +22,10 @@ import hoopsnake.geosource.media.MediaManagement;
  *
  * Implementation of an app field with type Video.
  */
-public class AppVideoField extends AbstractAppFieldWithFile {
+public class AppVideoField extends AbstractAppFieldWithFile{
 
-    public AppVideoField(VideoFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppVideoField(VideoFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
@@ -72,5 +77,23 @@ public class AppVideoField extends AbstractAppFieldWithFile {
             // Video capture failed, advise user
             Toast.makeText(activity, "Failed to capture video.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+
     }
 }

@@ -28,7 +28,8 @@
         </activity>
         <activity
             android:name=".IncidentActivity"
-            android:label="@string/title_activity_incident" >
+            android:label="@string/title_activity_incident"
+            android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

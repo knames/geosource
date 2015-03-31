@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "name": "more-routing",
+  "dependencies": {
+    "core-item": "Polymer/core-item#^0.5.0",
+    "more-switch": "Polymore/more-switch",
+    "polymer": "Polymer/polymer#^0.5.0"
+  },
+  "devDependencies": {
+    "core-animated-pages": "Polymer/core-animated-pages#^0.5.0",
+    "core-pages": "Polymer/core-pages#^0.5.0",
+    "core-scaffold": "Polymer/core-scaffold#^0.5.0",
+    "font-roboto": "Polymer/font-roboto#^0.5.0",
+    "more-param": "Polymore/more-param",
+    "paper-ripple": "Polymer/paper-ripple#^0.5.0",
+    "paper-shadow": "Polymer/paper-shadow#^0.5.0",
+    "paper-tabs": "Polymer/paper-tabs#^0.5.0",
+    "web-component-tester": "*",
+    "webcomponentsjs": "Polymer/webcomponentsjs"
+  },
+  "homepage": "https://github.com/Polymore/more-routing",
+  "version": "0.5.0",
+  "_release": "0.5.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.5.0",
+    "commit": "d3614f74ba5ec5b4e9d83602920edf763bace0e6"
+  },
+  "_source": "git://github.com/Polymore/more-routing.git",
+  "_target": "~0.5.0",
+  "_originalSource": "Polymore/more-routing",
+  "_direct": true
+}

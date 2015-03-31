@@ -10,7 +10,9 @@
 <link rel="import" href="../geosource-channel-settings/geosource-channel-settings.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 
-<polymer-element name="geosource-channels" attributes="channelSummaries user">
+<link rel="import" href="../geosource-services/channel-service.html">
+
+<polymer-element name="geosource-channels">
 
   <template>
 
@@ -56,8 +58,14 @@
 
       .channel-info {
         text-align: left;
+      }
+      .channel-info-subscribe {
         margin-right: 30px;
       }
+      .channel-info-settings {
+        margin-right: 70px;
+      }
+
       .channel-owner {
         color: #636363;
         text-transform: uppercase;
@@ -88,15 +96,21 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
+    <channel-service id="channel_service"
+      on-subscribe-response="{{subscribeResponse}}"
+      on-unsubscribe-response="{{unsubscribeResponse}}">
+    </channel-service>
+
     <paper-dialog id="create_dialog" role="dialog" backdrop>
-      <geosource-channel-creator on-finished="{{closeChannelCreate}}" user="{{user}}"></geosource-channel-creator>
+      <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
     </paper-dialog>
 
     <paper-dialog id="settings_dialog" role="dialog" backdrop>
       <geosource-channel-settings id="channel_settings" 
         on-loaded="{{openChannelSettings}}" 
-        on-finished="{{closeChannelSettings}}" 
-        user="{{user}}">
+        on-finished="{{closeChannelSettings}}">
       </geosource-channel-settings>
     </paper-dialog>
 
@@ -109,7 +123,7 @@
             </div>
           </paper-button>
       </div> 
-      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!user}}">
+      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!$.globals.data.user}}">
           <paper-button flex toggle class="channel-button">
             <div layout vertical flex class="channel-info">
               <div class="channel-name">Subscribed</div>
@@ -117,10 +131,10 @@
           </paper-button>
       </div> 
 
-      <template repeat="{{channel in subscribedChannels}}">
+      <template repeat="{{channel in $.globals.data.user.subscriber}}">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
-              <div layout vertical flex class="channel-info">
+              <div layout vertical flex class="channel-info {{ {'channel-info-subscribe': $.globals.data.user, 'channel-info-settings': $.globals.data.user.admin || channel.isOwner || channel.isModerator} | tokenList}}">
                 <div class="channel-name">{{channel.name}}</div>
                 <div class="channel-owner">Created by {{channel.owner}}</div>
               </div>
@@ -129,7 +143,7 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{loadChannelSettings}}"
-                hidden?="{{!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer && !(channel.isSubscribed && subscribedSelected)}}">
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
@@ -150,7 +164,7 @@
       <template repeat="{{channel in searchedChannels}}" id="searched_channels">
           <div layout horizontal class="channel">
             <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
-              <div layout vertical flex class="channel-info">
+              <div layout vertical flex class="channel-info {{ {'channel-info-settings': $.globals.data.user.admin || channel.isOwner || channel.isModerator} | tokenList}}">
                 <div class="channel-name">{{channel.name}}</div>
                 <div class="channel-owner">Created by {{channel.owner}}</div>
               </div>
@@ -159,24 +173,24 @@
               <paper-icon-button icon="settings" 
                 class="settings_button" 
                 on-tap="{{loadChannelSettings}}" 
-                hidden?="{{!user || (!user.admin && !channel.isOwner && !channel.isModerator && !channel.isViewer)}}">
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator}}">
               </paper-icon-button>
               <paper-icon-button icon="add" 
                 class="subscribe_button" 
                 on-tap="{{subscribe}}"
-                hidden?="{{!user || channel.isSubscriber}}">
+                hidden?="{{!$.globals.data.user || channel.isSubscriber}}">
               </paper-icon-button>
               <paper-icon-button icon="close" 
                 class="unsubscribe_button" 
                 on-tap="{{unsubscribe}}"
-                hidden?="{{!user || !channel.isSubscriber}}">
+                hidden?="{{!$.globals.data.user || !channel.isSubscriber}}">
               </paper-icon-button>
             </div>
           </div>
       </template>
 
       <div horizontal layout center-justified>
-       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!user}}">Create a channel</paper-button>
+       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!$.globals.data.user}}">Create a channel</paper-button>
       </div>
 
     </core-submenu>
@@ -187,145 +201,48 @@
   <script>
   Polymer({
 
-    user: null,
-    channelSummaries: null,
-
-    channels: [],
-
-    subscribedChannels: [],
-    searchedChannels: [],
-    selectedChannels: [],
-
-    selected: {"name": "All", "owner": null},
-
     allSelected: true,
     subscribedSelected: false,
+
+    searchedChannels: null,
     
-    channelSummariesChanged: function() {
+    // channelSummariesChanged: function() {
 
-      console.log("test");
+    //   console.log("test");
 
-      for(i=0; i<this.channelSummaries.length; i++) {
-        this.channels.push({
-          "name": this.channelSummaries[i].name,
-          "owner": this.channelSummaries[i].owner,
-          "isOwner": false,
-          "isModerator": false,
-          "isViewer": false,
-          "isSubscriber": false,
-          "isSelected": false
-        });
+    //   for(i=0; i<this.channelSummaries.length; i++) {
+    //     this.$.globals.data.channels.push({
+    //       "name": this.channelSummaries[i].name,
+    //       "owner": this.channelSummaries[i].owner,
+    //       "isOwner": false,
+    //       "isModerator": false,
+    //       "isViewer": false,
+    //       "isSubscriber": false,
+    //       "isSelected": false,
+    //       "isSearched": false
+    //     });
 
-      }
+    //   }
 
-      //in case user information is loaded before channel summaries
-      if(this.user) {
-        this.userChanged();
-      }
+    //   //in case user information is loaded before channel summaries
+    //   if(this.$.globals.data.user) {
+    //     this.userChanged();
+    //   }
+    // },
+
+    toggleAll: function() {
+      this.allSelected = !this.allSelected;
+      this.fire('filter-change');
     },
 
-    userChanged: function() {
-
-
-      if(this.user) {
-        console.log(this.channels.length);
-        console.log(this.user.owner.length);
-
-        for(i=0; i<this.channels.length; i++) {
-          for(j=0; j<this.user.owner.length; j++) {
-            if(this.user.owner[j].name == this.channels[i].name 
-              && this.user.owner[j].owner == this.channels[i].owner) {
-              console.log("TEST");
-              this.channels[i].isOwner = true;
-            }
-          }
-          for(j=0; j<this.user.moderator.length; j++) {
-            if(this.user.moderator[j].name == this.channels[i].name 
-              && this.user.moderator[j].owner == this.channels[i].owner) {
-              this.channels[i].isModerator = true;
-            }
-          }
-          for(j=0; j<this.user.viewer.length; j++) {
-            if(this.user.viewer[j].name == this.channels[i].name 
-              && this.user.viewer[j].owner == this.channels[i].owner) {
-              this.channels[i].isViewer = true;
-            }
-          }
-          for(j=0; j<this.user.subscriber.length; j++) {
-            if(this.user.subscriber[j].name == this.channels[i].name 
-              && this.user.subscriber[j].owner == this.channels[i].owner) {
-              this.channels[i].isSubscriber = true;
-            }
-          }
-        }
-
-        for(i=0; i<this.channels.length; i++) {
-          var channel = this.channels[i];
-          if(channel.isSubscriber) {
-            this.subscribedChannels.push(channel);
-          }
-        }
-      }
-      else {
-        this.subscribedChannels = [];
-      }
-    },
-
-    /**
-     * Given a set of posts, this returns the subset of those posts which are 
-     * applicable whichever channel(s) are selected.
-     */
-    filterPosts: function(posts) {
-
-      console.log('filtered');
-      console.log(this.selectedChannels);
-
-      var includedPosts = [];
-
-      if(this.allSelected) {
-        includedPosts = posts.slice(0);
-      }
-      else {
-        for(i=0; i<posts.length; i++) {
-          
-          var matched = false;
-
-          for(j=0; j<this.subscribedChannels.length && this.subscribedSelected && !matched; j++) {
-            if(posts[i].channel.name == this.subscribedChannels[j].name
-              && posts[i].channel.owner == this.subscribedChannels[j].owner) {
-              includedPosts.push(posts[i]);
-              matched = true;
-            }
-          }
-          for(j=0; j<this.selectedChannels.length && !matched; j++) {
-            if(posts[i].channel.name == this.selectedChannels[j].name
-              && posts[i].channel.owner == this.selectedChannels[j].owner) {
-              includedPosts.push(posts[i]);
-              matched = true;
-            }
-          }
-
-        }
-      }
-
-      return includedPosts;
+    toggleSubscribed: function() {
+      this.subscribedSelected = !this.subscribedSelected;
+      this.fire('filter-change');
     },
 
     toggleChannel: function(event, detail, sender) {
-      var channel = sender.templateInstance.model.channel;
-      var index = this.selectedChannels.indexOf(channel);
-
-      if(sender.active) {
-        channel.isSelected = true;
-        this.selectedChannels.push(channel);
-      }
-      else {
-        channel.isSelected = false;
-        var channel = sender.templateInstance.model.channel;
-        var index = this.selectedChannels.indexOf(channel);
-        this.selectedChannels.splice(index, 1);
-      }
-
+      var channel = this.getChannel(sender.templateInstance.model.channel);
+      channel.isSelected = !channel.isSelected;
       this.fire('filter-change');
     },
 
@@ -339,46 +256,36 @@
 
       var search = this.$.search_input.value;
 
-      if(search == '') {
-        this.searchedChannels = [];
-        return;
-      }
-
       var regexString = "^";
       for(i=0; i<search.length; i++) {
         regexString += search[i] + '.*';
       }
+      regexString += "$";
 
       var regex = new RegExp(regexString, 'i');
 
-      console.log(regexString);
+      console.log('searched with string: ' + regexString);
 
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name.match(regex)) {
+          this.$.globals.data.channels[i].isSearched = true;
+        }
+        else {
+          this.$.globals.data.channels[i].isSearched = false;
+        }
+        //console.log(this.$.globals.data.channels[i].name.match(regex));
+      }
+
+      this.updateSearchedChannels();
+    },
+
+    updateSearchedChannels: function() {
       this.searchedChannels = [];
-      for(i=0; i<this.channels.length; i++) {
-        if(this.channels[i].name.match(regex)) {
-          this.searchedChannels.push(this.channels[i]);
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSearched) {
+          this.searchedChannels.push(this.$.globals.data.channels[i]);
         }
       }
-    },
-
-    toggleAll: function() {
-      this.allSelected = !this.allSelected;
-      this.fire('filter-change');
-    },
-
-    toggleSubscribed: function() {
-      this.subscribedSelected = !this.subscribedSelected;
-      this.fire('filter-change');
-    },
-
-    /**
-     * Unsubscribes from the selected channel.
-     */
-    unsubscribe: function(event, detail, sender) {
-      var channel = sender.templateInstance.model.channel;
-      var index = this.subscribedChannels.indexOf(channel);
-      this.subscribedChannels.splice(index, 1);
-      channel.isSubscriber = false;
     },
 
     /**
@@ -386,11 +293,93 @@
      */
     subscribe: function(event, detail, sender) {
       var channel = sender.templateInstance.model.channel;
-      var index = this.subscribedChannels.indexOf(channel);
-      if(index == -1) {
-        this.subscribedChannels.push(channel);
-        channel.isSubscriber = true;
+      this.$.channel_service.subscribe(channel);
+    },
+
+    subscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
       }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        console.log(channel);
+	channel.isSubscriber = true;
+        this.$.globals.data.user.subscriber.push(channel);
+        //this.updateSubscribedChannels();
+        this.fire('filter-change');
+      }
+    },
+
+    /**
+     * Unsubscribes from the selected channel.
+     */
+    unsubscribe: function(event, detail, sender) {
+      var channel = sender.templateInstance.model.channel;
+      this.$.channel_service.unsubscribe(channel);
+    },
+
+    unsubscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
+      }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        channel.isSubscriber = false;
+        for(var i=0; i<this.$.globals.data.user.subscriber.length; i++) {
+	  if(this.$.globals.data.user.subscriber[i].name == channel.name 
+	      && this.$.globals.data.user.subscriber[i].owner == channel.owner) {
+            this.$.globals.data.user.subscriber.splice(i, 1);
+	  }
+	}
+        //this.updateSubscribedChannels();   
+        this.fire('filter-change');
+      }
+    },
+
+    updateSubscribedChannels: function() {
+      this.$.global.data.user.subscriber = [];
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSubscriber) {
+          this.$.global.data.user.subscriber.push(this.$.globals.data.channels[i]);
+        }
+      }
+    },
+
+    /**
+     * Given a set of posts, this returns the subset of those posts which are 
+     * applicable whichever channel(s) are selected.
+     */
+    filterPosts: function(posts) {
+
+      console.log('filtered');
+
+      var includedPosts = [];
+
+      if(this.allSelected) {
+        includedPosts = posts.slice(0);
+      }
+      else {
+        for(var i=0; i<posts.length; i++) {
+          var channel = this.getChannel(posts[i].channel);
+          if((this.subscribedSelected && channel.isSubscriber) || (channel.isSelected)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+      }
+
+      return includedPosts;
+    },
+
+    getChannel: function(channel) {
+      for(var i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name == channel.name 
+            && this.$.globals.data.channels[i].owner == channel.owner) {
+          return this.$.globals.data.channels[i];
+        }
+      }
+      return null;
     },
 
     openChannelCreate: function() {
@@ -406,8 +395,7 @@
     },
 
     openChannelSettings: function(event, detail, sender) {
-      var settings_dialog = this.$.settings_dialog;
-      settings_dialog.toggle();
+      this.$.settings_dialog.toggle();
     },
 
     closeChannelSettings: function() {

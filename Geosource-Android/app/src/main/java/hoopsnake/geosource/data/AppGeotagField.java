@@ -1,35 +1,53 @@
 package hoopsnake.geosource.data;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 
+import ServerClientShared.Geotag;
 import ServerClientShared.GeotagFieldWithContent;
-import hoopsnake.geosource.Geotag;
+import hoopsnake.geosource.AppGeotagWrapper;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class AppGeotagField extends AbstractAppField {
+public class AppGeotagField extends AbstractAppField{
 
     private TextView tv;
 
-    public AppGeotagField(GeotagFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+    public AppGeotagField(GeotagFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
     public String getContentStringRepresentation() {
-        return wrappedField.getContent().toString();
+        Geotag g = (Geotag) wrappedField.getContent();
+        if (g.exists())
+            return "Geotag:\ntime in millis: " + g.getTimestamp() + "\nlongitude: " + g.getLongitude() + "\nlatitude: " + g.getLatitude();
+        else
+            return "Geotag not yet determined.";
     }
 
+    public String getTimestampStringRepresentation(){
+        Geotag g = (Geotag) wrappedField.getContent();
+        return Long.toString(g.getTimestamp());
+    }
     @Override
     public boolean contentIsFilled()
     {
+        if (wrappedField.getContent() == null)
+            Log.d(LOG_TAG, "geotagfield content is null.");
+        else if (!((Geotag) wrappedField.getContent()).exists())
+            Log.d(LOG_TAG, "geotagfield content does not exist.");
+
         return (wrappedField.getContent() != null && ((Geotag) wrappedField.getContent()).exists());
     }
 
@@ -42,12 +60,6 @@ public class AppGeotagField extends AbstractAppField {
     }
 
     @Override
-    public boolean contentIsSuitable(Serializable content)
-    {
-        return content instanceof Geotag;
-    }
-
-    @Override
     public void onResultFromSelection(int resultCode, Intent data) {}
 
     public void onContentUpdated()
@@ -56,11 +68,27 @@ public class AppGeotagField extends AbstractAppField {
             tv.setHint(getContentStringRepresentation());
     }
 
-    @Override
-    public void setContent(Serializable content)
+    public void registerForGeotag(AppGeotagWrapper geotagWrapper)
     {
-        super.setContent(content);
+        geotagWrapper.setRegisteredField(this);
+        setContent(geotagWrapper.toGeotag());
+    }
 
-        ((Geotag) content).setRegisteredField(this);
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+
     }
 }

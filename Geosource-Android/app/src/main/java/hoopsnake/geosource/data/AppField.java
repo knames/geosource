@@ -5,14 +5,27 @@ import android.view.View;
 
 import java.io.Serializable;
 
+import hoopsnake.geosource.IncidentActivity;
+
 /**
  * Created by wsv759 on 07/03/15.
  *
  * Interface for Fields, to be accessed by the UI and control level of the android app.
  * Each implementation of field defines its own UI-level behaviour, as well as its basic
  * underlying Field behaviour.
+ *
+ * All implementations must implement Serializable.
+ *
+ * GUARANTEE: Any View produced by an appField that may launch a new activity or fragment has its tag (view.getTag())
+ * set to equal the view's position in the field list.
  */
 public interface AppField {
+
+    /**
+     * Set the activity pointer to which this AppField is bound. (So that it can render on the UI properly).
+     * @param activity the activity which will be displaying this AppField.
+     */
+    public void setActivity(IncidentActivity activity);
 
     /**
      *
@@ -25,6 +38,14 @@ public interface AppField {
      * @return true if this is a required field, false otherwise.
      */
     public boolean isRequired();
+
+//    /**
+//     *
+//     * @precond this field's view has already been initialized in the UI, so whatever view it uses is not null.
+//     * @postcond Set the position of this field in the fieldList, so that it knows its own position.
+//     * @param position the numbered position in the fieldList for this Field.
+//     */
+//    public void setPositionInFieldList(int position);
 
     /**
      *

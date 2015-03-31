@@ -1,7 +1,9 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../core-menu/core-submenu.html">
 
-<polymer-element name="geosource-flags" attributes="user">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-flags">
 
   <template>
     
@@ -25,6 +27,8 @@
       }
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <core-submenu opened active id="core_submenu" icon="flag" label="Flags">
       <div on-change="{{toggleButton}}">
         <div center horizontal layout class="toggle_label">
@@ -33,11 +37,11 @@
             on-change="{{toggleAll}}">
           </paper-toggle-button>
         </div>
-        <div center horizontal layout class="toggle_label" hidden?="{{!user}}">
+        <div center horizontal layout class="toggle_label" hidden?="{{!$.globals.data.user}}">
           <div flex>Mine</div>
           <paper-toggle-button id="mine" checked disabled></paper-toggle-button>
         </div>
-        <div center horizontal layout class="toggle_label" hidden?="{{!user}}">
+        <div center horizontal layout class="toggle_label" hidden?="{{!$.globals.data.user}}">
           <div flex>Favorites</div>
           <paper-toggle-button id="favorites" checked disabled></paper-toggle-button>
         </div>
@@ -90,6 +94,9 @@
        * applicable to the flags currently active within this component's state.
        */
       filterPosts: function(posts) {
+
+        var user = this.$.globals.data.user;
+
         var all = this.$.all.checked;
         var favorites = this.$.favorites.checked;
         var mine = this.$.mine.checked;
@@ -97,7 +104,7 @@
 
         var includedPosts = [];
         for(i=0; i<posts.length; i++) {
-          if((all) || (questions && posts[i].question) || (this.user && favorites && posts[i].favorite) || (this.user && mine && posts[i].username == this.user.username)) {
+          if((all) || (questions && posts[i].question) || (user && favorites && posts[i].favorite) || (user && mine && posts[i].username == user.username)) {
             includedPosts.push(posts[i]);
           }
         }

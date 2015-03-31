@@ -6,6 +6,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+
 import ServerClientShared.StringFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
@@ -15,9 +20,9 @@ import hoopsnake.geosource.R;
  *
  * Implementation of an app field with type String. This can be used for all basic text fields.
  */
-public class AppStringField extends AbstractAppField {
-    public AppStringField(StringFieldWithContent fieldToWrap, IncidentActivity activity) {
-        super(fieldToWrap, activity);
+public class AppStringField extends AbstractAppField{
+    public AppStringField(StringFieldWithContent fieldToWrap, int fieldPosInList, IncidentActivity activity) {
+        super(fieldToWrap, fieldPosInList, activity);
     }
 
     @Override
@@ -73,4 +78,22 @@ public class AppStringField extends AbstractAppField {
 
     @Override
     public void onResultFromSelection(int resultCode, Intent data) {}
+
+    //change this if and only if a new implementation is incompatible with an old one
+    private static final long serialVersionUID = 1L;
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+
+    }
+
+    private void readObjectNoData() throws ObjectStreamException
+    {
+
+    }
 }

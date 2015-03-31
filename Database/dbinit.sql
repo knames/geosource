@@ -1,13 +1,13 @@
 
 
 CREATE TABLE users (
-	u_identity varchar(256) NOT NULL,
+	u_identity varchar(64) NOT NULL UNIQUE,
 	u_username varchar(25) PRIMARY KEY
 	);
 
 CREATE TABLE channels (
 	ch_name varchar(50) NOT NULL,
-	ch_owner varchar(256) NOT NULL,
+	ch_owner varchar(25) NOT NULL,
 	ch_spec INT UNSIGNED  NOT NULL,
 	ch_public BOOL NOT NULL,
 	FOREIGN KEY (ch_owner) REFERENCES users (u_username),
@@ -34,6 +34,15 @@ CREATE TABLE channelfavs (
 	PRIMARY KEY (ch_fav_username, ch_fav_chname, ch_fav_chowner)
 	);
 
+CREATE TABLE channel_banned ( 
+	cb_username varchar(25) NOT NULL,
+	cb_chname varchar(50) NOT NULL,
+	cb_chowner varchar(25) NOT NULL,
+	FOREIGN KEY (cb_username) REFERENCES users (u_username),
+	FOREIGN KEY (cb_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (cb_chowner) REFERENCES users (u_username),
+	PRIMARY KEY (cb_username, cb_chname, cb_chowner)	
+	);
 
 CREATE TABLE admin (
 	a_username varchar(25) PRIMARY KEY,
@@ -59,6 +68,19 @@ CREATE TABLE users_fav_posts (
 	FOREIGN KEY (ufp_chname) REFERENCES channels (ch_name),
 	FOREIGN KEY (ufp_chowner) REFERENCES users (u_username),
 	PRIMARY KEY (ufp_username, ufp_chname, ufp_chowner, ufp_number)
+	);
+
+CREATE TABLE post_comments (
+	pc_username varchar(25) NOT NULL,
+	pc_comment varchar(256) NOT NULL,
+	pc_time timestamp NOT NULL,
+	pc_chname varchar(50) NOT NULL,
+	pc_chowner varchar(25) NOT NULL,
+	pc_number int UNSIGNED NOT NULL,
+	FOREIGN KEY (pc_username) REFERENCES users (u_username),
+	FOREIGN KEY (pc_chname) REFERENCES channels (ch_name),
+	FOREIGN KEY (pc_chowner) REFERENCES users (u_username),
+	PRIMARY KEY (pc_username, pc_chname, pc_chowner, pc_number)
 	);
 
 

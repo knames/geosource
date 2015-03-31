@@ -1,9 +1,11 @@
 package hoopsnake.geosource.data;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ServerClientShared.Incident;
-import hoopsnake.geosource.Geotag;
+import hoopsnake.geosource.AppGeotagWrapper;
+import hoopsnake.geosource.IncidentActivity;
 
 /**
  * Created by wsv759 on 08/03/15.
@@ -12,6 +14,8 @@ import hoopsnake.geosource.Geotag;
  * This is as opposed to the vanilla java Incidents that are passed between the client and server.
  * Implementations of this will probably be constructed out of and deconstructed into regular Incidents,
  * when it's time to send over the network.
+ *
+ * Any implementation of this must implement Serializable.
  */
 public interface AppIncident
 {
@@ -34,9 +38,24 @@ public interface AppIncident
     /**
      * @precond none.
      * @postcond see return.
-     * @return the channel name associated with this incident.This is not guaranteed to be non-null.
+     * @return the channel name associated with this incident.This is guaranteed to be non-null.
      */
     public String getChannelName();
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the channel owner associated with this incident.This is guaranteed to be non-null.
+     */
+    public String getChannelOwner();
+
+    /**
+     * @precond none.
+     * @postcond see return.
+     * @return the author associated with this incident. (i.e. the current user logged into the app.)
+     * This is guaranteed to be non-null.
+     */
+    public String getIncidentAuthor();
 
     /**
      * @precond none.
@@ -50,5 +69,18 @@ public interface AppIncident
      * @postcond this incident's geotag is updated to the new one.
      * @param geotag
      */
-    public void setGeotag(Geotag geotag);
+    public void setGeotag(AppGeotagWrapper geotag);
+
+    /**
+     *
+     * @return the file associated with this incident, for storage purposes. Not to be confused with IncidentActivity.FILENAME_CUR_INCIDENT,
+     * which contains a rotating copy of the current unfinished incident.
+     *
+     * If this incident had no file prior to this call, a new file is returned. Otherwise the associated file is returned.
+     *
+     * If this Incident is not completely filled in, null is returned.
+     *
+     * @param activity needed to resolve the absolute path name.
+     */
+    public File getFile(IncidentActivity activity);
 }
