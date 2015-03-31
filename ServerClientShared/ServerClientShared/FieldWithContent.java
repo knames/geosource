@@ -108,4 +108,10 @@ public abstract class FieldWithContent extends Field
      * @return true if the content and type match, false otherwise.
      */
     public abstract boolean contentMatchesType(Serializable content);
+    
+    /**
+     * write this content to the file system with the proper formatting 
+     * @param folderPath the path to prepend to the new file's writer
+     */
+    public abstract void saveFile(String folderPath);
 }
