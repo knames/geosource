@@ -87,7 +87,7 @@
 
     <div class="content" horizontal layout>
       <div class="card-header" horizontal layout center flex>
-        <div class="thumbnail"><img src="{{post.thumbnail}}" width="70" height="70"></div>
+        <div class="thumbnail"><img src="{{'/media/thumb.php?src=..' + post.thumbnail + '&size=70x70'}}" width="70" height="70"></div>
         <div class="title" flex>{{post.title}}</div>
       </div>
       <div class="buttons" vertical layout>
