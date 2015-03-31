@@ -4,11 +4,14 @@ import Control.Controller;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.crypto.Cipher;
@@ -32,9 +35,6 @@ public class CommSocket implements Runnable{
     private final int SocketNum; //identification number
     
     private final static int compressionBlockSize = 1024; //indicates the size in bytes of the blocks that are sent over the stream
-
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
 
     protected static ServerSocket serverSocket = null;
     private Socket clientSocket;
@@ -72,6 +72,45 @@ public class CommSocket implements Runnable{
     {
         try
         {
+            // Bind client and create streams
+            clientSocket = serverSocket.accept();
+
+            System.out.println("Client Connected");
+
+            OutputStream outStream = clientSocket.getOutputStream();
+            InputStream inStream = clientSocket.getInputStream();
+            int typeCommand = inStream.read();
+            switch (typeCommand)
+            {
+                case 1: //Android
+                {
+                    androidRun(inStream, outStream);
+                    break;
+                }
+                case 2: //Website
+                {
+                    websiteRun(inStream, outStream);
+                    break;
+                }
+            }
+        }
+        catch (IOException IOe)
+        {
+            throw new RuntimeException("Binding ordinary socket failed");
+        }
+        
+        controller.socketComplete(SocketNum);
+    }
+    
+    /**
+     * this socket is dealing with an android app
+     * @param inStream an input stream, already created, to use in communication
+     * @param outStream an already created output stream to use in communication
+     */
+    public void androidRun(InputStream inStream, OutputStream outStream)
+    {
+        try
+        {
             // Create Key
             byte key[] = password.getBytes();
             DESKeySpec desKeySpec = new DESKeySpec(key);
@@ -81,21 +120,13 @@ public class CommSocket implements Runnable{
             // Create Cipher
             Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
             desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            
-            // Bind client and create streams
-            clientSocket = serverSocket.accept();
-            
-            
-            System.out.println("Client Connected");
-            
-            OutputStream outStream = clientSocket.getOutputStream();
-            InputStream inStream = clientSocket.getInputStream();
             //CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
             //CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);
             //CompressedBlockOutputStream zipOut = new CompressedBlockOutputStream(cipherOut, compressionBlockSize);
             //CompressedBlockInputStream zipIn = new CompressedBlockInputStream(cipherIn);
-            out = new ObjectOutputStream(outStream);
-            in = new ObjectInputStream(inStream);
+            
+            ObjectOutputStream out = new ObjectOutputStream(outStream);
+            ObjectInputStream in = new ObjectInputStream(inStream);
             out.flush();
             
             //Read command
@@ -111,16 +142,19 @@ public class CommSocket implements Runnable{
                     ArrayList<FieldWithoutContent> formList = controller.getForm(channelName, ownerName);
                     out.writeObject(formList);
                     out.flush();
+                    break;
                 }
                 case SEND_INCIDENT:
                 {
                     Incident newIncident = (Incident)in.readObject();
                     controller.dealWith(newIncident);
+                    break;
                 }
                 case PING:
                 {
                     out.writeObject(IOCommand.PING);
                     out.flush();
+                    break;
                 }
             }
             in.close();
@@ -148,8 +182,33 @@ public class CommSocket implements Runnable{
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * this socket is dealing with the website
+     * @param inStream an already created input stream to use in communication
+     * @param outStream an already created output stream to use in communication
+     */
+    public void websiteRun(InputStream inStream, OutputStream outStream)
+    {
+        OutputStreamWriter out = new OutputStreamWriter(outStream);
+        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         
-        controller.socketComplete(SocketNum);
-
+        try
+        {
+            String command = in.readLine();
+            
+            switch (command)
+            {
+                case "CREATE_CHANNEL":
+                {
+                    break;
+                }
+            }
+        }
+        catch (IOException IOe)
+        {
+            System.err.println("Communication error, aborting website communication");
+        }
     }
 }

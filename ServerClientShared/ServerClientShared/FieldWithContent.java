@@ -96,5 +96,5 @@ public abstract class FieldWithContent extends Field
      * write this content to the file system with the proper formatting 
      * @param folderPath the path to prepend to the new file's writer
      */
-    public abstract void saveFile(String folderPath);
+    //public abstract void saveFile(String folderPath);
 }
