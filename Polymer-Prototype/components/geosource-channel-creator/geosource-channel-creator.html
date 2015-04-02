@@ -17,6 +17,8 @@
 <link rel="import" href="../paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
 <polymer-element name="geosource-channel-creator" attributes="channels subscribed">
 
 
@@ -119,6 +121,8 @@
 
     </style>
 
+    <geosource-globals id="globals"></geosource-globals>
+
     <div vertical layout>
       <div class="header" horizontal layout>
         <div vertical layout flex class="title">
@@ -153,7 +157,7 @@
             <template repeat="{{field, fieldIndex in fields}}">
               <tr>
                 <td><core-icon icon="{{field.icon}}"></core-icon>{{field.type}}</td>
-                <td><paper-input label="Enter a title..." value="{{field.value}}"></td> 
+                <td><paper-input label="Enter a title..." value="{{field.label}}"></td> 
                 <td horizontal center-justified layout><paper-checkbox checked="{{field.required}}"></paper-checkbox></td>
                 <td><paper-icon-button class="remove" icon="close" on-tap="{{removeField}}"></paper-icon-button></td>
               </tr>
@@ -161,7 +165,7 @@
               <template repeat="{{attribute, attributeIndex in field.attributes}}">
                 <tr class="attribute">
                   <td><core-icon class="attribute" icon="{{field.icon}}"></core-icon>{{field.attributeType}}</td>
-                  <td><paper-input label="Enter a label..." value="{{attribute.value}}"></td> 
+                  <td><paper-input label="Enter a label..." value="{{attribute.label}}"></td> 
                   <td horizontal center-justified layout><paper-checkbox disabled checked="{{field.required}}"></paper-checkbox></td>
                   <td><paper-icon-button class="remove" icon="close" on-tap="{{removeFieldAttribute}}"></paper-icon-button></td>
                 </tr>
@@ -205,27 +209,27 @@
     fields: [],
 
     addText: function() {
-      this.fields.push({type:"Text", icon:"text-format", value:"", required:false});
+      this.fields.push({type:"Text", icon:"text-format", label:"", required:false});
     },
 
     addImage: function() {
-      this.fields.push({type:"Image", icon:"image:photo-camera", value:"", required:false});
+      this.fields.push({type:"Image", icon:"image:photo-camera", label:"", required:false});
     },
 
     addAudio: function() {
-      this.fields.push({type:"Audio", icon:"av:mic", value:"", required:false});
+      this.fields.push({type:"Audio", icon:"av:mic", label:"", required:false});
     },
 
     addVideo: function() {
-      this.fields.push({type:"Video", icon:"av:videocam", value:"", required:false});
+      this.fields.push({type:"Video", icon:"av:videocam", label:"", required:false});
     },
 
     addCheckboxes: function() {
-      this.fields.push({type:"Checkboxes", icon:"check-box", value:"", attributes: [{value:""}], attributeType:"Checkbox", required:false});
+      this.fields.push({type:"Checkboxes", icon:"check-box", label:"", attributes: [{label:""}], attributeType:"Checkbox", required:false});
     },
 
     addRadioButtons: function() {
-      this.fields.push({type:"Radio Buttons", icon:"radio-button-on", value:"", attributes: [{value:""}], attributeType:"Radio Button", required:false});
+      this.fields.push({type:"Radio Buttons", icon:"radio-button-on", label:"", attributes: [{label:""}], attributeType:"Radio Button", required:false});
     },
 
     removeField: function(event, detail, sender) {
@@ -242,7 +246,7 @@
       // console.log(sender);
       var fieldIndex = sender.templateInstance.model.fieldIndex;
       var attributeIndex = sender.templateInstance.model.attributeIndex;
-      this.fields[fieldIndex].attributes.push({value: ""});
+      this.fields[fieldIndex].attributes.push({label: ""});
     },
 
     removeFieldAttribute: function(event, detail, sender) {
@@ -262,17 +266,17 @@
 
       var channel = {
         name: this.$.channel_name.value, 
-        owner: this.user.username, 
+        owner: this.$.globals.data.user.username, 
+        public: (this.$.channel_access.selected == "public")
         fields: [],
-        access: this.$.channel_access.selected
       };
 
       for(i=0; i<fields.length; i++) {
         channel.fields.push({
           type: this.fields[i].type,
-          value: this.fields[i].value,
-          attributes: this.fields[i].attributes,
-          required: this.fields[i].required
+          label: this.fields[i].label,
+          required: this.fields[i].required,
+          attributes: this.fields[i].attributes
         });
       }
 
