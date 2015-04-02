@@ -72,7 +72,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving picture field failed");
+            System.out.println("Saving field to database failed");
         }
     }
     

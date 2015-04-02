@@ -38,7 +38,7 @@ public class Queries {
     	//TODO Needs testing.
         //update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
         String sql = "update posts_" + ownerName + "_" + channelName
-                + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber;
+                + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber + ";";
         return sql;
     }
 
@@ -71,15 +71,6 @@ public class Queries {
         return sql;
     }
     
-    /** returns a query that drops all tables and rebuilds the database
-     @return returns the sql to drop and rebuild the database*/
-    public static String rebuildDB() {
-        String sql = "SOURCE /var/www/okenso.com/cmpt371group2/Database/dbdrop.sql" + 
-                " SOURCE /var/www/okenso.com/cmpt371group2/Database/dbinit.sql";
-       return sql;
-    }
-    
-    
     
     /** creates a default post table
      @param ownername the name of the owner of the post
@@ -110,7 +101,7 @@ public class Queries {
      */
     public static String nextSpecNum(String owner)
     {
-        String sql = "select ch_spec from channels where ch_owner =\"" + owner + "\"order by 1 desc limit 1";
+        String sql = "select ch_spec from channels where ch_owner =\"" + owner + "\"order by 1 desc limit 1;";
         return sql;
     }
     
