@@ -256,6 +256,9 @@
       var fieldIndex = sender.templateInstance.model.fieldIndex;
       var attributeIndex = sender.templateInstance.model.attributeIndex;
       this.fields[fieldIndex].attributes.splice(attributeIndex, 1);
+      if(this.fields[fieldIndex].attributes.length == 0) {
+        this.removeField(event, detail, sender);
+      }
     },
 
     cancel: function() {
@@ -267,11 +270,11 @@
       var channel = {
         name: this.$.channel_name.value, 
         owner: this.$.globals.data.user.username, 
-        public: (this.$.channel_access.selected == "public")
-        fields: [],
+        public: (this.$.channel_access.selected == "public"),
+        fields: []
       };
 
-      for(i=0; i<fields.length; i++) {
+      for(i=0; i<this.fields.length; i++) {
         channel.fields.push({
           type: this.fields[i].type,
           label: this.fields[i].label,
