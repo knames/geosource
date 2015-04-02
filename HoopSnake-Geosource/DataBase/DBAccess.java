@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -29,7 +30,7 @@ public class DBAccess {
         }
         catch (ClassNotFoundException e)
         {
-            System.err.println("fail: " + e.getMessage());
+            System.out.println("fail: " + e.getMessage());
         }
         
         dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -52,7 +53,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.err.println("formSpec not found!! Possible broken Incident request");
+            System.out.println("formSpec not found!! Possible broken Incident request");
         }
         return ownerName + "." + fileName;
     }
@@ -72,7 +73,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.err.println("Saving picture field failed");
+            System.out.println("Saving field to database failed");
         }
     }
     
@@ -97,7 +98,7 @@ public class DBAccess {
      * @param fieldNames a list of the names of any non-standard fields
      * @return the number to be appended to the new spec
      */
-    public int createNewChannel(String title, String owner, boolean isPublic, String[] fieldNames)
+    public int createNewChannel(String title, String owner, boolean isPublic, ArrayList<String> fieldNames)
     {
         try (Statement statement = dbconnection.createStatement())
         {
@@ -109,7 +110,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.err.println("Creating new channel failed!");
+            System.out.println("Creating new channel failed!");
             return -1;
         }
     }
@@ -131,7 +132,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.err.println("Creating new Post failed");
+            System.out.println("Creating new Post failed");
             return -1;
         }
     }

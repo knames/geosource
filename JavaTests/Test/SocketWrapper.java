@@ -72,6 +72,7 @@ public class SocketWrapper
                 System.out.println("Connection Established");
 
             OutputStream outStream = outSocket.getOutputStream();
+            outStream.write(1);
             InputStream inStream = outSocket.getInputStream();
 //            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
 //            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);

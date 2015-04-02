@@ -65,7 +65,7 @@
         In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
       </div>
 
-        <paper-input-decorator label="Enter a username..." floatingLabel error="{{response.message}}" isInvalid="{{response.error}}">
+        <paper-input-decorator i id="input_decorator" label="Enter a username..." floatingLabel>
           <input id="input" value="{{input}}" is="core-input">
         </paper-input-decorator>
 
@@ -93,9 +93,10 @@
     },
 
     handleResponse: function(event, detail, sender) {
-      console.log(this.response);
-      if(details.response.error) {
-        this.$.input_decorator.isInvalid = detail.response.error;
+      console.log(detail.response);
+      if(detail.response.error) {
+	console.log(detail.response.message);
+        this.$.input_decorator.isInvalid = true;
         this.$.input_decorator.error = detail.response.message;
       } else {
         this.$.globals.data.user = { 

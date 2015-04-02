@@ -64,10 +64,10 @@ public class FileAccess {
             in = new ObjectInputStream(fileRead); // stream to object
             return (ArrayList<FieldWithoutContent>) in.readObject();
         } catch (IOException IOe) {
-            System.err.println("Reader initialization failed!");
+            System.out.println("Reader initialization failed!");
             return null;
         } catch (ClassNotFoundException CNFe) {
-            System.err.println("Parsing Specification failed");
+            System.out.println("Parsing Specification failed");
             return null;
         }
     }
@@ -80,7 +80,7 @@ public class FileAccess {
         }
         catch (IOException IOe)
         {
-            System.err.println("Error writing form specification file");
+            System.out.println("Error writing form specification file");
         }
     }
 
@@ -90,7 +90,7 @@ public class FileAccess {
         try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream("media/fieldContent/" + fileName))) {
             fileOut.writeObject(fieldContent);
         } catch (IOException IOe) {
-            System.err.println("Error attempting to write field");
+            System.out.println("Error attempting to write field");
         }
         return fileName;
     }

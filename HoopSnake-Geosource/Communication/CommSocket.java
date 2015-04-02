@@ -4,7 +4,8 @@ import Control.Controller;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
-import java.io.BufferedReader;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -163,21 +164,21 @@ public class CommSocket implements Runnable{
         }
         catch (IOException IOe)
         {
-            System.err.println("IO Exception: ");
+            System.out.println("IO Exception: ");
             IOe.printStackTrace();
         }
         catch (InvalidKeyException IKe)
         {
-            System.err.println("invalid encryption password");
+            System.out.println("invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            System.err.println("invalid key specification");
+            System.out.println("invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            System.err.println("invalid encryption algorithm");
+            System.out.println("invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            System.err.println("No Such Padding");
+            System.out.println("No Such Padding");
         }
         catch (Exception e){
             e.printStackTrace();
@@ -191,24 +192,57 @@ public class CommSocket implements Runnable{
      */
     public void websiteRun(InputStream inStream, OutputStream outStream)
     {
-        OutputStreamWriter out = new OutputStreamWriter(outStream);
-        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+        InputStreamReader inReader = new InputStreamReader(inStream);
         
         try
         {
-            String command = in.readLine();
+            JsonWriter out = new JsonWriter(outWriter);
+            JsonReader in = new JsonReader(inReader);
+            
+            String garbage = in.nextName();
+            String command = in.nextString();
             
             switch (command)
             {
                 case "CREATE_CHANNEL":
                 {
+                    in.beginObject();
+                    assert (in.nextName().equals("name"));
+                    String title = in.nextString();
+                    assert (in.nextName().equals("owner"));
+                    String owner = in.nextString();
+                    assert (in.nextName().equals("public"));
+                    boolean isPublic = in.nextBoolean();
+                    assert (in.nextName().equals("numFields"));
+                    int numFields = in.nextInt();
+                    ArrayList types = new ArrayList(numFields);
+                    ArrayList fieldNames = new ArrayList(numFields);
+                    ArrayList required = new ArrayList(numFields);
+                    assert (in.nextName().equals("fields"));
+                    in.beginArray();
+                    for (int i = 0; i < numFields; i ++)
+                    {
+                        in.beginObject();
+                        assert (in.nextName().equals("type"));
+                        types.add(in.nextString());
+                        assert (in.nextName().equals("label"));
+                        fieldNames.add(in.nextString());
+                        assert (in.nextName().equals("required"));
+                        required.add(in.nextBoolean());
+                        //TODO add attribute support
+                        in.endObject();
+                    }
+                    in.endArray();
+                    in.endObject();
+                    controller.newChannel(title, owner, isPublic, types, fieldNames, required);
                     break;
                 }
             }
         }
         catch (IOException IOe)
         {
-            System.err.println("Communication error, aborting website communication");
+            System.out.println("Communication error, aborting website communication");
         }
     }
 }

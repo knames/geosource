@@ -32,7 +32,7 @@ public class SocketWrapper {
     private int portNum = 9001;
     //TODO change the IP address to come from a config file, or some other option.
     private String ipaddress = "www.okenso.com";
-
+    private static final int APP_IDENTIFIER = 1;
     private static final int TIMEOUT_TIME_MILLIS = 10000;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -75,6 +75,7 @@ public class SocketWrapper {
                 Log.i(LOG_TAG,"Connection Established");
 
             OutputStream outStream = outSocket.getOutputStream();
+            outStream.write(APP_IDENTIFIER); //converts to byte 1 automatically.
             InputStream inStream = outSocket.getInputStream();
 //            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
 //            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);

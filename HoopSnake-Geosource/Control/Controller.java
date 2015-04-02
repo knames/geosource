@@ -12,12 +12,8 @@ import ServerClientShared.StringFieldWithoutContent;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  *
@@ -103,9 +99,24 @@ public class Controller {
     private void insertTestChannel()
     {
         String[] types = {"STRING", "IMAGE", "VIDEO", "AUDIO"};
+        ArrayList<String> typeList = new ArrayList();
+        for (String type : types)
+        {
+            typeList.add(type);
+        }
         String[] fieldNames = {"TextField", "PictureField", "VideoField", "AudioField"};
+        ArrayList<String> fieldNameList = new ArrayList();
+        for (String fieldName : fieldNames)
+        {
+            fieldNameList.add(fieldName);
+        }
         boolean[] required = {false, false, false, false};
-        newChannel("testing", "okenso", true, types, fieldNames, required);
+        ArrayList<Boolean> requiredList = new ArrayList();
+        for (boolean require : required)
+        {
+            requiredList.add(require);
+        }
+        newChannel("testing", "okenso", true, typeList, fieldNameList, requiredList);
     }
     
     /**
@@ -117,17 +128,20 @@ public class Controller {
      * @param fieldNames the names of the channel's non-default fields
      * @param required whether or not each non-default field is a required field
      */
-    private void newChannel(String title, String owner, boolean isPublic, String[] types, String[] fieldNames, boolean[] required)
+    public void newChannel(String title, String owner, boolean isPublic, ArrayList<String> types, ArrayList<String> fieldNames, ArrayList<Boolean> required)
     {
         if (!dbAccess.channelExists(title, owner)) //don't re-make on normal server restart
         {
             ArrayList<FieldWithoutContent> newSpec = new ArrayList();
             newSpec.add(new StringFieldWithoutContent("title", true));
             newSpec.add(new GeotagFieldWithoutContent("geotag", true)); //always present
+            //newSpec.add(new CheckboxFieldWithoutContent("question", true));
             //make spec array
-            for (int i = 0; i < types.length; i ++)
+            if (types.size() != fieldNames.size() || types.size() != required.size() || fieldNames.size() != required.size())
+                throw new RuntimeException("non-standard form fields do not match in length!");
+            for (int i = 0; i < types.size(); i ++)
             {
-                newSpec.add(FieldType.valueOf(types[i]).getField(fieldNames[i], required[i]));
+                newSpec.add(FieldType.valueOf(types.get(i)).getField(fieldNames.get(i), required.get(i)));
             }
             int newSpecNum = dbAccess.createNewChannel(title, owner, isPublic, fieldNames);
             if (newSpecNum >=0) //only if new spec should be made
