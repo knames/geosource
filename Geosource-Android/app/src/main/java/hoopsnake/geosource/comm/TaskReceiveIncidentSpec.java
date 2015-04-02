@@ -1,5 +1,6 @@
 package hoopsnake.geosource.comm;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
@@ -21,9 +22,10 @@ import static junit.framework.Assert.assertNotNull;
  * @precond when calling execute(), must use precisely params as shown: execute(String channelName, String channelOwner, String poster). (No null args).
  * @postcond when execute() is called, receive a new incident spec from the server, detailing what the fields are that need to be filled out.
  */
-public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Void, SocketResult> {
+public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResult> {
     String channelName, channelOwner, poster;
     IncidentActivity activity;
+    private static final String LOG_TAG = "geosource comm";
     public TaskReceiveIncidentSpec(IncidentActivity activity)
     {
         this.activity = activity;
@@ -93,10 +95,9 @@ public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Vo
     }
 
     protected void onPostExecute(SocketResult result) {
-        makeToastAndLogOnSocketResult(
+        result.makeToastAndLog(
                 activity.getString(R.string.downloaded_incident_spec_for_channel) + " " + channelName + ".",
                 activity.getString(R.string.failed_to_download_incident_spec_for_channel) + " " + channelName + ".",
-                result,
                 activity,
                 LOG_TAG);
 
