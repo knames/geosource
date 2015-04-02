@@ -1,15 +1,19 @@
 package Test;
 
 import DataBase.DBAccess;
+import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
+import ServerClientShared.Geotag;
+import ServerClientShared.GeotagFieldWithContent;
 import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
+import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -141,20 +145,45 @@ public class ControllerTest
         //IN PROGRESS
         //Then, create an Incident, then send it to the server.
         
-        /*StringFieldWithoutContent t1 = new StringFieldWithoutContent("Test Description", true);     
+        StringFieldWithoutContent t1 = new StringFieldWithoutContent("Test Description", true);     
         StringFieldWithContent stringCon = new StringFieldWithContent(t1);
         stringCon.setContent("THIS IS A TEST. DO NOT PANIC");
         
+        StringFieldWithoutContent t2 = new StringFieldWithoutContent("More stuff", true);     
+        StringFieldWithContent stringCon2 = new StringFieldWithContent(t2);
+        stringCon2.setContent("GROUND CONTROL TO MAJOR TOM");
+        
+        Geotag location = new Geotag() ;
+        location.setLatitude(11.111);
+        location.setLongitude(22.222);
+        location.setTimestamp(555555);
+        GeotagFieldWithoutContent g1 = new GeotagFieldWithoutContent("Location", true);
+        GeotagFieldWithContent geotagCon = new GeotagFieldWithContent(g1);
+        
+        
         byte[] image = new byte[]{1,2,4};
-        ImageFieldWithoutContent t2 = new ImageFieldWithoutContent("Description", true);      
-        ImageFieldWithContent imageCon = new ImageFieldWithContent(t2);
+        ImageFieldWithoutContent i1 = new ImageFieldWithoutContent("an image?", true);      
+        ImageFieldWithContent imageCon = new ImageFieldWithContent(i1);
+        imageCon.setContent(image);
+        
+        VideoFieldWithoutContent v1 = new VideoFieldWithoutContent("a video?", true);      
+        VideoFieldWithContent videoCon = new VideoFieldWithContent(v1);
+        videoCon.setContent(image);
+        
+        AudioFieldWithoutContent a1 = new AudioFieldWithoutContent("an audio bite?", true);      
+        AudioFieldWithContent audioCon = new AudioFieldWithContent(a1);
+        audioCon.setContent(image);
         
         ArrayList<FieldWithContent> filledIncident=new ArrayList();
         filledIncident.add(stringCon);
+        filledIncident.add(geotagCon);
+        filledIncident.add(stringCon2);
         filledIncident.add(imageCon);
-        Incident testIncident = new Incident(filledIncident,testChannel,testOwner,"xxLegolasxxYoloxx");
+        filledIncident.add(videoCon);
+        filledIncident.add(audioCon);
+        Incident testIncident = new Incident(filledIncident,testChannel,testOwner,"xx420Blazexx");
         
-        SocketStuff.makePost(testIncident);*/
+        SocketStuff.makePost(testIncident);
     }
     
     
