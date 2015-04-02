@@ -83,7 +83,7 @@ CREATE TABLE post_comments (
 	PRIMARY KEY (pc_username, pc_chname, pc_chowner, pc_number)
 	);
 
-
+/*
 -- comment this out when done with dummydata
 source /var/www/okenso.com/cmpt371group2/Database/dbdummydata.sql
 
@@ -95,6 +95,7 @@ CREATE TABLE tblname (
 	PRIMARY KEY (name, name2)
 );
 */
+
 
 
 
