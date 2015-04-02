@@ -29,8 +29,8 @@
       // Make a copy of the loaded data
       console.log("response");
       this.response = this.$.ajax.response;
-      console.log(this.reponse);
-      this.fire('user-creation-response', {response: this.response});
+      console.log(this.response);
+      this.fire('user-creation-response', {response: this.$.ajax.response});
     },
 
     submit: function(username) {
