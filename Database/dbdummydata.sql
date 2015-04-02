@@ -1,6 +1,7 @@
 insert into users values ("0001", "okenso");
 insert into users values ("115161761450794914816", "Josh");
 insert into users values ("171717171717", "frank");
+insert into users values ("1515151", "xx420Blazexx");
 
 insert into channels values ("okenso's channel", "okenso", 1, true);	
 insert into channels values ("okenso's other channel", "okenso", 2, true);
