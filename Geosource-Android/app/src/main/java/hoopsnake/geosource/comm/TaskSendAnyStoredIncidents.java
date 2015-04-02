@@ -1,6 +1,8 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
@@ -14,11 +16,12 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 29/03/15.
  */
-public class TaskSendAnyStoredIncidents extends IncidentActivityCommTask<Void, Void, Void> {
-
-    public TaskSendAnyStoredIncidents(IncidentActivity activity)
+public class TaskSendAnyStoredIncidents extends AsyncTask<Void, Void, Void> {
+    private static final String LOG_TAG = "geosource comm";
+    Activity activity;
+    public TaskSendAnyStoredIncidents(Activity activity)
     {
-        super(activity);
+        this.activity = activity;
     }
 
     @Override

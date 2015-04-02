@@ -1,11 +1,12 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
+
 import java.io.File;
 import java.util.ArrayList;
 
 import ServerClientShared.Incident;
 import hoopsnake.geosource.AppGeotagWrapper;
-import hoopsnake.geosource.IncidentActivity;
 
 /**
  * Created by wsv759 on 08/03/15.
@@ -82,5 +83,5 @@ public interface AppIncident
      *
      * @param activity needed to resolve the absolute path name.
      */
-    public File getFile(IncidentActivity activity);
+    public File getFile(Activity activity);
 }

@@ -1,5 +1,7 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
@@ -12,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import ServerClientShared.Commands;
 import hoopsnake.geosource.FileIO;
-import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.data.AbstractAppFieldWithFile;
 import hoopsnake.geosource.data.AppField;
@@ -28,8 +29,10 @@ import static junit.framework.Assert.assertTrue;
  * Created by wsv759 on 19/02/15.
  * Task to send a new completed incident to the server.
  */
-public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void, SocketResult> {
+public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult> {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
+    private static final String LOG_TAG = "geosource comm";
+    Activity activity;
 
     SocketWrapper socketWrapper;
     ObjectOutputStream outStream; //stream to client
@@ -42,9 +45,9 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
         return contentSerializationCountDownLatch;
     }
 
-    public TaskSendIncident(IncidentActivity activity)
+    public TaskSendIncident(Activity activity)
     {
-        super(activity);
+        this.activity = activity;
     }
 
     protected SocketResult doInBackground(AppIncident... params) {
@@ -114,7 +117,6 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
 
         //TODO ping the server before serializing everything.
 
-
         assertNotNull(appIncidentToSend);
 
         SocketResult initializeResult = initializeSocketConnection();
@@ -152,9 +154,8 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
     }
 
     protected void onPostExecute(SocketResult result) {
-        makeToastAndLogOnSocketResult(activity.getString(R.string.uploaded_incident),
+        result.makeToastAndLog(activity.getString(R.string.uploaded_incident),
                 activity.getString(R.string.failed_to_upload_incident),
-                result,
                 activity,
                 LOG_TAG);
     }
