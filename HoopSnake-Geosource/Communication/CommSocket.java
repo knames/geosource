@@ -163,21 +163,21 @@ public class CommSocket implements Runnable{
         }
         catch (IOException IOe)
         {
-            System.err.println("IO Exception: ");
+            System.out.println("IO Exception: ");
             IOe.printStackTrace();
         }
         catch (InvalidKeyException IKe)
         {
-            System.err.println("invalid encryption password");
+            System.out.println("invalid encryption password");
         }
         catch (InvalidKeySpecException IKSe) {
-            System.err.println("invalid key specification");
+            System.out.println("invalid key specification");
         }
         catch (NoSuchAlgorithmException NSAe) {
-            System.err.println("invalid encryption algorithm");
+            System.out.println("invalid encryption algorithm");
         }
         catch (NoSuchPaddingException NSPe) {
-            System.err.println("No Such Padding");
+            System.out.println("No Such Padding");
         }
         catch (Exception e){
             e.printStackTrace();
@@ -208,7 +208,7 @@ public class CommSocket implements Runnable{
         }
         catch (IOException IOe)
         {
-            System.err.println("Communication error, aborting website communication");
+            System.out.println("Communication error, aborting website communication");
         }
     }
 }
