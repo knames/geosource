@@ -25,6 +25,7 @@ import hoopsnake.geosource.data.AppIncidentWithWrapper;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author wsv759
@@ -33,8 +34,8 @@ import static junit.framework.Assert.assertNull;
  * This activity also launches the tasks to receive a new incident spec and send a new incident.
  */
 public class IncidentActivity extends ActionBarActivity {
-    private boolean clickable = true;
-    private final ReentrantLock clickableLock = new ReentrantLock();
+    private boolean launchable = true;
+    private final ReentrantLock launchableLock = new ReentrantLock();
 
     private static final String LOG_TAG = "geosource";
     public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
@@ -44,6 +45,34 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident_exists";
     private static final String FILENAME_CUR_INCIDENT = "cur_incident_object";
     public static final String DIRNAME_INCIDENTS_YET_TO_SEND = "incidents_yet_to_send";
+
+    /**
+     * Is the activity's ui rendered already on screen? Useful for background tasks.
+     */
+    private boolean isUiRendered = false;
+
+    /**
+     * Is the activity waiting for its incident to be set by a background task? Useful when resuming and pausing.
+     */
+    private boolean isWaitingForIncident = false;
+
+    private boolean isWaitingForIncident() {
+        return isWaitingForIncident;
+    }
+
+    private void setWaitingForIncident(boolean isWaitingForIncident) {
+        this.isWaitingForIncident = isWaitingForIncident;
+
+        assertTrue(!isWaitingForIncident || incident == null);
+    }
+
+    public boolean isUiRendered() {
+        return isUiRendered;
+    }
+
+    private void setUiRendered(boolean isRendered) {
+        this.isUiRendered = isRendered;
+    }
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -88,7 +117,6 @@ public class IncidentActivity extends ActionBarActivity {
             if (!initializeAppIncidentFromPreexistingState()) {
                 saveIncidentState();
                 leaveDueToLostIncident();
-                return;
             }
         }
         else
@@ -121,6 +149,8 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(channelOwner);
         assertNotNull(poster);
 
+        setWaitingForIncident(true);
+
         new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
 //        ArrayList<FieldWithContent> l = new ArrayList<>();
@@ -139,8 +169,19 @@ public class IncidentActivity extends ActionBarActivity {
         return !extras.containsKey(PARAM_STRING_CHANNEL_NAME);
     }
 
+    /**
+     * Set the incident to underlie this activity (and its UI.)
+     * @param incident the new incident for this activity.
+     *
+     * @precond the new incident is not null, but the app's existing incident IS. (Otherwise there is no reason to set one.)
+     * @postcond the activity's incident is set, and it is informed as such.
+     */
     public void setIncident(AppIncident incident) {
+        assertNull(this.incident);
         this.incident = incident;
+        assertNotNull(incident);
+
+        setWaitingForIncident(false);
     }
 
     /**
@@ -192,6 +233,8 @@ public class IncidentActivity extends ActionBarActivity {
 
             incidentFieldsDisplay.addView(v);
         }
+
+        setUiRendered(true);
     }
 
     /**
@@ -272,14 +315,14 @@ public class IncidentActivity extends ActionBarActivity {
      * @return true if the activity is not busy and can be clicked, false otherwise.
      */
     private boolean canLaunch() {
-        clickableLock.lock();
-        if (clickable) {
-            clickable = false;
-            clickableLock.unlock();
+        launchableLock.lock();
+        if (launchable) {
+            launchable = false;
+            launchableLock.unlock();
             return true;
         }
 
-        clickableLock.unlock();
+        launchableLock.unlock();
         return false;
     }
 
@@ -287,10 +330,10 @@ public class IncidentActivity extends ActionBarActivity {
      * When a thread is done using this activity, allow other threads to use it again.
      */
     private void doneLaunching() {
-        clickableLock.lock();
-        assertFalse(clickable);
-        clickable = true;
-        clickableLock.unlock();
+        launchableLock.lock();
+        assertFalse(launchable);
+        launchable = true;
+        launchableLock.unlock();
     }
 
     /**
@@ -346,17 +389,21 @@ public class IncidentActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
-        //TODO save things like image bitmaps that have been created so they don't have to be regenerated each time. Basically, save incident state properly.
-        if (incident == null && !retrieveIncidentState()) {
+        if (incident == null && !isWaitingForIncident() && !retrieveIncidentState()) {
             leaveDueToLostIncident();
+            return;
         }
 
-        renderIncidentFromScratch(false);
+        if (!isUiRendered())
+            renderIncidentFromScratch(false);
+
     }
 
     /**
      * Incident state not guaranteed to be saved during execution of this function. Calling method is response for that.
      * (It is done automatically onPause() so there is no need to double-tap.)
+     * Also, finish() does not cause the activity to halt execution immediately! The calling function must return and not execute
+     * any more code.
      */
     private void leaveDueToLostIncident()
     {
@@ -383,6 +430,8 @@ public class IncidentActivity extends ActionBarActivity {
      */
     private void saveIncidentState()
     {
+        //TODO save things like image bitmaps that have been created so they don't have to be regenerated each time. Basically, save incident state properly.
+
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_sharedpref_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         if (incident == null) {
