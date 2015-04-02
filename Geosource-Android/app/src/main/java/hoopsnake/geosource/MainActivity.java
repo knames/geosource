@@ -8,6 +8,8 @@ import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
+import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
+
 /**
  * @author wsv759
  *
@@ -43,12 +45,15 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // TODO check if isInternetConnected() first.
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.load("http://okenso.com/", null);
         xWalkWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         setIncidentButtonTextBasedOnSharedPref();
+
+        //If folder is not empty, and we are connected to the internet, send those files!
+        new TaskSendAnyStoredIncidents(this).execute();
     }
 
     /**

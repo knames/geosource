@@ -24,7 +24,6 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
-import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -101,10 +100,6 @@ public class IncidentActivity extends ActionBarActivity {
         }
         else
             initializeAppIncidentFromServer(extras);
-
-
-        //If folder is not empty, and we are connected to the internet, send those files!
-        new TaskSendAnyStoredIncidents(this).execute();
     }
 
     private boolean initializeAppIncidentFromPreexistingState()

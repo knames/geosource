@@ -23,10 +23,10 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class TaskReceiveIncidentSpec extends IncidentActivityCommTask<String, Void, SocketResult> {
     String channelName, channelOwner, poster;
-
+    IncidentActivity activity;
     public TaskReceiveIncidentSpec(IncidentActivity activity)
     {
-        super(activity);
+        this.activity = activity;
     }
 
     protected SocketResult doInBackground(String... params) {

@@ -1,5 +1,6 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
 import android.util.Log;
 
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 import ServerClientShared.Commands;
 import hoopsnake.geosource.FileIO;
-import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.data.AbstractAppFieldWithFile;
 import hoopsnake.geosource.data.AppField;
@@ -31,6 +31,8 @@ import static junit.framework.Assert.assertTrue;
 public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void, SocketResult> {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
 
+    Activity activity;
+
     SocketWrapper socketWrapper;
     ObjectOutputStream outStream; //stream to client
     ObjectInputStream inStream; //stream from client
@@ -42,9 +44,9 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
         return contentSerializationCountDownLatch;
     }
 
-    public TaskSendIncident(IncidentActivity activity)
+    public TaskSendIncident(Activity activity)
     {
-        super(activity);
+        this.activity = activity;
     }
 
     protected SocketResult doInBackground(AppIncident... params) {
@@ -113,7 +115,6 @@ public class TaskSendIncident extends IncidentActivityCommTask<AppIncident, Void
         }
 
         //TODO ping the server before serializing everything.
-
 
         assertNotNull(appIncidentToSend);
 

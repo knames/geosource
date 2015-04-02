@@ -19,7 +19,7 @@ import hoopsnake.geosource.R;
 /**
  * Created by wsv759 on 21/03/15.
  */
-public class AppGeotagField extends AbstractAppField{
+public class AppGeotagField extends AbstractAppField {
 
     private TextView tv;
 

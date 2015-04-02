@@ -5,24 +5,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 15/03/15.
  */
 public abstract class IncidentActivityCommTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
     public static final String LOG_TAG = "geosource comm";
-
-    IncidentActivity activity;
-
-    public IncidentActivityCommTask(IncidentActivity activity)
-    {
-        this.activity = activity;
-        assertNotNull(activity);
-    }
 
     /**
      * Helper function. Allows the two socket tasks to react similarly to various results.
@@ -37,7 +26,7 @@ public abstract class IncidentActivityCommTask<Params, Progress, Result> extends
         String message;
         switch (result) {
             case UNKNOWN_ERROR:
-                message = onFailure + " " + activity.getString(R.string.unknown_error);
+                message = onFailure + " " + context.getString(R.string.unknown_error);
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                 Log.e(logTag, message);
                 break;
@@ -47,12 +36,12 @@ public abstract class IncidentActivityCommTask<Params, Progress, Result> extends
                 Log.e(logTag, message);
                 break;
             case FAILED_CONNECTION:
-                message = onFailure + " " + activity.getString(R.string.connection_failed);
+                message = onFailure + " " + context.getString(R.string.connection_failed);
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                 Log.e(logTag, message);
                 break;
             case CLASS_NOT_FOUND:
-                Toast.makeText(context, onFailure + " " + activity.getString(R.string.incomprehensible_server_response), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, onFailure + " " + context.getString(R.string.incomprehensible_server_response), Toast.LENGTH_LONG).show();
                 Log.e(logTag, onFailure + "Server response object class not found.");
                 break;
             case SUCCESS:

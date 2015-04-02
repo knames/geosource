@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.io.File;
@@ -217,7 +218,7 @@ public class AppIncidentWithWrapper implements AppIncident, Serializable {
     }
 
     @Override
-    public File getFile(IncidentActivity activity) {
+    public File getFile(Activity activity) {
         if (!isCompletelyFilledIn())
             return null;
 
