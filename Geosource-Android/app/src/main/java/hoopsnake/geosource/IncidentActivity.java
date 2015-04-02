@@ -24,6 +24,7 @@ import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
+import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
 import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppField;
@@ -133,16 +134,16 @@ public class IncidentActivity extends ActionBarActivity {
         assertNotNull(channelOwner);
         assertNotNull(poster);
 
-//        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
-        ArrayList<FieldWithContent> l = new ArrayList<>();
-        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
-        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
-        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
-        // etc.
-
-        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
-        renderIncidentFromScratch(true);
+//        ArrayList<FieldWithContent> l = new ArrayList<>();
+//        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
+//        l.add(new GeotagFieldWithContent(new GeotagFieldWithoutContent("GeotagTitle", true)));
+//        l.add(new ImageFieldWithContent(new ImageFieldWithoutContent("ImageTitle", true)));
+//        // etc.
+//
+//        incident = new AppIncidentWithWrapper(new Incident(l, channelName, channelOwner, poster), IncidentActivity.this);
+//        renderIncidentFromScratch(true);
     }
 
     private boolean extrasAreEmpty(Bundle extras)
