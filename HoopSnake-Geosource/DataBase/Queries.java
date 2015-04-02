@@ -1,5 +1,7 @@
 package DataBase;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Connor
@@ -38,7 +40,7 @@ public class Queries {
     	//TODO Needs testing.
         //update posts_okenso_pothole set p_field1 = "yo" where p_number=1; sample of SQL code.
         String sql = "update posts_" + ownerName + "_" + channelName
-                + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber;
+                + " set p_" + fieldName + " = \"" + filePath + "\" where p_number = " + postNumber + ";";
         return sql;
     }
 
@@ -87,7 +89,7 @@ public class Queries {
      @param fields an array of column names for the fields. can take null of no fields.
      * 
      @return the sql for the table creation*/
-    public static String createPosts(String ownername, String tablename, String[] fields){
+    public static String createPosts(String ownername, String tablename, ArrayList<String> fields){
         String allfields = "";
         if (fields != null){
             for (String i : fields){
@@ -130,20 +132,20 @@ public class Queries {
      * @param fieldNames the names of all non-standard fields
      * @return a string to be run by an sql statement
      */
-    public static String makeChannel(String title, String owner, int specNum, boolean isPublic, String[] fieldNames)
+    public static String makeChannel(String title, String owner, int specNum, boolean isPublic, ArrayList<String> fieldNames)
     {
         String sql = "insert into channels values (\"" + title + "\", \"" + owner + "\", " + specNum + ", " + isPublic +");";
         sql += createPosts(owner, title, fieldNames);
         return sql;
     }
     
-    /**  a main class to test some functions output
-     * @param args.*/
-    public static void main(String[] args)
-    {
-    	String[] test = {"pic", "video", "audio"};
-        System.out.println(createPosts("okenso", "toast", test));
-        
-    }
+//    /**  a main class to test some functions output
+//     * @param args.*/
+//    public static void main(String[] args)
+//    {
+//    	String[] test = {"pic", "video", "audio"};
+//        System.out.println(createPosts("okenso", "toast", test));
+//        
+//    }
 }
 

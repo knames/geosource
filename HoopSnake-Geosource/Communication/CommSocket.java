@@ -4,7 +4,8 @@ import Control.Controller;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
-import java.io.BufferedReader;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -191,17 +192,50 @@ public class CommSocket implements Runnable{
      */
     public void websiteRun(InputStream inStream, OutputStream outStream)
     {
-        OutputStreamWriter out = new OutputStreamWriter(outStream);
-        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+        InputStreamReader inReader = new InputStreamReader(inStream);
         
         try
         {
-            String command = in.readLine();
+            JsonWriter out = new JsonWriter(outWriter);
+            JsonReader in = new JsonReader(inReader);
+            
+            String garbage = in.nextName();
+            String command = in.nextString();
             
             switch (command)
             {
                 case "CREATE_CHANNEL":
                 {
+                    in.beginObject();
+                    assert (in.nextName().equals("name"));
+                    String title = in.nextString();
+                    assert (in.nextName().equals("owner"));
+                    String owner = in.nextString();
+                    assert (in.nextName().equals("public"));
+                    boolean isPublic = in.nextBoolean();
+                    assert (in.nextName().equals("numFields"));
+                    int numFields = in.nextInt();
+                    ArrayList types = new ArrayList(numFields);
+                    ArrayList fieldNames = new ArrayList(numFields);
+                    ArrayList required = new ArrayList(numFields);
+                    assert (in.nextName().equals("fields"));
+                    in.beginArray();
+                    for (int i = 0; i < numFields; i ++)
+                    {
+                        in.beginObject();
+                        assert (in.nextName().equals("type"));
+                        types.add(in.nextString());
+                        assert (in.nextName().equals("label"));
+                        fieldNames.add(in.nextString());
+                        assert (in.nextName().equals("required"));
+                        required.add(in.nextBoolean());
+                        //TODO add attribute support
+                        in.endObject();
+                    }
+                    in.endArray();
+                    in.endObject();
+                    controller.newChannel(title, owner, isPublic, types, fieldNames, required);
                     break;
                 }
             }

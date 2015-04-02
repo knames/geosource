@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -72,7 +73,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.err.println("Saving picture field failed");
+            System.err.println("Saving field failed");
         }
     }
     
@@ -97,7 +98,7 @@ public class DBAccess {
      * @param fieldNames a list of the names of any non-standard fields
      * @return the number to be appended to the new spec
      */
-    public int createNewChannel(String title, String owner, boolean isPublic, String[] fieldNames)
+    public int createNewChannel(String title, String owner, boolean isPublic, ArrayList<String> fieldNames)
     {
         try (Statement statement = dbconnection.createStatement())
         {
