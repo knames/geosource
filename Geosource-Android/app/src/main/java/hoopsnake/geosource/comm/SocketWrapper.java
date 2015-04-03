@@ -29,9 +29,9 @@ import javax.crypto.spec.DESKeySpec;
 public class SocketWrapper {
 
     private static final int COMPRESSION_BLOCK_SIZE = 1024;
-    private int portNum = 9001;
-    //TODO change the IP address to come from a config file, or some other option.
-    private String ipaddress = "www.okenso.com";
+    private static final int PORT_NUM = 9001;
+    //TODO change the IP address to come from a config file, or some other option. Nate recommended this?
+    private static final String IPADDRESS = "www.okenso.com";
     private static final int APP_IDENTIFIER = 1;
     private static final int TIMEOUT_TIME_MILLIS = 10000;
     private ObjectOutputStream out;
@@ -70,12 +70,12 @@ public class SocketWrapper {
             desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             outSocket = new Socket();
-            outSocket.connect(new InetSocketAddress(ipaddress, portNum), TIMEOUT_TIME_MILLIS);
+            outSocket.connect(new InetSocketAddress(IPADDRESS, PORT_NUM), TIMEOUT_TIME_MILLIS);
             if (outSocket.isConnected())
                 Log.i(LOG_TAG,"Connection Established");
 
             OutputStream outStream = outSocket.getOutputStream();
-            outStream.write(APP_IDENTIFIER); //converts to byte 1 automatically.
+            outStream.write(APP_IDENTIFIER); //TODO make sure this converts to bytes automatically.
             InputStream inStream = outSocket.getInputStream();
 //            CipherOutputStream cipherOut = new CipherOutputStream(outStream, desCipher);
 //            CipherInputStream cipherIn = new CipherInputStream(inStream, desCipher);

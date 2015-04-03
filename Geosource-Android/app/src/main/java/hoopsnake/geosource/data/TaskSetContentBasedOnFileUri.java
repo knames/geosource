@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.comm.TaskSendIncident;
@@ -73,8 +74,11 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
         byte[] fileInByteFormat = bos.toByteArray();
         assertNotNull(fileInByteFormat);
         fieldToSet.setContent(fileInByteFormat);
+
         //Alert the calling task that it is one step closer to being able to send this incident.
-        callingTask.getContentSerializationCountDownLatch().countDown();
+        CountDownLatch cdl = callingTask.getContentSerializationCountDownLatch();
+        assertNotNull(cdl);
+        cdl.countDown();
 
         return true;
     }

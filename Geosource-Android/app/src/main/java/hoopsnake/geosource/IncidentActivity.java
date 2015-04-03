@@ -47,11 +47,6 @@ public class IncidentActivity extends ActionBarActivity {
     public static final String DIRNAME_INCIDENTS_YET_TO_SEND = "incidents_yet_to_send";
 
     /**
-     * Is the activity's ui rendered already on screen? Useful for background tasks.
-     */
-    private boolean isUiRendered = false;
-
-    /**
      * Is the activity waiting for its incident to be set by a background task? Useful when resuming and pausing.
      */
     private boolean isWaitingForIncident = false;
@@ -65,14 +60,19 @@ public class IncidentActivity extends ActionBarActivity {
 
         assertTrue(!isWaitingForIncident || incident == null);
     }
-
-    public boolean isUiRendered() {
-        return isUiRendered;
-    }
-
-    private void setUiRendered(boolean isRendered) {
-        this.isUiRendered = isRendered;
-    }
+       //TODO destroy this when I know I don't need it.
+//    /**
+//     * Is the activity's ui rendered already on screen? Useful for background tasks.
+//     */
+//    private boolean isUiRendered = false;
+//
+//    public boolean isUiRendered() {
+//        return isUiRendered;
+//    }
+//
+//    private void setUiRendered(boolean isRendered) {
+//        this.isUiRendered = isRendered;
+//    }
 
     /** The incident to be created and edited by the user on this screen. */
     private AppIncident incident;
@@ -233,8 +233,8 @@ public class IncidentActivity extends ActionBarActivity {
 
             incidentFieldsDisplay.addView(v);
         }
-
-        setUiRendered(true);
+//TODO destroy this when I know I don't need it.
+//        setUiRendered(true);
     }
 
     /**
@@ -391,11 +391,11 @@ public class IncidentActivity extends ActionBarActivity {
 
         if (incident == null && !isWaitingForIncident() && !retrieveIncidentState()) {
             leaveDueToLostIncident();
-            return;
+//            return;
         }
-
-        if (!isUiRendered())
-            renderIncidentFromScratch(false);
+//TODO destroy this when I know I don't need it. Uncomment the above return if I need to uncomment this.
+//        if (incident != null && !isUiRendered())
+//            renderIncidentFromScratch(false);
 
     }
 
