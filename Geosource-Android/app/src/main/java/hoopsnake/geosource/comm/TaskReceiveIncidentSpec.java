@@ -101,7 +101,7 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
                 activity,
                 LOG_TAG);
 
-        if (result.equals(SocketResult.SUCCESS)) {
+        if (result.equals(SocketResult.SUCCESS) && !activity.isUiRendered()) {
             activity.renderIncidentFromScratch(true);
         }
     }
