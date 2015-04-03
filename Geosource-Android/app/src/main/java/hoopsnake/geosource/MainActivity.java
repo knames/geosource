@@ -3,12 +3,17 @@ package hoopsnake.geosource;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
 import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
+
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author wsv759
@@ -23,9 +28,7 @@ public class MainActivity extends Activity {
 
     private XWalkView xWalkWebView;
 
-    //TODO make these something other than a hard-coded string.
-    private String curChannelName = "testing";
-    private String curChannelOwner = "okenso";
+    //TODO make this something other than a hard-coded string.
     private String userName = "frank";
     private String gid = null;
 
@@ -34,7 +37,8 @@ public class MainActivity extends Activity {
      * The set of all request codes that are used by this activity when starting new activities or fragments.
      */
     private enum RequestCode {
-        CREATE_INCIDENT_ACTIVITY_REQUEST_CODE
+        CREATE_INCIDENT_ACTIVITY,
+        GET_CHANNEL_ACTIVITY
     }
 
     /**
@@ -61,40 +65,60 @@ public class MainActivity extends Activity {
      */
     public void onCreateIncidentButtonClicked(View v)
     {
+        if (IncidentActivity.curIncidentExistsInFileSystem(this))
+            startIncidentActivity(false, null);
+        else {
+            Intent intent = new Intent(MainActivity.this, ChannelSelectionActivity.class);
+            startActivityForResult(intent, RequestCode.GET_CHANNEL_ACTIVITY.ordinal());
+        }
+    }
+
+    private void startIncidentActivity(boolean createNewIncident, Channel channel)
+    {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
-        //TODO determine the current channel.
 
         //If there isn't currently an incident being worked on, give the necessary parameters to ask for a new one.
-        if (!IncidentActivity.curIncidentExistsInFileSystem(this)) {
-            intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_NAME, curChannelName);
-            intent.putExtra(IncidentActivity.PARAM_STRING_CHANNEL_OWNER, curChannelOwner);
+        if (createNewIncident) {
+            assertTrue(!IncidentActivity.curIncidentExistsInFileSystem(this));
+            assertNotNull(channel);
+
+            intent.putExtra(IncidentActivity.PARAM_CHANNEL, (Parcelable) channel);
             intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
         }
+        else
+        {
+            assertNull(channel);
+        }
 
-        startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal());
+        startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY.ordinal());
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RequestCode.CREATE_INCIDENT_ACTIVITY_REQUEST_CODE.ordinal())
+        RequestCode request = RequestCode.values()[requestCode];
+        switch(request)
         {
-            if (resultCode == RESULT_OK)
-            {
-                Button incidentButton = (Button) findViewById(R.id.create_incident_button);
-                incidentButton.setText(getString(R.string.create_incident));
-            }
-            else //RESULT_CANCELLED
-            {
-//                Button incidentButton = (Button) findViewById(R.id.create_incident_button);
-//                boolean incidentDiscarded = data.getBooleanExtra("SOMETHING", true);
-//                if (!incidentDiscarded)
-//                    incidentButton.setText(getString(R.string.resume_incident_creation));
-//                else
-//                    incidentButton.setText(getString(R.string.create_incident));
+            case CREATE_INCIDENT_ACTIVITY:
+                if (resultCode == RESULT_OK)
+                {
+                    Button incidentButton = (Button) findViewById(R.id.create_incident_button);
+                    incidentButton.setText(getString(R.string.create_incident));
+                }
+                else //RESULT_CANCELLED
+                {
+                    setIncidentButtonTextBasedOnSharedPref();
+                }
+                break;
+            case GET_CHANNEL_ACTIVITY:
+                if (resultCode == RESULT_OK)
+                {
+                    Channel channel = data.getParcelableExtra(ChannelSelectionActivity.PARAM_CHOSEN_CHANNEL);
 
-                //TODO uncomment this when it works.
-                setIncidentButtonTextBasedOnSharedPref();
-            }
+                    assertNotNull(channel);
+
+                    startIncidentActivity(false, channel);
+                }
+                break;
         }
     }
 

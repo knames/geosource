@@ -38,8 +38,7 @@ public class IncidentActivity extends ActionBarActivity {
     private final ReentrantLock launchableLock = new ReentrantLock();
 
     private static final String LOG_TAG = "geosource";
-    public static final String PARAM_STRING_CHANNEL_NAME = "channelName";
-    public static final String PARAM_STRING_CHANNEL_OWNER = "channelOwner";
+    public static final String PARAM_CHANNEL = "channelName";
     public static final String PARAM_STRING_POSTER = "poster";
 
     public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident_exists";
@@ -142,16 +141,14 @@ public class IncidentActivity extends ActionBarActivity {
 
     private void initializeAppIncidentFromServer(Bundle extras)
     {
-        String channelName = extras.getString(PARAM_STRING_CHANNEL_NAME);
-        String channelOwner = extras.getString(PARAM_STRING_CHANNEL_OWNER);
+        Channel channel = extras.getParcelable(PARAM_CHANNEL);
         String poster = extras.getString(PARAM_STRING_POSTER);
-        assertNotNull(channelName);
-        assertNotNull(channelOwner);
+        assertNotNull(channel);
         assertNotNull(poster);
 
         setWaitingForIncident(true);
 
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelName, channelOwner, poster);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channel.getChannelName(),channel.getChannelOwner(), poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
 //        ArrayList<FieldWithContent> l = new ArrayList<>();
 //        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
@@ -166,7 +163,7 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean extrasAreEmpty(Bundle extras)
     {
         assertNotNull(extras);
-        return !extras.containsKey(PARAM_STRING_CHANNEL_NAME);
+        return !extras.containsKey(PARAM_CHANNEL);
     }
 
     /**

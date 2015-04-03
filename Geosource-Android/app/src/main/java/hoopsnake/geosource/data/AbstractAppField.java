@@ -105,13 +105,13 @@ public abstract class AbstractAppField implements AppField, Serializable {
     @Override
     public boolean contentIsSuitable(Serializable content)
     {
-        return wrappedField.contentMatchesType(content);
+        return content == null || wrappedField.contentMatchesType(content);
     }
 
     @Override
     public void setContent(Serializable content)
     {
-        assertTrue(content == null || contentIsSuitable(content));
+        assertTrue(contentIsSuitable(content));
 
         wrappedField.setContent(content);
     }

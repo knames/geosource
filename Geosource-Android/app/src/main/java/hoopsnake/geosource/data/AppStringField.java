@@ -61,12 +61,9 @@ public class AppStringField extends AbstractAppField {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = s.toString();
+                String text = s.toString().trim();
                 if (contentIsSuitable(text))
                     setContent(text);
-                else
-                    //Their new entry is not valid, but they have still eliminated their old entry. Thus it becomes null.
-                    setContent(null);
             }
 
             @Override
