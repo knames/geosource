@@ -9,9 +9,11 @@ import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithoutContent;
+import hoopsnake.geosource.Channel;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -168,5 +170,16 @@ public class Controller {
     {
         String fileName = dbAccess.getFormSpecLocation(channelName, ownerName); //get spec's file name in filesystem
         return fileAccess.getFormSpec(fileName); //retreive form spec
+    }
+    
+    /**
+     * get all the channels in the system
+     * @return a list of all channels
+     */
+    public LinkedList<Channel> getChannelList()
+    {
+        LinkedList<Channel> channelList = dbAccess.getChannelList();
+        if (channelList.isEmpty()) return null;
+        else return channelList;
     }
 }

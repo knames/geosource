@@ -6,6 +6,7 @@ import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import hoopsnake.geosource.Channel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +24,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import javax.crypto.NoSuchPaddingException;
 
 /**
@@ -149,6 +151,13 @@ public class CommSocket implements Runnable{
                 {
                     Incident newIncident = (Incident)in.readObject();
                     controller.dealWith(newIncident);
+                    break;
+                }
+                case GET_CHANNELS:
+                {
+                    LinkedList<Channel> channels = controller.getChannelList();
+                    out.writeObject(channels);
+                    out.flush();
                     break;
                 }
                 case PING:

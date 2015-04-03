@@ -130,6 +130,16 @@ public class Queries {
         return sql;
     }
     
+    /**
+     * a query to get a list of all channels in the system
+     * @return a runnable sql query
+     */
+    public static String getAllChannels()
+    {
+        String sql = "SELECT ch_name, ch_owner from channels;";
+        return sql;
+    }
+    
 //    /**  a main class to test some functions output
 //     * @param args.*/
 //    public static void main(String[] args)
