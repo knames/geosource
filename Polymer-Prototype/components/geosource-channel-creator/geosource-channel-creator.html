@@ -19,6 +19,8 @@
 
 <link rel="import" href="../geosource-globals/geosource-globals.html">
 
+<link rel="import" href="../geosource-services/channel-service.html">
+
 <polymer-element name="geosource-channel-creator" attributes="channels subscribed">
 
 
@@ -38,6 +40,7 @@
 
       .content {
         padding: 20px;
+        padding-top: 0;
       }
 
       .footer {
@@ -123,6 +126,8 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
+    <channel-service id="channel_service" on-create-response="{{handleResponse}}"></channel-service>
+
     <div vertical layout>
       <div class="header" horizontal layout>
         <div vertical layout flex class="title">
@@ -133,7 +138,11 @@
         </div>
       </div>
       <div class="content" vertical layout>
-        <paper-input id="channel_name" floating label="Enter a channel name..."></paper-input>
+
+        <paper-input-decorator id="input_decorator" label="Enter a channel name..." floatingLabel>
+          <input id="channel_name" value="{{input}}" is="core-input">
+        </paper-input-decorator>
+
         <paper-radio-group id="channel_access" selected="public">
           <paper-radio-button name="public" label="Public"></paper-radio-button>
           <paper-radio-button name="private" label="Private"></paper-radio-button>
@@ -261,6 +270,10 @@
       }
     },
 
+    inputChanged: function() {
+      this.$.input_decorator.isInvalid = false;
+    },
+
     cancel: function() {
       this.fire('finished');
     },
@@ -270,7 +283,8 @@
       var channel = {
         name: this.$.channel_name.value, 
         owner: this.$.globals.data.user.username, 
-        public: (this.$.channel_access.selected == "public"),
+        isPublic: (this.$.channel_access.selected == "public"),
+        numFields: this.fields.length,
         fields: []
       };
 
@@ -278,16 +292,31 @@
         channel.fields.push({
           type: this.fields[i].type,
           label: this.fields[i].label,
-          required: this.fields[i].required,
-          attributes: this.fields[i].attributes
+          required: this.fields[i].required
+          //attributes: this.fields[i].attributes
         });
       }
 
       console.log(channel);
 
-      this.fire('finished');
+      this.$.channel_service.create(channel);
+    },
+    
+    handleResponse: function(event, detail, sender) {
+      console.log(detail);
+      if(detail.response.error) {
+        this.$.input_decorator.isInvalid = true;
+        this.$.input_decorator.error = detail.response.message;
+      } else {
+        //add channel manually
+        this.$.globals.data.channels.push({
+          name: detail.response.channel.name,
+          owner: detail.response.channel.owner,
+          isOwner: true
+        });
+        this.fire('finished');
+      }
     }
-
 
   });
   </script>

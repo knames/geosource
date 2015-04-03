@@ -80,6 +80,13 @@
       handleAs="json">
     </core-ajax>
 
+    <core-ajax id="create_ajax"
+      url="/php/channel/create-channel.php"
+      method="POST"
+      on-core-response="{{createResponse}}"
+      handleAs="json">
+    </core-ajax>
+
   </template>
   <script>
   Polymer('channel-service', {
@@ -112,6 +119,16 @@
     unsubscribeResponse: function() {
       console.log('unsubscribe response', this.$.subscribe_ajax.response);
       this.fire('unsubscribe-response', {response: this.$.unsubscribe_ajax.response}); 
+    },
+
+    create: function(channel) {
+      this.$.create_ajax.body = JSON.stringify(channel);
+      this.$.create_ajax.go();
+    },
+
+    createResponse: function() {
+      console.log("channel creation response", this.$.create_ajax.response);
+      this.fire('create-response', {response: this.$.create_ajax.response});
     }
 
   });
