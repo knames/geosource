@@ -73,7 +73,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving field to database failed");
+            System.out.println("Saving field to database failed" + SQLe.getMessage());
         }
     }
     
@@ -105,12 +105,13 @@ public class DBAccess {
             ResultSet results = statement.executeQuery(Queries.nextSpecNum(owner)); //TODO add query
             results.next();
             int specNum = results.getInt("ch_spec") + 1;
+            results.close();
             statement.execute(Queries.makeChannel(title, owner, specNum, isPublic, fieldNames)); //no batching, because the number retrieve does nothing
             return specNum;
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Creating new channel failed!");
+            System.out.println("Creating new channel failed!" + SQLe.getMessage());
             return -1;
         }
     }
