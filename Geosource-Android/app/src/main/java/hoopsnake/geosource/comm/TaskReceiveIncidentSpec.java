@@ -101,7 +101,8 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
                 activity,
                 LOG_TAG);
 
-        if (result.equals(SocketResult.SUCCESS) && !activity.isUiRendered()) {
+        //TODO may need && !activity.isUiRendered() here, if IncidentActivity moves in that direction.
+        if (result.equals(SocketResult.SUCCESS)) {
             activity.renderIncidentFromScratch(true);
         }
     }

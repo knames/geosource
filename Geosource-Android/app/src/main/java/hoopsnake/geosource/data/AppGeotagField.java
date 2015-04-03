@@ -53,6 +53,7 @@ public class AppGeotagField extends AbstractAppField {
 
     @Override
     public View getContentViewRepresentation(int requestCodeForIntent) {
+        //TODO the layout height weight and gravity might be funky because I am not passing the right view group? Or something?
         tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
         //This is for the faded out effect. (rather than setText().)
         tv.setHint(getContentStringRepresentation());
