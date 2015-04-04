@@ -157,8 +157,8 @@
     <div class="settings" vertical layout>
       <div class="header" horizontal layout>
         <div vertical layout flex class="title">
-          <h2>{{channelSettings.name}} Settings</h2>
-          <div class="info">Owned by {{channelSettings.owner}}</div>
+          <h2>{{channel.name}} Settings</h2>
+          <div class="info">Owned by {{channel.owner}}</div>
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
@@ -243,7 +243,15 @@
     },
     loadResponse: function(event, detail, sender) {
       console.log(detail.response);
-      this.fire('loaded');
+      if(detail.response.error) {
+        //handle error
+      }
+      else {
+        this.moderators = detail.response.moderators;
+        this.viewers = detail.response.viewers;
+        this.banned = detail.response.banned;
+        this.fire('loaded');
+      }
     },
 
     addBanned: function() {
