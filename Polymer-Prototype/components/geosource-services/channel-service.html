@@ -156,8 +156,8 @@
     
     channelsLoaded: function() {
       // Make a copy of the loaded data
-      console.log("loaded channels", this.$.ajax_get_channel.response);
-      this.$.globals.data.channels = this.$.ajax_get_channel.response.slice(0).sort(function(a,b) {
+      console.log("loaded channels", this.$.ajax_get_channels.response);
+      this.$.globals.data.channels = this.$.ajax_get_channels.response.slice(0).sort(function(a,b) {
         if(a.name > b.name) { return 1; }
         else if(a.name < b.name) { return -1; }
         else { return 0; }
