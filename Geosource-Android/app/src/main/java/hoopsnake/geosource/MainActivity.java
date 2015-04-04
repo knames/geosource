@@ -9,8 +9,9 @@ import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
+import hoopsnake.geosource.comm.TaskGetSubscribedChannels;
 import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
-import hoopsnake.geosource.data.AppChannel;
+import hoopsnake.geosource.data.AppChannelIdentifier;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -26,6 +27,8 @@ import static junit.framework.Assert.assertTrue;
  */
 public class MainActivity extends Activity {
     public static final String APP_LOG_TAG = "geosource";
+    public static final String FILENAME_SUBSCRIBED_CHANNELS = "subscribed_channels";
+    public static final String PARAM_CHOSEN_CHANNEL = "chosenChannel";
 
     private XWalkView xWalkWebView;
 
@@ -59,6 +62,9 @@ public class MainActivity extends Activity {
 
         //If folder is not empty, and we are connected to the internet, send those files!
         new TaskSendAnyStoredIncidents(this).execute();
+
+        //Get all the subscribed channels for this user.
+        new TaskGetSubscribedChannels(this).execute(userName);
     }
 
     /**
@@ -74,7 +80,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void startIncidentActivity(boolean createNewIncident, AppChannel channel)
+    private void startIncidentActivity(boolean createNewIncident, AppChannelIdentifier channel)
     {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
 
@@ -83,7 +89,7 @@ public class MainActivity extends Activity {
             assertTrue(!IncidentActivity.curIncidentExistsInFileSystem(this));
             assertNotNull(channel);
 
-            intent.putExtra(IncidentActivity.PARAM_CHANNEL, (Parcelable) channel);
+            intent.putExtra(PARAM_CHOSEN_CHANNEL, (Parcelable) channel);
             intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
         }
         else
@@ -113,7 +119,7 @@ public class MainActivity extends Activity {
             case GET_CHANNEL_ACTIVITY:
                 if (resultCode == RESULT_OK)
                 {
-                    AppChannel channel = data.getParcelableExtra(ChannelSelectionActivity.PARAM_CHOSEN_CHANNEL);
+                    AppChannelIdentifier channel = data.getParcelableExtra(PARAM_CHOSEN_CHANNEL);
 
                     assertNotNull(channel);
 

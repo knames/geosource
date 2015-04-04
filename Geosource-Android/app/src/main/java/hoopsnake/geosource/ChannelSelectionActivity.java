@@ -12,24 +12,22 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import ServerClientShared.Channel;
-import hoopsnake.geosource.data.AppChannel;
-import hoopsnake.geosource.data.AppChannelWithWrapper;
+import ServerClientShared.ChannelIdentifier;
+import hoopsnake.geosource.data.AppChannelIdentifier;
+import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 
 
 public class ChannelSelectionActivity extends ListActivity {
     public static final String PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY = "pictureChannelsOnly";
-    public static final String PARAM_CHOSEN_CHANNEL = "chosenChannel";
 
     private EditText channelSearchBar;
-
 
     /**
      * the channels to choose from.
      */
-    private AppChannel[] channels = {new AppChannelWithWrapper(new Channel("Dummy for testing.", "Please wait while I try and get your channels..."))};
+    private AppChannelIdentifier[] channels = {new AppChannelIdentifierWithWrapper(new ChannelIdentifier("Dummy for testing.", "Please wait while I try and get your channels..."))};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +42,11 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "2");
 //      //TODO uncomment this once channel sending from socket is implemented.
 //        if (extras == null) {
-//            new TaskGetChannels(this).execute(false);
+//            new TaskGetChannelIdentifiers(this).execute(false);
 //        }
 //        else
 //        {
-//            new TaskGetChannels(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
+//            new TaskGetChannelIdentifiers(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
 //        }
 
         channelSearchBar = (EditText) findViewById(R.id.channel_search_bar);
@@ -76,7 +74,7 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "3");
     }
 
-    public void setChannels(AppChannel[] channels)
+    public void setChannels(AppChannelIdentifier[] channels)
     {
         this.channels = channels;
         assertNotNull(channels);
@@ -92,7 +90,7 @@ public class ChannelSelectionActivity extends ListActivity {
         TextView channelNameView = (TextView) ll.findViewById(R.id.channel_name_view);
         TextView channelOwnerView = (TextView) ll.findViewById(R.id.channel_owner_view);
 
-        intent.putExtra(PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) new Channel(
+        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) new ChannelIdentifier(
                 channelNameView.getText().toString(),
                 channelOwnerView.getText().toString()));
 

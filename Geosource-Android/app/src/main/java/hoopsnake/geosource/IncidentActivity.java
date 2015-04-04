@@ -15,10 +15,11 @@ import android.widget.Toast;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import ServerClientShared.Channel;
 import ServerClientShared.Incident;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
-import hoopsnake.geosource.data.AppChannel;
+import hoopsnake.geosource.data.AppChannelIdentifier;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
@@ -39,7 +40,6 @@ public class IncidentActivity extends ActionBarActivity {
     private final ReentrantLock launchableLock = new ReentrantLock();
 
     private static final String LOG_TAG = "geosource";
-    public static final String PARAM_CHANNEL = "channelName";
     public static final String PARAM_STRING_POSTER = "poster";
 
     public static final String SHAREDPREF_CUR_INCIDENT_EXISTS = "sharedpref_incident_exists";
@@ -120,7 +120,33 @@ public class IncidentActivity extends ActionBarActivity {
             }
         }
         else
-            initializeAppIncidentFromServer(extras);
+        {
+            AppChannelIdentifier channelIdentifier = extras.getParcelable(MainActivity.PARAM_CHOSEN_CHANNEL);
+            String poster = extras.getString(PARAM_STRING_POSTER);
+            assertNotNull(channelIdentifier);
+            assertNotNull(poster);
+
+            setWaitingForIncident(true);
+
+            if (!initializeAppIncidentFromStoredIncidentSpecs(channelIdentifier, poster))
+                initializeAppIncidentFromServer(channelIdentifier, poster);
+        }
+    }
+
+    private boolean initializeAppIncidentFromStoredIncidentSpecs(AppChannelIdentifier channelIdentifier, String poster) {
+        Channel[] channels = (Channel[]) FileIO.readObjectFromFile(this, MainActivity.FILENAME_SUBSCRIBED_CHANNELS);
+        if (channels == null)
+            return false;
+
+        for (Channel channel : channels)
+            if (channelIdentifier.matchesChannel(channel))
+            {
+                setIncident(new AppIncidentWithWrapper(channel.getIncidentSpec(), channelIdentifier.getChannelName(), channelIdentifier.getChannelOwner(), poster, this));
+                renderIncidentFromScratch(true);
+                return true;
+            }
+
+        return false;
     }
 
     private boolean initializeAppIncidentFromPreexistingState()
@@ -140,16 +166,9 @@ public class IncidentActivity extends ActionBarActivity {
         return true;
     }
 
-    private void initializeAppIncidentFromServer(Bundle extras)
+    private void initializeAppIncidentFromServer(AppChannelIdentifier channelIdentifier, String poster)
     {
-        AppChannel channel = extras.getParcelable(PARAM_CHANNEL);
-        String poster = extras.getString(PARAM_STRING_POSTER);
-        assertNotNull(channel);
-        assertNotNull(poster);
-
-        setWaitingForIncident(true);
-
-        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channel.getChannelName(),channel.getChannelOwner(), poster);
+        new TaskReceiveIncidentSpec(IncidentActivity.this).execute(channelIdentifier.getChannelName(),channelIdentifier.getChannelOwner(), poster);
         //TODO uncomment the above code once spec can be pulled properly, then remove up to "renderIncidentFromScratch()"
 //        ArrayList<FieldWithContent> l = new ArrayList<>();
 //        l.add(new StringFieldWithContent(new StringFieldWithoutContent("StringTitle", true)));
@@ -164,7 +183,7 @@ public class IncidentActivity extends ActionBarActivity {
     private boolean extrasAreEmpty(Bundle extras)
     {
         assertNotNull(extras);
-        return !extras.containsKey(PARAM_CHANNEL);
+        return !extras.containsKey(MainActivity.PARAM_CHOSEN_CHANNEL);
     }
 
     /**

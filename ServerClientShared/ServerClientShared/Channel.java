@@ -1,49 +1,33 @@
 package ServerClientShared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Created by wsv759 on 02/04/15.
- *
- * Just strings representing and owner. A simple pair.
+ * Created by wsv759 on 04/04/15.
  */
 public class Channel implements Serializable {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
 
-    public String getChannelName() {
-        return channelName;
+    public ChannelIdentifier getIdentifier() {
+        return identifier;
     }
 
-    public String getChannelOwner() {
-        return channelOwner;
+    public ArrayList<FieldWithoutContent> getIncidentSpec() {
+        return incidentSpec;
     }
 
-    private String channelName;
-    private String channelOwner;
+    private ChannelIdentifier identifier;
 
-    public Channel(String channelName, String channelOwner)
+    private ArrayList<FieldWithoutContent> incidentSpec;
+
+    public Channel(ChannelIdentifier identifier, ArrayList<FieldWithoutContent> incidentSpec)
     {
-        this.channelName = channelName;
-        this.channelOwner = channelOwner;
-    }
+        if (identifier == null || incidentSpec == null)
+            throw new RuntimeException("parameters to channel constructor cannot be null.");
 
-    @Override
-    public String toString()
-    {
-        return "channel name: " + channelName + ", channel owner: " + channelOwner;
-    }
-
-    public static Channel[] fromStringArray(String[] channelNameChannelOwnerRepeating)
-    {
-        int numPairs = channelNameChannelOwnerRepeating.length;
-        if(numPairs % 2 != 0)
-            throw new RuntimeException("channel string array formatted incorrectly.");
-
-        Channel[] channels = new Channel[numPairs/2];
-        for (int i = 0; i < numPairs; i += 2)
-            channels[i] = new Channel(channelNameChannelOwnerRepeating[i], channelNameChannelOwnerRepeating[i + 1]);
-
-        return channels;
+        this.identifier = identifier;
+        this.incidentSpec = incidentSpec;
     }
 }

@@ -42,6 +42,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="search_for_a_channel">Search for a Channel</string>
 
+    <string name="downloaded_subscribed_channels">Downloaded subscribed channels.</string>
+    <string name="failed_to_download_subscribed_channels">Could not download subscribed channels.</string>
     <string name="downloaded_channel_choices">Downloaded channel choices.</string>
     <string name="failed_to_download_channel_choices">Could not download channel choices.</string>
     <string name="select_a_channel">Please select a channel for which to create a new incident.</string>
