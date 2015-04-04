@@ -165,9 +165,13 @@
         </div>
       </div>
       <div class="content" vertical layout>
-        <paper-radio-group selected="{{channelSettings.access}}">
-          <paper-radio-button name="public" id="public" label="Public" disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}"></paper-radio-button>
-          <paper-radio-button name="private" label="Private" disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}"></paper-radio-button>
+        <paper-radio-group selected="{{isPublic}}">
+          <paper-radio-button name="true" id="public" label="Public" 
+            disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
+          </paper-radio-button>
+          <paper-radio-button name="false" id="private" label="Private" 
+            disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
+          </paper-radio-button>
         </paper-radio-group>
 
         <h3>Moderators</h3>
@@ -179,7 +183,9 @@
             </div>
           </template>
           <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
-            <paper-input label="Enter a username..." flex id="moderator_input"></paper-input>
+            <paper-input-decorator id="moderator_input_decorator" label="Enter a username...">
+              <input value="{{moderatorInput}}"></paper-input>
+            </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addModerator}}"></paper-icon-button>
           </div>
         </div>
@@ -193,7 +199,9 @@
             </div>
           </template>
           <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
-            <paper-input label="Enter a username..." flex id="viewer_input"></paper-input>
+            <paper-input-decorator id="viewer_input_decorator" label="Enter a username...">
+              <input value="{{viewerInput}}"></paper-input>
+            </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addViewer}}"></paper-icon-button>
           </div>
         </div>
@@ -207,7 +215,9 @@
             </div>
           </template>
           <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
-            <paper-input label="Enter a username..." flex id="ban_input"></paper-input>
+            <paper-input-decorator id="banned_input_decorator" label="Enter a username...">
+              <input value="{{banInput}}"></paper-input>
+            </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addBanned}}"></paper-icon-button>
           </div>
         </div>
@@ -247,6 +257,7 @@
         //handle error
       }
       else {
+        this.ispublic = detail.response.public;
         this.moderators = detail.response.moderators;
         this.viewers = detail.response.viewers;
         this.banned = detail.response.banned;
@@ -255,7 +266,7 @@
     },
 
     addBanned: function() {
-      this.$.service.addBanned(this.channel, this.$.ban_input.value);
+      this.$.service.addBanned(this.channel, this.banInput);
       // if(this.$.ban_input.value != "") {
       //   this.channelSettings.banned.push(this.$.ban_input.value);
       // }
@@ -263,10 +274,22 @@
     },
     addBannedResponse: function(event, detail, sender) {
       console.log(detail.response);
+      if(detail.response.error) {
+        this.banned_input_decorator.isInvalid = true;
+        this.banned_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.banned.push(detail.response.banned);
+        this.banInput = "";
+      }
+    },
+    banInputChanged: function() {
+      this.banned_input_decorator.isInvalid = false;
+      this.banned_input_decorator.error = "";
     },
 
     addViewer: function() {
-      this.$.service.addViewer(this.channel, this.$.viewer_input.value);
+      this.$.service.addViewer(this.channel, this.$.viewerInput);
       // if(this.$.viewer_input.value != "") {
       //   this.channelSettings.viewers.push(this.$.viewer_input.value);
       // }
@@ -274,10 +297,22 @@
     },
     addViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
+      if(detail.response.error) {
+        this.viewer_input_decorator.isInvalid = true;
+        this.viewer_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.banned.push(detail.response.viewer);
+        this.viewerInput = "";
+      }
+    },
+    viewerInputChanged: function() {
+      this.viewer_input_decorator.isInvalid = false;
+      this.viewer_input_decorator.error = "";
     },
 
     addModerator: function() {
-      this.$.service.addModerator(this.channel, this.$.moderator_input.value);
+      this.$.service.addModerator(this.channel, this.$.moderatorInput);
       // if(this.$.moderator_input.value != "") {
       //   this.channelSettings.moderators.push(this.$.moderator_input.value);
       // }
@@ -285,6 +320,18 @@
     },
     addModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
+      if(detail.response.error) {
+        this.moderator_input_decorator.isInvalid = true;
+        this.moderator_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.banned.push(detail.response.moderator);
+        this.moderatorInput = "";
+      }
+    },
+    moderatorInputChanged: function() {
+      this.moderator_input_decorator.isInvalid = false;
+      this.moderator_input_decorator.error = "";
     },
 
     removeBanned: function(event, detail, sender) {
@@ -309,6 +356,12 @@
     },
     removeViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
+      if(detail.response.error) {
+
+      }
+      else {
+        
+      }
     },
 
     removeModerator: function(event, detail, sender) {
@@ -321,6 +374,12 @@
     },
     removeModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
+      if(detail.response.error) {
+
+      }
+      else {
+        
+      }
     },
 
     deleteChannel: function() {

@@ -29,7 +29,7 @@
 
 	$conn->close();
 
-	$response = array('error' => $error, 'error_message' => $error_message);
+	$response = array('error' => $error, 'error_message' => $error_message, 'moderator' => $moderator);
 	echo json_encode($response);
 
 	function addModerator($conn, $moderator, $channelname, $channelowner) {

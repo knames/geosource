@@ -29,7 +29,7 @@
 
         $conn->close();
 
-        $response = array('error' => $error, 'error_message' => $error_message);
+        $response = array('error' => $error, 'error_message' => $error_message, 'viewer' => $viewer);
         echo json_encode($response);
 
         function addViewer($conn, $viewer, $channelname, $channelowner) {
