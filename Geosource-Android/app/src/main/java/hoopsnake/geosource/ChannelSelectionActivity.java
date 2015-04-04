@@ -12,7 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import hoopsnake.geosource.media.ChannelDisplayAdapter;
+import ServerClientShared.Channel;
+import hoopsnake.geosource.data.AppChannel;
+import hoopsnake.geosource.data.AppChannelWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -27,7 +29,7 @@ public class ChannelSelectionActivity extends ListActivity {
     /**
      * the channels to choose from.
      */
-    private Channel[] channels = {new Channel("Dummy for testing.", "Please wait while I try and get your channels...")};
+    private AppChannel[] channels = {new AppChannelWithWrapper(new Channel("Dummy for testing.", "Please wait while I try and get your channels..."))};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,7 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "3");
     }
 
-    public void setChannels(Channel[] channels)
+    public void setChannels(AppChannel[] channels)
     {
         this.channels = channels;
         assertNotNull(channels);

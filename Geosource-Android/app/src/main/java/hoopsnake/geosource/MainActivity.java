@@ -10,6 +10,7 @@ import android.widget.Button;
 import org.xwalk.core.XWalkView;
 
 import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
+import hoopsnake.geosource.data.AppChannel;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -73,7 +74,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void startIncidentActivity(boolean createNewIncident, Channel channel)
+    private void startIncidentActivity(boolean createNewIncident, AppChannel channel)
     {
         Intent intent = new Intent(MainActivity.this, IncidentActivity.class);
 
@@ -112,7 +113,7 @@ public class MainActivity extends Activity {
             case GET_CHANNEL_ACTIVITY:
                 if (resultCode == RESULT_OK)
                 {
-                    Channel channel = data.getParcelableExtra(ChannelSelectionActivity.PARAM_CHOSEN_CHANNEL);
+                    AppChannel channel = data.getParcelableExtra(ChannelSelectionActivity.PARAM_CHOSEN_CHANNEL);
 
                     assertNotNull(channel);
 

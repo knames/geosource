@@ -1,4 +1,4 @@
-package hoopsnake.geosource.media;
+package hoopsnake.geosource;
 
 import android.app.Activity;
 import android.util.Log;
@@ -8,18 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import hoopsnake.geosource.Channel;
-import hoopsnake.geosource.MainActivity;
-import hoopsnake.geosource.R;
+import hoopsnake.geosource.data.AppChannel;
 
 /**
  * Created by wsv759 on 02/04/15.
  */
-public class ChannelDisplayAdapter extends ArrayAdapter<Channel> {
+public class ChannelDisplayAdapter extends ArrayAdapter<AppChannel> {
 
     int layoutResourceId;
 
-    public ChannelDisplayAdapter(Activity activity, int resource, Channel[] channels) {
+    public ChannelDisplayAdapter(Activity activity, int resource, AppChannel[] channels) {
         super(activity, resource, channels);
 
         layoutResourceId = resource;
@@ -47,7 +45,7 @@ public class ChannelDisplayAdapter extends ArrayAdapter<Channel> {
             holder = (ChannelHolder)row.getTag();
         }
 
-        Channel channel = super.getItem(position);
+        AppChannel channel = super.getItem(position);
         holder.viewChannelName.setText(channel.getChannelName());
         holder.viewChannelOwner.setText(channel.getChannelOwner());
 

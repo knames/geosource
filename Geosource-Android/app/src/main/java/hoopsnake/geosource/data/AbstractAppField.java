@@ -30,7 +30,7 @@ import static junit.framework.Assert.assertTrue;
  *
  * All implementations of AppField should extend this.
  */
-public abstract class AbstractAppField implements AppField, Serializable {
+public abstract class AbstractAppField implements AppField {
     private int fieldPosInList;
     /**
      * The complete view representing this field: a horizontal linear layout containing the field title, followed by its content.

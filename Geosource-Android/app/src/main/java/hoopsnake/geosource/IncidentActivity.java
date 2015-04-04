@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import ServerClientShared.Incident;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
 import hoopsnake.geosource.comm.TaskSendIncident;
+import hoopsnake.geosource.data.AppChannel;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
@@ -141,7 +142,7 @@ public class IncidentActivity extends ActionBarActivity {
 
     private void initializeAppIncidentFromServer(Bundle extras)
     {
-        Channel channel = extras.getParcelable(PARAM_CHANNEL);
+        AppChannel channel = extras.getParcelable(PARAM_CHANNEL);
         String poster = extras.getString(PARAM_STRING_POSTER);
         assertNotNull(channel);
         assertNotNull(poster);

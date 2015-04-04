@@ -14,12 +14,10 @@ import hoopsnake.geosource.IncidentActivity;
  * Each implementation of field defines its own UI-level behaviour, as well as its basic
  * underlying Field behaviour.
  *
- * All implementations must implement Serializable.
- *
  * GUARANTEE: Any View produced by an appField that may launch a new activity or fragment has its tag (view.getTag())
  * set to equal the view's position in the field list.
  */
-public interface AppField {
+public interface AppField extends Serializable {
 
     /**
      * Set the activity pointer to which this AppField is bound. (So that it can render on the UI properly).

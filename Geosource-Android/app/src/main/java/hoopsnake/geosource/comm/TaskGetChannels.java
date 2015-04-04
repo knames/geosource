@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import ServerClientShared.Channel;
 import ServerClientShared.Commands;
-import hoopsnake.geosource.Channel;
 import hoopsnake.geosource.ChannelSelectionActivity;
 import hoopsnake.geosource.R;
+import hoopsnake.geosource.data.AppChannel;
+import hoopsnake.geosource.data.AppChannelWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -49,7 +51,7 @@ public class TaskGetChannels extends AsyncTask<Boolean, Void, SocketResult>
         }
 
 
-        String[] channels;
+        Channel[] channels;
         try
         {
             Log.i(LOG_TAG, "Attempting to get channels.");
@@ -57,7 +59,7 @@ public class TaskGetChannels extends AsyncTask<Boolean, Void, SocketResult>
             outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
-            channels = (String[]) inStream.readObject();
+            channels = (Channel[]) inStream.readObject();
 
             if (channels == null)
                 return SocketResult.FAILED_FORMATTING;
@@ -75,8 +77,11 @@ public class TaskGetChannels extends AsyncTask<Boolean, Void, SocketResult>
             socketWrapper.closeAll();
         }
 
-        //TODO some of this code should maybe go on the ui thread.
-        activity.setChannels(Channel.fromStringArray(channels));
+        AppChannel[] appChannels = new AppChannel[channels.length];
+        for (int i = 0; i < channels.length; i++)
+            appChannels[i] = new AppChannelWithWrapper(channels[i]);
+
+        activity.setChannels(appChannels);
 
         return SocketResult.SUCCESS;
     }
