@@ -290,10 +290,6 @@
 
     addViewer: function() {
       this.$.service.addViewer(this.channel, this.$.viewerInput);
-      // if(this.$.viewer_input.value != "") {
-      //   this.channelSettings.viewers.push(this.$.viewer_input.value);
-      // }
-      // this.$.viewer_input.value = "";
     },
     addViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
@@ -313,10 +309,6 @@
 
     addModerator: function() {
       this.$.service.addModerator(this.channel, this.$.moderatorInput);
-      // if(this.$.moderator_input.value != "") {
-      //   this.channelSettings.moderators.push(this.$.moderator_input.value);
-      // }
-      // this.$.moderator_input.value = "";
     },
     addModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
@@ -336,49 +328,34 @@
 
     removeBanned: function(event, detail, sender) {
       this.$.service.removeBanned(this.channel, sender.templateInstance.model.user);
-      // var user = sender.templateInstance.model.user;
-      // var index = this.channelSettings.banned.indexOf(user);
-      // if(index > -1) {
-      //   this.channelSettings.banned.splice(index, 1);
-      // }
     },
     removeBannedResponse: function(event, detail, sender) {
       console.log(detail.response);
+      var index = this.channelSettings.banned.indexOf(detail.response.banned);
+      if(index > -1) {
+        this.channelSettings.banned.splice(index, 1);
+      }
     },
 
     removeViewer: function(event, detail, sender) {
       this.$.service.removeViewer(this.channel, sender.templateInstance.model.user);
-      // var user = sender.templateInstance.model.user;
-      // var index = this.channelSettings.viewers.indexOf(user);
-      // if(index > -1) {
-      //   this.channelSettings.viewers.splice(index, 1);
-      // }
     },
     removeViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
-      if(detail.response.error) {
-
-      }
-      else {
-        
+      var index = this.channelSettings.banned.indexOf(detail.response.viewer);
+      if(index > -1) {
+        this.channelSettings.banned.splice(index, 1);
       }
     },
 
     removeModerator: function(event, detail, sender) {
       this.$.service.removeModerator(this.channel, sender.templateInstance.model.user);
-      // var user = sender.templateInstance.model.user;
-      // var index = this.channelSettings.moderators.indexOf(user);
-      // if(index > -1) {
-      //   this.channelSettings.moderators.splice(index, 1);
-      // }
     },
     removeModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
-      if(detail.response.error) {
-
-      }
-      else {
-        
+      var index = this.channelSettings.banned.indexOf(detail.response.moderator);
+      if(index > -1) {
+        this.channelSettings.banned.splice(index, 1);
       }
     },
 
