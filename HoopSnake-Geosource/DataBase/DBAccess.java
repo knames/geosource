@@ -1,11 +1,13 @@
 package DataBase;
 
+import hoopsnake.geosource.Channel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *
@@ -53,7 +55,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("formSpec not found!! Possible broken Incident request");
+            System.out.println("formSpec not found!! Possible broken Incident request" + SQLe.getMessage());
         }
         return ownerName + "." + fileName;
     }
@@ -73,7 +75,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Saving field to database failed");
+            System.out.println("Saving field to database failed" + SQLe.getMessage());
         }
     }
     
@@ -105,12 +107,13 @@ public class DBAccess {
             ResultSet results = statement.executeQuery(Queries.nextSpecNum(owner)); //TODO add query
             results.next();
             int specNum = results.getInt("ch_spec") + 1;
+            results.close();
             statement.execute(Queries.makeChannel(title, owner, specNum, isPublic, fieldNames)); //no batching, because the number retrieve does nothing
             return specNum;
         }
         catch (SQLException SQLe)
         {
-            System.out.println("Creating new channel failed!");
+            System.out.println("Creating new channel failed!" + SQLe.getMessage());
             return -1;
         }
     }
@@ -134,6 +137,25 @@ public class DBAccess {
         {
             System.out.println("Creating new Post failed");
             return -1;
+        }
+    }
+    
+    public LinkedList<Channel> getChannelList()
+    {
+        try (Statement statement = dbconnection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(Queries.getAllChannels());
+            LinkedList<Channel> channelList = new LinkedList();
+            while (results.next())
+            {
+                channelList.add(new Channel(results.getString("ch_name"), results.getString("ch_owner")));
+            }
+            return channelList;
+        }
+        catch (SQLException DQLe)
+        {
+            System.out.println("Getting Channel list failed");
+            return null;
         }
     }
     

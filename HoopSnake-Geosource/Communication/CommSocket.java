@@ -6,6 +6,7 @@ import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import hoopsnake.geosource.Channel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +24,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import javax.crypto.NoSuchPaddingException;
 
 /**
@@ -151,6 +153,13 @@ public class CommSocket implements Runnable{
                     controller.dealWith(newIncident);
                     break;
                 }
+                case GET_CHANNELS:
+                {
+                    LinkedList<Channel> channels = controller.getChannelList();
+                    out.writeObject(channels);
+                    out.flush();
+                    break;
+                }
                 case PING:
                 {
                     out.writeObject(IOCommand.PING);
@@ -197,44 +206,57 @@ public class CommSocket implements Runnable{
         
         try
         {
-            JsonWriter out = new JsonWriter(outWriter);
+            //JsonWriter out = new JsonWriter(outWriter);
             JsonReader in = new JsonReader(inReader);
             
-            String garbage = in.nextName();
+            in.beginArray();
+            in.beginObject();
+            String tagRead = in.nextName();
+            if (!tagRead.equals("command")) throw new IOException("parse error, aborting");
             String command = in.nextString();
+            in.endObject();
             
             switch (command)
             {
                 case "CREATE_CHANNEL":
                 {
                     in.beginObject();
-                    assert (in.nextName().equals("name"));
+                    tagRead = in.nextName();
+                    if (!tagRead.equals("name")) throw new IOException("parse error, aborting");
                     String title = in.nextString();
-                    assert (in.nextName().equals("owner"));
+                    tagRead = in.nextName();
+                    if (!tagRead.equals("owner")) throw new IOException("parse error, aborting");
                     String owner = in.nextString();
-                    assert (in.nextName().equals("public"));
+                    tagRead = in.nextName();
+                    if (!tagRead.equals("isPublic")) throw new IOException("parse error, aborting");
                     boolean isPublic = in.nextBoolean();
-                    assert (in.nextName().equals("numFields"));
+                    tagRead = in.nextName();
+                    if (!tagRead.equals("numFields")) throw new IOException("parse error, aborting");
                     int numFields = in.nextInt();
                     ArrayList types = new ArrayList(numFields);
                     ArrayList fieldNames = new ArrayList(numFields);
                     ArrayList required = new ArrayList(numFields);
-                    assert (in.nextName().equals("fields"));
+                    tagRead = in.nextName();
+                    if (!tagRead.equals("fields")) throw new IOException("parse error, aborting");
                     in.beginArray();
                     for (int i = 0; i < numFields; i ++)
                     {
                         in.beginObject();
-                        assert (in.nextName().equals("type"));
+                        tagRead = in.nextName();
+                        if (!tagRead.equals("type")) throw new IOException("parse error, aborting");
                         types.add(in.nextString());
-                        assert (in.nextName().equals("label"));
+                        tagRead = in.nextName();
+                        if (!tagRead.equals("label")) throw new IOException("parse error, aborting");
                         fieldNames.add(in.nextString());
-                        assert (in.nextName().equals("required"));
+                        tagRead = in.nextName();
+                        if (!tagRead.equals("required")) throw new IOException("parse error, aborting");
                         required.add(in.nextBoolean());
                         //TODO add attribute support
                         in.endObject();
                     }
                     in.endArray();
                     in.endObject();
+                    in.endArray();
                     controller.newChannel(title, owner, isPublic, types, fieldNames, required);
                     break;
                 }
@@ -242,7 +264,7 @@ public class CommSocket implements Runnable{
         }
         catch (IOException IOe)
         {
-            System.out.println("Communication error, aborting website communication");
+            System.out.println("Communication error, aborting website communication: at tag - " + IOe.getMessage());
         }
     }
 }
