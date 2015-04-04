@@ -1,37 +1,51 @@
-<?php 
-	//db credentials
-	$servername = "okenso.com";
-	$username = "hdev";
-	$dbname = "dev";
-	$password = "devsnake371";
+<?php
+        include '../account/permissions.php';
 
-	$data = json_decode(file_get_contents('php://input'), true);
-	$user = $data["username"];
-	$channelname = $data["channelname"];
-	$owner = $data["owner"];
+        $servername = "okenso.com";
+        $username = "hdev";
+        $password = "devsnake371";
+        $dbname = "dev";
 
-	$error = false;
-	$error_message="";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+        }
 
-	$conn = new mysqli($servername, $username, $password, $dbname);
+        $error = false;
+        $error_message = "";
 
-	if ($conn->connect_error) {
-	    die("Connection failed: " . $conn->connect_error);
-	} 
+        $data = json_decode(file_get_contents('php://input'), true);
+        $user = $data["username"];
+        $banned = $data["banned"];
+        $channelname = $data["channelname"];
+        $channelowner = $data["channelowner"];
 
-	$sql = "INSERT INTO channel_banned (cb_username, cb_chname, cb_chowner) 
-	VALUES (\"".$user."\",\"".$channelname."\",\"".$owner."\");";
+        if(isAdmin($conn, $user) || isOwner($conn, $user, $channelname, $channelowner) || isModerator($conn, $user, $channelname, $channelowner)) {
+                addBanned($conn, $banned, $channelname, $channelowner);
+        } else {
+                $error = true;
+                $error_message = "You do not have permission to ban a user in this channel";
+        }
 
-	if(!$conn->query($sql)) {
-		$error = true;
-		$error_message = "The user is either already banned or does not exist";
-	}
+        $conn->close();
 
-	$conn->close();
+        $response = array('error' => $error, 'error_message' => $error_message);
+        echo json_encode($response);
 
-	$channel = array('name' => $channelname, 'owner' => $owner);
-	$resp = array('error' => $error, 'error_message' => $error_message, 'username' => $user, 'channel' => $channel);
+        function addBanned($conn, $banned, $channelname, $channelowner) {
+                global $error, $error_message;
 
-	echo json_encode($resp);
+                if(isUser($conn, $banned)) {
+                        $sql = "INSERT INTO channel_banned (cb_username, cb_chname, cb_chowner) 
+                                VALUES (\"".$banned."\", \"".$channelname."\", \"".$channelowner."\");";
+                        if(!$conn->query($sql)) {
+                                $error = true;
+                                $error_message = "User is already banned";
+                        }
+                } else {
+                        $error = true;
+                        $error_message = "User does not exist";
+                }
+        }
 ?>
 
