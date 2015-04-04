@@ -126,7 +126,7 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <channel-service id="channel_service" on-create-response="{{handleResponse}}"></channel-service>
+    <channel-service id="channel_service" on-create-channel-response="{{handleResponse}}"></channel-service>
 
     <div vertical layout>
       <div class="header" horizontal layout>
@@ -299,7 +299,7 @@
 
       console.log(channel);
 
-      this.$.channel_service.create(channel);
+      this.$.channel_service.createChannel(channel);
     },
     
     handleResponse: function(event, detail, sender) {

@@ -59,31 +59,94 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <core-ajax id="ajax"
+    <core-ajax id="ajax_get_channels"
       auto
       url="/php/channel/get-channels.php"
       on-core-response="{{channelsLoaded}}"
       handleAs="json">
     </core-ajax>
 
-    <core-ajax id="subscribe_ajax"
+    <core-ajax id="ajax_subscribe"
       url="/php/channel/subscribe.php"
       method="POST"
       on-core-response="{{subscribeResponse}}"
       handleAs="json">
     </core-ajax>
 
-    <core-ajax id="unsubscribe_ajax"
+    <core-ajax id="ajax_unsubscribe"
       url="/php/channel/unsubscribe.php"
       method="POST"
       on-core-response="{{unsubscribeResponse}}"
       handleAs="json">
     </core-ajax>
 
-    <core-ajax id="create_ajax"
+    <core-ajax id="ajax_get_channel_settings"
+      url="/php/channel/delete-channel.php"
+      method="POST"
+      on-core-response="{{getChannelSettingsResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_set_public"
+      url="/php/channel/"
+      method="POST"
+      on-core-response="{{setPublicResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_add_banned"
+      url="/php/channel/add-banned.php"
+      method="POST"
+      on-core-response="{{addBannedResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_remove_banned"
+      url="/php/channel/"
+      method="POST"
+      on-core-response="{{removeBannedResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_add_moderator"
+      url="/php/channel/add-moderator.php"
+      method="POST"
+      on-core-response="{{addModeratorResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_remove_moderator"
+      url="/php/channel/"
+      method="POST"
+      on-core-response="{{removeModeratorResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_add_viewer"
+      url="/php/channel/add-viewer.php"
+      method="POST"
+      on-core-response="{{addViewerResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_remove_viewer"
+      url="/php/channel/"
+      method="POST"
+      on-core-response="{{removeViewerResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_create_channel"
       url="/php/channel/create-channel.php"
       method="POST"
-      on-core-response="{{createResponse}}"
+      on-core-response="{{createChannelResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_delete_channel"
+      url="/php/channel/delete-channel.php"
+      method="POST"
+      on-core-response="{{deleteChannelResponse}}"
       handleAs="json">
     </core-ajax>
 
@@ -93,8 +156,8 @@
     
     channelsLoaded: function() {
       // Make a copy of the loaded data
-      console.log("loaded channels", this.$.ajax.response);
-      this.$.globals.data.channels = this.$.ajax.response.slice(0).sort(function(a,b) {
+      console.log("loaded channels", this.$.ajax_get_channel.response);
+      this.$.globals.data.channels = this.$.ajax_get_channel.response.slice(0).sort(function(a,b) {
         if(a.name > b.name) { return 1; }
         else if(a.name < b.name) { return -1; }
         else { return 0; }
@@ -102,33 +165,158 @@
     },
 
     subscribe: function(channel) {
-      this.$.subscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
-      this.$.subscribe_ajax.go();
+      body = {
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_subscribe.body = JSON.stringify(body);
+      this.$.ajax_subscribe.go();
     },
-
     subscribeResponse: function() {
-      console.log('subscribe response', this.$.subscribe_ajax.response);
-      this.fire('subscribe-response', {response: this.$.subscribe_ajax.response}); 
+      console.log('subscribe response', this.$.ajax_subscribe.response);
+      this.fire('subscribe-response', {response: this.$.ajax_subscribe.response}); 
     },
 
     unsubscribe: function(channel) {
-      this.$.unsubscribe_ajax.body = '{"username": "' + this.$.globals.data.user.username + '", "channelname": "' + channel.name + '", "owner": "' + channel.owner + '"}';
-      this.$.unsubscribe_ajax.go();
+      body = {
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_unsubscribe.body = JSON.stringify(body);
+      this.$.ajax_unsubscribe.go();
     },
-
     unsubscribeResponse: function() {
-      console.log('unsubscribe response', this.$.subscribe_ajax.response);
-      this.fire('unsubscribe-response', {response: this.$.unsubscribe_ajax.response}); 
+      console.log('unsubscribe response', this.$.ajax_subscribe.response);
+      this.fire('unsubscribe-response', {response: this.$.ajax_unsubscribe.response}); 
     },
 
-    create: function(channel) {
-      this.$.create_ajax.body = JSON.stringify(channel);
-      this.$.create_ajax.go();
+    getChannelSettings: function(channel) {
+      body = {
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_get_channel_settings.body = JSON.stringify(body);
+      this.$.ajax_get_channel_settings.go();
+    },
+    getChannelSettingsResponse: function() {
+      this.fire('get-channel-settings-response', {response: this.$.ajax_get_channel_settings.response});
     },
 
-    createResponse: function() {
-      console.log("channel creation response", this.$.create_ajax.response);
-      this.fire('create-response', {response: this.$.create_ajax.response});
+    setPublic: function(channel, public) {
+      body = {
+        public: public,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_set_public.body = JSON.stringify(body);
+      this.$.ajax_set_public.go();
+    },
+    setPublicResponse: function() {
+      this.fire('set-public-response', {response: this.$.ajax_set_public.response});
+    },
+
+    addBanned: function(channel, user) {
+      body = {
+        banned: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_add_banned.body = JSON.stringify(body);
+      this.$.ajax_add_banned.go();
+    },
+    addBannedResponse: function() {
+      this.fire('add-banned-response', {response: this.$.ajax_add_banned.response});
+    },
+
+    removeBanned: function(channel, user) {
+      body = {
+        banned: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_remove_banned.body = JSON.stringify(body);
+      this.$.ajax_remove_banned.go();
+    },
+    removeBannedResponse: function() {
+      this.fire('remove-banned-response', {response: this.$.ajax_remove_banned.response});
+    },
+
+    addModerator: function(channel, user) {
+      body = {
+        moderator: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_add_moderator.body = JSON.stringify(body);
+      this.$.ajax_add_moderator.go();
+    },
+    addModeratorResponse: function() {
+      this.fire('add-moderator-response', {response: this.$.ajax_add_moderator.response});
+    },
+
+    removeModerator: function(channel, user) {
+      body = {
+        moderator: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_remove_moderator.body = JSON.stringify(body);
+      this.$.ajax_remove_moderator.go();
+    },
+    removeModeratorResponse: function() {
+      this.fire('remove-moderator-response', {response: this.$.ajax_remove_moderator.response});
+    },
+
+    addViewer: function(channel, user) {
+      body = {
+        viewer: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_add_viewer.body = JSON.stringify(body);
+      this.$.ajax_add_viewer.go();
+    },
+    addViewerResponse: function() {
+      this.fire('add-viewer-response', {response: this.$.ajax_add_viewer.response});
+    },
+
+    removeViewer: function(channel, user) {
+      body = {
+        viewer: user,
+        username: this.$.globals.data.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner
+      };
+      this.$.ajax_remove_viewer.body = JSON.stringify(body);
+      this.$.ajax_remove_viewer.go();
+    },
+    removeViewerResponse: function() {
+      this.fire('remove-viewer-response', {response: this.$.ajax_remove_viewer.response});
+    },
+
+    createChannel: function(channel) {
+      this.$.ajax_create_channel.body = JSON.stringify(channel);
+      this.$.ajax_create_channel.go();
+    },
+    createChannelResponse: function() {
+      console.log("channel creation response", this.$.ajax_create_channel.response);
+      this.fire('create-channel-response', {response: this.$.ajax_create_channel.response});
+    },
+
+    deleteChannel: function(channel) {
+      //todo
+    },
+    deleteChannelResponse: function() {
+      //todo
     }
 
   });

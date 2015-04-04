@@ -142,7 +142,17 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <channel-settings-service id="service" channelSettings="{{channelSettings}}"></channel-settings-service>
+    <channel-service id="service" 
+      on-get-channel-settings-response="{{loadResponse}}"
+      on-set-public-response="{{setPublicResponse}}"
+      on-add-banned-response="{{addBannedResponse}}"
+      on-remove-banned-response="{{removeBannedResponse]}"
+      on-add-viewer-response="{{addViewerResponse}}"
+      on-remove-viewer-response="{{removeViewerResponse}}"
+      on-add-moderator-response="{{addModeratorResponse]}"
+      on-remove-moderator-response="{{removeModeratorResponse}}"
+      on-delete-channel-response="{{deleteChannelResponse}}">
+    </channel-service>
 
     <div class="settings" vertical layout>
       <div class="header" horizontal layout>
@@ -193,12 +203,12 @@
           <template repeat="{{user in channelSettings.banned}}">
             <div class="user" horizontal layout center>
               <div flex>{{user}}</div>
-              <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBan}}"></paper-icon-button></td>
+              <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBanned}}"></paper-icon-button></td>
             </div>
           </template>
           <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
             <paper-input label="Enter a username..." flex id="ban_input"></paper-input>
-            <paper-icon-button class="add-button" icon="add" on-tap="{{addBan}}"></paper-icon-button>
+            <paper-icon-button class="add-button" icon="add" on-tap="{{addBanned}}"></paper-icon-button>
           </div>
         </div>
 
@@ -216,6 +226,8 @@
   <script>
   Polymer({
 
+    channel: null,
+
     visibility: null,
 
     isViewer: false,
@@ -226,56 +238,88 @@
     banned: null,
 
     load: function(channel) {
-      this.$.service.load(channel);
+      this.channel = channel;
+      this.$.service.getChannelSettings(this.channel);
+    },
+    loadResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      this.fire('loaded');
     },
 
-    addBan: function() {
-      if(this.$.ban_input.value != "") {
-        this.channelSettings.banned.push(this.$.ban_input.value);
-      }
-      this.$.ban_input.value = "";
+    addBanned: function() {
+      this.$.service.addBanned(this.channel, this.$.ban_input.value);
+      // if(this.$.ban_input.value != "") {
+      //   this.channelSettings.banned.push(this.$.ban_input.value);
+      // }
+      // this.$.ban_input.value = "";
+    },
+    addBannedResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
     addViewer: function() {
-      if(this.$.viewer_input.value != "") {
-        this.channelSettings.viewers.push(this.$.viewer_input.value);
-      }
-      this.$.viewer_input.value = "";
+      this.$.service.addViewer(this.channel, this.$.viewer_input.value);
+      // if(this.$.viewer_input.value != "") {
+      //   this.channelSettings.viewers.push(this.$.viewer_input.value);
+      // }
+      // this.$.viewer_input.value = "";
+    },
+    addViewerResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
     addModerator: function() {
-      if(this.$.moderator_input.value != "") {
-        this.channelSettings.moderators.push(this.$.moderator_input.value);
-      }
-      this.$.moderator_input.value = "";
+      this.$.service.addModerator(this.channel, this.$.moderator_input.value);
+      // if(this.$.moderator_input.value != "") {
+      //   this.channelSettings.moderators.push(this.$.moderator_input.value);
+      // }
+      // this.$.moderator_input.value = "";
+    },
+    addModeratorResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
-    removeBan: function(event, detail, sender) {
-      var user = sender.templateInstance.model.user;
-      var index = this.channelSettings.banned.indexOf(user);
-      if(index > -1) {
-        this.channelSettings.banned.splice(index, 1);
-      }
+    removeBanned: function(event, detail, sender) {
+      this.$.service.removeBanned(this.channel, sender.templateInstance.model.user);
+      // var user = sender.templateInstance.model.user;
+      // var index = this.channelSettings.banned.indexOf(user);
+      // if(index > -1) {
+      //   this.channelSettings.banned.splice(index, 1);
+      // }
+    },
+    removeBannedResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
     removeViewer: function(event, detail, sender) {
-      var user = sender.templateInstance.model.user;
-      var index = this.channelSettings.viewers.indexOf(user);
-      if(index > -1) {
-        this.channelSettings.viewers.splice(index, 1);
-      }
+      this.$.service.removeViewer(this.channel, sender.templateInstance.model.user);
+      // var user = sender.templateInstance.model.user;
+      // var index = this.channelSettings.viewers.indexOf(user);
+      // if(index > -1) {
+      //   this.channelSettings.viewers.splice(index, 1);
+      // }
+    },
+    removeViewerResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
     removeModerator: function(event, detail, sender) {
-      var user = sender.templateInstance.model.user;
-      var index = this.channelSettings.moderators.indexOf(user);
-      if(index > -1) {
-        this.channelSettings.moderators.splice(index, 1);
-      }
+      this.$.service.removeModerator(this.channel, sender.templateInstance.model.user);
+      // var user = sender.templateInstance.model.user;
+      // var index = this.channelSettings.moderators.indexOf(user);
+      // if(index > -1) {
+      //   this.channelSettings.moderators.splice(index, 1);
+      // }
+    },
+    removeModeratorResponse: function(event, detail, sender) {
+      console.log(detail.response);
     },
 
     deleteChannel: function() {
-      this.fire('finished');
+      //todo
+    },
+    deleteChannelResponse: function(event, detail, sender) {
+      //todo
     },
 
     close: function() {
