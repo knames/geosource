@@ -1,12 +1,12 @@
 package Communication;
 
 import Control.Controller;
+import ServerClientShared.Channel;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import hoopsnake.geosource.Channel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
