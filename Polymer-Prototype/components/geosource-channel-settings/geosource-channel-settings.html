@@ -149,7 +149,7 @@
       on-remove-banned-response="{{removeBannedResponse]}"
       on-add-viewer-response="{{addViewerResponse}}"
       on-remove-viewer-response="{{removeViewerResponse}}"
-      on-add-moderator-response="{{addModeratorResponse]}"
+      on-add-moderator-response="{{addModeratorResponse}}"
       on-remove-moderator-response="{{removeModeratorResponse}}"
       on-delete-channel-response="{{deleteChannelResponse}}">
     </channel-service>
@@ -176,7 +176,7 @@
 
         <h3>Moderators</h3>
         <div class="user-list">
-          <template repeat="{{user in channelSettings.moderators}}">
+          <template repeat="{{user in moderators}}">
             <div class="user" horizontal layout center>
               <div flex>{{user}}</div>
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeModerator}}"></paper-icon-button></td>
@@ -192,7 +192,7 @@
 
         <h3>Viewers</h3>
         <div class="user-list" id="viewer_user_list">
-          <template repeat="{{user in channelSettings.viewers}}">
+          <template repeat="{{user in viewers}}">
             <div class="user" horizontal layout center>
               <div flex>{{user}}</div>
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeViewer}}"></paper-icon-button></td>
@@ -208,7 +208,7 @@
 
         <h3>Banned</h3>
         <div class="user-list">
-          <template repeat="{{user in channelSettings.banned}}">
+          <template repeat="{{user in banned}}">
             <div class="user" horizontal layout center>
               <div flex>{{user}}</div>
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBanned}}"></paper-icon-button></td>
