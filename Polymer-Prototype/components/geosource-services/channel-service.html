@@ -81,14 +81,14 @@
     </core-ajax>
 
     <core-ajax id="ajax_get_channel_settings"
-      url="/php/channel/delete-channel.php"
+      url="/php/channel/get-channel-settings.php"
       method="POST"
       on-core-response="{{getChannelSettingsResponse}}"
       handleAs="json">
     </core-ajax>
 
     <core-ajax id="ajax_set_public"
-      url="/php/channel/"
+      url="/php/channel/set-public.php"
       method="POST"
       on-core-response="{{setPublicResponse}}"
       handleAs="json">
@@ -102,7 +102,7 @@
     </core-ajax>
 
     <core-ajax id="ajax_remove_banned"
-      url="/php/channel/"
+      url="/php/channel/remove-banned.php"
       method="POST"
       on-core-response="{{removeBannedResponse}}"
       handleAs="json">
@@ -116,7 +116,7 @@
     </core-ajax>
 
     <core-ajax id="ajax_remove_moderator"
-      url="/php/channel/"
+      url="/php/channel/remove-moderator.php"
       method="POST"
       on-core-response="{{removeModeratorResponse}}"
       handleAs="json">
@@ -130,7 +130,7 @@
     </core-ajax>
 
     <core-ajax id="ajax_remove_viewer"
-      url="/php/channel/"
+      url="/php/channel/remove-viewer.php"
       method="POST"
       on-core-response="{{removeViewerResponse}}"
       handleAs="json">
