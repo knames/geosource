@@ -14,10 +14,10 @@
 	$error = false;
 	$error_message = "";
 
-	//$data = json_decode(file_get_contents('php://input'), true);
-	$user = "Josh";//$data["username"];
-	$channelname = "IsThisThingOn";//$data["channelname"];
-	$channelowner = "Josh";//$data["channelowner"];
+	$data = json_decode(file_get_contents('php://input'), true);
+	$user = $data["username"];
+	$channelname = $data["channelname"];
+	$channelowner = $data["channelowner"];
 
 
 	if(isAdmin($conn, $user) || isOwner($conn, $user, $channelname, $channelowner) || isModerator($conn, $user, $channelname, $channelowner)) {

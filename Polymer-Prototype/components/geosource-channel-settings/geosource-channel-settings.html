@@ -121,6 +121,9 @@
         margin-bottom: 0;
       }
 
+      .footer {
+        margin-top: 20px;
+      }
 
       .add-user {
         margin-left: 15px;
@@ -146,7 +149,7 @@
       on-get-channel-settings-response="{{loadResponse}}"
       on-set-public-response="{{setPublicResponse}}"
       on-add-banned-response="{{addBannedResponse}}"
-      on-remove-banned-response="{{removeBannedResponse]}"
+      on-remove-banned-response="{{removeBannedResponse}}"
       on-add-viewer-response="{{addViewerResponse}}"
       on-remove-viewer-response="{{removeViewerResponse}}"
       on-add-moderator-response="{{addModeratorResponse}}"
@@ -165,11 +168,13 @@
         </div>
       </div>
       <div class="content" vertical layout>
-        <paper-radio-group selected="{{isPublic}}">
-          <paper-radio-button name="true" id="public" label="Public" 
+        <paper-radio-group selected="{{access}}">
+          <paper-radio-button name="public" id="public" label="Public"
+            on-tap="{{setPublic}}" 
             disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
           </paper-radio-button>
-          <paper-radio-button name="false" id="private" label="Private" 
+          <paper-radio-button name="private" id="private" label="Private" i
+            on-tap="{{setPrivate}}"
             disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
           </paper-radio-button>
         </paper-radio-group>
@@ -183,7 +188,7 @@
             </div>
           </template>
           <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
-            <paper-input-decorator id="moderator_input_decorator" label="Enter a username...">
+            <paper-input-decorator id="moderator_input_decorator" label="Enter a username..." flex>
               <input value="{{moderatorInput}}"></paper-input>
             </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addModerator}}"></paper-icon-button>
@@ -198,8 +203,8 @@
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeViewer}}"></paper-icon-button></td>
             </div>
           </template>
-          <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
-            <paper-input-decorator id="viewer_input_decorator" label="Enter a username...">
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
+            <paper-input-decorator id="viewer_input_decorator" label="Enter a username..." flex>
               <input value="{{viewerInput}}"></paper-input>
             </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addViewer}}"></paper-icon-button>
@@ -214,18 +219,18 @@
               <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBanned}}"></paper-icon-button></td>
             </div>
           </template>
-          <div horizontal layout center class="add-$.globals.data.user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
-            <paper-input-decorator id="banned_input_decorator" label="Enter a username...">
-              <input value="{{banInput}}"></paper-input>
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
+            <paper-input-decorator id="banned_input_decorator" label="Enter a username..." flex>
+              <input id="ban_input" value="{{banInput}}"></paper-input>
             </paper-input-decorator>
             <paper-icon-button class="add-button" icon="add" on-tap="{{addBanned}}"></paper-icon-button>
           </div>
         </div>
 
-      </div>
+        <div class="footer" horizontal around-justifed layout>
+          <paper-button flex on-tap="{{deleteChannel}}">Delete Channel</paper-button>
+        </div>
 
-      <div class="footer" horizontal around-justifed layout>
-        <paper-button flex on-tap="{{deleteChannel}}">Delete Channel</paper-button>
       </div>
 
     </div>
@@ -247,6 +252,8 @@
     viewers: null,
     banned: null,
 
+    access: "public",
+
     load: function(channel) {
       this.channel = channel;
       this.$.service.getChannelSettings(this.channel);
@@ -257,7 +264,11 @@
         //handle error
       }
       else {
-        this.ispublic = detail.response.public;
+        if(detail.response.public) {
+          this.access = "public";
+        } else {
+          this.access = "private";
+        }
         this.moderators = detail.response.moderators;
         this.viewers = detail.response.viewers;
         this.banned = detail.response.banned;
@@ -267,63 +278,59 @@
 
     addBanned: function() {
       this.$.service.addBanned(this.channel, this.banInput);
-      // if(this.$.ban_input.value != "") {
-      //   this.channelSettings.banned.push(this.$.ban_input.value);
-      // }
-      // this.$.ban_input.value = "";
     },
     addBannedResponse: function(event, detail, sender) {
       console.log(detail.response);
       if(detail.response.error) {
-        this.banned_input_decorator.isInvalid = true;
-        this.banned_input_decorator.error = detail.response.error_message;
+        this.$.banned_input_decorator.isInvalid = true;
+        this.$.banned_input_decorator.error = detail.response.error_message;
       }
       else {
         this.banned.push(detail.response.banned);
-        this.banInput = "";
+        this.$.ban_input.value = "";
       }
     },
     banInputChanged: function() {
-      this.banned_input_decorator.isInvalid = false;
-      this.banned_input_decorator.error = "";
+      this.$.banned_input_decorator.isInvalid = false;
+      this.$.banned_input_decorator.error = "";
     },
 
     addViewer: function() {
-      this.$.service.addViewer(this.channel, this.$.viewerInput);
+      this.$.service.addViewer(this.channel, this.viewerInput);
     },
     addViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
       if(detail.response.error) {
-        this.viewer_input_decorator.isInvalid = true;
-        this.viewer_input_decorator.error = detail.response.error_message;
+        this.$.viewer_input_decorator.isInvalid = true;
+        this.$.viewer_input_decorator.error = detail.response.error_message;
       }
       else {
-        this.banned.push(detail.response.viewer);
+        this.viewers.push(detail.response.viewer);
         this.viewerInput = "";
       }
     },
     viewerInputChanged: function() {
-      this.viewer_input_decorator.isInvalid = false;
-      this.viewer_input_decorator.error = "";
+      this.$.viewer_input_decorator.isInvalid = false;
+      this.$.viewer_input_decorator.error = "";
     },
 
     addModerator: function() {
-      this.$.service.addModerator(this.channel, this.$.moderatorInput);
+      this.$.service.addModerator(this.channel, this.moderatorInput);
     },
     addModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
       if(detail.response.error) {
-        this.moderator_input_decorator.isInvalid = true;
-        this.moderator_input_decorator.error = detail.response.error_message;
+        this.$.moderator_input_decorator.isInvalid = true;
+        this.$.moderator_input_decorator.error = detail.response.error_message;
       }
       else {
-        this.banned.push(detail.response.moderator);
+        this.moderators.push(detail.response.moderator);
         this.moderatorInput = "";
       }
     },
     moderatorInputChanged: function() {
-      this.moderator_input_decorator.isInvalid = false;
-      this.moderator_input_decorator.error = "";
+      this.$.moderator_input_decorator.isInvalid = false;
+      this.$.moderator_input_decorator.error = "";
     },
 
     removeBanned: function(event, detail, sender) {
@@ -331,9 +338,9 @@
     },
     removeBannedResponse: function(event, detail, sender) {
       console.log(detail.response);
-      var index = this.channelSettings.banned.indexOf(detail.response.banned);
+      var index = this.banned.indexOf(detail.response.banned);
       if(index > -1) {
-        this.channelSettings.banned.splice(index, 1);
+        this.banned.splice(index, 1);
       }
     },
 
@@ -342,9 +349,9 @@
     },
     removeViewerResponse: function(event, detail, sender) {
       console.log(detail.response);
-      var index = this.channelSettings.banned.indexOf(detail.response.viewer);
+      var index = this.viewers.indexOf(detail.response.viewer);
       if(index > -1) {
-        this.channelSettings.banned.splice(index, 1);
+        this.viewers.splice(index, 1);
       }
     },
 
@@ -353,9 +360,32 @@
     },
     removeModeratorResponse: function(event, detail, sender) {
       console.log(detail.response);
-      var index = this.channelSettings.banned.indexOf(detail.response.moderator);
+      var index = this.moderators.indexOf(detail.response.moderator);
       if(index > -1) {
-        this.channelSettings.banned.splice(index, 1);
+        this.moderators.splice(index, 1);
+      }
+    },
+
+    setPublic: function() {
+      this.$.service.setPublic(this.channel, true);
+    },
+    setPrivate: function() {
+      this.$.service.setPublic(this.channel, false);
+    },
+    setPublicResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+        if(detail.response.public) {
+          this.access = "private";
+        } else {
+          this.access = "public";
+        }
+      } else {
+        if(detail.response.public) {
+          this.access = "public";
+        } else {
+          this.access = "private";
+        }
       }
     },
 
