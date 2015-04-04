@@ -24,7 +24,7 @@
                 removeModerator($conn, $moderator, $channelname, $channelowner);
         } else {
                 $error = true;
-                $error_message = "You do not have permission to ban a user in this channel";
+                $error_message = "You do not have permission to remove a moderator from this channel";
         }
 
         $conn->close();

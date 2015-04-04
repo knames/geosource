@@ -24,7 +24,7 @@
                 removeBanned($conn, $banned, $channelname, $channelowner);
         } else {
                 $error = true;
-                $error_message = "You do not have permission to ban a user in this channel";
+                $error_message = "You do not have permission to unban a user in this channel";
         }
 
         $conn->close();

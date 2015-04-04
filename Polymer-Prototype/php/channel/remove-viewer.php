@@ -24,7 +24,7 @@
                 removeViewer($conn, $viewer, $channelname, $channelowner);
         } else {
                 $error = true;
-                $error_message = "You do not have permission to ban a user in this channel";
+                $error_message = "You do not have permission to remove a viewer from this channel";
         }
 
         $conn->close();
