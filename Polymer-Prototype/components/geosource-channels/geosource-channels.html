@@ -330,6 +330,7 @@
         for(var i=0; i<this.$.globals.data.user.subscriber.length; i++) {
 	  if(this.$.globals.data.user.subscriber[i].name == channel.name 
 	      && this.$.globals.data.user.subscriber[i].owner == channel.owner) {
+            //this.$.globals.data.user.subscriber[i].isSubscriber = false;
             this.$.globals.data.user.subscriber.splice(i, 1);
 	  }
 	}

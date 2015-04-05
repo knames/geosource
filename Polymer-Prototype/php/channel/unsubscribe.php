@@ -8,7 +8,7 @@
         $data = json_decode(file_get_contents('php://input'), true);
         $user = $data["username"];
         $channelname = $data["channelname"];
-        $owner = $data["owner"];
+        $owner = $data["channelowner"];
 
         $err = false;
         $errMsg="";

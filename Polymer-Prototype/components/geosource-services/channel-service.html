@@ -188,7 +188,7 @@
       this.$.ajax_unsubscribe.go();
     },
     unsubscribeResponse: function() {
-      console.log('unsubscribe response', this.$.ajax_subscribe.response);
+      console.log('unsubscribe response', this.$.ajax_unsubscribe.response);
       this.fire('unsubscribe-response', {response: this.$.ajax_unsubscribe.response}); 
     },
 
