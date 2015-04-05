@@ -80,7 +80,7 @@ CREATE TABLE post_comments (
 	FOREIGN KEY (pc_username) REFERENCES users (u_username),
 	FOREIGN KEY (pc_chname) REFERENCES channels (ch_name),
 	FOREIGN KEY (pc_chowner) REFERENCES users (u_username),
-	PRIMARY KEY (pc_username, pc_chname, pc_chowner, pc_number)
+	PRIMARY KEY (pc_username, pc_time, pc_chname, pc_chowner, pc_number)
 	);
 
 
