@@ -69,7 +69,7 @@
         color: #4285f4;
       }
 
-      .field-type {
+      .field-title {
         margin-left: 10px;
         width: 150px;
       }
@@ -152,7 +152,7 @@
         <div class="form">
           <table id="fields" class="fields" style="width:100%">
             <tr>
-              <th class="field-type">Type</th>
+              <th class="field-title">Type</th>
               <th class="field-label">Label</th> 
               <th class="field-required">Required</th>
               <th class="field-remove"></th>
@@ -165,7 +165,7 @@
             </tr>
             <template repeat="{{field, fieldIndex in fields}}">
               <tr>
-                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.type}}</td>
+                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.title}}</td>
                 <td><paper-input label="Enter a title..." value="{{field.label}}"></td> 
                 <td horizontal center-justified layout><paper-checkbox checked="{{field.required}}"></paper-checkbox></td>
                 <td><paper-icon-button class="remove" icon="close" on-tap="{{removeField}}"></paper-icon-button></td>
@@ -173,7 +173,7 @@
 
               <template repeat="{{attribute, attributeIndex in field.attributes}}">
                 <tr class="attribute">
-                  <td><core-icon class="attribute" icon="{{field.icon}}"></core-icon>{{field.attributeType}}</td>
+                  <td><core-icon class="attribute" icon="{{field.icon}}"></core-icon>{{field.attributeTitle}}</td>
                   <td><paper-input label="Enter a label..." value="{{attribute.label}}"></td> 
                   <td horizontal center-justified layout><paper-checkbox disabled checked="{{field.required}}"></paper-checkbox></td>
                   <td><paper-icon-button class="remove" icon="close" on-tap="{{removeFieldAttribute}}"></paper-icon-button></td>
@@ -218,27 +218,27 @@
     fields: [],
 
     addText: function() {
-      this.fields.push({type:"Text", icon:"text-format", label:"", required:false});
+      this.fields.push({title:"Text", icon:"text-format", type:"TEXT", label:"", required:false});
     },
 
     addImage: function() {
-      this.fields.push({type:"Image", icon:"image:photo-camera", label:"", required:false});
+      this.fields.push({title:"Image", icon:"image:photo-camera", type:"IMAGE", label:"", required:false});
     },
 
     addAudio: function() {
-      this.fields.push({type:"Audio", icon:"av:mic", label:"", required:false});
+      this.fields.push({title:"Audio",  icon:"av:mic", type:"AUDIO", label:"", required:false});
     },
 
     addVideo: function() {
-      this.fields.push({type:"Video", icon:"av:videocam", label:"", required:false});
+      this.fields.push({title:"Video", icon:"av:videocam", type:"VIDEO", label:"", required:false});
     },
 
     addCheckboxes: function() {
-      this.fields.push({type:"Checkboxes", icon:"check-box", label:"", attributes: [{label:""}], attributeType:"Checkbox", required:false});
+      this.fields.push({title:"Checkboxes", icon:"check-box", type:"CHECKBOXES", label:"", attributeTitle:"Checkbox", attributes: [{label:""}], required:false});
     },
 
     addRadioButtons: function() {
-      this.fields.push({type:"Radio Buttons", icon:"radio-button-on", label:"", attributes: [{label:""}], attributeType:"Radio Button", required:false});
+      this.fields.push({title:"Radio Buttons", icon:"radio-button-on", type:"RADIO_BUTTONS", label:"", attributeTitle:"Radio Button", attributes: [{label:""}], required:false});
     },
 
     removeField: function(event, detail, sender) {
