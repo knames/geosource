@@ -18,7 +18,7 @@
         $channelname = $data["channelname"];
         $channelowner = $data["channelowner"];
 
-        favorite($conn, $user, $banned, $channelname, $channelowner);
+        favorite($conn, $user, $pid, $channelname, $channelowner);
 
         $conn->close();
 

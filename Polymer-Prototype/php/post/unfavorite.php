@@ -18,7 +18,7 @@
         $channelname = $data["channelname"];
         $channelowner = $data["channelowner"];
 
-        unfavorite($conn, $user, $banned, $channelname, $channelowner);
+        unfavorite($conn, $user, $pid, $channelname, $channelowner);
 
         $conn->close();
 
