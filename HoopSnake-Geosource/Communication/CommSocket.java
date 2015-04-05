@@ -2,6 +2,7 @@ package Communication;
 
 import Control.Controller;
 import ServerClientShared.Channel;
+import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.Commands.IOCommand;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
@@ -153,10 +154,18 @@ public class CommSocket implements Runnable{
                     controller.dealWith(newIncident);
                     break;
                 }
-                case GET_CHANNELS:
+                case GET_CHANNEL_IDENTIFIERS:
                 {
-                    LinkedList<Channel> channels = controller.getChannelList();
+                    LinkedList<ChannelIdentifier> channels = controller.getChannelList();
                     out.writeObject(channels);
+                    out.flush();
+                    break;
+                }
+                case GET_SUBSCRIBED_CHANNELS:
+                {
+                    String userName = in.readUTF();
+                    LinkedList<Channel> subscriptions = controller.getSubscriptions(userName);
+                    out.writeObject(subscriptions);
                     out.flush();
                     break;
                 }

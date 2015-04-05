@@ -4,6 +4,7 @@ import Communication.CommSocket;
 import DataBase.DBAccess;
 import FileSystem.FileAccess;
 import ServerClientShared.Channel;
+import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.FieldType;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
@@ -13,6 +14,7 @@ import ServerClientShared.StringFieldWithoutContent;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -176,10 +178,43 @@ public class Controller {
      * get all the channels in the system
      * @return a list of all channels
      */
-    public LinkedList<Channel> getChannelList()
+    public LinkedList<ChannelIdentifier> getChannelList()
     {
-        LinkedList<Channel> channelList = dbAccess.getChannelList();
+        LinkedList<ChannelIdentifier> channelList = dbAccess.getChannelList();
         if (channelList.isEmpty()) return null;
         else return channelList;
+    }
+    
+    /**
+     * retrieve all subscribed channels specs for a given user (expensive operation)
+     * @param userName the name of the user
+     * @return a list of channel identifiers and form specifications
+     */
+    public LinkedList<Channel> getSubscriptions(String userName)
+    {
+        //get list of identifiers and file locations
+        LinkedList<ChannelIdentifier> subscriptionIDs = dbAccess.getSubscriptionIDs(userName);
+        if (subscriptionIDs == null) return null;
+        LinkedList<String> locations = dbAccess.getSpecLocations(subscriptionIDs);
+        if (locations == null) return null;
+        
+        //make list of actual form specs
+        LinkedList<ArrayList<FieldWithoutContent>> forms = new LinkedList();
+        for (String location : locations)
+        {
+            forms.add(fileAccess.getFormSpec(location));
+        }
+        
+        //zipper the two informations together
+        LinkedList<Channel> returnList = new LinkedList();
+        Iterator<ChannelIdentifier> IDiter = subscriptionIDs.iterator();
+        Iterator<ArrayList<FieldWithoutContent>> specIter = forms.iterator();
+        while (IDiter.hasNext() && specIter.hasNext())
+        {
+            Channel newChannel = new Channel(IDiter.next(), specIter.next());
+            returnList.add(newChannel);
+        }
+        
+        return returnList;
     }
 }

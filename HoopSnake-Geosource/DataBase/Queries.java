@@ -1,6 +1,8 @@
 package DataBase;
 
+import ServerClientShared.ChannelIdentifier;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *
@@ -137,6 +139,13 @@ public class Queries {
     public static String getAllChannels()
     {
         String sql = "SELECT ch_name, ch_owner from channels;";
+        return sql;
+    }
+    
+    public static String getSubscriptionIDs(String username)
+    {
+        String sql = "SELECT ch_fav_chname, ch_fav_chowner FROM channelfavs WHERE ch_fav_username = \""
+                + username + "\";";
         return sql;
     }
     

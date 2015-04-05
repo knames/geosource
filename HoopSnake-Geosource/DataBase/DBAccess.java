@@ -1,6 +1,7 @@
 package DataBase;
 
 import ServerClientShared.Channel;
+import ServerClientShared.ChannelIdentifier;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -140,21 +141,71 @@ public class DBAccess {
         }
     }
     
-    public LinkedList<Channel> getChannelList()
+    public LinkedList<ChannelIdentifier> getChannelList()
     {
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.getAllChannels());
-            LinkedList<Channel> channelList = new LinkedList();
+            LinkedList<ChannelIdentifier> channelList = new LinkedList();
             while (results.next())
             {
-                channelList.add(new Channel(results.getString("ch_name"), results.getString("ch_owner")));
+                channelList.add(new ChannelIdentifier(results.getString("ch_name"), results.getString("ch_owner")));
             }
             return channelList;
         }
         catch (SQLException DQLe)
         {
             System.out.println("Getting Channel list failed");
+            return null;
+        }
+    }
+    
+    /**
+     * get the unique identifiers for all channels that a user is subscribed to
+     * @param userName the user to query against
+     * @return a list of the identifiers of subscribed channels
+     */
+    public LinkedList<ChannelIdentifier> getSubscriptionIDs(String userName)
+    {
+        try (Statement statement = dbconnection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(Queries.getSubscriptionIDs(userName));
+            LinkedList<ChannelIdentifier> identifiers = new LinkedList();
+            while (results.next())
+            {
+                String chName = results.getString("ch_fav_chname");
+                String chOwner = results.getString("ch_fav_chowner");
+                identifiers.add(new ChannelIdentifier(chName, chOwner));
+            }
+            return identifiers;
+        }
+        catch (SQLException SQLe)
+        {
+            System.out.println("Error finding user's subscriptions");
+            return null;
+        }
+    }
+    
+    /**
+     * return a list of spec locations based on a list of Identifiers
+     * @param IDs the identifiers of all the channels that need to be polled
+     * @return a linked list of the filepaths of the forms
+     */
+    public LinkedList<String> getSpecLocations(LinkedList<ChannelIdentifier> IDs)
+    {
+        try (Statement statement = dbconnection.createStatement())
+        {
+            LinkedList<String> formLocations = new LinkedList();
+            for (ChannelIdentifier ID : IDs)
+            {
+                String location = getFormSpecLocation(ID.getChannelName(), ID.getChannelOwner());
+                formLocations.add(location);
+            }
+            return formLocations;
+        }
+        catch (SQLException SQLe)
+        {
+            System.out.println("Error getting list of form specifications");
             return null;
         }
     }
