@@ -223,7 +223,7 @@
                 <div class="comment-username" flex><b>{{comment.username}}</b></div>
                 <div class="comment-time">{{timeString(comment.time)}}</div>
               </div>
-              <paper-icon-button id="comment-delete" icon="delete" hidden="{{!deletePermission}}"></paper-icon-button>
+              <paper-icon-button id="comment-delete" icon="delete" hidden?="{{!deletePermission}}" on-tap="{{deleteComment}}"></paper-icon-button>
             </div>
             <div class="comment-text">{{comment.text}}</div>
           </div>
@@ -317,9 +317,20 @@
         this.commentInput = "";
       }
     },
-
     commentInputChanged: function() {
       this.$.comment_input_decorator.isInvalid = false;
+    },
+
+    deleteComment: function(event, detail, sender) {
+      var comment = sender.templateInstance.model.comment;
+      this.$.service.deleteComment(this.post.channel, this.post.pid, comment);
+    },
+    deleteCommentResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        //remove post
+      }
     },
 
     userChanged: function() {
@@ -345,11 +356,7 @@
           this.deletePermission = true;
           return;
         }
-        // //post/comment creator
-        // else if(this.user.username == creator) {
-        //   this.deletePermissions = true;
-        //   return;
-        // }
+
         //moderator
         else {
           for(i=0; i<user.moderator.length; i++) {

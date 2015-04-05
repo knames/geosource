@@ -159,14 +159,20 @@
       this.fire('create-comment-response', {response: this.$.ajax_create_comment.response});
     },
 
-    deleteComment: function(channel, pid, user, time) {
+    deleteComment: function(channel, pid, comment) {
       body = {
-        //todo
+        username: this.$.globals.data.user.username,
+        poster: comment.username,
+        channelname: channel.name,
+        channelowner: channel.owner,
+        time: comment.time,
+        pid: pid
       };
       this.$.ajax_delete_comment.body = JSON.stringify(body);
       this.$.ajax_delete_comment.go();
     },
     deleteCommentResponse: function() {
+      console.log(this.$.ajax_delete_comment.response);
       this.fire('delete-comment-response', {response: this.$.ajax_delete_comment.response});
     },
 
