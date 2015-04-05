@@ -3,6 +3,7 @@
 <link rel="import" href="../core-icons/communication-icons.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../geosource-globals/geosource-globals.html">
+<link rel="import" href="../geosource-services/post-service.html">
 
 <polymer-element name="geosource-post-summary" attributes="post mapInfo">
   <template>
@@ -85,6 +86,11 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
+    <post-service id="service"
+      on-favorite-response="{{favoriteResponse}}"
+      on-unfavorite-response="{{unfavoriteResponse}}">
+    </post-service>
+
     <div class="content" horizontal layout>
       <div class="card-header" horizontal layout center flex>
         <div class="thumbnail"><img src="{{'/media/thumb.php?src=..' + post.thumbnail + '&size=70x70'}}" width="70" height="70"></div>
@@ -136,8 +142,27 @@
     time: null,
 
     favoriteTapped: function(event, detail, sender) {
-      this.post.favorite = !this.post.favorite;
-      this.fire('favorite-click');
+      if(this.post.favorite) {
+        this.$.service.unfavorite(this.post.channel, this.post.pid);
+      } else {
+        this.$.service.favorite(this.post.channel, this.post.pid);
+      }
+    },
+    favoriteResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        this.post.favorite = true;
+        this.fire('favorite-click');
+      }
+    },
+    unfavoriteResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        this.post.favorite = false;
+        this.fire('favorite-click');
+      }
     },
 
     locationTapped: function(event, detail, sender) {

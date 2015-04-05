@@ -146,7 +146,10 @@
 
     <geosource-globals id="globals"></geosource-globals>
 
-    <post-service id="post_service" post="{{post}}"></post-service>
+    <post-service id="service" post="{{post}}"
+      on-favorite-response="{{favoriteResponse}}"
+      on-unfavorite-response="{{unfavoriteResponse}}">
+    </post-service>
 
     <div class="post" vertical layout>
       <div class="header" horizontal layout>
@@ -156,7 +159,7 @@
         </div>
         <div class="buttons" vertical layout>
           <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
-          <paper-icon-button id="favorite" icon="{{ {'favorite-outline': !postSummary.favorite, 'favorite': postSummary.favorite} | tokenList}}" on-tap="{{favorite}}" hidden?="{{!$.globals.data.user}}"></paper-icon-button>
+          <paper-icon-button id="favorite" icon="{{ {'favorite-outline': !postSummary.favorite, 'favorite': postSummary.favorite} | tokenList}}" on-tap="{{favoriteTapped}}" hidden?="{{!$.globals.data.user}}"></paper-icon-button>
           <paper-icon-button id="delete" icon="delete" on-tap="{{delete}}" hidden?="{{!deletePermission}}"></paper-icon-button>
         </div>
       </div>
@@ -256,7 +259,7 @@
     load: function(postSummary) {
       this.postSummary = postSummary;
       console.log(this.postSummary);
-      this.$.post_service.load(postSummary.pid);
+      this.$.service.load(postSummary.pid);
     },
 
     postChanged: function() {
@@ -268,9 +271,28 @@
       this.fire('close');
     },
 
-    favorite: function() {
-      this.postSummary.favorite = !this.postSummary.favorite;
-      this.fire('favorite-click');
+    favoriteTapped: function() {
+      if(this.postSummary.favorite) {
+        this.$.service.unfavorite(this.postSummary.channel, this.postSummary.pid);
+      } else {
+        this.$.service.favorite(this.postSummary.channel, this.postSummary.pid);
+      }
+    },
+    favoriteResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        this.postSummary.favorite = true;
+        this.fire('favorite-click');
+      }
+    },
+    unfavoriteResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        this.postSummary.favorite = false;
+        this.fire('favorite-click');
+      }
     },
 
     userChanged: function() {

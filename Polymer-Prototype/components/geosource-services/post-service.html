@@ -54,23 +54,115 @@
       display: none;
     }
     </style>
-    <core-ajax id="ajax"
+
+    <core-ajax id="ajax_get_post"
       url="/api/posts/{{pid}}.json"
       on-core-response="{{postLoaded}}"
       handleAs="json">
     </core-ajax>
+
+    <core-ajax id="ajax_favorite"
+      url="/php/post/favorite.php"
+      on-core-response="{{favoriteResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_unfavorite"
+      url="/php/post/unfavorite.php"
+      on-core-response="{{unfavoriteResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_create_comment"
+      url="/php/post/create-comment.php"
+      on-core-response="{{createCommentResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_delete_comment"
+      url="/php/post/delete-comment.php"
+      on-core-response="{{deleteCommentResponse}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="ajax_delete_post"
+      url="/php/post/delete-post.php"
+      on-core-response="{{deletePostResponse}}"
+      handleAs="json">
+    </core-ajax>
+
   </template>
   <script>
   Polymer('post-service', {
 
     load: function(pid) {
       this.pid = pid;
-      this.$.ajax.go();
+      this.$.ajax_get_post.go();
+    },
+    postLoaded: function() {
+      this.post = this.$.ajax_get_post.response;
     },
 
-    postLoaded: function() {
-      this.post = this.$.ajax.response;
+    favorite: function(channel, pid) {
+      body = {
+        username: this.$.globals.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner,
+        pid: pid
+      };
+      this.$.ajax_favorite.body = body;
+      this.$.ajax_favorite.go();
     },
+    favoriteResponse: function() {
+      this.fire('favorite-response', {response: this.$.ajax_favorite.response});
+    },
+
+    unfavorite: function(channel, pid) {
+      body = {
+        username: this.$.globals.user.username,
+        channelname: channel.name,
+        channelowner: channel.owner,
+        pid: pid
+      };
+      this.$.ajax_unfavorite.body = body;
+      this.$.ajax_unfavorite.go();
+    },
+    unfavoriteResponse: function() {
+      this.fire('unfavorite-response', {response: this.$.ajax_unfavorite.response});
+    },
+
+    createComment: function(channel, pid, comment) {
+      body = {
+        //todo
+      };
+      this.$.ajax_create_comment.body = body;
+      this.$.ajax_create_comment.go();
+    },
+    createCommentResponse: function() {
+      this.fire('create-comment-response', {response: this.$.ajax_create_comment.response});
+    },
+
+    deleteComment: function(channel, pid, user, time) {
+      body = {
+        //todo
+      };
+      this.$.ajax_delete_comment.body = body;
+      this.$.ajax_delete_comment.go();
+    },
+    deleteCommentResponse: function() {
+      this.fire('delete-comment-response', {response: this.$.ajax_delete_comment.response});
+    }
+
+    deletePost: function(channel, pid) {
+      body = {
+        //todo
+      };
+      this.$.ajax_delete_post.body = body;
+      this.$.ajax_delete_post.go();
+    },
+    deleteCommentResponse: function() {
+      this.fire('delete-post-response', {response: this.$.ajax_delete_post.response});
+    }
 
   });
   </script>
