@@ -85,7 +85,9 @@ public class DBAccess {
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.channelExists(title, owner));
-            return results.isAfterLast();
+            results.next();
+            int existing = results.getInt(1);
+            return (existing == 1); //if 1 channel was found, channel already exists
         }
         catch (SQLException SQLe)
         {
