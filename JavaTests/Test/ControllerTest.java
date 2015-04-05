@@ -90,7 +90,7 @@ public class ControllerTest
     /**
      * Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.        
      * */
-    /*@Test
+    @Test
     public void getFormSpecTest()
     {
         try
@@ -194,6 +194,6 @@ public class ControllerTest
         
         SocketStuff.makePost(testIncident);
     }
-    */
+    
     
 }
