@@ -183,7 +183,7 @@
       this.$.ajax_delete_post.body = JSON.stringify(body);
       this.$.ajax_delete_post.go();
     },
-    deleteCommentResponse: function() {
+    deletePostResponse: function() {
       this.fire('delete-post-response', {response: this.$.ajax_delete_post.response});
     }
 

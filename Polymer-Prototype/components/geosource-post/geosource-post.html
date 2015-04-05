@@ -150,7 +150,8 @@
     <post-service id="service" post="{{post}}"
       on-favorite-response="{{favoriteResponse}}"
       on-unfavorite-response="{{unfavoriteResponse}}"
-      on-create-comment-response="{{createCommentResponse}}">
+      on-create-comment-response="{{createCommentResponse}}"
+      on-delete-comment-response="{{deleteCommentResponse}}">
     </post-service>
 
     <div class="post" vertical layout>
@@ -323,17 +324,26 @@
 
     deleteComment: function(event, detail, sender) {
       var comment = sender.templateInstance.model.comment;
+      console.log(comment);
       this.$.service.deleteComment(this.post.channel, this.post.pid, comment);
     },
     deleteCommentResponse: function(event, detail, sender) {
       if(detail.response.error) {
         //todo
       } else {
-        //remove post
+        for(var i=0; i<this.post.comments.length; i++) {
+          if(this.post.comments[i].username == detail.response.poster &&
+             this.post.comments[i].time == detail.response.time) {
+            this.post.comments.splice(i, 1); 
+          }
+        }
       }
     },
 
     userChanged: function() {
+      //this doesnt currently work
+      //need to update when the user logs in or else delete buttons won't appear
+      //until the next post is opened
       this.checkDeletePermission();
     },
 
