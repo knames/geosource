@@ -91,6 +91,7 @@ public class DBAccess {
         }
         catch (SQLException SQLe)
         {
+            System.out.println(SQLe.getMessage());
             throw new RuntimeException("Error finding previous channel");
         }
     }
