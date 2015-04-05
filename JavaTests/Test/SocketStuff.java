@@ -16,6 +16,62 @@ import java.util.ArrayList;
  */
 public class SocketStuff 
 {
+    
+    public static boolean getPing()
+    {
+        ObjectOutputStream outStream; //wrapped stream to client
+        ObjectInputStream inStream; //stream from client
+        Socket outSocket;
+
+
+
+        Commands.IOCommand ping;
+        try //create socket
+        {
+            SocketWrapper socketWrapper = new SocketWrapper();
+            outSocket = socketWrapper.getOutSocket();
+            outStream = socketWrapper.getOut();
+            inStream = socketWrapper.getIn();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException("Creating socket error");
+        }
+
+
+        ArrayList<FieldWithoutContent> fieldsToBeFilled;
+        try
+        {
+            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
+            System.out.println("Attempting to send incident.");
+            outStream.writeObject(Commands.IOCommand.PING);
+            outStream.flush();
+
+
+
+            System.out.println("Retrieving reply...");
+            ping = (Commands.IOCommand) inStream.readObject();
+
+            inStream.close();
+            outStream.close();
+            outSocket.close();
+            System.out.println("Connection Closed");
+        }
+        catch (IOException e)
+        {
+
+            throw new RuntimeException("Connection failed.");
+        }
+        catch (ClassNotFoundException e) 
+        {
+            throw new RuntimeException("Weird stuff happened.");
+        }
+   
+        return (ping==Commands.IOCommand.PING);
+       
+    }
+    
     /**
      * Grabs the spec for the given channel.
      * @param channelName the channel we wish to post to grab the spec from.
