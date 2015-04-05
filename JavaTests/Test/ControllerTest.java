@@ -77,11 +77,20 @@ public class ControllerTest
     // The basic type of test fails if an assertion fails, or if use fail(String), which contains an error 
     // message.
 
+    /**
+     * Checks if we can get a ping off the server.
+     */
+    @Test
+    public void pingTest()
+    {
+        assertTrue(SocketStuff.getPing());
+    }
+    
     
     /**
      * Checks whether we can grab formSpecs inside the controller properly, using a test channel currently on the server.        
      * */
-    @Test
+    /*@Test
     public void getFormSpecTest()
     {
         try
@@ -185,6 +194,6 @@ public class ControllerTest
         
         SocketStuff.makePost(testIncident);
     }
-    
+    */
     
 }
