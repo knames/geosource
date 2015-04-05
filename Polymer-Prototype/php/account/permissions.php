@@ -34,7 +34,7 @@
 	}
 
 	function isBanned($conn, $username, $channelname, $channelowner) {
-		$sql = "SELECT * FROM private_view_channels WHERE 
+		$sql = "SELECT * FROM channel_banned WHERE 
 			cb_username = \"" .$username. "\" AND 
 			cb_chname = \"" .$channelname. "\" AND 
 			cb_chowner = \"" .$channelowner. "\";";

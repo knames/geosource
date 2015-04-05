@@ -21,6 +21,7 @@
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../paper-input/paper-input-decorator.html">
 <link rel="import" href="../paper-input/paper-autogrow-textarea.html">
+<link rel="import" href="../paper-input/paper-char-counter.html">
 
 <link rel="import" href="../geosource-globals/geosource-globals.html">
 
@@ -231,13 +232,13 @@
         <div hidden?="{{!$.globals.data.user}}">
           <h3>Add a Comment</h3>
           <div class="add-creator" vertical end-justified layout>
-            <paper-input-decorator label="Enter a comment...">
+            <paper-input-decorator id="comment_input_decorator" label="Enter a comment...">
               <paper-autogrow-textarea>
-                <textarea id="comment_input" maxlength="256" value="{{commentInput}}"></textarea>
+                <textarea id="comment_input" maxLength="256" value="{{commentInput}}"></textarea>
               </paper-autogrow-textarea>
-              <paper-char-counter class="footer" target="comment_input"></paper-char-counter>
+              <paper-char-counter class="counter" target="{{$.comment_input}}"></paper-char-counter>
             </paper-input-decorator>
-            <paper-button>Submit</paper-button>
+            <paper-button on-tap="{{createComment}}">Submit</paper-button>
           </div>
         </div>
       </div>
@@ -253,10 +254,10 @@
     postSummary: null,
     post: null,
     deletePermission: false,
-    commentInput: "";
+    commentInput: "",
 
     timeString: function(time) {
-      return moment(time).fromNow();
+      return moment.utc(time).fromNow();
     },
 
     load: function(postSummary) {
@@ -299,19 +300,26 @@
     },
 
     createComment: function() {
+      console.log("creating comment");
       this.$.service.createComment(this.post.channel, this.post.pid, this.commentInput);
     },
     createCommentResponse: function(event, detail, sender) {
       if(detail.response.error) {
-        //todo
+        this.$.comment_input_decorator.isInvalid = true;
+        this.$.comment_input_decorator.error = detail.response.error_message;
       } else {
         var comment = {
-          username: this.$.globals.data.username,
+          username: this.$.globals.data.user.username,
           time: detail.response.time,
           text: detail.response.comment
         };
-        this.post.comments.unshift(comment);
+        this.post.comments.push(comment);
+        this.commentInput = "";
       }
+    },
+
+    commentInputChanged: function() {
+      this.$.comment_input_decorator.isInvalid = false;
     },
 
     userChanged: function() {

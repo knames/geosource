@@ -174,7 +174,7 @@
     },
 
     postChanged: function() {
-      this.time = moment(this.post.time).fromNow();
+      this.time = moment.utc(this.post.time).fromNow();
     },
 
   });

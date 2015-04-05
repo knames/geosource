@@ -24,9 +24,12 @@
         if(isBanned($conn, $user, $channelname, $channelowner)) {
         	$error = true;
         	$error_message = "You are banned from posting in this channel";
+	} else if(strlen($comment) == 0) {
+		$error = true;
+		$error_message = "Your comment cannot be empty";
         } else if(strlen($comment) > 256) {
         	$error = true;
-        	$error_message = "The comment is longer than 256 characters";
+        	$error_message = "Your comment cannot be longer than 256 characters";
         } else {
 	        createComment($conn, $user, $comment, $pid, $channelname, $channelowner);
 	        $time = getCommentTime($conn, $user, $pid, $channelname, $channelowner);
@@ -42,7 +45,7 @@
         function createComment($conn, $user, $comment, $pid, $channelname, $channelowner) {
     		global $error, $error_message;
     		$stmt = $conn->prepare("INSERT INTO post_comments (pc_username, pc_comment, pc_time, pc_chname, pc_chowner, pc_number) 
-    			VALUES (?, ?, NOW(), ?, ?, ?)");
+    			VALUES (?, ?, UTC_TIMESTAMP(), ?, ?, ?)");
 			$stmt->bind_param("ssssi", $user, $comment, $channelname, $channelowner, $pid);
 			if(!$stmt->execute()) {
 				$error = true;
@@ -56,7 +59,7 @@
             $stmt = $conn->prepare("SELECT pc_time FROM post_comments 
             	WHERE pc_username=? AND pc_chname=? AND pc_chowner=? AND pc_number=?
             	ORDER BY pc_time DESC") ;
-            $stmt->bind_param("sssssi", $user, $comment, $timestamp, $channelname, $channelowner, $pid);
+            $stmt->bind_param("sssi", $user, $channelname, $channelowner, $pid);
             $stmt->execute();
             $stmt->bind_result($time);
             $stmt->fetch();

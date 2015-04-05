@@ -145,12 +145,17 @@
 
     createComment: function(channel, pid, comment) {
       body = {
-        //todo
+        username: this.$.globals.data.user.username,
+        comment: comment,
+        channelname: channel.name,
+        channelowner: channel.owner,
+        pid: pid
       };
       this.$.ajax_create_comment.body = JSON.stringify(body);
       this.$.ajax_create_comment.go();
     },
     createCommentResponse: function() {
+      console.log(this.$.ajax_create_comment.response);
       this.fire('create-comment-response', {response: this.$.ajax_create_comment.response});
     },
 

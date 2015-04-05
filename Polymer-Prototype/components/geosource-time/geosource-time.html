@@ -144,7 +144,7 @@
       filterPosts: function(posts) {
         var filteredPosts = [];
         for(i=0; i<posts.length; i++) {
-          if(moment(posts[i].time).isBetween(this.startDate, this.endDate)) {
+          if(moment.utc(posts[i].time).isBetween(this.startDate, this.endDate)) {
             filteredPosts.push(posts[i]);
           }
         }
