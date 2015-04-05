@@ -148,7 +148,8 @@
 
     <post-service id="service" post="{{post}}"
       on-favorite-response="{{favoriteResponse}}"
-      on-unfavorite-response="{{unfavoriteResponse}}">
+      on-unfavorite-response="{{unfavoriteResponse}}"
+      on-create-comment-response="{{createCommentResponse}}">
     </post-service>
 
     <div class="post" vertical layout>
@@ -232,8 +233,9 @@
           <div class="add-creator" vertical end-justified layout>
             <paper-input-decorator label="Enter a comment...">
               <paper-autogrow-textarea>
-                <textarea></textarea>
+                <textarea id="comment_input" maxlength="256" value="{{commentInput}}"></textarea>
               </paper-autogrow-textarea>
+              <paper-char-counter class="footer" target="comment_input"></paper-char-counter>
             </paper-input-decorator>
             <paper-button>Submit</paper-button>
           </div>
@@ -251,6 +253,7 @@
     postSummary: null,
     post: null,
     deletePermission: false,
+    commentInput: "";
 
     timeString: function(time) {
       return moment(time).fromNow();
@@ -295,6 +298,22 @@
       }
     },
 
+    createComment: function() {
+      this.$.service.createComment(this.post.channel, this.post.pid, this.commentInput);
+    },
+    createCommentResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+      } else {
+        var comment = {
+          username: this.$.globals.data.username,
+          time: detail.response.time,
+          text: detail.response.comment
+        };
+        this.post.comments.unshift(comment);
+      }
+    },
+
     userChanged: function() {
       this.checkDeletePermission();
     },
@@ -328,7 +347,7 @@
           for(i=0; i<user.moderator.length; i++) {
             if(user.moderator[i].name == this.post.channel.name &&
                 user.moderator[i].owner == this.post.channel.owner) {
-              this.deletePermissions = true;
+              this.deletePermission = true;
               return;
             }
           }
