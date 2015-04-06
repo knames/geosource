@@ -1,5 +1,6 @@
 package hoopsnake.geosource;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,12 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import ServerClientShared.Channel;
 import ServerClientShared.Incident;
+import hoopsnake.geosource.comm.RunnableSendIncident;
 import hoopsnake.geosource.comm.TaskReceiveIncidentSpec;
-import hoopsnake.geosource.comm.TaskSendIncident;
 import hoopsnake.geosource.data.AppChannelIdentifier;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
@@ -289,8 +291,12 @@ public class IncidentActivity extends ActionBarActivity {
         if (incident != null && incident.isCompletelyFilledIn()) {
             //TODO uncomment this when actually using it.
             Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
+            Thread sendIncidentThread = new Thread(new RunnableSendIncident(new WeakReference<Activity>(this), incident));
+            sendIncidentThread.setPriority(Thread.currentThread().getPriority());
+            sendIncidentThread.run();
 
-            new TaskSendIncident(IncidentActivity.this).execute(incident);
+            //TODO destroy this when runnable method confirmed correct.
+//            new TaskSendIncident(new WeakReference<Activity>(this), incident).execute();
 
             setIncident(null);
             setResult(RESULT_OK);

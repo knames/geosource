@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 
 import ServerClientShared.Channel;
 import ServerClientShared.Commands;
@@ -59,10 +60,11 @@ public class TaskGetSubscribedChannels extends AsyncTask<String, Void, SocketRes
             outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
-            subscribedChannels = (Channel[]) inStream.readObject();
-
-            if (subscribedChannels == null)
+            LinkedList<Channel> listSubscribedChannels = (LinkedList<Channel>) inStream.readObject();
+            if (listSubscribedChannels == null)
                 return SocketResult.FAILED_FORMATTING;
+
+            subscribedChannels  = listSubscribedChannels.toArray(new Channel[listSubscribedChannels.size()]);
         }
         catch (IOException e)
         {

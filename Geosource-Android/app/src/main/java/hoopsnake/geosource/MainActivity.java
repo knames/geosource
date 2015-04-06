@@ -9,8 +9,8 @@ import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
-import hoopsnake.geosource.comm.TaskGetSubscribedChannels;
-import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
+import hoopsnake.geosource.comm.RunnableGetSubscribedChannels;
+import hoopsnake.geosource.comm.RunnableSendAnyStoredIncidents;
 import hoopsnake.geosource.data.AppChannelIdentifier;
 
 import static junit.framework.Assert.assertNotNull;
@@ -61,10 +61,18 @@ public class MainActivity extends Activity {
         setIncidentButtonTextBasedOnSharedPref();
 
         //If folder is not empty, and we are connected to the internet, send those files!
-        new TaskSendAnyStoredIncidents(this).execute();
+        Thread sendIncidentsThread = new Thread(new RunnableSendAnyStoredIncidents(this));
+        sendIncidentsThread.setPriority(Thread.MIN_PRIORITY);
+        sendIncidentsThread.run();
 
         //Get all the subscribed channels for this user.
-        new TaskGetSubscribedChannels(this).execute(userName);
+        Thread subscribedChannelsThread = new Thread(new RunnableGetSubscribedChannels(this, userName));
+        subscribedChannelsThread.setPriority(Thread.MIN_PRIORITY);
+        subscribedChannelsThread.run();
+
+        //TODO destroy these once the runnable implementation is confirmed correct.
+//        new TaskGetSubscribedChannels(this).execute(userName);
+//        new TaskSendAnyStoredIncidents(this).execute();
     }
 
     /**

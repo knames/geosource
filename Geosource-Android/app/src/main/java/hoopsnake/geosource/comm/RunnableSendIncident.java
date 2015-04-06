@@ -1,7 +1,6 @@
 package hoopsnake.geosource.comm;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
@@ -20,27 +19,27 @@ import hoopsnake.geosource.data.AbstractAppFieldWithFile;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import hoopsnake.geosource.data.TaskSetContentBasedOnFileUri;
+import hoopsnake.geosource.data.RunnableSetContentBasedOnFileUri;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Created by wsv759 on 19/02/15.
+ * Created by wsv759 on 06/04/15.
  * Task to send a new completed incident to the server.
  */
-public class TaskSendIncident extends AsyncTask<Void, Void, SocketResult> {
+public class RunnableSendIncident implements Runnable {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
     private static final String LOG_TAG = "geosource comm";
 
     WeakReference<Activity> activityRef;
+    AppIncident appIncidentToSend;
     File incidentFile;
 
     SocketWrapper socketWrapper;
     ObjectOutputStream outStream; //stream to client
     ObjectInputStream inStream; //stream from client
-    AppIncident appIncidentToSend;
 
     private CountDownLatch contentSerializationCountDownLatch;
 
@@ -48,7 +47,7 @@ public class TaskSendIncident extends AsyncTask<Void, Void, SocketResult> {
         return contentSerializationCountDownLatch;
     }
 
-    public TaskSendIncident(WeakReference<Activity> activityRef, AppIncident incidentToSend)
+    public RunnableSendIncident(WeakReference<Activity> activityRef, AppIncident incidentToSend)
     {
         assertNotNull(incidentToSend);
 
@@ -58,7 +57,7 @@ public class TaskSendIncident extends AsyncTask<Void, Void, SocketResult> {
             incidentFile = incidentToSend.getFile(activityRef.get());
     }
 
-    protected SocketResult doInBackground(Void... params) {
+    protected SocketResult doInBackground() {
         //Check if there are any fields to serialize.
         LinkedList<AbstractAppFieldWithFile> listFileFieldsToSerialize = new LinkedList<>();
         for (AppField field : appIncidentToSend.getFieldList())
@@ -108,9 +107,14 @@ public class TaskSendIncident extends AsyncTask<Void, Void, SocketResult> {
 
             //Serialize all the necessary files.
             contentSerializationCountDownLatch = new CountDownLatch(listFileFieldsToSerialize.size());
-            for (AbstractAppFieldWithFile field : listFileFieldsToSerialize)
-                new TaskSetContentBasedOnFileUri(this).execute(field);
+            for (AbstractAppFieldWithFile field : listFileFieldsToSerialize) {
+                Thread threadSetContent = new Thread(new RunnableSetContentBasedOnFileUri(this, field));
+                threadSetContent.setPriority(Thread.currentThread().getPriority());
+                threadSetContent.run();
 
+                //TODO do this sequentially if necessary.
+//                new RunnableSetContentBasedOnFileUri(this, field).run();
+            }
             try {
                 contentSerializationCountDownLatch.await(MINUTES_TO_WAIT_FOR_FORMATTING, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
@@ -224,5 +228,11 @@ public class TaskSendIncident extends AsyncTask<Void, Void, SocketResult> {
             saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.FAILED_CONNECTION;
         }
+    }
+
+    @Override
+    public void run() {
+        SocketResult result = doInBackground();
+        onPostExecute(result);
     }
 }
