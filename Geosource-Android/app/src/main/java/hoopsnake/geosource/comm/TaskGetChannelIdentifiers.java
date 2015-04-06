@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 
 import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.Commands;
@@ -59,10 +60,12 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
-            channelIdentifiers = (ChannelIdentifier[]) inStream.readObject();
-
-            if (channelIdentifiers == null)
+            LinkedList<ChannelIdentifier> listChannelIdentifiers = (LinkedList<ChannelIdentifier>) inStream.readObject();
+            if (listChannelIdentifiers == null)
                 return SocketResult.FAILED_FORMATTING;
+
+            channelIdentifiers  = listChannelIdentifiers.toArray(new ChannelIdentifier[listChannelIdentifiers.size()]);
+
         }
         catch (IOException e)
         {

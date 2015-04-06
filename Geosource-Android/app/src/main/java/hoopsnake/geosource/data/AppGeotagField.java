@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +54,10 @@ public class AppGeotagField extends AbstractAppField {
 
     @Override
     public View getContentViewRepresentation(int requestCodeForIntent) {
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
+
         //TODO the layout height weight and gravity might be funky because I am not passing the right view group? Or something?
         tv = (TextView) activity.getLayoutInflater().inflate(R.layout.field_geotag_view, null);
         //This is for the faded out effect. (rather than setText().)

@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,6 +11,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
@@ -50,16 +52,19 @@ public abstract class AbstractAppField implements AppField {
     FieldWithContent wrappedField;
 
     public IncidentActivity getActivity() {
-        return activity;
+        if (activityRef != null)
+            return activityRef.get();
+
+        return null;
     }
 
     @Override
-    public void setActivity(IncidentActivity activity){ this.activity = activity; }
+    public void setActivity(IncidentActivity activity){ this.activityRef = new WeakReference<IncidentActivity>(activity); }
 
     /**
      * The activity that will be displaying this field on the UI.
      */
-    IncidentActivity activity;
+    private WeakReference<IncidentActivity> activityRef;
 
     String LOG_TAG = "geosource ui";
 
@@ -77,7 +82,7 @@ public abstract class AbstractAppField implements AppField {
         assertNotNull(activity);
 
         this.wrappedField = fieldToWrap;
-        this.activity = activity;
+        setActivity(activity);
         this.fieldPosInList = fieldPosInList;
     }
 
@@ -119,6 +124,10 @@ public abstract class AbstractAppField implements AppField {
     @Override
     public View getFieldViewRepresentation(final int requestCodeForIntent)
     {
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
+
         fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
         TextView titleView = (TextView) fieldView.getChildAt(POSITION_VIEW_FIELD_TITLE);
 

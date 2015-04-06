@@ -2,7 +2,6 @@ package hoopsnake.geosource.data;
 
 import android.app.Activity;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,39 +10,42 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
 
 import hoopsnake.geosource.R;
-import hoopsnake.geosource.comm.TaskSendIncident;
+import hoopsnake.geosource.comm.BackgroundRunnable;
+import hoopsnake.geosource.comm.RunnableSendIncident;
 
 import static junit.framework.Assert.assertNotNull;
 
 /**
- * The following @precond and @postcond apply to calling .execute() on this class.
+ * The following @precond and @postcond apply to calling .run() on this class.
  * @precond before executing this task, construct it with an AbstractAppFieldWithFile.
  * That field must have a non-null file URI referring to an existent file.
  * @postcond the given field's content file is converted into a byte array, and its content is set to that byte array.
  */
-public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWithFile, Void, Boolean>
-{
-    private TaskSendIncident callingTask;
+public class RunnableSetContentBasedOnFileUri extends BackgroundRunnable<Boolean> {
+    private RunnableSendIncident callingRunnable;
     private AbstractAppFieldWithFile fieldToSet;
     private static final String LOG_TAG = "geosource";
 
     /**
      *
-     * @param callingTask The task that is counting down based upon this.
+     * @param callingRunnable The task that is counting down based upon this.
      */
-    public TaskSetContentBasedOnFileUri(TaskSendIncident callingTask)
+    public RunnableSetContentBasedOnFileUri(RunnableSendIncident callingRunnable, AbstractAppFieldWithFile fieldToSet)
     {
-        this.callingTask = callingTask;
-        assertNotNull(callingTask);
+        super(new WeakReference<Activity>(fieldToSet.getActivity()));
+
+        this.callingRunnable = callingRunnable;
+        this.fieldToSet = fieldToSet;
+
+        assertNotNull(fieldToSet);
+        assertNotNull(callingRunnable);
     }
 
-    @Override
-    protected Boolean doInBackground(AbstractAppFieldWithFile... params) {
-        fieldToSet = params[0];
-        assertNotNull(fieldToSet);
+    protected Boolean doInBackground() {
         Uri contentFileUri = fieldToSet.getContentFileUri();
         assertNotNull(contentFileUri);
         File imageFile = new File(contentFileUri.getPath());
@@ -76,20 +78,16 @@ public class TaskSetContentBasedOnFileUri extends AsyncTask<AbstractAppFieldWith
         fieldToSet.setContent(fileInByteFormat);
 
         //Alert the calling task that it is one step closer to being able to send this incident.
-        CountDownLatch cdl = callingTask.getContentSerializationCountDownLatch();
+        CountDownLatch cdl = callingRunnable.getContentSerializationCountDownLatch();
         assertNotNull(cdl);
         cdl.countDown();
 
         return true;
     }
 
-    @Override
-    protected void onPostExecute(Boolean setContentSucceeded)
+    protected void onPostExecute(Boolean setContentSucceeded, Activity activity)
     {
-        if (!setContentSucceeded && fieldToSet != null) {
-            Activity activity = fieldToSet.getActivity();
-
+        if (!setContentSucceeded && fieldToSet != null)
             Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
-        }
     }
 }

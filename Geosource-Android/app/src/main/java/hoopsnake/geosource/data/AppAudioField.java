@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -64,6 +65,10 @@ public class AppAudioField extends AbstractAppFieldWithFile{
 
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return null;
+
         recordButton = (ToggleButton) activity.getLayoutInflater().inflate(R.layout.field_audio_toggle_button, null);
 
         recordButton.setOnClickListener(new View.OnClickListener() {

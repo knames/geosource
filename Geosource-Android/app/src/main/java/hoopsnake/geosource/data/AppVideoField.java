@@ -42,6 +42,10 @@ public class AppVideoField extends AbstractAppFieldWithFile{
 
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
+        final IncidentActivity activity = getActivity();
+        if (activity == null)
+            return null;
+
         ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setImageResource(R.drawable.videocamera);
 
@@ -65,6 +69,10 @@ public class AppVideoField extends AbstractAppFieldWithFile{
     public void onResultFromSelection(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             // Video captured and saved to fileUri specified in the Intent
+            Activity activity = getActivity();
+            if (activity == null)
+                return;
+
             Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
 
             //TODO display the video in its field! This means notifying the UI.
@@ -75,6 +83,10 @@ public class AppVideoField extends AbstractAppFieldWithFile{
             // User cancelled the video capture
         } else {
             // Video capture failed, advise user
+            Activity activity = getActivity();
+            if (activity == null)
+                return;
+
             Toast.makeText(activity, "Failed to capture video.", Toast.LENGTH_LONG).show();
         }
     }

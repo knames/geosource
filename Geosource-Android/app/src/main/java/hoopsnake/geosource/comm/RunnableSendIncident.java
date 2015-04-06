@@ -1,13 +1,13 @@
 package hoopsnake.geosource.comm;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -19,25 +19,26 @@ import hoopsnake.geosource.data.AbstractAppFieldWithFile;
 import hoopsnake.geosource.data.AppField;
 import hoopsnake.geosource.data.AppIncident;
 import hoopsnake.geosource.data.AppIncidentWithWrapper;
-import hoopsnake.geosource.data.TaskSetContentBasedOnFileUri;
+import hoopsnake.geosource.data.RunnableSetContentBasedOnFileUri;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Created by wsv759 on 19/02/15.
+ * Created by wsv759 on 06/04/15.
  * Task to send a new completed incident to the server.
  */
-public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult> {
+public class RunnableSendIncident extends BackgroundRunnable<SocketResult> {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
     private static final String LOG_TAG = "geosource comm";
-    Activity activity;
+
+    AppIncident appIncidentToSend;
+    File incidentFile;
 
     SocketWrapper socketWrapper;
     ObjectOutputStream outStream; //stream to client
     ObjectInputStream inStream; //stream from client
-    AppIncident appIncidentToSend;
 
     private CountDownLatch contentSerializationCountDownLatch;
 
@@ -45,16 +46,20 @@ public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult>
         return contentSerializationCountDownLatch;
     }
 
-    public TaskSendIncident(Activity activity)
+    public RunnableSendIncident(WeakReference<Activity> activityRef, AppIncident incidentToSend)
     {
-        this.activity = activity;
+        super(activityRef);
+        assertNotNull(incidentToSend);
+
+        this.appIncidentToSend = incidentToSend;
+        if (activityRef != null)
+            incidentFile = incidentToSend.getFile(activityRef.get());
     }
 
-    protected SocketResult doInBackground(AppIncident... params) {
-        appIncidentToSend = params[0];
-        LinkedList<AbstractAppFieldWithFile> listFileFieldsToSerialize = new LinkedList<>();
-
+    @Override
+    protected SocketResult doInBackground() {
         //Check if there are any fields to serialize.
+        LinkedList<AbstractAppFieldWithFile> listFileFieldsToSerialize = new LinkedList<>();
         for (AppField field : appIncidentToSend.getFieldList())
         {
             assertFalse(!field.contentIsFilled() && field.isRequired());
@@ -102,9 +107,14 @@ public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult>
 
             //Serialize all the necessary files.
             contentSerializationCountDownLatch = new CountDownLatch(listFileFieldsToSerialize.size());
-            for (AbstractAppFieldWithFile field : listFileFieldsToSerialize)
-                new TaskSetContentBasedOnFileUri(this).execute(field);
+            for (AbstractAppFieldWithFile field : listFileFieldsToSerialize) {
+                Thread threadSetContent = new Thread(new RunnableSetContentBasedOnFileUri(this, field));
+                threadSetContent.setPriority(Thread.currentThread().getPriority());
+                threadSetContent.start();
 
+                //TODO do this sequentially if necessary.
+//                new RunnableSetContentBasedOnFileUri(this, field).run();
+            }
             try {
                 contentSerializationCountDownLatch.await(MINUTES_TO_WAIT_FOR_FORMATTING, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
@@ -153,7 +163,8 @@ public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult>
         return SocketResult.SUCCESS;
     }
 
-    protected void onPostExecute(SocketResult result) {
+    @Override
+    protected void onPostExecute(SocketResult result, Activity activity) {
         result.makeToastAndLog(activity.getString(R.string.uploaded_incident),
                 activity.getString(R.string.failed_to_upload_incident),
                 activity,
@@ -162,25 +173,39 @@ public class TaskSendIncident extends AsyncTask<AppIncident, Void, SocketResult>
 
     private void saveUnsentIncidentToFileSystemIfNecessary(AppIncident unsentIncident)
     {
+        String incidentLostMsg;
+        if (activityRef != null)
+            incidentLostMsg = activityRef.get().getString(R.string.incident_lost_media_saved);
+        else
+            incidentLostMsg = "Unable to retrieve current incident. Any created media files were saved.";
+
+        //If no file could be created for the incident, fail.
+        if (incidentFile == null) {
+            Log.e(LOG_TAG, incidentLostMsg);
+            return;
+        }
+
+        //If the file is empty or does not exist, create it. Otherwise it already exists, with the correct serialized incident inside, and
+        // we can return.
+        if (incidentFile.length() != 0) {
+            Log.i(LOG_TAG, "unsent incident exists at " + incidentFile.getAbsolutePath());
+            return;
+        }
         assertTrue(unsentIncident.isCompletelyFilledIn());
 
         //Don't serialize the big file content byte arrays!
         for (AppField field : unsentIncident.getFieldList())
         {
-            if (field instanceof AbstractAppFieldWithFile)
+            if (field instanceof AbstractAppFieldWithFile) {
                 field.setContent(null);
+            }
         }
 
-        File unsentIncidentFile = unsentIncident.getFile(activity);
-
-        //If the file is empty or does not exist, create it. (Otherwise it already exists, with the correct serialized incident inside.)
-        if (unsentIncidentFile.length() == 0) {
-            boolean fileWasWritten = FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, unsentIncidentFile.getAbsolutePath());
-            if (fileWasWritten)
-                Log.i(LOG_TAG, "unsent incident saved to " + unsentIncidentFile.getAbsolutePath());
-            else
-                Log.e(LOG_TAG, activity.getString(R.string.incident_lost_media_saved));
-        }
+        boolean fileWasWritten = FileIO.writeObjectToFileNoContext((AppIncidentWithWrapper) unsentIncident, incidentFile.getAbsolutePath());
+        if (fileWasWritten)
+            Log.i(LOG_TAG, "unsent incident saved to " + incidentFile.getAbsolutePath());
+        else
+            Log.e(LOG_TAG, incidentLostMsg);
     }
 
     private SocketResult initializeSocketConnection()
