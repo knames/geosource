@@ -123,8 +123,7 @@ public class ControllerTest
     @Test
     public void postThings()
     {
-        //Hit a dead-end with this, due to various issues.
-        //Will try again later.
+
         
         
         //Note: All checking to see if fields are valid is done in the app. This is just to test
@@ -150,37 +149,33 @@ public class ControllerTest
         assertTrue(testSpec.get(4) instanceof VideoFieldWithoutContent);
         assertTrue(testSpec.get(5) instanceof AudioFieldWithoutContent);
    
-        
-        //IN PROGRESS
+       
         //Then, create an Incident, then send it to the server.
-        
-        StringFieldWithoutContent t1 = new StringFieldWithoutContent("Test Description", true);     
-        StringFieldWithContent stringCon = new StringFieldWithContent(t1);
+          
+        StringFieldWithContent stringCon = new StringFieldWithContent((StringFieldWithoutContent)testSpec.get(0));
         stringCon.setContent("THIS IS A TEST. DO NOT PANIC");
-        
-        StringFieldWithoutContent t2 = new StringFieldWithoutContent("More stuff", true);     
-        StringFieldWithContent stringCon2 = new StringFieldWithContent(t2);
-        stringCon2.setContent("GROUND CONTROL TO MAJOR TOM");
         
         Geotag location = new Geotag() ;
         location.setLatitude(11.111);
         location.setLongitude(22.222);
         location.setTimestamp(555555);
-        GeotagFieldWithoutContent g1 = new GeotagFieldWithoutContent("Location", true);
-        GeotagFieldWithContent geotagCon = new GeotagFieldWithContent(g1);
+        GeotagFieldWithContent geotagCon = new GeotagFieldWithContent((GeotagFieldWithoutContent)testSpec.get(1));
+            
+        StringFieldWithContent stringCon2 = new StringFieldWithContent((StringFieldWithoutContent)testSpec.get(2));
+        stringCon2.setContent("GROUND CONTROL TO MAJOR TOM");
         
+
         
         byte[] image = new byte[]{1,2,4};
-        ImageFieldWithoutContent i1 = new ImageFieldWithoutContent("an image?", true);      
-        ImageFieldWithContent imageCon = new ImageFieldWithContent(i1);
+
+        
+        ImageFieldWithContent imageCon = new ImageFieldWithContent((ImageFieldWithoutContent)testSpec.get(3));
         imageCon.setContent(image);
-        
-        VideoFieldWithoutContent v1 = new VideoFieldWithoutContent("a video?", true);      
-        VideoFieldWithContent videoCon = new VideoFieldWithContent(v1);
+           
+        VideoFieldWithContent videoCon = new VideoFieldWithContent((VideoFieldWithoutContent)testSpec.get(4));
         videoCon.setContent(image);
-        
-        AudioFieldWithoutContent a1 = new AudioFieldWithoutContent("an audio bite?", true);      
-        AudioFieldWithContent audioCon = new AudioFieldWithContent(a1);
+           
+        AudioFieldWithContent audioCon = new AudioFieldWithContent((AudioFieldWithoutContent)testSpec.get(5));
         audioCon.setContent(image);
         
         ArrayList<FieldWithContent> filledIncident=new ArrayList();
