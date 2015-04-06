@@ -171,15 +171,15 @@ public class ControllerTest
         
         
         byte[] image = new byte[]{1,2,4};
-        ImageFieldWithoutContent i1 = new ImageFieldWithoutContent("an image?", true);      
+        ImageFieldWithoutContent i1 = new ImageFieldWithoutContent("an image", true);      
         ImageFieldWithContent imageCon = new ImageFieldWithContent(i1);
         imageCon.setContent(image);
         
-        VideoFieldWithoutContent v1 = new VideoFieldWithoutContent("a video?", true);      
+        VideoFieldWithoutContent v1 = new VideoFieldWithoutContent("a video", true);      
         VideoFieldWithContent videoCon = new VideoFieldWithContent(v1);
         videoCon.setContent(image);
         
-        AudioFieldWithoutContent a1 = new AudioFieldWithoutContent("an audio bite?", true);      
+        AudioFieldWithoutContent a1 = new AudioFieldWithoutContent("an audio bite", true);      
         AudioFieldWithContent audioCon = new AudioFieldWithContent(a1);
         audioCon.setContent(image);
         
