@@ -69,10 +69,6 @@ public class MainActivity extends Activity {
         Thread subscribedChannelsThread = new Thread(new RunnableGetSubscribedChannels(this, userName));
         subscribedChannelsThread.setPriority(Thread.MIN_PRIORITY);
         subscribedChannelsThread.run();
-
-        //TODO destroy these once the runnable implementation is confirmed correct.
-//        new TaskGetSubscribedChannels(this).execute(userName);
-//        new TaskSendAnyStoredIncidents(this).execute();
     }
 
     /**

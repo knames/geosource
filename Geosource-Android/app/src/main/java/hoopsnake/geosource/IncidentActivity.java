@@ -295,9 +295,6 @@ public class IncidentActivity extends ActionBarActivity {
             sendIncidentThread.setPriority(Thread.currentThread().getPriority());
             sendIncidentThread.run();
 
-            //TODO destroy this when runnable method confirmed correct.
-//            new TaskSendIncident(new WeakReference<Activity>(this), incident).execute();
-
             setIncident(null);
             setResult(RESULT_OK);
             finish();
