@@ -4,6 +4,7 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../geosource-globals/geosource-globals.html">
 <link rel="import" href="../geosource-services/post-service.html">
+<link rel="import" href="../core-tooltip/core-tooltip.html">
 
 <polymer-element name="geosource-post-summary" attributes="post mapInfo">
   <template>
@@ -117,7 +118,13 @@
       </paper-icon-button> -->
     </div>       
     <div end horizontal layout class="card-footer">
-      <div flex class="info" title="{{post.time}}">posted by {{post.username}} {{time}} to {{post.channel.name}}</div> 
+      <div flex class="info" title="">
+        posted by {{post.username}} 
+      <core-tooltip label='{{post.time}} UDT'>
+        {{time}} 
+      </core-tooltip>
+        to {{post.channel.name}}
+      </div>
       <paper-button 
         id="more-button"
         icon="launch"
