@@ -29,11 +29,10 @@ import static junit.framework.Assert.assertTrue;
  * Created by wsv759 on 06/04/15.
  * Task to send a new completed incident to the server.
  */
-public class RunnableSendIncident implements Runnable {
+public class RunnableSendIncident extends BackgroundRunnable<SocketResult> {
     private static final int MINUTES_TO_WAIT_FOR_FORMATTING = 2;
     private static final String LOG_TAG = "geosource comm";
 
-    WeakReference<Activity> activityRef;
     AppIncident appIncidentToSend;
     File incidentFile;
 
@@ -49,14 +48,15 @@ public class RunnableSendIncident implements Runnable {
 
     public RunnableSendIncident(WeakReference<Activity> activityRef, AppIncident incidentToSend)
     {
+        super(activityRef);
         assertNotNull(incidentToSend);
 
         this.appIncidentToSend = incidentToSend;
-        this.activityRef = activityRef;
         if (activityRef != null)
             incidentFile = incidentToSend.getFile(activityRef.get());
     }
 
+    @Override
     protected SocketResult doInBackground() {
         //Check if there are any fields to serialize.
         LinkedList<AbstractAppFieldWithFile> listFileFieldsToSerialize = new LinkedList<>();
@@ -110,7 +110,7 @@ public class RunnableSendIncident implements Runnable {
             for (AbstractAppFieldWithFile field : listFileFieldsToSerialize) {
                 Thread threadSetContent = new Thread(new RunnableSetContentBasedOnFileUri(this, field));
                 threadSetContent.setPriority(Thread.currentThread().getPriority());
-                threadSetContent.run();
+                threadSetContent.start();
 
                 //TODO do this sequentially if necessary.
 //                new RunnableSetContentBasedOnFileUri(this, field).run();
@@ -163,17 +163,12 @@ public class RunnableSendIncident implements Runnable {
         return SocketResult.SUCCESS;
     }
 
-    protected void onPostExecute(SocketResult result) {
-        if (activityRef != null) {
-            Activity activity = activityRef.get();
-            if (activity != null)
-                result.makeToastAndLog(activity.getString(R.string.uploaded_incident),
-                        activity.getString(R.string.failed_to_upload_incident),
-                        activity,
-                        LOG_TAG);
-        }
-        else
-            Log.i(LOG_TAG, "TaskSendIncident had result " + result.toString() );
+    @Override
+    protected void onPostExecute(SocketResult result, Activity activity) {
+        result.makeToastAndLog(activity.getString(R.string.uploaded_incident),
+                activity.getString(R.string.failed_to_upload_incident),
+                activity,
+                LOG_TAG);
     }
 
     private void saveUnsentIncidentToFileSystemIfNecessary(AppIncident unsentIncident)
@@ -228,11 +223,5 @@ public class RunnableSendIncident implements Runnable {
             saveUnsentIncidentToFileSystemIfNecessary(appIncidentToSend);
             return SocketResult.FAILED_CONNECTION;
         }
-    }
-
-    @Override
-    public void run() {
-        SocketResult result = doInBackground();
-        onPostExecute(result);
     }
 }

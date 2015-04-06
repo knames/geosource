@@ -20,22 +20,22 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 06/04/15.
  */
-public class RunnableGetSubscribedChannels implements Runnable {
+public class RunnableGetSubscribedChannels extends BackgroundRunnable<SocketResult> {
 
         private static final String LOG_TAG = "geosource comm";
-        private WeakReference<Activity> activityRef;
+
         private String userId;
         private String absFileName;
         public RunnableGetSubscribedChannels(Activity activity, String userId) {
-            assertNotNull(activity);
+            super(new WeakReference<Activity>(activity));
             assertNotNull(userId);
 
             absFileName = activity.getFilesDir().getAbsolutePath() + "/" + MainActivity.FILENAME_SUBSCRIBED_CHANNELS;
-            this.activityRef = new WeakReference<Activity>(activity);
-            this.userId = userId;
 
+            this.userId = userId;
         }
 
+        @Override
         protected SocketResult doInBackground() {
 
             SocketWrapper socketWrapper;
@@ -90,23 +90,13 @@ public class RunnableGetSubscribedChannels implements Runnable {
                 return SocketResult.FAILED_FORMATTING; //TODO this should not be a socket result, as it is local, after the socket succeeded.
         }
 
-    protected void onPostExecute(SocketResult result)
-    {
-        if (activityRef != null) {
-            Activity activity = activityRef.get();
-            if (activity != null)
-                result.makeToastAndLog(
-                        activity.getString(R.string.downloaded_subscribed_channels),
-                        activity.getString(R.string.failed_to_download_subscribed_channels),
-                        activity,
-                        LOG_TAG);
-        }
-    }
-
-
     @Override
-    public void run() {
-        SocketResult result = doInBackground();
-        onPostExecute(result);
+    protected void onPostExecute(SocketResult result, Activity activity)
+    {
+        result.makeToastAndLog(
+                activity.getString(R.string.downloaded_subscribed_channels),
+                activity.getString(R.string.failed_to_download_subscribed_channels),
+                activity,
+                LOG_TAG);
     }
 }

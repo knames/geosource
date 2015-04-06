@@ -293,7 +293,7 @@ public class IncidentActivity extends ActionBarActivity {
             Toast.makeText(IncidentActivity.this, "Attempting to format and send your incident to server.", Toast.LENGTH_LONG).show();
             Thread sendIncidentThread = new Thread(new RunnableSendIncident(new WeakReference<Activity>(this), incident));
             sendIncidentThread.setPriority(Thread.currentThread().getPriority());
-            sendIncidentThread.run();
+            sendIncidentThread.start();
 
             setIncident(null);
             setResult(RESULT_OK);

@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
 
 import hoopsnake.geosource.R;
+import hoopsnake.geosource.comm.BackgroundRunnable;
 import hoopsnake.geosource.comm.RunnableSendIncident;
 
 import static junit.framework.Assert.assertNotNull;
@@ -23,7 +25,7 @@ import static junit.framework.Assert.assertNotNull;
  * That field must have a non-null file URI referring to an existent file.
  * @postcond the given field's content file is converted into a byte array, and its content is set to that byte array.
  */
-public class RunnableSetContentBasedOnFileUri implements Runnable {
+public class RunnableSetContentBasedOnFileUri extends BackgroundRunnable<Boolean> {
     private RunnableSendIncident callingRunnable;
     private AbstractAppFieldWithFile fieldToSet;
     private static final String LOG_TAG = "geosource";
@@ -34,6 +36,8 @@ public class RunnableSetContentBasedOnFileUri implements Runnable {
      */
     public RunnableSetContentBasedOnFileUri(RunnableSendIncident callingRunnable, AbstractAppFieldWithFile fieldToSet)
     {
+        super(new WeakReference<Activity>(fieldToSet.getActivity()));
+
         this.callingRunnable = callingRunnable;
         this.fieldToSet = fieldToSet;
 
@@ -81,20 +85,9 @@ public class RunnableSetContentBasedOnFileUri implements Runnable {
         return true;
     }
 
-    protected void onPostExecute(boolean setContentSucceeded)
+    protected void onPostExecute(Boolean setContentSucceeded, Activity activity)
     {
-        if (!setContentSucceeded && fieldToSet != null) {
-            Activity activity = fieldToSet.getActivity();
-            if (activity == null)
-                return;
-
+        if (!setContentSucceeded && fieldToSet != null)
             Toast.makeText(activity, activity.getString(R.string.failed_to_format_content), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void run() {
-        boolean setContentSucceeded = doInBackground();
-        onPostExecute(setContentSucceeded);
     }
 }

@@ -16,27 +16,20 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by wsv759 on 06/04/15.
  */
-public class RunnableSendAnyStoredIncidents implements Runnable {
-
-    @Override
-    public void run() {
-
-    }
+public class RunnableSendAnyStoredIncidents extends BackgroundRunnable<Void> {
 
     private static final String LOG_TAG = "geosource comm";
-    WeakReference<Activity>  activityRef;
     File savedIncidentsDir;
     public RunnableSendAnyStoredIncidents(Activity activity)
     {
-        assertNotNull(activity);
+        super(new WeakReference<Activity>(activity));
 
         savedIncidentsDir = activity.getDir(IncidentActivity.DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE);
         assertNotNull(savedIncidentsDir);
-
-        this.activityRef = new WeakReference<Activity>(activity);
     }
 
-    protected Void doInBackground(Void... params) {
+    @Override
+    protected Void doInBackground() {
         File[] savedIncidentFiles = savedIncidentsDir.listFiles();
 
         Log.v(LOG_TAG, Integer.toString(savedIncidentFiles.length) + " incidents to send.");
@@ -80,7 +73,7 @@ public class RunnableSendAnyStoredIncidents implements Runnable {
             else {
                 Thread threadSendIncident = new Thread(new RunnableSendIncident(activityRef, incidentToSend));
                 threadSendIncident.setPriority(Thread.currentThread().getPriority());
-                threadSendIncident.run();
+                threadSendIncident.start();
 
                 //TODO do this sequentially if necessary.
 //                new RunnableSendIncident(activityRef, incidentToSend).run();
@@ -89,4 +82,7 @@ public class RunnableSendAnyStoredIncidents implements Runnable {
 
         return null;
     }
+
+    @Override
+    protected void onPostExecute(Void result, Activity activity) {}
 }

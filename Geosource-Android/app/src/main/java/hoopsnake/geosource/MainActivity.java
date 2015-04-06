@@ -63,12 +63,12 @@ public class MainActivity extends Activity {
         //If folder is not empty, and we are connected to the internet, send those files!
         Thread sendIncidentsThread = new Thread(new RunnableSendAnyStoredIncidents(this));
         sendIncidentsThread.setPriority(Thread.MIN_PRIORITY);
-        sendIncidentsThread.run();
+        sendIncidentsThread.start();
 
         //Get all the subscribed channels for this user.
         Thread subscribedChannelsThread = new Thread(new RunnableGetSubscribedChannels(this, userName));
         subscribedChannelsThread.setPriority(Thread.MIN_PRIORITY);
-        subscribedChannelsThread.run();
+        subscribedChannelsThread.start();
     }
 
     /**
