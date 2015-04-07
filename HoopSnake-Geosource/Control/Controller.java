@@ -47,7 +47,7 @@ public class Controller {
             insertTestChannel();
             successful = true;
         }
-        catch (SQLException SQLe)
+        catch (IllegalStateException ISe)
         {
             System.out.println("Database initialization failed");
         }
