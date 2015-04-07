@@ -61,7 +61,7 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            Log.i(LOG_TAG, "Attempting to send incident.");
+            Log.i(LOG_TAG, "Attempting to get Incident spec.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
             outStream.flush();

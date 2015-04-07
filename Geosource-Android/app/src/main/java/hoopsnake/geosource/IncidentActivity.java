@@ -196,7 +196,6 @@ public class IncidentActivity extends ActionBarActivity {
      * @postcond the activity's incident is set, and it is informed as such.
      */
     public void setIncident(AppIncident incident) {
-        assertNull(this.incident);
         this.incident = incident;
         assertNotNull(incident);
 
