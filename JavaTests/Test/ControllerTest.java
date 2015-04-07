@@ -3,6 +3,7 @@ package Test;
 import DataBase.DBAccess;
 import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
+import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Geotag;
@@ -16,6 +17,7 @@ import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -187,6 +189,15 @@ public class ControllerTest
         Incident testIncident = new Incident(filledIncident,testChannel,testOwner,"xx420Blazexx");
         
         SocketStuff.makePost(testIncident);
+    }
+    
+    /**
+     * Can we grab subscriptions for a user?
+     */
+    @Test
+    public void grabSubscriptions()
+    {
+        LinkedList<ChannelIdentifier> channels;
     }
     
     

@@ -8,6 +8,7 @@ insert into channels values ("okenso's other channel", "okenso", 2, true);
 insert into channels values ("pothole", "okenso", 3, true);
 insert into channels values ("poly", "josh", 1, true);
 
+insert into channelfavs values ("xx420Blazexx", "testing", "okenso");
 insert into channelfavs values ("okenso", "pothole", "okenso");
 insert into channelfavs values ("okenso", "okenso's channel", "okenso");
 insert into channelfavs values ("josh", "poly", "josh");
