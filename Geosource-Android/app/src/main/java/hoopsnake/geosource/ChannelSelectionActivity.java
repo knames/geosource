@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import ServerClientShared.ChannelIdentifier;
+import hoopsnake.geosource.comm.TaskGetChannelIdentifiers;
 import hoopsnake.geosource.data.AppChannelIdentifier;
 import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
@@ -38,15 +39,17 @@ public class ChannelSelectionActivity extends ListActivity {
         ChannelDisplayAdapter channelAdapter = new ChannelDisplayAdapter(
                 this, R.layout.channel_name_and_owner_view, channelIdentifiers);
         setListAdapter(channelAdapter);
+        channelAdapter.notifyDataSetChanged();
+
         Log.d(MainActivity.APP_LOG_TAG, "2");
 //      //TODO uncomment this once channel sending from socket is implemented.
-//        if (extras == null) {
-//            new TaskGetChannelIdentifiers(this).execute(false);
-//        }
-//        else
-//        {
-//            new TaskGetChannelIdentifiers(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
-//        }
+        if (extras == null) {
+            new TaskGetChannelIdentifiers(this).execute(false);
+        }
+        else
+        {
+            new TaskGetChannelIdentifiers(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
+        }
 
         channelSearchBar = (EditText) findViewById(R.id.channel_search_bar);
 
@@ -58,9 +61,9 @@ public class ChannelSelectionActivity extends ListActivity {
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
                 String text = cs.toString().trim();
 
+                //Filter the list to display only items matching the edit text.
                 ((ChannelDisplayAdapter) getListAdapter()).getFilter().filter(text);
             }
 
