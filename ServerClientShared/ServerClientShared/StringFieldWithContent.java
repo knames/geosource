@@ -31,6 +31,8 @@ public class StringFieldWithContent extends FieldWithContent{
         out.name("string");
         out.value((String)content);
         out.endObject();
+        out.flush();
+        out.close();
     }
 
 }
