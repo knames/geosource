@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import ServerClientShared.Commands;
+import hoopsnake.geosource.BackgroundRunnable;
 import hoopsnake.geosource.FileIO;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.data.AbstractAppFieldWithFile;
@@ -79,7 +80,7 @@ public class RunnableSendIncident extends BackgroundRunnable<SocketResult> {
             }
 
 
-            //Ping the server.
+            //Ping the server. TODO make ping general, and callable by other long running socket tasks.
             try {
                 Log.v(LOG_TAG, "pinging server.");
 

@@ -11,6 +11,7 @@ import java.util.LinkedList;
 
 import ServerClientShared.Channel;
 import ServerClientShared.Commands;
+import hoopsnake.geosource.BackgroundRunnable;
 import hoopsnake.geosource.FileIO;
 import hoopsnake.geosource.MainActivity;
 import hoopsnake.geosource.R;
@@ -65,6 +66,7 @@ public class RunnableGetSubscribedChannels extends BackgroundRunnable<SocketResu
                 outStream.flush();
 
                 Log.i(LOG_TAG, "Retrieving reply...");
+                @SuppressWarnings("unchecked")
                 LinkedList<Channel> listSubscribedChannels = (LinkedList<Channel>) inStream.readObject();
                 if (listSubscribedChannels == null)
                     return SocketResult.FAILED_FORMATTING;
@@ -84,6 +86,7 @@ public class RunnableGetSubscribedChannels extends BackgroundRunnable<SocketResu
                 socketWrapper.closeAll();
             }
 
+            //TODO make subscribedChannels a better search-structure than an array! Some kind of tree.
             if (FileIO.writeObjectToFileNoContext(subscribedChannels, absFileName))
                 return SocketResult.SUCCESS;
             else

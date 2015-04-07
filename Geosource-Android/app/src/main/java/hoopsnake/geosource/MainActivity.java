@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
 
                     assertNotNull(channel);
 
-                    startIncidentActivity(false, channel);
+                    startIncidentActivity(true, channel);
                 }
                 break;
         }

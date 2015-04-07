@@ -64,8 +64,7 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             if (listChannelIdentifiers == null)
                 return SocketResult.FAILED_FORMATTING;
 
-            channelIdentifiers  = listChannelIdentifiers.toArray(new ChannelIdentifier[listChannelIdentifiers.size()]);
-
+            channelIdentifiers = listChannelIdentifiers.toArray(new ChannelIdentifier[listChannelIdentifiers.size()]);
         }
         catch (IOException e)
         {
@@ -84,7 +83,7 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
         for (int i = 0; i < channelIdentifiers.length; i++)
             appChannelIdentifiers[i] = new AppChannelIdentifierWithWrapper(channelIdentifiers[i]);
 
-        activity.setChannels(appChannelIdentifiers);
+        activity.setChannelIdentifiers(appChannelIdentifiers);
 
         return SocketResult.SUCCESS;
     }

@@ -1,5 +1,6 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -102,8 +103,12 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
                 LOG_TAG);
 
         //TODO may need && !activity.isUiRendered() here, if IncidentActivity moves in that direction.
-        if (result.equals(SocketResult.SUCCESS)) {
+        if (result.equals(SocketResult.SUCCESS))
             activity.renderIncidentFromScratch(true);
+        else {
+            activity.setResult(Activity.RESULT_CANCELED);
+            activity.finish();
         }
+
     }
 }

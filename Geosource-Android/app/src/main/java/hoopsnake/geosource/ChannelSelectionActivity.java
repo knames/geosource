@@ -8,9 +8,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import ServerClientShared.ChannelIdentifier;
 import hoopsnake.geosource.data.AppChannelIdentifier;
@@ -25,9 +23,10 @@ public class ChannelSelectionActivity extends ListActivity {
     private EditText channelSearchBar;
 
     /**
-     * the channels to choose from.
+     * the channelIdentifiers to choose from.
      */
-    private AppChannelIdentifier[] channels = {new AppChannelIdentifierWithWrapper(new ChannelIdentifier("Dummy for testing.", "Please wait while I try and get your channels..."))};
+    private AppChannelIdentifier[] channelIdentifiers = {
+            new AppChannelIdentifierWithWrapper(new ChannelIdentifier("Dummy for testing.", "Please wait while I try and get your channelIdentifiers..."))};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +36,7 @@ public class ChannelSelectionActivity extends ListActivity {
 
         Log.d(MainActivity.APP_LOG_TAG, "1");
         ChannelDisplayAdapter channelAdapter = new ChannelDisplayAdapter(
-                this, R.layout.channel_name_and_owner_view, channels);
+                this, R.layout.channel_name_and_owner_view, channelIdentifiers);
         setListAdapter(channelAdapter);
         Log.d(MainActivity.APP_LOG_TAG, "2");
 //      //TODO uncomment this once channel sending from socket is implemented.
@@ -74,25 +73,18 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "3");
     }
 
-    public void setChannels(AppChannelIdentifier[] channels)
+    public void setChannelIdentifiers(AppChannelIdentifier[] channelIdentifiers)
     {
-        this.channels = channels;
-        assertNotNull(channels);
+        this.channelIdentifiers = channelIdentifiers;
+        assertNotNull(channelIdentifiers);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         //TODO fix all this.
-        Intent intent = new Intent();
-
         Log.d(MainActivity.APP_LOG_TAG, "4");
-        LinearLayout ll = (LinearLayout) v;
-        TextView channelNameView = (TextView) ll.findViewById(R.id.channel_name_view);
-        TextView channelOwnerView = (TextView) ll.findViewById(R.id.channel_owner_view);
-
-        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) new ChannelIdentifier(
-                channelNameView.getText().toString(),
-                channelOwnerView.getText().toString()));
+        Intent intent = new Intent();
+        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) channelIdentifiers[position]);
 
         setResult(RESULT_OK, intent);
         finish();

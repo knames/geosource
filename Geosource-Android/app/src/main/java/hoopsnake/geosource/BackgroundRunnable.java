@@ -1,4 +1,4 @@
-package hoopsnake.geosource.comm;
+package hoopsnake.geosource;
 
 import android.app.Activity;
 

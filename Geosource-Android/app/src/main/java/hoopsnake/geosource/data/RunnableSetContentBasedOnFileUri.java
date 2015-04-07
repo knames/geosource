@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
 
 import hoopsnake.geosource.R;
-import hoopsnake.geosource.comm.BackgroundRunnable;
+import hoopsnake.geosource.BackgroundRunnable;
 import hoopsnake.geosource.comm.RunnableSendIncident;
 
 import static junit.framework.Assert.assertNotNull;

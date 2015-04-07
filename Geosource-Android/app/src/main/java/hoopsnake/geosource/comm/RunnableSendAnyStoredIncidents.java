@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import hoopsnake.geosource.BackgroundRunnable;
 import hoopsnake.geosource.FileIO;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.data.AppIncident;
