@@ -76,7 +76,6 @@ public class AppVideoField extends AbstractAppFieldWithFile{
             Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
 
             //TODO display the video in its field! This means notifying the UI.
-            //TODO set the content of this field appropriately. Probably in a background task?
 
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
