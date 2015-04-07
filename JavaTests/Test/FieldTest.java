@@ -2,6 +2,9 @@ package Test;
 
 import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
+import ServerClientShared.Geotag;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.StringFieldWithContent;
@@ -241,31 +244,35 @@ public class FieldTest {
     public void geotagFieldTest()
     {
         
-        byte[] audio = new byte[]{1,2,4};
+        Geotag geotag = new Geotag();
+        geotag.setLatitude(11.555);
+        geotag.setLongitude(31.789);
+        geotag.setTimestamp(5);
+        
         //Check if the given  field type can be built.
-        AudioFieldWithoutContent t1 = new AudioFieldWithoutContent("Description", true);
+        GeotagFieldWithoutContent t1 = new GeotagFieldWithoutContent("Description", true);
         
-        AudioFieldWithContent audioCon = new AudioFieldWithContent(t1);
+        GeotagFieldWithContent geotagCon = new GeotagFieldWithContent(t1);
         
-        assertTrue(audioCon.getContent()==null);
+        assertTrue(geotagCon.getContent()==null);
         
         //Check to see if it allows/disallows certain types to be added
         
-        assertFalse(audioCon.contentMatchesType("TROLOLOL"));
-        assertTrue(audioCon.contentMatchesType(audio));
+        assertFalse(geotagCon.contentMatchesType("TROLOLOL"));
+        assertTrue(geotagCon.contentMatchesType(geotag));
         
         try
         {
-            audioCon.setContent("LOLOLOL");
-            fail("Accepted String->Audio");
+            geotagCon.setContent("LOLOLOL");
+            fail("Accepted String->Geotag");
         }
         catch(RuntimeException e){};//Expected
         
-        assertTrue(audioCon.getContent()==null);
+        assertTrue(geotagCon.getContent()==null);
         
-        audioCon.setContent(audio);
+        geotagCon.setContent(geotag);
         
-        assertTrue(audioCon.getContent()==audio);
+        assertTrue(geotagCon.getContent()==geotag);
         
     }
     
