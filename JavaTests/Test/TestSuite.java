@@ -20,6 +20,8 @@ public class TestSuite
         System.out.println(parseResults(result,"FieldTest"));
         result= junit.run(IncidentTest.class);
         System.out.println(parseResults(result,"IncidentTest"));
+        result= junit.run(GeotagTest.class);
+        System.out.println(parseResults(result,"GeotagTest"));
         result= junit.run(ControllerTest.class);
         System.out.println(parseResults(result,"ControllerTest"));
         

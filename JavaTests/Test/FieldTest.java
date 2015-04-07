@@ -2,6 +2,9 @@ package Test;
 
 import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
+import ServerClientShared.Geotag;
+import ServerClientShared.GeotagFieldWithContent;
+import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.ImageFieldWithContent;
 import ServerClientShared.ImageFieldWithoutContent;
 import ServerClientShared.StringFieldWithContent;
@@ -233,6 +236,43 @@ public class FieldTest {
         audioCon.setContent(audio);
         
         assertTrue(audioCon.getContent()==audio);
+        
+    }
+    
+     //Tests constructors for AudioFieldWithContent
+    @Test
+    public void geotagFieldTest()
+    {
+        
+        Geotag geotag = new Geotag();
+        geotag.setLatitude(11.555);
+        geotag.setLongitude(31.789);
+        geotag.setTimestamp(5);
+        
+        //Check if the given  field type can be built.
+        GeotagFieldWithoutContent t1 = new GeotagFieldWithoutContent("Description", true);
+        
+        GeotagFieldWithContent geotagCon = new GeotagFieldWithContent(t1);
+        
+        assertTrue(geotagCon.getContent()==null);
+        
+        //Check to see if it allows/disallows certain types to be added
+        
+        assertFalse(geotagCon.contentMatchesType("TROLOLOL"));
+        assertTrue(geotagCon.contentMatchesType(geotag));
+        
+        try
+        {
+            geotagCon.setContent("LOLOLOL");
+            fail("Accepted String->Geotag");
+        }
+        catch(RuntimeException e){};//Expected
+        
+        assertTrue(geotagCon.getContent()==null);
+        
+        geotagCon.setContent(geotag);
+        
+        assertTrue(geotagCon.getContent()==geotag);
         
     }
     

@@ -36,13 +36,13 @@ public class ChannelDisplayAdapter extends ArrayAdapter<AppChannelIdentifier> {
 
             holder = new ChannelHolder();
             holder.viewChannelName = (TextView) row.findViewById(R.id.channel_name_view);
-            holder.viewChannelOwner = (TextView)row.findViewById(R.id.channel_owner_view);
+            holder.viewChannelOwner = (TextView) row.findViewById(R.id.channel_owner_view);
 
             row.setTag(holder);
         }
         else
         {
-            holder = (ChannelHolder)row.getTag();
+            holder = (ChannelHolder) row.getTag();
         }
 
         AppChannelIdentifier channel = super.getItem(position);
