@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
 
-import hoopsnake.geosource.R;
 import hoopsnake.geosource.BackgroundRunnable;
+import hoopsnake.geosource.R;
 import hoopsnake.geosource.comm.RunnableSendIncident;
 
 import static junit.framework.Assert.assertNotNull;
@@ -29,6 +29,7 @@ public class RunnableSetContentBasedOnFileUri extends BackgroundRunnable<Boolean
     private RunnableSendIncident callingRunnable;
     private AbstractAppFieldWithFile fieldToSet;
     private static final String LOG_TAG = "geosource";
+    private static final int BUFFER_SIZE = 8192;
 
     /**
      *
@@ -60,7 +61,7 @@ public class RunnableSetContentBasedOnFileUri extends BackgroundRunnable<Boolean
         }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[BUFFER_SIZE];
         try {
             for (int readNum; (readNum = fis.read(buf)) != -1;) {
                 bos.write(buf, 0, readNum); //no doubt here is 0

@@ -5,4 +5,5 @@
     android:maxLength="140"
     android:inputType="textMultiLine|textAutoCorrect|textLongMessage"
     android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"/>
+    android:layout_alignParentEnd="true"
+    android:saveEnabled="false"/>

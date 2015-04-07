@@ -4,6 +4,7 @@
     android:clickable="false"
     android:textIsSelectable="true"
     android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true">
+    android:layout_alignParentEnd="true"
+    android:saveEnabled="false">
 
 </TextView>
