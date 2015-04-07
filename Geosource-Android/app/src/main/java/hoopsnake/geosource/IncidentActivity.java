@@ -143,7 +143,12 @@ public class IncidentActivity extends ActionBarActivity {
         for (Channel channel : channels)
             if (channelIdentifier.matchesChannel(channel))
             {
-                setIncident(new AppIncidentWithWrapper(channel.getIncidentSpec(), channelIdentifier.getChannelName(), channelIdentifier.getChannelOwner(), poster, this));
+                setIncident(new AppIncidentWithWrapper(
+                        channel.getIncidentSpec(),
+                        channelIdentifier.getChannelName(),
+                        channelIdentifier.getChannelOwner(),
+                        poster,
+                        this));
                 renderIncidentFromScratch(true);
                 return true;
             }
@@ -196,9 +201,7 @@ public class IncidentActivity extends ActionBarActivity {
      * @postcond the activity's incident is set, and it is informed as such.
      */
     public void setIncident(AppIncident incident) {
-        assertNull(this.incident);
         this.incident = incident;
-        assertNotNull(incident);
 
         setWaitingForIncident(false);
     }
@@ -247,7 +250,7 @@ public class IncidentActivity extends ActionBarActivity {
             assertNotNull(field);
 
             Log.d(LOG_TAG, "content: " + field.getContentStringRepresentation());
-            View v = field.getFieldViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal(), incidentFieldsDisplay);
+            View v = field.getFieldViewRepresentation(RequestCode.FIELD_ACTION_REQUEST_CODE.ordinal());
             assertNotNull(v);
 
             incidentFieldsDisplay.addView(v);

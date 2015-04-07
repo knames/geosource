@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import hoopsnake.geosource.data.AppChannelIdentifier;
 
 /**
@@ -17,7 +19,7 @@ public class ChannelDisplayAdapter extends ArrayAdapter<AppChannelIdentifier> {
 
     int layoutResourceId;
 
-    public ChannelDisplayAdapter(Activity activity, int resource, AppChannelIdentifier[] channels) {
+    public ChannelDisplayAdapter(Activity activity, int resource, ArrayList<AppChannelIdentifier> channels) {
         super(activity, resource, channels);
 
         layoutResourceId = resource;

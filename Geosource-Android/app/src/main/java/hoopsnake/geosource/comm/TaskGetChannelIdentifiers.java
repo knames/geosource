@@ -7,7 +7,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import ServerClientShared.ChannelIdentifier;
@@ -54,7 +54,7 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
         }
 
 
-        ChannelIdentifier[] channelIdentifiers;
+        LinkedList<ChannelIdentifier> channelIdentifiers;
         try
         {
             Log.i(LOG_TAG, "Attempting to get channels.");
@@ -62,11 +62,10 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
-            LinkedList<ChannelIdentifier> listChannelIdentifiers = (LinkedList<ChannelIdentifier>) inStream.readObject();
-            if (listChannelIdentifiers == null)
-                return SocketResult.FAILED_FORMATTING;
+            channelIdentifiers = (LinkedList<ChannelIdentifier>) inStream.readObject();
 
-            channelIdentifiers = listChannelIdentifiers.toArray(new ChannelIdentifier[listChannelIdentifiers.size()]);
+            if (channelIdentifiers == null)
+                return SocketResult.FAILED_FORMATTING;
         }
         catch (IOException e)
         {
@@ -81,13 +80,13 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             socketWrapper.closeAll();
         }
 
-        AppChannelIdentifier[] appChannelIdentifiers = new AppChannelIdentifier[channelIdentifiers.length];
-        for (int i = 0; i < channelIdentifiers.length; i++)
-            appChannelIdentifiers[i] = new AppChannelIdentifierWithWrapper(channelIdentifiers[i]);
+        ArrayList<AppChannelIdentifier> appChannelIdentifiers = new ArrayList<AppChannelIdentifier>(channelIdentifiers.size());
+        for (int i = 0; i < channelIdentifiers.size(); i++)
+            appChannelIdentifiers.add(i, new AppChannelIdentifierWithWrapper(channelIdentifiers.get(i)));
 
         activity.setChannelIdentifiers(appChannelIdentifiers);
 
-        Log.d(LOG_TAG, Arrays.toString(appChannelIdentifiers));
+        Log.d(LOG_TAG, appChannelIdentifiers.toString());
         return SocketResult.SUCCESS;
     }
 

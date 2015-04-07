@@ -2,7 +2,6 @@ package hoopsnake.geosource.data;
 
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.io.Serializable;
 
@@ -84,7 +83,7 @@ public interface AppField extends Serializable {
      * @return a View representing this field, to be displayed by the UI. This view should be up-to-date
      * with the field's content status: if content is not null, return a view showing the filled version.
      */
-    public View getFieldViewRepresentation(final int requestCodeForIntent, ViewGroup parent);
+    public View getFieldViewRepresentation(final int requestCodeForIntent);
 
     /**
      * When the result from this field being selected by the UI is returned, execute the correct action.

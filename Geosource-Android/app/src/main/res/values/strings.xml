@@ -40,7 +40,7 @@
 
     <string name="title_activity_channel_selection">ChannelSelectionActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="search_for_a_channel">Search for a Channel</string>
+    <string name="enter_filter_text">Enter filter text here.</string>
 
     <string name="downloaded_subscribed_channels">Downloaded subscribed channelIdentifiers.</string>
     <string name="failed_to_download_subscribed_channels">Could not download subscribed channelIdentifiers.</string>

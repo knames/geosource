@@ -10,10 +10,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import ServerClientShared.ChannelIdentifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import hoopsnake.geosource.comm.TaskGetChannelIdentifiers;
 import hoopsnake.geosource.data.AppChannelIdentifier;
-import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -26,8 +27,7 @@ public class ChannelSelectionActivity extends ListActivity {
     /**
      * the channelIdentifiers to choose from.
      */
-    private AppChannelIdentifier[] channelIdentifiers = {
-            new AppChannelIdentifierWithWrapper(new ChannelIdentifier("Dummy for testing.", "Please wait while I try and get your channelIdentifiers..."))};
+    private ArrayList<AppChannelIdentifier> channelIdentifiers = new ArrayList<AppChannelIdentifier>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +76,11 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "3");
     }
 
-    public void setChannelIdentifiers(AppChannelIdentifier[] channelIdentifiers)
+    public void setChannelIdentifiers(List<AppChannelIdentifier> channelIdentifiers)
     {
-        this.channelIdentifiers = channelIdentifiers;
+        this.channelIdentifiers.clear();
+        this.channelIdentifiers.addAll(channelIdentifiers);
+
         assertNotNull(channelIdentifiers);
     }
 
@@ -87,7 +89,7 @@ public class ChannelSelectionActivity extends ListActivity {
         //TODO fix all this.
         Log.d(MainActivity.APP_LOG_TAG, "4");
         Intent intent = new Intent();
-        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) channelIdentifiers[position]);
+        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) channelIdentifiers.get(position));
 
         setResult(RESULT_OK, intent);
         finish();
@@ -105,6 +107,8 @@ public class ChannelSelectionActivity extends ListActivity {
         String searchString = channelSearchBar.getText().toString().trim();
         if (!searchString.isEmpty())
             channelAdapter.getFilter().filter(searchString);
+
+        getListView().invalidateViews();
     }
 }
 
