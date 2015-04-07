@@ -3,6 +3,7 @@ package hoopsnake.geosource.data;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -62,7 +63,7 @@ public abstract class AbstractAppField implements AppField {
     public void setActivity(IncidentActivity activity){ this.activityRef = new WeakReference<IncidentActivity>(activity); }
 
     /**
-     * The activity that will be displaying this field on the UI.
+     * The activity that will be displaying this field on the UI. This reference will not prevent the UI from being destroyed.
      */
     private WeakReference<IncidentActivity> activityRef;
 
@@ -122,13 +123,13 @@ public abstract class AbstractAppField implements AppField {
     }
 
     @Override
-    public View getFieldViewRepresentation(final int requestCodeForIntent)
+    public View getFieldViewRepresentation(final int requestCodeForIntent, ViewGroup parent)
     {
         Activity activity = getActivity();
         if (activity == null)
             return null;
 
-        fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
+        fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, parent);
         TextView titleView = (TextView) fieldView.getChildAt(POSITION_VIEW_FIELD_TITLE);
 
         String fieldLabel = getTitle() + ":";

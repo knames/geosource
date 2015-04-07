@@ -39,8 +39,11 @@ public class ChannelSelectionActivity extends ListActivity {
         ChannelDisplayAdapter channelAdapter = new ChannelDisplayAdapter(
                 this, R.layout.channel_name_and_owner_view, channelIdentifiers);
         setListAdapter(channelAdapter);
+        channelAdapter.notifyDataSetChanged();
+
         Log.d(MainActivity.APP_LOG_TAG, "2");
-      //TODO uncomment this once channel sending from socket is implemented.
+
+		//TODO uncomment this once channel sending from socket is implemented.
         if (extras == null) {
             new TaskGetChannelIdentifiers(this).execute(false);
         }
@@ -59,9 +62,9 @@ public class ChannelSelectionActivity extends ListActivity {
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
                 String text = cs.toString().trim();
 
+                //Filter the list to display only items matching the edit text.
                 ((ChannelDisplayAdapter) getListAdapter()).getFilter().filter(text);
             }
 

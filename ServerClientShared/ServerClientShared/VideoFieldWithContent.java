@@ -1,5 +1,9 @@
 package ServerClientShared;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -22,4 +26,13 @@ public class VideoFieldWithContent extends FileFieldWithContent{
         //TODO add extra tests?
         return true;
     }
+
+    @Override
+    public void write(String folderPath) throws IOException {
+        File newFile = new File(folderPath + ".mp4");
+        FileOutputStream fileOut = new FileOutputStream(newFile);
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        out.writeObject(content);
+    }
+    
 }

@@ -33,7 +33,6 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
     }
 
     protected SocketResult doInBackground(String... params) {
-
         channelName = params[0];
         channelOwner = params[1];
         poster = params[2];
@@ -56,7 +55,6 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
 
             return SocketResult.FAILED_CONNECTION;
         }
-
 
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try

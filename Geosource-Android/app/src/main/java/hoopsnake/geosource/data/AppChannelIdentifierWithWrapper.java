@@ -62,4 +62,10 @@ public class AppChannelIdentifierWithWrapper implements AppChannelIdentifier {
             return new AppChannelIdentifierWithWrapper[size];
         }
     };
+
+    @Override
+    public String toString()
+    {
+        return wrappedChannelIdentifier.getChannelName() + " " + wrappedChannelIdentifier.getChannelOwner();
+    }
 }

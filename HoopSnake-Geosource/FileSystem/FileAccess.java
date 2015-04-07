@@ -1,5 +1,6 @@
 package FileSystem;
 
+import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -84,13 +84,16 @@ public class FileAccess {
         }
     }
 
-    public String saveField(Serializable fieldContent) {
+    public String saveField(FieldWithContent fieldContent) {
         UUID fileUUID = UUID.randomUUID();
         String fileName = fileUUID.toString();
-        try (ObjectOutputStream fileOut = new ObjectOutputStream(new FileOutputStream("media/fieldContent/" + fileName))) {
-            fileOut.writeObject(fieldContent);
-        } catch (IOException IOe) {
-            System.out.println("Error attempting to write field");
+        try
+        {
+            fieldContent.write("media/fieldContent/"+fileName);
+        }
+        catch (IOException IOe)
+        {
+            System.out.println("Saving field to file system failed" + IOe.getMessage());
         }
         return fileName;
     }

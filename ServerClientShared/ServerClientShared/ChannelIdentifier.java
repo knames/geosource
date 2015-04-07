@@ -28,12 +28,6 @@ public class ChannelIdentifier implements Serializable, Comparable<ChannelIdenti
         this.channelOwner = channelOwner;
     }
 
-    @Override
-    public String toString()
-    {
-        return "channel name: " + channelName + ", channel owner: " + channelOwner;
-    }
-
     public static ChannelIdentifier[] fromStringArray(String[] channelNameChannelOwnerRepeating)
     {
         int numPairs = channelNameChannelOwnerRepeating.length;
