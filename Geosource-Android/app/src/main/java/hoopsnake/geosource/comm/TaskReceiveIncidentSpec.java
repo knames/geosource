@@ -68,7 +68,8 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
             outStream.writeUTF(channelOwner);
             outStream.flush();
             outStream.writeUTF(poster);
-            outStream.flush();
+            //putting this flush in causes the incident spec to not be downloaded successfully
+//            outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();

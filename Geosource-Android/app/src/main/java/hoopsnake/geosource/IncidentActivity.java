@@ -197,7 +197,6 @@ public class IncidentActivity extends ActionBarActivity {
      */
     public void setIncident(AppIncident incident) {
         this.incident = incident;
-        assertNotNull(incident);
 
         setWaitingForIncident(false);
     }

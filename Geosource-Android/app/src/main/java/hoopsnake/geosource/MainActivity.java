@@ -81,15 +81,15 @@ public class MainActivity extends Activity {
         if (IncidentActivity.curIncidentExistsInFileSystem(this))
             startIncidentActivity(false, null);
         else {
-//            Intent intent = new Intent(MainActivity.this, ChannelSelectionActivity.class);
-//            startActivityForResult(intent, RequestCode.GET_CHANNEL_ACTIVITY.ordinal());
+            Intent intent = new Intent(MainActivity.this, ChannelSelectionActivity.class);
+            startActivityForResult(intent, RequestCode.GET_CHANNEL_ACTIVITY.ordinal());
 
-            Intent intent = new Intent(MainActivity.this,IncidentActivity.class);
-            AppChannelIdentifier ac = new AppChannelIdentifierWithWrapper(new ChannelIdentifier("testing", "okenso"));
-            intent.putExtra(PARAM_CHOSEN_CHANNEL, (Parcelable) ac);
-            intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
-
-            startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY.ordinal());
+//            Intent intent = new Intent(MainActivity.this,IncidentActivity.class);
+//            AppChannelIdentifier ac = new AppChannelIdentifierWithWrapper(new ChannelIdentifier("testing", "okenso"));
+//            intent.putExtra(PARAM_CHOSEN_CHANNEL, (Parcelable) ac);
+//            intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
+//
+//            startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY.ordinal());
         }
     }
 
