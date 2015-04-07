@@ -1,9 +1,9 @@
 package ServerClientShared;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -31,8 +31,12 @@ public class ImageFieldWithContent extends FileFieldWithContent{
     public void write(String folderPath) throws IOException {
         File newFile = new File(folderPath + ".jpg");
         FileOutputStream fileOut = new FileOutputStream(newFile);
-        ObjectOutputStream out = new ObjectOutputStream(fileOut);
-        out.writeObject(content);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] contentArray = (byte[]) content;
+        out.write(contentArray, 0, contentArray.length);
+        out.writeTo(fileOut);
+        fileOut.flush();
+        fileOut.close();
         out.flush();
         out.close();
     }
