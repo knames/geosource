@@ -1,5 +1,7 @@
 package ServerClientShared;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -93,8 +95,9 @@ public abstract class FieldWithContent extends Field
     public abstract boolean contentMatchesType(Serializable content);
     
     /**
-     * write this content to the file system with the proper formatting 
-     * @param folderPath the path to prepend to the new file's writer
+     * writes the field to the filesystem using the given folderPath
+     * @param folderPath the file path up to the written object
+     * @throws java.io.IOException
      */
-    //public abstract void saveFile(String folderPath);
+    public abstract void write(String folderPath) throws IOException;
 }
