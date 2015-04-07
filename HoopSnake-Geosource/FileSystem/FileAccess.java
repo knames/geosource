@@ -21,6 +21,8 @@ import java.util.UUID;
  * @author Connor
  */
 public class FileAccess {
+    
+    private final String[] folderNames = { "media", "media/spec", "Polymer-Prototype/media/fieldContent" };
 
     public FileAccess() throws URISyntaxException {
 
@@ -41,8 +43,6 @@ public class FileAccess {
      * @throws Exception
      */
     private void FolderExists() {
-        String[] folderNames = { "media", "media/spec", "media/fieldContent" };
-
         for (int i = 0; i < folderNames.length; i++) {
             Path folder = Paths.get(folderNames[i]);
             if (Files.notExists(folder, LinkOption.NOFOLLOW_LINKS)) {
@@ -60,7 +60,7 @@ public class FileAccess {
         FileInputStream fileRead;
         ObjectInputStream in;
         try {
-            fileRead = new FileInputStream("media/spec/" + fileName); // file input
+            fileRead = new FileInputStream(folderNames[1]+ "/" + fileName); // file input
             in = new ObjectInputStream(fileRead); // stream to object
             ArrayList<FieldWithoutContent> returnList = (ArrayList<FieldWithoutContent>)in.readObject();
             in.close();
@@ -76,7 +76,7 @@ public class FileAccess {
     
     public void saveFormSpec(ArrayList<FieldWithoutContent> fields, String owner, int identifier)
     {
-        try (FileOutputStream fout = new FileOutputStream("media/spec/" + owner + "." + identifier); ObjectOutputStream oos = new ObjectOutputStream(fout))
+        try (FileOutputStream fout = new FileOutputStream(folderNames[1] + "/" + owner + "." + identifier); ObjectOutputStream oos = new ObjectOutputStream(fout))
         {
             oos.writeObject(fields); //save spec file
             oos.flush();
@@ -93,7 +93,7 @@ public class FileAccess {
         String fileName = fileUUID.toString();
         try
         {
-            fieldContent.write("media/fieldContent/"+fileName);
+            fieldContent.write(folderNames[2]+ "/" + fileName);
         }
         catch (IOException IOe)
         {
