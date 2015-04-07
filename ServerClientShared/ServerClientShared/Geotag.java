@@ -23,7 +23,7 @@ public class Geotag implements Serializable {
 
     /**
      * Checks to see if Geotag is valid.
-     * @return 
+     * @return true if the geotag is valid, false otherwise.
      */
     public boolean exists()
     {
