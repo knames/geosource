@@ -15,7 +15,6 @@ import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -101,7 +100,7 @@ public class ControllerTest
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
             
         }
-        catch (SQLException SQLe)
+        catch (IllegalStateException SQLe)
         {
             throw new RuntimeException("Database connection failed");
         }
@@ -136,7 +135,7 @@ public class ControllerTest
             DBAccess dbTest= new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));     
         }
-        catch(SQLException SQLe)
+        catch(IllegalStateException SQLe)
         {
             throw new RuntimeException("Database initialization failed");   
         }
