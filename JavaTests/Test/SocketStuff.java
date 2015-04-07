@@ -1,6 +1,6 @@
 package Test;
 
-import ServerClientShared.ChannelIdentifier;
+import ServerClientShared.Channel;
 import ServerClientShared.Commands;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
@@ -45,7 +45,7 @@ public class SocketStuff
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            System.out.println("Attempting to send incident.");
+            System.out.println("Attempting to send a ping.");
             outStream.writeObject(Commands.IOCommand.PING);
             outStream.flush();
 
@@ -107,7 +107,7 @@ public class SocketStuff
         try
         {
 
-            System.out.println("Attempting to send incident.");
+            System.out.println("Attempting to send grab spec list.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
             outStream.flush();
@@ -187,13 +187,13 @@ public class SocketStuff
      * @param user The user we wish to grab the channels for
      * @return the list of subscribed channels.
      */
-    public static LinkedList<ChannelIdentifier> grabSubs(String user)
+    public static LinkedList<Channel> grabSubs(String user)
     {
         ObjectOutputStream outStream; //wrapped stream to client
         ObjectInputStream inStream; //stream from client
         Socket outSocket;
 
-        LinkedList<ChannelIdentifier> channels;
+        LinkedList<Channel> channels;
         
         try //create socket
         {
@@ -210,12 +210,12 @@ public class SocketStuff
 
         try
         {
-            System.out.println("Attempting to send incident.");
+            System.out.println("Attempting to grab subscriptions of user.");
             outStream.writeObject(Commands.IOCommand.GET_SUBSCRIBED_CHANNELS);
-            outStream.writeObject(user);
+            outStream.writeUTF(user);
             outStream.flush();
             
-            channels = (LinkedList<ChannelIdentifier>) inStream.readObject();
+            channels = (LinkedList<Channel>) inStream.readObject();
 
             inStream.close();
             outStream.close();

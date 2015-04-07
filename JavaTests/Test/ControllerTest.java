@@ -3,7 +3,7 @@ package Test;
 import DataBase.DBAccess;
 import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
-import ServerClientShared.ChannelIdentifier;
+import ServerClientShared.Channel;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Geotag;
@@ -197,7 +197,11 @@ public class ControllerTest
     @Test
     public void grabSubscriptions()
     {
-        LinkedList<ChannelIdentifier> channels;
+        LinkedList<Channel> channels=SocketStuff.grabSubs("xx420Blazexx");
+        assertFalse(channels.isEmpty());
+        assertEquals(channels.get(0).getIdentifier().getChannelName(), "testing");
+        assertEquals(channels.get(0).getIdentifier().getChannelOwner(), "okenso");
+        int i=5;
     }
     
     
