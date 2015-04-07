@@ -8,13 +8,17 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ServerClientShared.ChannelIdentifier;
 import hoopsnake.geosource.comm.TaskGetChannelIdentifiers;
 import hoopsnake.geosource.data.AppChannelIdentifier;
+import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -42,7 +46,8 @@ public class ChannelSelectionActivity extends ListActivity {
         channelAdapter.notifyDataSetChanged();
 
         Log.d(MainActivity.APP_LOG_TAG, "2");
-//      //TODO uncomment this once channel sending from socket is implemented.
+
+		//TODO uncomment this once channel sending from socket is implemented.
         if (extras == null) {
             new TaskGetChannelIdentifiers(this).execute(false);
         }
@@ -89,7 +94,14 @@ public class ChannelSelectionActivity extends ListActivity {
         //TODO fix all this.
         Log.d(MainActivity.APP_LOG_TAG, "4");
         Intent intent = new Intent();
-        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) channelIdentifiers.get(position));
+
+        LinearLayout ll = (LinearLayout) v;
+        TextView channelNameView = (TextView) v.findViewById(R.id.channel_name_view);
+        TextView channelOwnerView = (TextView) v.findViewById(R.id.channel_owner_view);
+
+        AppChannelIdentifier selectedAci = new AppChannelIdentifierWithWrapper(
+                new ChannelIdentifier(channelNameView.getText().toString(), channelOwnerView.getText().toString()));
+        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) selectedAci);
 
         setResult(RESULT_OK, intent);
         finish();

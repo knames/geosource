@@ -9,9 +9,11 @@ import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
+import ServerClientShared.ChannelIdentifier;
 import hoopsnake.geosource.comm.RunnableGetSubscribedChannels;
 import hoopsnake.geosource.comm.RunnableSendAnyStoredIncidents;
 import hoopsnake.geosource.data.AppChannelIdentifier;
+import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -81,6 +83,13 @@ public class MainActivity extends Activity {
         else {
             Intent intent = new Intent(MainActivity.this, ChannelSelectionActivity.class);
             startActivityForResult(intent, RequestCode.GET_CHANNEL_ACTIVITY.ordinal());
+
+//            Intent intent = new Intent(MainActivity.this,IncidentActivity.class);
+//            AppChannelIdentifier ac = new AppChannelIdentifierWithWrapper(new ChannelIdentifier("testing", "okenso"));
+//            intent.putExtra(PARAM_CHOSEN_CHANNEL, (Parcelable) ac);
+//            intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
+//
+//            startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY.ordinal());
         }
     }
 
