@@ -1,5 +1,6 @@
 package Test;
 
+import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.Commands;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Incident;
@@ -8,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 /**
@@ -43,7 +45,6 @@ public class SocketStuff
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             System.out.println("Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.PING);
             outStream.flush();
@@ -105,7 +106,7 @@ public class SocketStuff
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
+
             System.out.println("Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
@@ -116,8 +117,7 @@ public class SocketStuff
 
             System.out.println("Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
-            /*if (fieldsToBeFilled == null)
-                throw new RuntimeException("Handed null fields.");*/
+
 
             inStream.close();
             outStream.close();
@@ -165,12 +165,11 @@ public class SocketStuff
 
         try
         {
-            //TODO identify with the server whether I am asking for an incident spec or sending an incident.
             System.out.println("Attempting to send incident.");
             outStream.writeObject(Commands.IOCommand.SEND_INCIDENT);
             outStream.writeObject(incidentToSend);
             outStream.flush();
-            //TODO is a reply really not necessary?
+
 
             inStream.close();
             outStream.close();
@@ -181,5 +180,56 @@ public class SocketStuff
         {
              throw new RuntimeException("Connection failed.(mP)");
         }
+    }
+    
+    /**
+     * Grabs a list of subscribed channels for the user
+     * @param user The user we wish to grab the channels for
+     * @return the list of subscribed channels.
+     */
+    public static LinkedList<ChannelIdentifier> grabSubs(String user)
+    {
+        ObjectOutputStream outStream; //wrapped stream to client
+        ObjectInputStream inStream; //stream from client
+        Socket outSocket;
+
+        LinkedList<ChannelIdentifier> channels;
+        
+        try //create socket
+        {
+            SocketWrapper socketWrapper = new SocketWrapper();
+            outSocket = socketWrapper.getOutSocket();
+            outStream = socketWrapper.getOut();
+            inStream = socketWrapper.getIn();
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException("Creating socket error(gS)");
+        }
+
+
+        try
+        {
+            System.out.println("Attempting to send incident.");
+            outStream.writeObject(Commands.IOCommand.GET_SUBSCRIBED_CHANNELS);
+            outStream.writeObject(user);
+            outStream.flush();
+            
+            channels = (LinkedList<ChannelIdentifier>) inStream.readObject();
+
+            inStream.close();
+            outStream.close();
+            outSocket.close();
+            System.out.println("Connection Closed");
+        }
+        catch (IOException e)
+        {
+             throw new RuntimeException("Connection failed.(gS)");
+        }
+        catch (ClassNotFoundException e) 
+        {
+            throw new RuntimeException("Weird stuff happened.(gS)");
+        }
+        return channels;
     }
 }
