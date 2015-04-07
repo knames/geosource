@@ -236,4 +236,37 @@ public class FieldTest {
         
     }
     
+     //Tests constructors for AudioFieldWithContent
+    @Test
+    public void geotagFieldTest()
+    {
+        
+        byte[] audio = new byte[]{1,2,4};
+        //Check if the given  field type can be built.
+        AudioFieldWithoutContent t1 = new AudioFieldWithoutContent("Description", true);
+        
+        AudioFieldWithContent audioCon = new AudioFieldWithContent(t1);
+        
+        assertTrue(audioCon.getContent()==null);
+        
+        //Check to see if it allows/disallows certain types to be added
+        
+        assertFalse(audioCon.contentMatchesType("TROLOLOL"));
+        assertTrue(audioCon.contentMatchesType(audio));
+        
+        try
+        {
+            audioCon.setContent("LOLOLOL");
+            fail("Accepted String->Audio");
+        }
+        catch(RuntimeException e){};//Expected
+        
+        assertTrue(audioCon.getContent()==null);
+        
+        audioCon.setContent(audio);
+        
+        assertTrue(audioCon.getContent()==audio);
+        
+    }
+    
 }
