@@ -62,7 +62,9 @@ public class FileAccess {
         try {
             fileRead = new FileInputStream("media/spec/" + fileName); // file input
             in = new ObjectInputStream(fileRead); // stream to object
-            return (ArrayList<FieldWithoutContent>) in.readObject();
+            ArrayList<FieldWithoutContent> returnList = (ArrayList<FieldWithoutContent>)in.readObject();
+            in.close();
+            return returnList;
         } catch (IOException IOe) {
             System.out.println("Reader initialization failed!");
             return null;
@@ -77,6 +79,8 @@ public class FileAccess {
         try (FileOutputStream fout = new FileOutputStream("media/spec/" + owner + "." + identifier); ObjectOutputStream oos = new ObjectOutputStream(fout))
         {
             oos.writeObject(fields); //save spec file
+            oos.flush();
+            oos.close();
         }
         catch (IOException IOe)
         {

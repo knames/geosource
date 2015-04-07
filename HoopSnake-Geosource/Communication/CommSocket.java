@@ -270,6 +270,10 @@ public class CommSocket implements Runnable{
                     break;
                 }
             }
+            
+            in.close();
+            //out.close();
+            outWriter.close(); //delete if out is ever pressed in to service
         }
         catch (IOException IOe)
         {

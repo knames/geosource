@@ -33,6 +33,8 @@ public class ImageFieldWithContent extends FileFieldWithContent{
         FileOutputStream fileOut = new FileOutputStream(newFile);
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
         out.writeObject(content);
+        out.flush();
+        out.close();
     }
 
 }

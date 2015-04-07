@@ -39,6 +39,8 @@ public class GeotagFieldWithContent extends FieldWithContent {
         out.name("time");
         out.value(geotag.getTimestamp());
         out.endObject();
+        out.flush();
+        out.close();
     }
 
 }
