@@ -54,7 +54,7 @@ public class AppVideoField extends AbstractAppFieldWithFile{
             public void run() {
                 Uri fileUriForNewVideo = MediaManagement.getOutputVideoFileUri();
                 if (fileUriForNewVideo == null) {
-                    Toast.makeText(activity, "Cannot take video; new image file could not be created on external storage device.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "Cannot take video; new video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                     return;
                 }
 

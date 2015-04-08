@@ -181,6 +181,12 @@ public class MediaManagement {
         return getOutputMediaFileUri(MediaType.VIDEO);
     }
 
+    /** Create a file Uri for saving an Audio file.
+     * @precond none.
+     * @postcond a new empty aidio mp3 file is created on the system, and its Uri is returned. If no new file
+     * could be created, null is returned. */
+    public static Uri getOutputAudioFileUri() { return getOutputMediaFileUri(MediaType.AUDIO);}
+
     /** Create a file Uri for saving an image or video.
      * @param type the type of file to create. This dictates the file name.
      * @precond type is not null.
@@ -203,8 +209,25 @@ public class MediaManagement {
 
         // Check that the SDCard is mounted. If it is, initialize an external file.
         if (isExternalStorageWritable()) {
-            File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES), GEOSOURCE_MEDIA_DIR_NAME);
+            File mediaStorageDir;
+            switch(type)
+            {
+                case IMAGE:
+                    mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), GEOSOURCE_MEDIA_DIR_NAME);
+                    break;
+                case VIDEO:
+                    mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_MOVIES), GEOSOURCE_MEDIA_DIR_NAME);
+                    break;
+                case AUDIO:
+                    mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_MUSIC), GEOSOURCE_MEDIA_DIR_NAME);
+                    break;
+                default:
+                    throw new InvalidParameterException("media file type is invalid.");
+            }
+
 
             // This location works best if you want the created images to be shared
             // between applications and persist after your app has been uninstalled.
@@ -232,8 +255,10 @@ public class MediaManagement {
                             "VID_" + timeStamp + ".mp4");
                     break;
                 case AUDIO:
-                    //TODO implement this.
-                    throw new RuntimeException("Audio files are unimplemented, sorry.");
+                    mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                            "AUD_" + timeStamp + ".mp3");
+                    break;
+//                    throw new RuntimeException("Audio files are unimplemented, sorry.");
                 default:
                     throw new InvalidParameterException("media file type is invalid.");
             }

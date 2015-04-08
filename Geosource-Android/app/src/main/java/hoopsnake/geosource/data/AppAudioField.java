@@ -75,7 +75,7 @@ public class AppAudioField extends AbstractAppFieldWithFile{
             @Override
             public void onClick(View v) {
                 if (recordButton.isChecked()) {
-                    Uri fileUriForNewAudio = MediaManagement.getOutputImageFileUri();
+                    Uri fileUriForNewAudio = MediaManagement.getOutputAudioFileUri();
                     if (fileUriForNewAudio == null) {
                         Toast.makeText(activity, "Cannot record audio; new audio file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                         return;
