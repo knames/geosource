@@ -1,6 +1,5 @@
-Incremental Deliverable 3: HoopSnake-Geosource
+Incremental Deliverable 5: HoopSnake-Geosource
 Submitted by Connor, Ken, Anam, William, Christina, Alex, Josh, John, and Warren
-
 
 The Android App is located in branch dev (not master, currently), in the
 folder Geosource-Android. It takes the form of an Android-Studio project. For
