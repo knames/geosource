@@ -14,12 +14,12 @@
 	    die("Connection failed: " . $conn->connect_error);
 	} 
 	//echo "Connected successfully <br>";
-	$result = $mysqli->query("SELECT ch_owner, ch_name FROM channels;");
+	$result = $mysqli->query("SELECT ch_owner, ch_name, ch_spec FROM channels;");
  		$rows = array();
  		while ($r = mysqli_fetch_assoc($result)){
  			//print $table;
  			/** The monstrosity below strips posts_ and _username from the table names.*/
- 			$rows[] = array('name'=>$r['ch_name'], 'owner'=>$r['ch_owner']);
+ 			$rows[] = array('name'=>$r['ch_name'], 'owner'=>$r['ch_owner'],'pid'=>$r['ch_spec']);
  		}
  	$channels = $rows;
  	
@@ -28,6 +28,7 @@
  	foreach ($channels as $z){
 		$owner = $z['owner'];
 		$name = $z['name'];
+		$pid = $z['pid'];
 		//echo $owner;
 		$result = $mysqli->query("SELECT * FROM posts_$owner._$name WHERE items.xml LIKE '%.jpg';");
  		$rows = array();
@@ -58,10 +59,9 @@
  			$location = array($geodecode['lat'],$geodecode['lng']);
  		}
  		// NOTE QUESTION IS FALSE HERE TODO IMPLEMENT IT AND IT DOESNT HAVE TEO BE
-		$rows[] = array('pid'=>$count, 'title'=>$name, 'username'=>$owner, 'thumbnail'=>$thumb, 
+		$rows[] = array('pid'=>$pid, 'title'=>$name, 'username'=>$owner, 'thumbnail'=>$thumb, 
 			'time'=>$time, 'location'=>$geo, 'channel'=>array('name'=>$name, 'owner'=>$owner),
 			'question'=>false);
-		$count++;
  	}
 
  	$arr = $rows;
