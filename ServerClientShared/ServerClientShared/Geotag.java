@@ -8,7 +8,29 @@ import java.io.Serializable;
 public class Geotag implements Serializable {
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
+    
+    //error value for TimeStamp
+    private static final int NONEXISTENT_VAL = -1;
 
+    //A long representing a timeStamp when this geotag was taken.
+    private long timestamp = NONEXISTENT_VAL;
+    
+    //A double representing the longitude of where this geotag is taken.
+    private Double longitude;
+            
+    //A double representing the latitude of where this geotag is taken.
+    private Double latitude;
+
+    /**
+     * Checks to see if Geotag is valid.
+     * @return true if the geotag is valid, false otherwise.
+     */
+    public boolean exists()
+    {
+        return timestamp != NONEXISTENT_VAL && longitude != null && latitude != null;
+    }
+    
+    //Getters and Setters
     public long getTimestamp() {
         return timestamp;
     }
@@ -36,13 +58,5 @@ public class Geotag implements Serializable {
         this.latitude = latitude;
     }
 
-    private static final int NONEXISTENT_VAL = -1;
 
-    private long timestamp = NONEXISTENT_VAL;
-    private double longitude = NONEXISTENT_VAL, latitude = NONEXISTENT_VAL;
-
-    public boolean exists()
-    {
-        return timestamp != NONEXISTENT_VAL && longitude != NONEXISTENT_VAL && latitude != NONEXISTENT_VAL;
-    }
 }

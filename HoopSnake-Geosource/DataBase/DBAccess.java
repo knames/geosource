@@ -23,9 +23,9 @@ public class DBAccess {
 	   static final String USER = "hdev";
 	   static final String PASS = "devsnake371";
     
-    private final Connection dbconnection;
+    private Connection dbconnection = null;
     
-    public DBAccess() throws SQLException
+    public DBAccess() throws IllegalStateException
     {
         try
         {
@@ -36,7 +36,39 @@ public class DBAccess {
             System.out.println("fail: " + e.getMessage());
         }
         
-        dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
+        newConnection();
+        if (dbconnection == null) throw new IllegalStateException("SQL server not initialized");
+    }
+    
+    /**
+     * makes a new connection to the database
+     */
+    private void newConnection()
+    {
+        try
+        {
+            dbconnection = DriverManager.getConnection(DB_URL,USER,PASS);
+        }
+        catch (SQLException SQLe)
+        {
+            System.out.println("creating SQL connection failed!");
+        }
+    }
+    
+    /**
+     * makes sure that the SQL connection hasn't expired since the last query
+     */
+    private void refreshConnection()
+    {
+        try
+        {
+            if (dbconnection.isValid(1)) return;
+        }
+        catch (SQLException SQLe){}
+        finally
+        {
+            newConnection(); //either way, if it's not up then new connection
+        }
     }
 
     /**
@@ -48,6 +80,7 @@ public class DBAccess {
      */
     public String getFormSpecLocation(String channelName, String ownerName)
     {
+        refreshConnection();
         Integer fileName = null;
         try (Statement statement = dbconnection.createStatement()) {
             ResultSet results = statement.executeQuery(Queries.getFormSpec(channelName, ownerName));
@@ -71,6 +104,7 @@ public class DBAccess {
      */
     public void saveField(String channelName, String ownerName, int postNum, String fieldName, String filePath)
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement()) {
             statement.execute(Queries.saveField(channelName, ownerName, postNum, fieldName, filePath));
         }
@@ -82,6 +116,7 @@ public class DBAccess {
     
     public boolean channelExists(String title, String owner)
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.channelExists(title, owner));
@@ -106,6 +141,7 @@ public class DBAccess {
      */
     public int createNewChannel(String title, String owner, boolean isPublic, ArrayList<String> fieldNames)
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.nextSpecNum(owner)); //TODO add query
@@ -129,8 +165,9 @@ public class DBAccess {
      * @param posterName the person posting to this channel
      * @return an integer value indexing the new post within the channel
      */
-    public int newPost(String channelName, String ownerName, String posterName) {
-        
+    public int newPost(String channelName, String ownerName, String posterName)
+    {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement()) {
             statement.execute(Queries.newRow(channelName, ownerName, posterName));
             ResultSet results = statement.executeQuery(Queries.getNewPostNum(channelName, ownerName));
@@ -146,6 +183,7 @@ public class DBAccess {
     
     public LinkedList<ChannelIdentifier> getChannelList()
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.getAllChannels());
@@ -170,6 +208,7 @@ public class DBAccess {
      */
     public LinkedList<ChannelIdentifier> getSubscriptionIDs(String userName)
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement())
         {
             ResultSet results = statement.executeQuery(Queries.getSubscriptionIDs(userName));
@@ -196,6 +235,7 @@ public class DBAccess {
      */
     public LinkedList<String> getSpecLocations(LinkedList<ChannelIdentifier> IDs)
     {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement())
         {
             LinkedList<String> formLocations = new LinkedList();
@@ -214,7 +254,9 @@ public class DBAccess {
     }
     
     /* executes a query  */
-    public void easyQuery(String Query){
+    public void easyQuery(String Query)
+    {
+        refreshConnection();
         try (Statement statement = dbconnection.createStatement()){
             statement.execute(Query);
             

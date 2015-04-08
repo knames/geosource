@@ -12,7 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ServerClientShared.ChannelIdentifier;
+import hoopsnake.geosource.comm.TaskGetChannelIdentifiers;
 import hoopsnake.geosource.data.AppChannelIdentifier;
 import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
@@ -25,9 +29,9 @@ public class ChannelSelectionActivity extends ListActivity {
     private EditText channelSearchBar;
 
     /**
-     * the channels to choose from.
+     * the channelIdentifiers to choose from.
      */
-    private AppChannelIdentifier[] channels = {new AppChannelIdentifierWithWrapper(new ChannelIdentifier("Dummy for testing.", "Please wait while I try and get your channels..."))};
+    private ArrayList<AppChannelIdentifier> channelIdentifiers = new ArrayList<AppChannelIdentifier>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +41,20 @@ public class ChannelSelectionActivity extends ListActivity {
 
         Log.d(MainActivity.APP_LOG_TAG, "1");
         ChannelDisplayAdapter channelAdapter = new ChannelDisplayAdapter(
-                this, R.layout.channel_name_and_owner_view, channels);
+                this, R.layout.channel_name_and_owner_view, channelIdentifiers);
         setListAdapter(channelAdapter);
+        channelAdapter.notifyDataSetChanged();
+
         Log.d(MainActivity.APP_LOG_TAG, "2");
-//      //TODO uncomment this once channel sending from socket is implemented.
-//        if (extras == null) {
-//            new TaskGetChannelIdentifiers(this).execute(false);
-//        }
-//        else
-//        {
-//            new TaskGetChannelIdentifiers(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
-//        }
+
+		//TODO uncomment this once channel sending from socket is implemented.
+        if (extras == null) {
+            new TaskGetChannelIdentifiers(this).execute(false);
+        }
+        else
+        {
+            new TaskGetChannelIdentifiers(this).execute(extras.getBoolean(PARAM_BOOLEAN_PICTURE_CHANNELS_ONLY, false));
+        }
 
         channelSearchBar = (EditText) findViewById(R.id.channel_search_bar);
 
@@ -59,9 +66,9 @@ public class ChannelSelectionActivity extends ListActivity {
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
                 String text = cs.toString().trim();
 
+                //Filter the list to display only items matching the edit text.
                 ((ChannelDisplayAdapter) getListAdapter()).getFilter().filter(text);
             }
 
@@ -74,25 +81,27 @@ public class ChannelSelectionActivity extends ListActivity {
         Log.d(MainActivity.APP_LOG_TAG, "3");
     }
 
-    public void setChannels(AppChannelIdentifier[] channels)
+    public void setChannelIdentifiers(List<AppChannelIdentifier> channelIdentifiers)
     {
-        this.channels = channels;
-        assertNotNull(channels);
+        this.channelIdentifiers.clear();
+        this.channelIdentifiers.addAll(channelIdentifiers);
+
+        assertNotNull(channelIdentifiers);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         //TODO fix all this.
+        Log.d(MainActivity.APP_LOG_TAG, "4");
         Intent intent = new Intent();
 
-        Log.d(MainActivity.APP_LOG_TAG, "4");
         LinearLayout ll = (LinearLayout) v;
-        TextView channelNameView = (TextView) ll.findViewById(R.id.channel_name_view);
-        TextView channelOwnerView = (TextView) ll.findViewById(R.id.channel_owner_view);
+        TextView channelNameView = (TextView) v.findViewById(R.id.channel_name_view);
+        TextView channelOwnerView = (TextView) v.findViewById(R.id.channel_owner_view);
 
-        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) new ChannelIdentifier(
-                channelNameView.getText().toString(),
-                channelOwnerView.getText().toString()));
+        AppChannelIdentifier selectedAci = new AppChannelIdentifierWithWrapper(
+                new ChannelIdentifier(channelNameView.getText().toString(), channelOwnerView.getText().toString()));
+        intent.putExtra(MainActivity.PARAM_CHOSEN_CHANNEL, (android.os.Parcelable) selectedAci);
 
         setResult(RESULT_OK, intent);
         finish();
@@ -110,6 +119,8 @@ public class ChannelSelectionActivity extends ListActivity {
         String searchString = channelSearchBar.getText().toString().trim();
         if (!searchString.isEmpty())
             channelAdapter.getFilter().filter(searchString);
+
+        getListView().invalidateViews();
     }
 }
 

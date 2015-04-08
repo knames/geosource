@@ -125,26 +125,31 @@ public class MediaManagement {
     /**
      * @param activity the activity from which to launch the new camera activity.
      * @param requestCodeForIntent the request code with which to launch the new camera activity, so activity can handle the result properly.
-     * @param fileUriForNewImage the file in which to store the new image.
+     * @param fileUriForNewMedia the file in which to store the new image.
      * @param mediaType the type of media to start a camera activity for.
-     * @precond activity and fileUriForNewImage and mediaType are not null. mediaType must be either IMAGE or VIDEO.
+     * @precond activity and fileUriForNewMedia and mediaType are not null. mediaType must be either IMAGE or VIDEO.
      * @postcond start Android's built-in Camera activity, allowing the user to take a picture or video, and save it
      * to the provided file. The result of the camera is returned to activity.
      */
-    private static void startCameraActivityForMedia(Activity activity, int requestCodeForIntent, Uri fileUriForNewImage, MediaType mediaType)
+    private static void startCameraActivityForMedia(Activity activity, int requestCodeForIntent, Uri fileUriForNewMedia, MediaType mediaType)
     {
         assertNotNull(activity);
-        assertNotNull(fileUriForNewImage);
+        assertNotNull(fileUriForNewMedia);
         assertNotNull(mediaType);
         assertTrue(mediaType.equals(MediaType.IMAGE) || mediaType.equals(MediaType.VIDEO));
 
         // create Intent to take a picture and return control to the calling application
-        Intent mediaIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mediaIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewImage); // set the file to use.
-        if (mediaType.equals(MediaType.VIDEO))
+        Intent mediaIntent;
+        if (mediaType.equals(MediaType.IMAGE))
+            mediaIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        else {
+            mediaIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             mediaIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+        }
 
-        Log.i(LOG_TAG, "starting new camera activity. Media file will be stored in " + fileUriForNewImage);
+        mediaIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUriForNewMedia); // set the file to use.
+
+        Log.i(LOG_TAG, "starting new camera activity. Media file will be stored in " + fileUriForNewMedia);
         // start the image capture Intent
         activity.startActivityForResult(mediaIntent, requestCodeForIntent);
     }

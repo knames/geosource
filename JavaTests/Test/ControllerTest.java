@@ -3,6 +3,7 @@ package Test;
 import DataBase.DBAccess;
 import ServerClientShared.AudioFieldWithContent;
 import ServerClientShared.AudioFieldWithoutContent;
+import ServerClientShared.Channel;
 import ServerClientShared.FieldWithContent;
 import ServerClientShared.FieldWithoutContent;
 import ServerClientShared.Geotag;
@@ -15,8 +16,8 @@ import ServerClientShared.StringFieldWithContent;
 import ServerClientShared.StringFieldWithoutContent;
 import ServerClientShared.VideoFieldWithContent;
 import ServerClientShared.VideoFieldWithoutContent;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -101,7 +102,7 @@ public class ControllerTest
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));
             
         }
-        catch (SQLException SQLe)
+        catch (IllegalStateException SQLe)
         {
             throw new RuntimeException("Database connection failed");
         }
@@ -136,7 +137,7 @@ public class ControllerTest
             DBAccess dbTest= new DBAccess();
             assertTrue(dbTest.getFormSpecLocation(testChannel, testOwner).equals("okenso.4"));     
         }
-        catch(SQLException SQLe)
+        catch(IllegalStateException SQLe)
         {
             throw new RuntimeException("Database initialization failed");   
         }
@@ -188,6 +189,19 @@ public class ControllerTest
         Incident testIncident = new Incident(filledIncident,testChannel,testOwner,"xx420Blazexx");
         
         SocketStuff.makePost(testIncident);
+    }
+    
+    /**
+     * Can we grab subscriptions for a user?
+     */
+    @Test
+    public void grabSubscriptions()
+    {
+        LinkedList<Channel> channels=SocketStuff.grabSubs("xx420Blazexx");
+        assertFalse(channels.isEmpty());
+        assertEquals(channels.get(0).getIdentifier().getChannelName(), "testing");
+        assertEquals(channels.get(0).getIdentifier().getChannelOwner(), "okenso");
+        int i=5;
     }
     
     

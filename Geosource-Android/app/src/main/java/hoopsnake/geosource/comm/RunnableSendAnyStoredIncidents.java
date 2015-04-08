@@ -2,11 +2,12 @@ package hoopsnake.geosource.comm;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
+import hoopsnake.geosource.BackgroundRunnable;
 import hoopsnake.geosource.FileIO;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.data.AppIncident;
@@ -14,19 +15,22 @@ import hoopsnake.geosource.data.AppIncident;
 import static junit.framework.Assert.assertNotNull;
 
 /**
- * Created by wsv759 on 29/03/15.
+ * Created by wsv759 on 06/04/15.
  */
-public class TaskSendAnyStoredIncidents extends AsyncTask<Void, Void, Void> {
+public class RunnableSendAnyStoredIncidents extends BackgroundRunnable<Void> {
+
     private static final String LOG_TAG = "geosource comm";
-    Activity activity;
-    public TaskSendAnyStoredIncidents(Activity activity)
+    File savedIncidentsDir;
+    public RunnableSendAnyStoredIncidents(Activity activity)
     {
-        this.activity = activity;
+        super(new WeakReference<Activity>(activity));
+
+        savedIncidentsDir = activity.getDir(IncidentActivity.DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE);
+        assertNotNull(savedIncidentsDir);
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        File savedIncidentsDir = activity.getDir(IncidentActivity.DIRNAME_INCIDENTS_YET_TO_SEND, Context.MODE_PRIVATE);
+    protected Void doInBackground() {
         File[] savedIncidentFiles = savedIncidentsDir.listFiles();
 
         Log.v(LOG_TAG, Integer.toString(savedIncidentFiles.length) + " incidents to send.");
@@ -67,10 +71,19 @@ public class TaskSendAnyStoredIncidents extends AsyncTask<Void, Void, Void> {
 
             if (incidentToSend == null)
                 Log.e(LOG_TAG, "unable to send file " + incidentFilePath +". File IO failed.");
-            else
-                new TaskSendIncident(activity).execute(incidentToSend);
+            else {
+                Thread threadSendIncident = new Thread(new RunnableSendIncident(activityRef, incidentToSend));
+                threadSendIncident.setPriority(Thread.currentThread().getPriority());
+                threadSendIncident.start();
+
+                //TODO do this sequentially if necessary.
+//                new RunnableSendIncident(activityRef, incidentToSend).run();
+            }
         }
 
         return null;
     }
+
+    @Override
+    protected void onPostExecute(Void result, Activity activity) {}
 }

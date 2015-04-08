@@ -1,5 +1,6 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -32,7 +33,6 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
     }
 
     protected SocketResult doInBackground(String... params) {
-
         channelName = params[0];
         channelOwner = params[1];
         poster = params[2];
@@ -56,18 +56,19 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
             return SocketResult.FAILED_CONNECTION;
         }
 
-
         ArrayList<FieldWithoutContent> fieldsToBeFilled;
         try
         {
-            Log.i(LOG_TAG, "Attempting to send incident.");
+            Log.i(LOG_TAG, "Attempting to get Incident spec.");
             outStream.writeObject(Commands.IOCommand.GET_FORM);
             outStream.writeUTF(channelName);
             outStream.flush();
             outStream.writeUTF(channelOwner);
             outStream.flush();
             outStream.writeUTF(poster);
-            outStream.flush();
+
+            //putting this flush in causes the incident spec to not be downloaded successfully
+//            outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
             fieldsToBeFilled = (ArrayList<FieldWithoutContent>) inStream.readObject();
@@ -102,8 +103,12 @@ public class TaskReceiveIncidentSpec extends AsyncTask<String, Void, SocketResul
                 LOG_TAG);
 
         //TODO may need && !activity.isUiRendered() here, if IncidentActivity moves in that direction.
-        if (result.equals(SocketResult.SUCCESS)) {
+        if (result.equals(SocketResult.SUCCESS))
             activity.renderIncidentFromScratch(true);
+        else {
+            activity.setResult(Activity.RESULT_CANCELED);
+            activity.finish();
         }
+
     }
 }

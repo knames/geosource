@@ -10,7 +10,8 @@
     android:focusable="false"
     android:focusableInTouchMode="false"
     android:layout_centerVertical="true"
-    android:layout_weight="@string/content_view_weight"
-    android:layout_gravity="center">
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:saveEnabled="false">
 
 </ToggleButton>

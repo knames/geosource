@@ -1,11 +1,14 @@
 package hoopsnake.geosource.comm;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import ServerClientShared.ChannelIdentifier;
 import ServerClientShared.Commands;
@@ -51,7 +54,7 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
         }
 
 
-        ChannelIdentifier[] channelIdentifiers;
+        LinkedList<ChannelIdentifier> channelIdentifiers;
         try
         {
             Log.i(LOG_TAG, "Attempting to get channels.");
@@ -59,7 +62,7 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             outStream.flush();
 
             Log.i(LOG_TAG, "Retrieving reply...");
-            channelIdentifiers = (ChannelIdentifier[]) inStream.readObject();
+            channelIdentifiers = (LinkedList<ChannelIdentifier>) inStream.readObject();
 
             if (channelIdentifiers == null)
                 return SocketResult.FAILED_FORMATTING;
@@ -77,12 +80,13 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
             socketWrapper.closeAll();
         }
 
-        AppChannelIdentifier[] appChannelIdentifiers = new AppChannelIdentifier[channelIdentifiers.length];
-        for (int i = 0; i < channelIdentifiers.length; i++)
-            appChannelIdentifiers[i] = new AppChannelIdentifierWithWrapper(channelIdentifiers[i]);
+        ArrayList<AppChannelIdentifier> appChannelIdentifiers = new ArrayList<AppChannelIdentifier>(channelIdentifiers.size());
+        for (int i = 0; i < channelIdentifiers.size(); i++)
+            appChannelIdentifiers.add(i, new AppChannelIdentifierWithWrapper(channelIdentifiers.get(i)));
 
-        activity.setChannels(appChannelIdentifiers);
+        activity.setChannelIdentifiers(appChannelIdentifiers);
 
+        Log.d(LOG_TAG, appChannelIdentifiers.toString());
         return SocketResult.SUCCESS;
     }
 
@@ -97,5 +101,9 @@ public class TaskGetChannelIdentifiers extends AsyncTask<Boolean, Void, SocketRe
 
         if (result.equals(SocketResult.SUCCESS))
             activity.onUpdated();
+        else {
+            activity.setResult(Activity.RESULT_CANCELED);
+            activity.finish();
+        }
     }
 }

@@ -9,9 +9,11 @@ import android.widget.Button;
 
 import org.xwalk.core.XWalkView;
 
-import hoopsnake.geosource.comm.TaskGetSubscribedChannels;
-import hoopsnake.geosource.comm.TaskSendAnyStoredIncidents;
+import ServerClientShared.ChannelIdentifier;
+import hoopsnake.geosource.comm.RunnableGetSubscribedChannels;
+import hoopsnake.geosource.comm.RunnableSendAnyStoredIncidents;
 import hoopsnake.geosource.data.AppChannelIdentifier;
+import hoopsnake.geosource.data.AppChannelIdentifierWithWrapper;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -61,10 +63,14 @@ public class MainActivity extends Activity {
         setIncidentButtonTextBasedOnSharedPref();
 
         //If folder is not empty, and we are connected to the internet, send those files!
-        new TaskSendAnyStoredIncidents(this).execute();
+        Thread sendIncidentsThread = new Thread(new RunnableSendAnyStoredIncidents(this));
+        sendIncidentsThread.setPriority(Thread.MIN_PRIORITY);
+        sendIncidentsThread.start();
 
         //Get all the subscribed channels for this user.
-        new TaskGetSubscribedChannels(this).execute(userName);
+        Thread subscribedChannelsThread = new Thread(new RunnableGetSubscribedChannels(this, userName));
+        subscribedChannelsThread.setPriority(Thread.MIN_PRIORITY);
+        subscribedChannelsThread.start();
     }
 
     /**
@@ -77,6 +83,13 @@ public class MainActivity extends Activity {
         else {
             Intent intent = new Intent(MainActivity.this, ChannelSelectionActivity.class);
             startActivityForResult(intent, RequestCode.GET_CHANNEL_ACTIVITY.ordinal());
+
+//            Intent intent = new Intent(MainActivity.this,IncidentActivity.class);
+//            AppChannelIdentifier ac = new AppChannelIdentifierWithWrapper(new ChannelIdentifier("testing", "okenso"));
+//            intent.putExtra(PARAM_CHOSEN_CHANNEL, (Parcelable) ac);
+//            intent.putExtra(IncidentActivity.PARAM_STRING_POSTER, userName);
+//
+//            startActivityForResult(intent, RequestCode.CREATE_INCIDENT_ACTIVITY.ordinal());
         }
     }
 
@@ -123,7 +136,7 @@ public class MainActivity extends Activity {
 
                     assertNotNull(channel);
 
-                    startIncidentActivity(false, channel);
+                    startIncidentActivity(true, channel);
                 }
                 break;
         }

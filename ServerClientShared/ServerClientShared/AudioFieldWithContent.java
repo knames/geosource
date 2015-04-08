@@ -1,5 +1,10 @@
 package ServerClientShared;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -22,4 +27,19 @@ public class AudioFieldWithContent extends FileFieldWithContent{
         //TODO add extra tests?
         return true;
     }
+
+    @Override
+    public void write(String folderPath) throws IOException {
+        File newFile = new File(folderPath + ".mp3");
+        FileOutputStream fileOut = new FileOutputStream(newFile);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] contentArray = (byte[]) content;
+        out.write(contentArray, 0, contentArray.length);
+        out.writeTo(fileOut);
+        fileOut.flush();
+        fileOut.close();
+        out.flush();
+        out.close();
+    }
+
 }

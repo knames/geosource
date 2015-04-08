@@ -45,6 +45,10 @@ public class AppImageField extends AbstractAppFieldWithFile{
 
     @Override
     View getFilledContentViewRepresentation() {
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
+
         iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setClickable(false);
         new TaskDisplayImageFromBitmap(iv).execute(getContentFileUri().getPath());
@@ -54,6 +58,10 @@ public class AppImageField extends AbstractAppFieldWithFile{
 
     @Override
     View getEmptyContentViewRepresentation(final int requestCodeForIntent) {
+        final IncidentActivity activity = getActivity();
+        if (activity == null)
+            return null;
+
         iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setImageResource(R.drawable.camera); //TODO arrow_right is just a placeholder.
 
@@ -87,8 +95,14 @@ public class AppImageField extends AbstractAppFieldWithFile{
             if(imgFile.exists()){
                 String path = imgFile.getAbsolutePath();
                 String msg = "Image saved to:\n" + path;
-                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
                 Log.i(LOG_TAG, msg);
+
+                Activity activity = getActivity();
+                if (activity == null) {
+                    return;
+                }
+
+                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
 
                 assertNotNull(iv);
 
@@ -98,12 +112,20 @@ public class AppImageField extends AbstractAppFieldWithFile{
             {
                 setContentFileUri(null);
                 Log.e(LOG_TAG, "new file was not created.");
+
+                Activity activity = getActivity();
+                if (activity == null)
+                    return;
                 Toast.makeText(activity, activity.getString(R.string.failed_to_capture_image) , Toast.LENGTH_LONG).show();
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             setContentFileUri(null);
         } else {
             // Image capture failed, advise user
+            Activity activity = getActivity();
+            if (activity == null)
+                return;
+
             Toast.makeText(activity, activity.getString(R.string.failed_to_capture_image), Toast.LENGTH_LONG).show();
         }
     }

@@ -1,8 +1,10 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 
 import ServerClientShared.FieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
@@ -32,11 +35,6 @@ import static junit.framework.Assert.assertTrue;
  */
 public abstract class AbstractAppField implements AppField {
     private int fieldPosInList;
-    /**
-     * The complete view representing this field: a horizontal linear layout containing the field title, followed by its content.
-     * (The content will be filled in by the particular implementation of AppField.)
-     */
-    private LinearLayout fieldView;
 
     //change this if and only if a new implementation is incompatible with an old one
     private static final long serialVersionUID = 1L;
@@ -50,16 +48,19 @@ public abstract class AbstractAppField implements AppField {
     FieldWithContent wrappedField;
 
     public IncidentActivity getActivity() {
-        return activity;
+        if (activityRef != null)
+            return activityRef.get();
+
+        return null;
     }
 
     @Override
-    public void setActivity(IncidentActivity activity){ this.activity = activity; }
+    public void setActivity(IncidentActivity activity){ this.activityRef = new WeakReference<IncidentActivity>(activity); }
 
     /**
-     * The activity that will be displaying this field on the UI.
+     * The activity that will be displaying this field on the UI. This reference will not prevent the UI from being destroyed.
      */
-    IncidentActivity activity;
+    private WeakReference<IncidentActivity> activityRef;
 
     String LOG_TAG = "geosource ui";
 
@@ -67,7 +68,7 @@ public abstract class AbstractAppField implements AppField {
      * Construct a new AppField, wrapping (not copying) a FieldWithContent.
      * Thus the reference to that FieldWithContent is guaranteed to remain up to date.
      * @param fieldToWrap a FieldWithContent that will be wrapped (not copied).
-     * @param fieldPosInList
+     * @param fieldPosInList the field's position in the field list.
      *@param activity  @precond fieldToWrap is not null, and is of the correct type. activity is not null.
      * @postcond a new AppField is created with fieldToWrap as an underlying field.
      */
@@ -77,7 +78,7 @@ public abstract class AbstractAppField implements AppField {
         assertNotNull(activity);
 
         this.wrappedField = fieldToWrap;
-        this.activity = activity;
+        setActivity(activity);
         this.fieldPosInList = fieldPosInList;
     }
 
@@ -119,20 +120,31 @@ public abstract class AbstractAppField implements AppField {
     @Override
     public View getFieldViewRepresentation(final int requestCodeForIntent)
     {
-        fieldView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
-        TextView titleView = (TextView) fieldView.getChildAt(POSITION_VIEW_FIELD_TITLE);
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
 
+        /*
+         *   The complete view representing this field: a horizontal linear layout containing the field title, followed by its content.
+         *   (The content will be filled in by the particular implementation of AppField.)
+         */
+        ViewGroup fieldView = (RelativeLayout) activity.getLayoutInflater().inflate(R.layout.field_view, null);
+
+        TextView titleView = (TextView) fieldView.findViewById(R.id.field_title_view);
         String fieldLabel = getTitle() + ":";
         if (isRequired())
             fieldLabel += "*";
-
         titleView.setText(fieldLabel);
-        View contentView = getContentViewRepresentation(requestCodeForIntent);
 
+        View contentView = getContentViewRepresentation(requestCodeForIntent);
         //Make sure the contentView knows its own position in the field list, so that if it launches a new activity, we can find it back.
         contentView.setTag(fieldPosInList);
 
         fieldView.addView(contentView);
+
+        RelativeLayout.LayoutParams cvParams = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
+        cvParams.addRule(RelativeLayout.RIGHT_OF, titleView.getId());
+
         return fieldView;
     }
 

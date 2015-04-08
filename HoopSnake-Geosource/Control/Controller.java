@@ -12,7 +12,6 @@ import ServerClientShared.GeotagFieldWithoutContent;
 import ServerClientShared.Incident;
 import ServerClientShared.StringFieldWithoutContent;
 import java.net.URISyntaxException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,7 +46,7 @@ public class Controller {
             insertTestChannel();
             successful = true;
         }
-        catch (SQLException SQLe)
+        catch (IllegalStateException ISe)
         {
             System.out.println("Database initialization failed");
         }
@@ -163,8 +162,11 @@ public class Controller {
         int postNum = dbAccess.newPost(incident.getChannelName(), incident.getOwnerName(), incident.getPosterName());
         for (FieldWithContent field : incident.getFieldList())
         {
-            String filePath = fileAccess.saveField(field.getContent());
-            dbAccess.saveField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
+            if (field.getContent() != null)
+            {
+                String filePath = fileAccess.saveField(field);
+                dbAccess.saveField(incident.getChannelName(), incident.getOwnerName(), postNum, field.getTitle(), filePath);
+            }
         }
     }
     

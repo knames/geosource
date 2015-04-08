@@ -1,5 +1,6 @@
 package hoopsnake.geosource.data;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,11 +40,18 @@ public class AppStringField extends AbstractAppField {
      * @return a prompt string to be used by the UI when this class has no content. Guaranteed not null.
      */
     private String getPromptStringForUi() {
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
         return activity.getString(R.string.prompt_enter_text);
     }
 
     @Override
     public View getContentViewRepresentation(final int requestCodeForIntent) {
+        Activity activity = getActivity();
+        if (activity == null)
+            return null;
+
         //TODO both these lines seem to work for the same purpose. Which is better?
         EditText contentEditor = (EditText) activity.getLayoutInflater().inflate(R.layout.field_edit_text, null);
 
