@@ -24,7 +24,7 @@
  	$channels = $rows;
  	
  	$count = 0;
- 	$rows = array();
+ 	$allrows = array();
  	foreach ($channels as $z){
 		$owner = $z['owner'];
 		$name = $z['name'];
@@ -42,9 +42,12 @@
  		 else 
  			$thumb = null;
  		
- 		$result = $mysqli->query("SELECT p_geotag FROM posts_$owner._$name;");
- 		if ($result == true)
+ 		$result = $mysqli->query("SELECT p_geotag FROM posts_$owner"."_$name;");
+ 		echo "<br>posts_$owner"."_$name<br>";
+ 		if ($result == true){
  			$geo = mysqli_fetch_assoc($result);
+ 			//echo $geo['Time'];
+ 		}
  		else
  			$geo = null;
 
@@ -52,19 +55,20 @@
  			$time = null;
  			$location = null;
  		} else {
- 			$jreader = file_get_contents($geo);
+ 			$geo = $geo['p_geotag'];
+ 			$jreader = file_get_contents("../../../media/fieldContent/$geo");
  			$geodecode = json_decode($jreader, true);
  			echo $geodecode;
  			$time = $geodecode['time'];
  			$location = array($geodecode['lat'],$geodecode['lng']);
  		}
  		// NOTE QUESTION IS FALSE HERE TODO IMPLEMENT IT AND IT DOESNT HAVE TEO BE
-		$rows[] = array('pid'=>$pid, 'title'=>$name, 'username'=>$owner, 'thumbnail'=>$thumb, 
+		$allrows[] = array('pid'=>$pid, 'title'=>$name, 'username'=>$owner, 'thumbnail'=>$thumb, 
 			'time'=>$time, 'location'=>$geo, 'channel'=>array('name'=>$name, 'owner'=>$owner),
 			'question'=>false);
  	}
 
- 	$arr = $rows;
+ 	$arr = array('channels'=>$allrows);
 	echo json_encode($arr);
 
 
