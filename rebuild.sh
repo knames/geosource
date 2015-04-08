@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf Polymer-Prototype/media/fieldContent
 rm -rf media
 killall -9 java
 mysql -pdevsnake371 << EOF
