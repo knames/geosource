@@ -55,16 +55,20 @@
  			$time = null;
  			$location = null;
  		} else {
- 			$geo = $geo['p_geotag'];
+ 			$geo = $geo['p_geotag'].'.'.json;
+			echo '$geo: '.$geo;
  			$jreader = file_get_contents("../../../media/fieldContent/$geo");
  			$geodecode = json_decode($jreader, true);
- 			echo $geodecode;
+			foreach ($geodecode as $k=>$v) {
+				echo $k, ' : ', $v;
+			}
+ 			echo "geodecode: " . $geodecode['time'];
  			$time = $geodecode['time'];
  			$location = array($geodecode['lat'],$geodecode['lng']);
  		}
  		// NOTE QUESTION IS FALSE HERE TODO IMPLEMENT IT AND IT DOESNT HAVE TEO BE
 		$allrows[] = array('pid'=>$pid, 'title'=>$name, 'username'=>$owner, 'thumbnail'=>$thumb, 
-			'time'=>$time, 'location'=>$geo, 'channel'=>array('name'=>$name, 'owner'=>$owner),
+			'time'=>$time, 'location'=>$location, 'channel'=>array('name'=>$name, 'owner'=>$owner),
 			'question'=>false);
  	}
 
