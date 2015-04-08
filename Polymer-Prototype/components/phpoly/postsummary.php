@@ -64,8 +64,8 @@
 		$count++;
  	}
 
- 	$arr = array("channel"=>$rows);
-	echo "[".json_encode($arr)."]";
+ 	$arr = $rows;
+	echo json_encode($arr);
 
 
 ?>
