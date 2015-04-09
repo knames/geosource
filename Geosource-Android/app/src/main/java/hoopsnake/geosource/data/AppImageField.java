@@ -63,7 +63,7 @@ public class AppImageField extends AbstractAppFieldWithFile{
             return null;
 
         iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
-        iv.setImageResource(R.drawable.camera); //TODO arrow_right is just a placeholder.
+        iv.setImageResource(R.drawable.camera);
 
         assertNotNull(iv);
         activity.makeViewLaunchable(iv, new Runnable() {
@@ -111,7 +111,7 @@ public class AppImageField extends AbstractAppFieldWithFile{
             else
             {
                 setContentFileUri(null);
-                Log.e(LOG_TAG, "new file was not created.");
+                Log.e(LOG_TAG, "new jpg file was not created.");
 
                 Activity activity = getActivity();
                 if (activity == null)

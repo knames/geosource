@@ -26,6 +26,7 @@
     <string name="connection_failed">Connection failed.</string>
     <string name="incomprehensible_server_response">Incomprehensible server response.</string>
     <string name="failed_to_capture_image">Failed to capture image.</string>
+    <string name="failed_to_capture_video">Failed to capture video.</string>
     <string name="content_view_weight">4</string>
     <string name="poster_label">incident author:</string>
     <string name="owner_label">channel owner:</string>

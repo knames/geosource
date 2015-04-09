@@ -3,10 +3,12 @@ package hoopsnake.geosource.data;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +18,8 @@ import ServerClientShared.VideoFieldWithContent;
 import hoopsnake.geosource.IncidentActivity;
 import hoopsnake.geosource.R;
 import hoopsnake.geosource.media.MediaManagement;
+
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by wsv759 on 07/03/15.
@@ -49,6 +53,7 @@ public class AppVideoField extends AbstractAppFieldWithFile{
         ImageView iv = (ImageView) activity.getLayoutInflater().inflate(R.layout.field_image_button, null);
         iv.setImageResource(R.drawable.videocamera);
 
+        assertNotNull(iv);
         activity.makeViewLaunchable(iv, new Runnable() {
             @Override
             public void run() {
@@ -57,6 +62,8 @@ public class AppVideoField extends AbstractAppFieldWithFile{
                     Toast.makeText(activity, "Cannot take video; new video file could not be created on external storage device.", Toast.LENGTH_LONG).show();
                     return;
                 }
+
+                setContentFileUri(fileUriForNewVideo);
 
                 MediaManagement.startCameraActivityForVideo(activity, requestCodeForIntent, fileUriForNewVideo);
             }
@@ -69,24 +76,40 @@ public class AppVideoField extends AbstractAppFieldWithFile{
     public void onResultFromSelection(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             // Video captured and saved to fileUri specified in the Intent
-            Activity activity = getActivity();
-            if (activity == null)
-                return;
+            Uri contentFileUri = getContentFileUri();
+            assertNotNull(contentFileUri);
+            File vidFile = new File(contentFileUri.getPath());
 
-            Toast.makeText(activity, "Video saved to:\n" + getContentFileUri(), Toast.LENGTH_LONG).show();
+            if(vidFile.exists()){
+                String path = vidFile.getAbsolutePath();
+                String msg = "Video saved to :\n" + path;
+                Log.i(LOG_TAG, msg);
 
-            //TODO display the video in its field! This means notifying the UI.
+                Activity activity = getActivity();
+                if (activity == null) {
+                    return;
+                }
 
+                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            } else {
+                setContentFileUri(null);
+                Log.e(LOG_TAG, "new mp4 file was not created.");
+
+                Activity activity = getActivity();
+                if (activity == null)
+                    return;
+                Toast.makeText(activity, activity.getString(R.string.failed_to_capture_video), Toast.LENGTH_LONG).show();
+            }
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            // User cancelled the video capture
+            setContentFileUri(null);
         } else {
             // Video capture failed, advise user
             Activity activity = getActivity();
             if (activity == null)
                 return;
 
-            Toast.makeText(activity, "Failed to capture video.", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, activity.getString(R.string.failed_to_capture_video), Toast.LENGTH_LONG).show();
         }
     }
 
