@@ -1,0 +1,113 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+<!-- 
+  `<post-service>` provides an API for a fake service -- 
+  _unquote_, the read-only social networking service!
+
+  Provides a very simple API: `posts` returns the list of posts.
+  `setFavorite` pretends to persist a user's favorite choice.
+
+  @element post-service
+  @demo 
+  @homepage http://www.polymer-project.org/docs/start/tutorial.html
+-->
+`
+<!--
+  An array of post objects, with the following format:
+
+  <table border="0">
+    <tr>
+      <td><code>uid</code></td>
+      <td>Number</td>
+      <td>Unique ID for this post.</td>
+    </tr>
+     <tr>
+      <td><code>username</code></td>
+      <td>String</td>
+      <td>Poster's username.</td>
+    </tr>
+    <tr>
+      <td><code>avatar</code></td>
+      <td>String</td>
+      <td>URL for the user's avatar.</td>
+    </tr>  
+    <tr>
+      <td><code>text</code></td>
+      <td>String</td>
+      <td>Post text.</td>
+    </tr>  
+    <tr>
+      <td><code>favorite</code></td>
+      <td>Boolean</td>
+      <td>True if the current user favorited this post.</td>
+    </tr>
+  </table>
+  
+  @attribute posts 
+  @type Array
+  @default []
+-->
+<polymer-element name="user-service">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <core-ajax id="google_ajax"
+      url='{{"https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=" + $.globals.data.id_token}}'
+      on-core-response="{{googleLoaded}}"
+      handleAs="json">
+    </core-ajax>
+
+    <core-ajax id="geosource_ajax"
+      method="POST"
+      url="/php/account/get-user.php"
+      on-core-response="{{userLoaded}}"
+      body='{"gid": "{{$.globals.data.gid}}"}'
+      handleAs="json">
+    </core-ajax>
+
+  </template>
+  <script>
+  Polymer('user-service', {
+
+    id_token: null,
+    
+    load: function() {
+      console.log("test-123");
+      console.log(this.$.globals.data.id_token);
+      this.$.google_ajax.go();
+    },
+
+    googleLoaded: function() {
+      console.log(this.$.google_ajax.response);
+      if(this.$.google_ajax.response.error) {
+        //display google_info.error_description
+      }
+      else {
+        this.$.globals.data.gid = this.$.google_ajax.response.user_id;
+	console.log(this.$.globals.data.gid);
+        this.loadUser();
+      }
+    },
+
+    loadUser: function() {
+      this.$.geosource_ajax.go();
+    },
+
+    userLoaded: function() {
+      // Make a copy of the loaded data
+      this.$.globals.data.user = this.$.geosource_ajax.response.slice(0)[0];
+      console.log(this.$.globals.data.user);
+      this.fire('user-loaded');
+    }
+
+  });
+  </script>
+</polymer-element>

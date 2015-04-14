@@ -1,0 +1,28 @@
+{ 
+	"username": "Josh",
+	"admin": true,
+    "subscriber": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "viewer":
+    	[
+			{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "moderator": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "owner": 
+    	[
+    		{"name": "Birds", "owner": "Josh"}, 
+    		{"name": "Mushrooms", "owner": "Josh"}
+    	],
+    "favorites":
+    	[
+    		{"channel": {"name": "Mushrooms", "owner": "Josh"}, "pid": 2}
+    	]
+}

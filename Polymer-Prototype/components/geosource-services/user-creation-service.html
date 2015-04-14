@@ -1,0 +1,47 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="user-creation-service" attributes="response">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <core-ajax id="ajax"
+      method="POST"
+      url="/php/account/create-user.php"
+      on-core-response="{{handleResponse}}"
+      body='{"gid": "{{$.globals.data.gid}}", "username": "{{username}}"}'
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer('user-creation-service', {
+
+    username: null,
+
+    handleResponse: function() {
+      // Make a copy of the loaded data
+      console.log("response");
+      this.response = this.$.ajax.response;
+      console.log(this.response);
+      this.fire('user-creation-response', {response: this.$.ajax.response});
+    },
+
+    submit: function(username) {
+      console.log("submitting name");
+      this.username = username;
+      console.log(this.username);
+      console.log(this.$.globals.data.gid);
+      this.$.ajax.go();
+      console.log("submitted");
+    }
+  });
+  </script>
+</polymer-element>
+

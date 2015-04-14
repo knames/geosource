@@ -1,0 +1,208 @@
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../google-signin/google-signin.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../google-apis/google-apis.html">
+<link rel="import" href="../google-apis/google-plusone-api.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../geosource-services/user-service.html">
+<link rel="import" href="../geosource-account-creator/geosource-account-creator.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-account" attributes="posts">
+
+  <template>
+    
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
+      #toggle_label {
+        margin: 15px;
+        margin-left: 0;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin: 0;
+      }
+      google-signin {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      #dropdown {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        color: #636363;
+      }
+      #greeting {
+        margin: 8px;
+      }
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <user-service id="user_service" on-core-error="{{userError}}" on-user-loaded="{{userLoaded}}"></user-service>
+
+    <paper-dialog id="create_dialog" role="dialog" backdrop autoclosedisabled>
+      <geosource-account-creator on-finished="{{closeDialog}}"></geosource-account-creator>
+    </paper-dialog>
+
+    <paper-toast id="toast" text="An error occured attempting to retrieve user data"></paper-toast>
+
+    <core-submenu opened active id="core_submenu" icon="account-circle" label="Account">
+      <google-signin theme="light" flex
+        clientId="1076032317176-qkd5a832pq3rgaioamlhf93qlqo20k5f.apps.googleusercontent.com" 
+        scopes="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
+        width="wide"
+        on-google-signin-success="{{signIn}}"
+        on-google-signed-out="{{signOut}}">
+      </google-signin>
+      <div id="greeting" hidden?="{{!$.globals.data.user}}">Hello, {{$.globals.data.user.username}}</div>
+    </core-submenu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      signIn: function(event, details, sender) {
+        console.log('signed in');
+        console.log(details);
+
+        // var geosource_account = this;
+        // var user_service = this.$.user_service;
+
+        this.$.globals.data.id_token = details.result.id_token;
+        this.$.globals.data.access_token = details.result.access_token;
+
+        this.$.user_service.load();
+
+        // details.gapi.client.load('plus', 'v1', function() {
+        //   var request = gapi.client.plus.people.get({userId: 'me'});
+
+        //   request.execute(function(resp) {
+        //     console.log(resp);
+        //     console.log(user_service);
+        //     user_service.load(resp.id);
+        //     geosource_account.fire('filter-change');
+        //   });
+        // });
+      },
+
+      signOut: function() {
+        console.log('signed out');
+        this.$.globals.data.user = null;
+      },
+
+      openDialog: function() {
+        this.$.create_dialog.open();
+      },
+
+      closeDialog: function() {
+        console.log("created account");
+	this.$.create_dialog.close();
+      },
+
+      userError: function() {
+        console.log("opened toast");
+        this.$.toast.show();
+      },
+
+      userLoaded: function() {
+
+        var user = this.$.globals.data.user;
+
+        if(!user) {
+          this.openDialog();
+        }
+        else {
+          console.log(this.posts);
+          console.log(user.favorites);
+          
+          this.markViewer();
+          this.markSubscriber();
+          this.markModerator();
+          this.markOwner();
+          this.markFavorites();
+        }
+      },
+
+      markViewer: function() {
+        var channels = this.$.globals.data.channels;
+        var viewer = this.$.globals.data.user.viewer;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<viewer.length; j++) {
+            if(channels[i].name == viewer[j].name && channels[i].owner == viewer[j].owner) {
+              channels[i].isViewer = true;
+              break;
+            }
+          }
+        }
+      },
+
+      markSubscriber: function() {
+        var channels = this.$.globals.data.channels;
+        var subscriber = this.$.globals.data.user.subscriber;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<subscriber.length; j++) {
+            if(channels[i].name == subscriber[j].name && channels[i].owner == subscriber[j].owner) {
+              channels[i].isSubscriber = true;
+              break;
+            }
+          }
+        }  
+      },
+
+      markModerator: function() {
+        var channels = this.$.globals.data.channels;
+        var moderator = this.$.globals.data.user.moderator;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<moderator.length; j++) {
+            if(channels[i].name == moderator[j].name && channels[i].owner == moderator[j].owner) {
+              channels[i].isModerator = true;
+              break;
+            }
+          }
+        }
+      },
+
+      markOwner: function() {
+        var channels = this.$.globals.data.channels;
+        var owner = this.$.globals.data.user.owner;
+        for(i=0; i<channels.length; i++) {
+          for(j=0; j<owner.length; j++) {
+            if(channels[i].name == owner[j].name && channels[i].owner == owner[j].owner) {
+              channels[i].isOwner = true;
+              break;
+            }
+          }
+        }
+      },
+
+      markFavorites: function() {
+        var favorites = this.$.globals.data.user.favorites;
+        for(i=0; i<this.posts.length; i++) {
+          for(j=0; j<favorites.length; j++) {
+            if(favorites[j].pid == this.posts[i].pid
+                && favorites[j].channel.name == this.posts[i].channel.name
+                && favorites[j].channel.owner == this.posts[i].channel.owner) {
+              this.posts[i].favorite = true;
+              break;
+            }
+          }
+        }
+      }
+
+    });
+  </script>
+
+</polymer-element>

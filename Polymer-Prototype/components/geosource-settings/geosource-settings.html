@@ -1,0 +1,60 @@
+<link rel="import" href="../geosource-flags/geosource-flags.html">
+<link rel="import" href="../geosource-channels/geosource-channels.html">
+<link rel="import" href="../core-menu/core-menu.html">
+<link rel="import" href="../geosource-account/geosource-account.html">
+<link rel="import" href="../geosource-time/geosource-time.html">
+
+<polymer-element name="geosource-settings" attributes="posts user filteredPosts">
+
+  <template>
+    
+    <style>
+      #core_menu {
+        font-size: 16px;
+        position: absolute;
+        padding: 10px;
+      }
+      .panel {
+        margin-bottom: 30px;
+      }
+    </style>
+      <div layout vertical center>
+          <geosource-account id="account_panel" class="panel"
+            user="{{user}}"
+            posts="{{posts}}">
+          </geosource-account>
+
+          <geosource-flags id="flags_panel" class="panel"
+            user="{{user}}">
+          </geosource-flags>
+          
+          <geosource-time id="time_panel" class="panel">
+          </geosource-time>
+
+          <geosource-channels id="channels_panel" class="panel"
+            user="{{user}}">
+          </geosource-channels>
+      </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      user: null,
+
+      /**
+       * Given a set of posts, returns the subset which apply to the filter
+       * panels contained within this component.
+       */
+      filterPosts: function(posts) {
+        var filteredPosts = this.$.flags_panel.filterPosts(posts);
+        filteredPosts = this.$.time_panel.filterPosts(filteredPosts);
+        filteredPosts = this.$.channels_panel.filterPosts(filteredPosts);
+        
+        return filteredPosts;
+      },
+
+    });
+  </script>
+
+</polymer-element>

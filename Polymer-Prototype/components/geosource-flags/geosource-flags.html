@@ -1,0 +1,117 @@
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-flags">
+
+  <template>
+    
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
+      .toggle_label {
+        margin: 15px;
+        margin-left: 0;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin-left: 15px;
+      }
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <core-submenu opened active id="core_submenu" icon="flag" label="Flags">
+      <div on-change="{{toggleButton}}">
+        <div center horizontal layout class="toggle_label">
+          <div flex>All</div>
+          <paper-toggle-button id="all" checked
+            on-change="{{toggleAll}}">
+          </paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label" hidden?="{{!$.globals.data.user}}">
+          <div flex>Mine</div>
+          <paper-toggle-button id="mine" checked disabled></paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label" hidden?="{{!$.globals.data.user}}">
+          <div flex>Favorites</div>
+          <paper-toggle-button id="favorites" checked disabled></paper-toggle-button>
+        </div>
+        <div center horizontal layout class="toggle_label">
+          <div flex>Questions</div>
+          <paper-toggle-button id="questions" checked disabled></paper-toggle-button>
+        </div>
+      </div>
+    </core-submenu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      uid: null,
+
+      /**
+       * When the all flag is turned off, the other flags within this component
+       * become active. When it is turned on, the other flags are disabled.
+       */
+      toggleAll: function(e) {
+        var all = this.$.all;
+        var favorites = this.$.favorites;
+        var mine = this.$.mine;
+        var questions = this.$.questions;
+
+        if(all.checked) {
+          favorites.disabled = true;
+          mine.disabled = true;
+          questions.disabled = true;
+        }
+        else {
+          favorites.disabled = false;
+          mine.disabled = false;
+          questions.disabled = false;
+        }
+      },
+
+      /**
+       * Fires a filter-change event, which is caught by geosource-main to
+       * determine that the posts should be re-filtered.
+       */
+      toggleButton: function() {
+        this.fire('filter-change');
+      },
+
+      /**
+       * Given a set of posts, this returns the subset of those posts which are 
+       * applicable to the flags currently active within this component's state.
+       */
+      filterPosts: function(posts) {
+
+        var user = this.$.globals.data.user;
+
+        var all = this.$.all.checked;
+        var favorites = this.$.favorites.checked;
+        var mine = this.$.mine.checked;
+        var questions = this.$.questions.checked;
+
+        var includedPosts = [];
+        for(i=0; i<posts.length; i++) {
+          if((all) || (questions && posts[i].question) || (user && favorites && posts[i].favorite) || (user && mine && posts[i].username == user.username)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+        return includedPosts;
+      },
+
+    });
+  </script>
+
+</polymer-element>

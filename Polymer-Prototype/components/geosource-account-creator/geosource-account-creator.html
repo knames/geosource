@@ -1,0 +1,119 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-input-decorator.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<link rel="import" href="../geosource-services/user-creation-service.html">
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-account-creator">
+
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        color: #FFFFFF;
+      }
+
+      .content {
+        max-width: 400px;
+        padding: 20px;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      paper-button {
+        color: #4285f4;
+        margin: 20px;
+        margin-top: 0;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      #description {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      paper-input {
+        margin-bottom: 10px;
+      }
+
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <user-creation-service id="service"  
+      on-user-creation-response="{{handleResponse}}">
+    </user-creation-service>
+
+    <div vertical layout>
+      <h2 class="header">Create an Account</h2>
+      <div class="content" vertical layout>
+        
+      <div id="description">
+        In order to keep your Google account private from other users, you create to add a username which will replace it as a form of identification within the site.
+      </div>
+
+        <paper-input-decorator i id="input_decorator" label="Enter a username..." floatingLabel>
+          <input id="input" value="{{input}}" is="core-input">
+        </paper-input-decorator>
+
+      </div>
+    </div>
+
+    <div class="footer" horizontal around-justifed layout>
+      <paper-button flex on-tap="{{submit}}">Submit</paper-button>
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    input: "",
+
+    submit: function() {
+      this.$.service.submit(this.$.input.value);
+    },
+
+    inputChanged: function() {
+      this.$.input_decorator.isInvalid = false;
+    },
+
+    handleResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      if(detail.response.error) {
+	console.log(detail.response.message);
+        this.$.input_decorator.isInvalid = true;
+        this.$.input_decorator.error = detail.response.message;
+      } else {
+        this.$.globals.data.user = { 
+          "username": this.$.input.value,
+          "admin": false,
+          "subscriber": [],
+          "viewer": [],
+          "moderator": [],
+          "owner": [],
+          "favorites": [] 
+        };
+        this.fire('finished');
+      }
+    }
+
+  });
+  </script>
+  
+</polymer-element>
+

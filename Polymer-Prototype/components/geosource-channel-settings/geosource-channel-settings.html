@@ -1,0 +1,404 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<polymer-element name="geosource-channel-settings" attributes="channel">
+
+
+  <template>
+
+    <style>
+
+      .settings {
+        overflow-x: auto;
+        max-width: 600px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      core-icon {
+        margin-right: 0.5em;
+      }
+      .user-list {
+        background-color: #EDEDED;
+        padding: 15px;
+        padding-top: 25px;
+      }
+      paper-icon-button {
+        margin-top: 0px;
+      }
+
+      paper-button {
+        color: #FF6666;
+      }
+
+      .field-type {
+        margin-left: 10px;
+        width: 140px;
+      }
+      .field-remove {
+        width: 40px;
+      }
+
+      paper-checkbox {
+        padding-top: 15px;
+      }
+
+      .fields {
+        padding: 20px;
+        padding-bottom: 0;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      .buttons {
+        padding: 10px;
+        color: #FFF;
+      }
+
+      .header {
+        margin: 0;
+        font-size: 1.8em;
+        color: #000000;
+        background-color: #5CC0A2;
+        /*position: fixed;*/
+      }
+
+      .title {
+        padding: 20px;
+      }
+
+      .info {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.75);
+        text-transform: uppercase;
+        padding-top: 10px;
+      }
+
+      .add {
+        
+      }
+      .remove {
+        color: #FF6666;
+      }
+      th {
+        text-align: left;
+      }
+
+      h2 {
+        color: #FFF;
+        margin-top: 0;
+        margin-bottom: 0;
+        font-weight: 300;
+        font-size: 1.3em;
+      }
+
+      h3 {
+        margin-bottom: 0;
+      }
+
+      .footer {
+        margin-top: 20px;
+      }
+
+      .add-user {
+        margin-left: 15px;
+        margin-bottom: 5px;
+      }
+      .add-button {
+        margin-left: 15px;
+        color: #5CC0A2;
+      }
+      .user {
+        margin-left: 15px;
+      }
+
+      :host([publiclyVisible]) #viewer_user_list {
+        display: none;
+      }
+
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <channel-service id="service" 
+      on-get-channel-settings-response="{{loadResponse}}"
+      on-set-public-response="{{setPublicResponse}}"
+      on-add-banned-response="{{addBannedResponse}}"
+      on-remove-banned-response="{{removeBannedResponse}}"
+      on-add-viewer-response="{{addViewerResponse}}"
+      on-remove-viewer-response="{{removeViewerResponse}}"
+      on-add-moderator-response="{{addModeratorResponse}}"
+      on-remove-moderator-response="{{removeModeratorResponse}}"
+      on-delete-channel-response="{{deleteChannelResponse}}">
+    </channel-service>
+
+    <div class="settings" vertical layout>
+      <div class="header" horizontal layout>
+        <div vertical layout flex class="title">
+          <h2>{{channel.name}} Settings</h2>
+          <div class="info">Owned by {{channel.owner}}</div>
+        </div>
+        <div class="buttons" vertical layout>
+          <paper-icon-button id="close" icon="close" on-tap="{{close}}"></paper-icon-button>
+        </div>
+      </div>
+      <div class="content" vertical layout>
+        <paper-radio-group selected="{{access}}">
+          <paper-radio-button name="public" id="public" label="Public"
+            on-tap="{{setPublic}}" 
+            disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
+          </paper-radio-button>
+          <paper-radio-button name="private" id="private" label="Private" i
+            on-tap="{{setPrivate}}"
+            disabled?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
+          </paper-radio-button>
+        </paper-radio-group>
+
+        <h3>Moderators</h3>
+        <div class="user-list">
+          <template repeat="{{user in moderators}}">
+            <div class="user" horizontal layout center>
+              <div flex>{{user}}</div>
+              <td><paper-icon-button class="remove" icon="close" on-tap="{{removeModerator}}"></paper-icon-button></td>
+            </div>
+          </template>
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && channel.owner != $.globals.data.user.username)}}">
+            <paper-input-decorator id="moderator_input_decorator" label="Enter a username..." flex>
+              <input value="{{moderatorInput}}"></paper-input>
+            </paper-input-decorator>
+            <paper-icon-button class="add-button" icon="add" on-tap="{{addModerator}}"></paper-icon-button>
+          </div>
+        </div>
+
+        <h3>Viewers</h3>
+        <div class="user-list" id="viewer_user_list">
+          <template repeat="{{user in viewers}}">
+            <div class="user" horizontal layout center>
+              <div flex>{{user}}</div>
+              <td><paper-icon-button class="remove" icon="close" on-tap="{{removeViewer}}"></paper-icon-button></td>
+            </div>
+          </template>
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
+            <paper-input-decorator id="viewer_input_decorator" label="Enter a username..." flex>
+              <input value="{{viewerInput}}"></paper-input>
+            </paper-input-decorator>
+            <paper-icon-button class="add-button" icon="add" on-tap="{{addViewer}}"></paper-icon-button>
+          </div>
+        </div>
+
+        <h3>Banned</h3>
+        <div class="user-list">
+          <template repeat="{{user in banned}}">
+            <div class="user" horizontal layout center>
+              <div flex>{{user}}</div>
+              <td><paper-icon-button class="remove" icon="close" on-tap="{{removeBanned}}"></paper-icon-button></td>
+            </div>
+          </template>
+          <div horizontal layout center class="add-user" hidden?="{{!$.globals.data.user || (!$.globals.data.user.admin && !isModerator)}}">
+            <paper-input-decorator id="banned_input_decorator" label="Enter a username..." flex>
+              <input id="ban_input" value="{{banInput}}"></paper-input>
+            </paper-input-decorator>
+            <paper-icon-button class="add-button" icon="add" on-tap="{{addBanned}}"></paper-icon-button>
+          </div>
+        </div>
+
+        <div class="footer" horizontal around-justifed layout>
+          <paper-button flex on-tap="{{deleteChannel}}">Delete Channel</paper-button>
+        </div>
+
+      </div>
+
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    channel: null,
+
+    visibility: null,
+
+    isViewer: false,
+    isModerator: false,
+
+    moderators: null,
+    viewers: null,
+    banned: null,
+
+    access: "public",
+
+    load: function(channel) {
+      this.channel = channel;
+      this.$.service.getChannelSettings(this.channel);
+    },
+    loadResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      if(detail.response.error) {
+        //handle error
+      }
+      else {
+        if(detail.response.public) {
+          this.access = "public";
+        } else {
+          this.access = "private";
+        }
+        this.moderators = detail.response.moderators;
+        this.viewers = detail.response.viewers;
+        this.banned = detail.response.banned;
+        this.fire('loaded');
+      }
+    },
+
+    addBanned: function() {
+      this.$.service.addBanned(this.channel, this.banInput);
+    },
+    addBannedResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      if(detail.response.error) {
+        this.$.banned_input_decorator.isInvalid = true;
+        this.$.banned_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.banned.push(detail.response.banned);
+        this.$.ban_input.value = "";
+      }
+    },
+    banInputChanged: function() {
+      this.$.banned_input_decorator.isInvalid = false;
+      this.$.banned_input_decorator.error = "";
+    },
+
+    addViewer: function() {
+      this.$.service.addViewer(this.channel, this.viewerInput);
+    },
+    addViewerResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      if(detail.response.error) {
+        this.$.viewer_input_decorator.isInvalid = true;
+        this.$.viewer_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.viewers.push(detail.response.viewer);
+        this.viewerInput = "";
+      }
+    },
+    viewerInputChanged: function() {
+      this.$.viewer_input_decorator.isInvalid = false;
+      this.$.viewer_input_decorator.error = "";
+    },
+
+    addModerator: function() {
+      this.$.service.addModerator(this.channel, this.moderatorInput);
+    },
+    addModeratorResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      if(detail.response.error) {
+        this.$.moderator_input_decorator.isInvalid = true;
+        this.$.moderator_input_decorator.error = detail.response.error_message;
+      }
+      else {
+        this.moderators.push(detail.response.moderator);
+        this.moderatorInput = "";
+      }
+    },
+    moderatorInputChanged: function() {
+      this.$.moderator_input_decorator.isInvalid = false;
+      this.$.moderator_input_decorator.error = "";
+    },
+
+    removeBanned: function(event, detail, sender) {
+      this.$.service.removeBanned(this.channel, sender.templateInstance.model.user);
+    },
+    removeBannedResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      var index = this.banned.indexOf(detail.response.banned);
+      if(index > -1) {
+        this.banned.splice(index, 1);
+      }
+    },
+
+    removeViewer: function(event, detail, sender) {
+      this.$.service.removeViewer(this.channel, sender.templateInstance.model.user);
+    },
+    removeViewerResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      var index = this.viewers.indexOf(detail.response.viewer);
+      if(index > -1) {
+        this.viewers.splice(index, 1);
+      }
+    },
+
+    removeModerator: function(event, detail, sender) {
+      this.$.service.removeModerator(this.channel, sender.templateInstance.model.user);
+    },
+    removeModeratorResponse: function(event, detail, sender) {
+      console.log(detail.response);
+      var index = this.moderators.indexOf(detail.response.moderator);
+      if(index > -1) {
+        this.moderators.splice(index, 1);
+      }
+    },
+
+    setPublic: function() {
+      this.$.service.setPublic(this.channel, true);
+    },
+    setPrivate: function() {
+      this.$.service.setPublic(this.channel, false);
+    },
+    setPublicResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        //todo
+        if(detail.response.public) {
+          this.access = "private";
+        } else {
+          this.access = "public";
+        }
+      } else {
+        if(detail.response.public) {
+          this.access = "public";
+        } else {
+          this.access = "private";
+        }
+      }
+    },
+
+    deleteChannel: function() {
+      //todo
+    },
+    deleteChannelResponse: function(event, detail, sender) {
+      //todo
+    },
+
+    close: function() {
+      this.fire('finished');
+    }
+
+  });
+  </script>
+  
+</polymer-element>

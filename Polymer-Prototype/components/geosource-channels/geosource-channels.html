@@ -1,0 +1,409 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../geosource-channel-creator/geosource-channel-creator.html">
+<link rel="import" href="../geosource-channel-settings/geosource-channel-settings.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+
+<link rel="import" href="../geosource-services/channel-service.html">
+
+<polymer-element name="geosource-channels">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        background-color: white;
+        width: 100%;
+        font-weight: 300;
+      }
+      paper-input {
+        padding-bottom: 10px;
+      }
+      core-submenu {
+        padding: 10px;
+      }
+      core-submenu::shadow #submenu {
+        margin-left: 0px;
+      }
+/*      core-item.core-selected {
+        color: #3C8670;
+      }*/
+      .unsubscribe_button {
+        color: #FF6666;
+      }
+      .subscribe_button {
+        color: #5CC0A2;
+      }
+      .settings_button {
+        color: #636363;
+      }
+      #subscribed {
+        padding: 0;
+      }
+      .create-channel {
+        color: #4285f4;
+        font-size: 14px;
+      }
+      .search {
+        padding-left: 15px;
+      }
+
+      .channel-info {
+        text-align: left;
+      }
+      .channel-info-subscribe {
+        margin-right: 30px;
+      }
+      .channel-info-settings {
+        margin-right: 70px;
+      }
+
+      .channel-owner {
+        color: #636363;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      .channel {
+        position: relative;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .channel-button {
+        text-transform: none;
+        color: #888888;
+      }
+
+      .channel-unsubscribe {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 5px;
+      }
+
+      .channel-name {
+        color: #000000;
+      }
+
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <channel-service id="channel_service"
+      on-subscribe-response="{{subscribeResponse}}"
+      on-unsubscribe-response="{{unsubscribeResponse}}">
+    </channel-service>
+
+    <paper-dialog id="create_dialog" role="dialog" backdrop>
+      <geosource-channel-creator on-finished="{{closeChannelCreate}}"></geosource-channel-creator>
+    </paper-dialog>
+
+    <paper-dialog id="settings_dialog" role="dialog" backdrop>
+      <geosource-channel-settings id="channel_settings" 
+        on-loaded="{{openChannelSettings}}" 
+        on-finished="{{closeChannelSettings}}">
+      </geosource-channel-settings>
+    </paper-dialog>
+
+    <core-submenu opened active id="core_submenu" icon="settings-remote" label="Channels">
+
+      <div layout horizontal class="channel">
+          <paper-button flex toggle class="channel-button" active?="{{allSelected}}" on-tap="{{toggleAll}}">
+            <div layout vertical flex class="channel-info">
+              <div class="channel-name">All</div>
+            </div>
+          </paper-button>
+      </div> 
+      <div layout horizontal class="channel" active?="{{subscribedSelected}}" on-tap="{{toggleSubscribed}}" hidden?="{{!$.globals.data.user}}">
+          <paper-button flex toggle class="channel-button">
+            <div layout vertical flex class="channel-info">
+              <div class="channel-name">Subscribed</div>
+            </div>
+          </paper-button>
+      </div> 
+
+      <template repeat="{{channel in $.globals.data.user.subscriber}}">
+          <div layout horizontal class="channel">
+            <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
+              <div layout vertical flex class="channel-info {{ {'channel-info-subscribe': $.globals.data.user, 'channel-info-settings': $.globals.data.user.admin || channel.isOwner || channel.isModerator} | tokenList}}">
+                <div class="channel-name">{{channel.name}}</div>
+                <div class="channel-owner">Created by {{channel.owner}}</div>
+              </div>
+            </paper-button>
+            <div class="channel-unsubscribe" horizontal center layout>
+              <paper-icon-button icon="settings" 
+                class="settings_button" 
+                on-tap="{{loadChannelSettings}}"
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator}}">
+              </paper-icon-button>
+              <paper-icon-button icon="close" 
+                class="unsubscribe_button" 
+                on-tap="{{unsubscribe}}">
+              </paper-icon-button>
+            </div>
+          </div>
+      </template>
+
+      <div center horizontal layout class="search">
+        <paper-input id="search_input" flex 
+          label="Search for channels..."
+          on-immediate-value-change="{{searchChannels}}">
+        </paper-input>
+        <paper-icon-button icon="search"></paper-icon-button> 
+      </div>
+
+      <template repeat="{{channel in searchedChannels}}" id="searched_channels">
+          <div layout horizontal class="channel">
+            <paper-button flex toggle class="channel-button" on-tap="{{toggleChannel}}" active?="{{channel.isSelected}}">
+              <div layout vertical flex class="channel-info {{ {'channel-info-settings': $.globals.data.user.admin || channel.isOwner || channel.isModerator} | tokenList}}">
+                <div class="channel-name">{{channel.name}}</div>
+                <div class="channel-owner">Created by {{channel.owner}}</div>
+              </div>
+            </paper-button>
+            <div class="channel-unsubscribe" horizontal center layout>
+              <paper-icon-button icon="settings" 
+                class="settings_button" 
+                on-tap="{{loadChannelSettings}}" 
+                hidden?="{{!$.globals.data.user.admin && !channel.isOwner && !channel.isModerator}}">
+              </paper-icon-button>
+              <paper-icon-button icon="add" 
+                class="subscribe_button" 
+                on-tap="{{subscribe}}"
+                hidden?="{{!$.globals.data.user || channel.isSubscriber}}">
+              </paper-icon-button>
+              <paper-icon-button icon="close" 
+                class="unsubscribe_button" 
+                on-tap="{{unsubscribe}}"
+                hidden?="{{!$.globals.data.user || !channel.isSubscriber}}">
+              </paper-icon-button>
+            </div>
+          </div>
+      </template>
+
+      <div horizontal layout center-justified>
+       <paper-button class="create-channel" on-tap="{{openChannelCreate}}" flex hidden?="{{!$.globals.data.user}}">Create a channel</paper-button>
+      </div>
+
+    </core-submenu>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    allSelected: true,
+    subscribedSelected: false,
+
+    searchedChannels: null,
+    
+    // channelSummariesChanged: function() {
+
+    //   console.log("test");
+
+    //   for(i=0; i<this.channelSummaries.length; i++) {
+    //     this.$.globals.data.channels.push({
+    //       "name": this.channelSummaries[i].name,
+    //       "owner": this.channelSummaries[i].owner,
+    //       "isOwner": false,
+    //       "isModerator": false,
+    //       "isViewer": false,
+    //       "isSubscriber": false,
+    //       "isSelected": false,
+    //       "isSearched": false
+    //     });
+
+    //   }
+
+    //   //in case user information is loaded before channel summaries
+    //   if(this.$.globals.data.user) {
+    //     this.userChanged();
+    //   }
+    // },
+
+    toggleAll: function() {
+      this.allSelected = !this.allSelected;
+      this.fire('filter-change');
+    },
+
+    toggleSubscribed: function() {
+      this.subscribedSelected = !this.subscribedSelected;
+      this.fire('filter-change');
+    },
+
+    toggleChannel: function(event, detail, sender) {
+      var channel = this.getChannel(sender.templateInstance.model.channel);
+      channel.isSelected = !channel.isSelected;
+      this.fire('filter-change');
+    },
+
+    /**
+     * Displays all channels which apply to the current text within
+     * 'search_input'. A regex is constructed with .* between each character,
+     * so in the case where 'birds' is entered, the regex would appear as
+     * '^b.*i.*r.*d.*s.*'.
+     */
+    searchChannels: function() {
+
+      var search = this.$.search_input.value;
+
+      var regexString = "^";
+      for(i=0; i<search.length; i++) {
+        regexString += search[i] + '.*';
+      }
+      regexString += "$";
+
+      var regex = new RegExp(regexString, 'i');
+
+      console.log('searched with string: ' + regexString);
+
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name.match(regex)) {
+          this.$.globals.data.channels[i].isSearched = true;
+        }
+        else {
+          this.$.globals.data.channels[i].isSearched = false;
+        }
+        //console.log(this.$.globals.data.channels[i].name.match(regex));
+      }
+
+      this.updateSearchedChannels();
+    },
+
+    updateSearchedChannels: function() {
+      this.searchedChannels = [];
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSearched) {
+          this.searchedChannels.push(this.$.globals.data.channels[i]);
+        }
+      }
+    },
+
+    /**
+     * Subscribes to the selected channel.
+     */
+    subscribe: function(event, detail, sender) {
+      var channel = sender.templateInstance.model.channel;
+      this.$.channel_service.subscribe(channel);
+    },
+
+    subscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
+      }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        console.log(channel);
+	channel.isSubscriber = true;
+        this.$.globals.data.user.subscriber.push(channel);
+        //this.updateSubscribedChannels();
+        this.fire('filter-change');
+      }
+    },
+
+    /**
+     * Unsubscribes from the selected channel.
+     */
+    unsubscribe: function(event, detail, sender) {
+      var channel = sender.templateInstance.model.channel;
+      this.$.channel_service.unsubscribe(channel);
+    },
+
+    unsubscribeResponse: function(event, detail, sender) {
+      if(detail.response.error) {
+        console.log(detail.response.message);
+        //handle error
+      }
+      else {
+        var channel = this.getChannel(detail.response.channel);
+        channel.isSubscriber = false;
+        for(var i=0; i<this.$.globals.data.user.subscriber.length; i++) {
+	  if(this.$.globals.data.user.subscriber[i].name == channel.name 
+	      && this.$.globals.data.user.subscriber[i].owner == channel.owner) {
+            //this.$.globals.data.user.subscriber[i].isSubscriber = false;
+            this.$.globals.data.user.subscriber.splice(i, 1);
+	  }
+	}
+        //this.updateSubscribedChannels();   
+        this.fire('filter-change');
+      }
+    },
+
+    updateSubscribedChannels: function() {
+      this.$.global.data.user.subscriber = [];
+      for(i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].isSubscriber) {
+          this.$.global.data.user.subscriber.push(this.$.globals.data.channels[i]);
+        }
+      }
+    },
+
+    /**
+     * Given a set of posts, this returns the subset of those posts which are 
+     * applicable whichever channel(s) are selected.
+     */
+    filterPosts: function(posts) {
+
+      console.log('filtered');
+
+      var includedPosts = [];
+
+      if(this.allSelected) {
+        includedPosts = posts.slice(0);
+      }
+      else {
+        for(var i=0; i<posts.length; i++) {
+          var channel = this.getChannel(posts[i].channel);
+          if((this.subscribedSelected && channel.isSubscriber) || (channel.isSelected)) {
+            includedPosts.push(posts[i]);
+          }
+        }
+      }
+
+      return includedPosts;
+    },
+
+    getChannel: function(channel) {
+      for(var i=0; i<this.$.globals.data.channels.length; i++) {
+        if(this.$.globals.data.channels[i].name == channel.name 
+            && this.$.globals.data.channels[i].owner == channel.owner) {
+          return this.$.globals.data.channels[i];
+        }
+      }
+      return null;
+    },
+
+    openChannelCreate: function() {
+      this.$.create_dialog.toggle();
+    },
+
+    closeChannelCreate: function() {
+      this.$.create_dialog.close();
+    },
+
+    loadChannelSettings: function(event, detail, sender) {
+      this.$.channel_settings.load(sender.templateInstance.model.channel);
+    },
+
+    openChannelSettings: function(event, detail, sender) {
+      this.$.settings_dialog.toggle();
+    },
+
+    closeChannelSettings: function() {
+      this.$.settings_dialog.close();
+    },
+
+  });
+  </script>
+  
+</polymer-element>

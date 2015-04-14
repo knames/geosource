@@ -1,0 +1,324 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-item/core-item.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../core-menu/core-submenu.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../core-icon/core-icon.html" >
+<link rel="import" href="../core-icons/core-icons.html" >
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../core-icons/image-icons.html">
+<link rel="import" href="../core-icons/av-icons.html">
+
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../geosource-globals/geosource-globals.html">
+
+<link rel="import" href="../geosource-services/channel-service.html">
+
+<polymer-element name="geosource-channel-creator" attributes="channels subscribed">
+
+
+  <template>
+
+    <style>
+
+      .header {
+        background-color: #5CC0A2;
+        margin: 0;
+        padding: 20px;
+        font-size: 1.8em;
+        font-weight: 300;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+      }
+
+      .content {
+        padding: 20px;
+        padding-top: 0;
+      }
+
+      .footer {
+        padding: 20px;
+        padding-top: 0;
+      }
+
+      core-icon {
+        margin-right: 0.5em;
+      }
+
+      core-icon.attribute {
+        margin-left: 10px;
+      }
+
+      .form {
+        background-color: #EDEDED;
+      }
+      paper-menu-button {
+        margin: 12px;
+        margin-top: 0px;
+        margin-bottom: 10px;
+      }
+
+      paper-button {
+        color: #4285f4;
+      }
+
+      .field-title {
+        margin-left: 10px;
+        width: 150px;
+      }
+      .field-remove {
+        width: 40px;
+      }
+
+      paper-checkbox {
+        padding-top: 15px;
+      }
+
+      .fields {
+        padding: 20px;
+        padding-bottom: 0;
+        min-width: 500px;
+      }
+
+      paper-input::shadow paper-input-decorator{
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      .add {
+        color: #5CC0A2;
+      }
+      .remove {
+        color: #FF6666;
+      }
+      th {
+        text-align: left;
+      }
+
+      h2 {
+        font-size: 1.3em;
+        font-weight: 300;
+        margin-bottom: 0px;
+        margin-top: 0px;
+      }
+
+      table {
+        border-spacing:0; /* Removes the cell spacing via CSS */
+      }
+
+      tr.attribute { 
+        background-color: #DDDDDD;
+      }
+
+      paper-icon-button {
+        width: 24px;
+        height: 24px;
+      }
+
+    </style>
+
+    <geosource-globals id="globals"></geosource-globals>
+
+    <channel-service id="channel_service" on-create-channel-response="{{handleResponse}}"></channel-service>
+
+    <div vertical layout>
+      <div class="header" horizontal layout>
+        <div vertical layout flex class="title">
+          <h2>Create a Channel</h2>
+        </div>
+        <div class="buttons" vertical layout>
+          <paper-icon-button id="close" icon="close" on-tap="{{cancel}}"></paper-icon-button>
+        </div>
+      </div>
+      <div class="content" vertical layout>
+
+        <paper-input-decorator id="input_decorator" label="Enter a channel name..." floatingLabel>
+          <input id="channel_name" value="{{input}}" is="core-input">
+        </paper-input-decorator>
+
+        <paper-radio-group id="channel_access" selected="public">
+          <paper-radio-button name="public" label="Public"></paper-radio-button>
+          <paper-radio-button name="private" label="Private"></paper-radio-button>
+        </paper-radio-group>
+
+        <h2>Form</h2>
+        <div class="form">
+          <table id="fields" class="fields" style="width:100%">
+            <tr>
+              <th class="field-title">Type</th>
+              <th class="field-label">Label</th> 
+              <th class="field-required">Required</th>
+              <th class="field-remove"></th>
+            </tr>
+            <tr>
+              <td><core-icon icon="text-format"></core-icon>Text</td>
+              <td><paper-input value="Title" disabled></td> 
+              <td horizontal center-justified layout><paper-checkbox checked disabled></paper-checkbox></td>
+              <td></td>
+            </tr>
+            <template repeat="{{field, fieldIndex in fields}}">
+              <tr>
+                <td><core-icon icon="{{field.icon}}"></core-icon>{{field.title}}</td>
+                <td><paper-input label="Enter a title..." value="{{field.label}}"></td> 
+                <td horizontal center-justified layout><paper-checkbox checked="{{field.required}}"></paper-checkbox></td>
+                <td><paper-icon-button class="remove" icon="close" on-tap="{{removeField}}"></paper-icon-button></td>
+              </tr>
+
+              <template repeat="{{attribute, attributeIndex in field.attributes}}">
+                <tr class="attribute">
+                  <td><core-icon class="attribute" icon="{{field.icon}}"></core-icon>{{field.attributeTitle}}</td>
+                  <td><paper-input label="Enter a label..." value="{{attribute.label}}"></td> 
+                  <td horizontal center-justified layout><paper-checkbox disabled checked="{{field.required}}"></paper-checkbox></td>
+                  <td><paper-icon-button class="remove" icon="close" on-tap="{{removeFieldAttribute}}"></paper-icon-button></td>
+                </tr>
+              </template>
+
+              <tr class="attribute" hidden?="{{!field.attributes}}">
+                <td><paper-icon-button class="add" icon="add" on-tap="{{addFieldAttribute}}"></paper-icon-button></td>
+                <td></td> 
+                <td></td>
+                <td></td>
+              </tr>
+            </template>
+          </table>
+          <paper-menu-button>
+            <paper-icon-button class="add" icon="add"></paper-icon-button>
+            <paper-dropdown class="dropdown">
+              <div class="menu">
+                <paper-item on-tap="{{addText}}"><core-icon icon="text-format"></core-icon>Text</paper-item>
+                <paper-item on-tap="{{addImage}}"><core-icon icon="image:photo-camera"></core-icon>Image</paper-item>
+                <paper-item on-tap="{{addAudio}}"><core-icon icon="av:mic"></core-icon>Audio</paper-item>
+                <paper-item on-tap="{{addVideo}}"><core-icon icon="av:videocam"></core-icon>Video</paper-item>
+                <paper-item on-tap="{{addCheckboxes}}"><core-icon icon="check-box"></core-icon>Checkboxes</paper-item>
+                <paper-item on-tap="{{addRadioButtons}}"><core-icon icon="radio-button-on"></core-icon>Radio Buttons</paper-item>
+              </div>
+            </paper-dropdown>
+          </paper-menu-button>
+      </div>
+    </div>
+
+    <div class="footer" horizontal around-justifed layout>
+      <paper-button flex on-tap="{{cancel}}">Cancel</paper-button>
+      <paper-button flex on-tap="{{submit}}">Submit</paper-button>
+    </div>
+    
+  </template>
+
+
+  <script>
+  Polymer({
+
+    fields: [],
+
+    addText: function() {
+      this.fields.push({title:"Text", icon:"text-format", type:"STRING", label:"", required:false});
+    },
+
+    addImage: function() {
+      this.fields.push({title:"Image", icon:"image:photo-camera", type:"IMAGE", label:"", required:false});
+    },
+
+    addAudio: function() {
+      this.fields.push({title:"Audio",  icon:"av:mic", type:"AUDIO", label:"", required:false});
+    },
+
+    addVideo: function() {
+      this.fields.push({title:"Video", icon:"av:videocam", type:"VIDEO", label:"", required:false});
+    },
+
+    addCheckboxes: function() {
+      this.fields.push({title:"Checkboxes", icon:"check-box", type:"CHECKBOXES", label:"", attributeTitle:"Checkbox", attributes: [{label:""}], required:false});
+    },
+
+    addRadioButtons: function() {
+      this.fields.push({title:"Radio Buttons", icon:"radio-button-on", type:"RADIO_BUTTONS", label:"", attributeTitle:"Radio Button", attributes: [{label:""}], required:false});
+    },
+
+    removeField: function(event, detail, sender) {
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      this.fields.splice(fieldIndex, 1);
+    },
+
+    addFieldAttribute: function(event, detail, sender) {
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      var attributeIndex = sender.templateInstance.model.attributeIndex;
+      this.fields[fieldIndex].attributes.push({label: ""});
+    },
+
+    removeFieldAttribute: function(event, detail, sender) {
+      // console.log(event);
+      // console.log(detail);
+      // console.log(sender);
+      var fieldIndex = sender.templateInstance.model.fieldIndex;
+      var attributeIndex = sender.templateInstance.model.attributeIndex;
+      this.fields[fieldIndex].attributes.splice(attributeIndex, 1);
+      if(this.fields[fieldIndex].attributes.length == 0) {
+        this.removeField(event, detail, sender);
+      }
+    },
+
+    inputChanged: function() {
+      this.$.input_decorator.isInvalid = false;
+    },
+
+    cancel: function() {
+      this.fire('finished');
+    },
+
+    submit: function() {
+
+      var channel = {
+        name: this.$.channel_name.value, 
+        owner: this.$.globals.data.user.username, 
+        isPublic: (this.$.channel_access.selected == "public"),
+        numFields: this.fields.length,
+        fields: []
+      };
+
+      for(i=0; i<this.fields.length; i++) {
+        channel.fields.push({
+          type: this.fields[i].type,
+          label: this.fields[i].label,
+          required: this.fields[i].required
+          //attributes: this.fields[i].attributes
+        });
+      }
+
+      console.log(channel);
+
+      this.$.channel_service.createChannel(channel);
+    },
+    
+    handleResponse: function(event, detail, sender) {
+      console.log(detail);
+      if(detail.response.error) {
+        this.$.input_decorator.isInvalid = true;
+        this.$.input_decorator.error = detail.response.message;
+      } else {
+        //add channel manually
+        this.$.globals.data.channels.push({
+          name: detail.response.channel.name,
+          owner: detail.response.channel.owner,
+          isOwner: true
+        });
+        this.fire('finished');
+      }
+    }
+
+  });
+  </script>
+  
+</polymer-element>

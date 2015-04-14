@@ -1,0 +1,31 @@
+apply plugin: 'java'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile files('../lib/gson-2.3.1.jar')
+    testCompile 'junit:junit:4.10'
+    testCompile 'mysql:mysql-connector-java:5.1.13'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir '../ServerClientShared/ServerClientShared' 
+            srcDir '../HoopSnake-Geosource'
+        }
+    }
+    test {
+    	java {
+    		srcDir 'Test'
+    	}
+    }
+}

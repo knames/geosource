@@ -1,0 +1,26 @@
+language: android
+jdk: oraclejdk7
+env:
+  matrix: 
+    # - TEST_DIRECTORY=Geosource-Android TEST=connectedAndroidTest
+    - TEST_DIRECTORY=Geosource-Android TEST=test
+    - TEST_DIRECTORY=JavaTests TEST=test
+
+# android:
+#   components:
+#     - build-tools-19.0.0
+
+# before_script:
+#   # Create and start emulator
+#   - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+#   - emulator -avd test -no-skin -no-audio -no-window &
+#   - adb wait-for-device
+#   - adb shell input keyevent 82 &
+
+script: cd $TEST_DIRECTORY && ./gradlew $TEST --info
+
+notifications:
+  email:
+    - jih320@mail.usask.ca
+    - wwf594@mail.usask.ca
+    - cbl013@mail.usask.ca

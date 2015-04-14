@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+
+  <title>GeoSource</title>
+  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <script src="components/webcomponentsjs/webcomponents.js"></script>
+  
+  <link rel="import" href="components/polymer/polymer.html">
+  <link rel="import" href="components/geosource-main/geosource-main.html">
+  <link rel="import" href="test_suite/assert.html">
+
+  <style>
+
+  html,body {
+    height: 100%;
+    margin: 0;
+    background-color: #E5E5E5;
+    font-family: 'RobotoDraft', sans-serif;
+  }
+
+  html /deep/ paper-dialog::shadow #scroller {
+    padding: 0;
+  }
+
+    paper-dialog #scroller {
+      padding: 0;
+  }
+
+
+  </style>
+
+</head>
+
+<body>
+
+  <geosource-main></geosource-main>
+  
+</body>
+</html>

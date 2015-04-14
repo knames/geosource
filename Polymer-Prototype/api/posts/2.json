@@ -1,0 +1,21 @@
+{
+	"pid": 2,
+	"uid": 115161761450794914816,
+	"username": "Rob",
+	"channel": {"name": "poly", "owner": "josh"},
+    "title": "Loving this mushroom.",
+	"fields": 
+		[
+			{"type": "Text", "label": "Description", "value": "Oops, I guess I recorded some audio. Not that useful for a mushroom..."},
+			{"type": "Audio", "label": "Audio", "value": "/media/audio/terran.mp3"},
+			{"type": "Image", "label": "Picture", "value": "/media/images/mushroom-01.jpg"},
+			{"type": "Radio Button", "label": "Size", "value": null, "attributes": [{"label": "Big", "value": true}, {"label": "Small", "value": false}]}
+		],
+	"time": "2015-02-25 12:00:00.000",
+    "location": {"latitude": 52.2333, "longitude": -106.6633},
+    "question": false,
+    "comments":
+    	[
+    		{"username": "Josh", "time": "2015-02-26 12:00:00.000", "text": "Me too! What a great mushroom! Pretty amazing that it sounds like StarCraft music too."}
+    	]
+}
